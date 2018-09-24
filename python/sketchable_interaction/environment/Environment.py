@@ -18,11 +18,59 @@ class Environment(QtWidgets.QWidget):
 
         self.painter = QtGui.QPainter()
 
+        self.previous_pointer_location = None
+
         self.current_drawn_points = []
         self.artifacts = []
 
     def update_all(self):
+        Interaction.process()
+
         self.update()
+
+    def point_collides_with_artifacts(self, p):
+        """
+        In the future requires more thought of which to select or if multiple should be allowed
+        """
+
+        for a in self.artifacts:
+            if a.collides_with_point(p):
+                return a
+
+        return None
+
+    def move_region(self, q):
+        if self.previous_pointer_location is None:
+            self.previous_pointer_location = q
+
+        vector = (q[0] - self.previous_pointer_location[0], q[1] - self.previous_pointer_location[1])
+
+        artifact = self.point_collides_with_artifacts(q)
+
+        if not self.drawing:
+            if artifact is not None:
+                artifact.move_interactive_region(vector)
+
+    def __handle_left_button(self, ev):
+        self.previous_pointer_location = None
+
+        p = (ev.x(), ev.y())
+
+        if self.point_collides_with_artifacts(p) is None:
+            self.current_drawn_points = []
+            self.drawing = True
+
+    def __handle_right_button(self, ev):
+        p = (ev.x(), ev.y())
+
+        for artifact in self.artifacts:
+            if artifact.collides_with_point(p):
+                print("Hit with Point")
+
+        for i in range(len(self.artifacts)):
+            for k in range(i + 1, len(self.artifacts)):
+                if self.artifacts[i].collides_with_other(self.artifacts[k]):
+                    print("Intersection")
 
     def keyPressEvent(self, ev):
         if ev.key() == QtCore.Qt.Key_Escape:
@@ -30,22 +78,13 @@ class Environment(QtWidgets.QWidget):
 
     def mousePressEvent(self, ev):
         if ev.button() == QtCore.Qt.LeftButton:
-            self.current_drawn_points = []
-            self.drawing = True
+            self.__handle_left_button(ev)
         elif ev.button() == QtCore.Qt.RightButton:
-            p = (ev.x(), ev.y())
-
-            for artifact in self.artifacts:
-                if artifact.collides_with_point(p):
-                    print("Hit with Point")
-
-            for i in range(len(self.artifacts)):
-                for k in range(i + 1, len(self.artifacts)):
-                    if self.artifacts[i].collides_with_other(self.artifacts[k]):
-                        print("Intersection")
+            self.__handle_right_button(ev)
 
     def mouseReleaseEvent(self, ev):
         if ev.button() == QtCore.Qt.LeftButton:
+            self.previous_pointer_location = None
             self.drawing = False
 
             if len(self.current_drawn_points) > 0:
@@ -61,8 +100,14 @@ class Environment(QtWidgets.QWidget):
             self.current_drawn_points = []
 
     def mouseMoveEvent(self, ev):
+        p = (ev.x(), ev.y())
+
+        self.move_region(p)
+
         if self.drawing:
-            self.current_drawn_points.append((ev.x(), ev.y()))
+            self.current_drawn_points.append(p)
+
+        self.previous_pointer_location = p
 
     def poly(self, pts):
         return QtGui.QPolygonF(map(lambda p: QtCore.QPointF(*p), pts))
@@ -77,9 +122,16 @@ class Environment(QtWidgets.QWidget):
         self.painter.drawPolyline(self.poly(self.current_drawn_points))
 
         for artifact in self.artifacts:
-            self.painter.drawPolyline(self.poly(artifact.get_contour()))
+            self.painter.drawPolyline(self.poly(artifact.get_interactive_region_contour()))
 
         self.painter.end()
+
+
+class Interaction:
+
+    @staticmethod
+    def process():
+        pass
 
 
 class HeartBeat(QtCore.QThread):
