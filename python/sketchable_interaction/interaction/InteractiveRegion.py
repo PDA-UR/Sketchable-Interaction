@@ -24,7 +24,7 @@ class InteractiveRegion:
         self.directionality = directionality
         self.parent_artifact = parent_artifact
         self.linkage = linkage
-        self.links = links
+        self.link_ids = links
 
         self.collision_mask = Mask.create_mask(self.point_set)
 
@@ -33,6 +33,10 @@ class InteractiveRegion:
 
     def get_aabb(self):
         return self.aabb
+
+    def set_linked(self, toggle, artifact_id):
+        self.linkage = True
+        self.link_ids.append(artifact_id)
 
     def move(self, vector):
         for i in range(len(self.point_set)):

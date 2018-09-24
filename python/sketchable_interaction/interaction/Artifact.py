@@ -10,6 +10,7 @@ class Artifact:
         FINGER = 1
         TANGIBLE = 2
         SMARTPHONE = 3
+        CURSOR = 4
 
     def __init__(self, artifact_type):
         self.id = uuid.uuid4()
@@ -31,6 +32,12 @@ class Artifact:
         # effect
 
         self.interactive_region = interactive_region
+
+    def set_interactive_region_linked(self, toggle, link_id):
+        if self.interactive_region is None:
+            raise ValueError("Interactive Region is None")
+        else:
+            self.interactive_region.set_linked(toggle, link_id)
 
     def get_interactive_region(self):
         if self.interactive_region is None:
@@ -81,3 +88,28 @@ class Artifact:
                aabb1[0][0] + aabb1[3][0] - aabb1[0][0] > aabb2[0][0] and \
                aabb1[0][1] < aabb2[0][1] + aabb2[1][1] - aabb2[0][1] and \
                aabb1[0][1] + aabb1[1][1] - aabb1[0][1] > aabb2[0][1]
+
+
+class Sketch(Artifact):
+    def __init__(self):
+        super(Sketch, self).__init__(Artifact.ArtifactType.SKETCH.value)
+
+
+class Cursor(Artifact):
+    def __init__(self):
+        super(Cursor, self).__init__(Artifact.ArtifactType.CURSOR.value)
+
+        self.left_clicked = False
+        self.right_clicked = False
+
+        self.pressed_moved = False
+
+
+class Tangible(Artifact):
+    def __init__(self):
+        super(Tangible, self).__init__(Artifact.ArtifactType.TANGIBLE.value)
+
+
+class Finger(Artifact):
+    def __init__(self):
+        super(Finger, self).__init__(Artifact.ArtifactType.FINGER.value)

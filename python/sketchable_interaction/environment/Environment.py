@@ -1,7 +1,7 @@
 
 from PyQt5 import QtWidgets, QtCore, QtGui
 import time
-from sketchable_interaction.interaction.Artifact import Artifact, InteractiveRegion
+from sketchable_interaction.interaction.Artifact import Artifact, Sketch, Cursor, InteractiveRegion
 
 
 class Environment(QtWidgets.QWidget):
@@ -22,6 +22,8 @@ class Environment(QtWidgets.QWidget):
 
         self.current_drawn_points = []
         self.artifacts = []
+
+        self.mouse_cursor = Cursor()
 
     def update_all(self):
         Interaction.process()
@@ -56,9 +58,13 @@ class Environment(QtWidgets.QWidget):
 
         p = (ev.x(), ev.y())
 
-        if self.point_collides_with_artifacts(p) is None:
+        artifact = self.point_collides_with_artifacts(p)
+
+        if artifact is None:
             self.current_drawn_points = []
             self.drawing = True
+        else:
+            artifact.set_interactive_region_linked(True, self.mouse_cursor.id)
 
     def __handle_right_button(self, ev):
         p = (ev.x(), ev.y())
@@ -88,14 +94,14 @@ class Environment(QtWidgets.QWidget):
             self.drawing = False
 
             if len(self.current_drawn_points) > 0:
-                a = Artifact(Artifact.ArtifactType.SKETCH.value)
-                a.set_interactive_region_from_ordered_point_set(self.current_drawn_points,
+                s = Sketch()
+                s.set_interactive_region_from_ordered_point_set(self.current_drawn_points,
                                                                 InteractiveRegion.EffectType.NONE.value,
                                                                 InteractiveRegion.RoleType.NONE.value,
                                                                 InteractiveRegion.Direction.UNIDIRECTIONAL.value,
                                                                 self)
 
-                self.artifacts.append(a)
+                self.artifacts.append(s)
 
             self.current_drawn_points = []
 
