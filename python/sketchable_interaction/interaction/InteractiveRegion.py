@@ -34,9 +34,28 @@ class InteractiveRegion:
     def get_aabb(self):
         return self.aabb
 
+    def remove_link_by_id(self, _id):
+        t = -1
+
+        for i, _i in enumerate(self.link_ids):
+            if _i == _id:
+                t = i
+                break
+
+        if t != -1:
+            self.link_ids.pop(t)
+
+        if len(self.link_ids) == 0:
+            self.linkage = False
+        else:
+            self.linkage = True
+
     def set_linked(self, toggle, artifact_id):
         self.linkage = True
         self.link_ids.append(artifact_id)
+
+    def get_linked_artifact_ids(self):
+        return self.link_ids
 
     def move(self, vector):
         for i in range(len(self.point_set)):

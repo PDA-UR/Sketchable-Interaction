@@ -2,6 +2,7 @@
 from enum import Enum
 from sketchable_interaction.interaction.InteractiveRegion import InteractiveRegion
 import uuid
+import math
 
 
 class Artifact:
@@ -63,11 +64,26 @@ class Artifact:
         else:
             self.interactive_region.move(vector)
 
-    def collides_with_point(self, p):
-        if int(p[0]) > 1919 or int(p[0]) < 0 or int(p[1]) > 1079 or int(p[1]) < 0:
-            return False
+    def is_linked(self):
+        if self.interactive_region is None:
+            raise ValueError("Interactive Region is None")
+        else:
+            return self.interactive_region.linkage
 
-        return self.interactive_region.collision_mask[int(p[1])][int(p[0])] == 1
+    def get_linked_artifacts(self):
+        if self.interactive_region is None:
+            raise ValueError("Interactive Region is None")
+        else:
+            return self.interactive_region.get_linked_artifact_ids()
+
+    def remove_link_by_id(self, _id):
+        if self.interactive_region is None:
+            raise ValueError("Interactive Region is None")
+        else:
+            return self.interactive_region.remove_link_by_id(_id)
+
+    def collides_with_point(self, p):
+        return (self.interactive_region.collision_mask[int(p[1])][int(p[0])] == 1) if not (int(p[0]) > 1919 or int(p[0]) < 0 or int(p[1]) > 1079 or int(p[1]) < 0) else False
 
     def collides_with_other(self, other):
         if self.__collides_with_aabb(other):
@@ -96,13 +112,46 @@ class Sketch(Artifact):
 
 
 class Cursor(Artifact):
-    def __init__(self):
+    def __init__(self, x, y):
         super(Cursor, self).__init__(Artifact.ArtifactType.CURSOR.value)
 
         self.left_clicked = False
         self.right_clicked = False
 
         self.pressed_moved = False
+
+        self.current_position = None
+        self.last_position = None
+
+        self.__create_interactive_region(x, y, 5)
+
+    def set_current_position(self, p):
+        self.current_position = p
+
+    def get_current_position(self):
+        return self.current_position
+
+    def set_last_position(self, p):
+        self.last_position = p
+
+    def get_last_position(self):
+        return self.last_position
+
+    def __create_interactive_region(self, x, y, radius):
+        temp1 = []
+        temp2 = []
+
+        for x_ in range(-radius, radius):
+            y_ = int(math.sqrt(int(radius * radius) - x_ * x_) + 0.5)
+
+            temp1.append((x + x_, y + y_))
+            temp2.append((x + x_, y - y_))
+
+        self.set_interactive_region_from_ordered_point_set(temp1 + list(reversed(temp2)),
+                                                           InteractiveRegion.EffectType.NONE.value,
+                                                           InteractiveRegion.EffectType.NONE.value,
+                                                           InteractiveRegion.Direction.UNIDIRECTIONAL.value, True,
+                                                           [str(self.id)])
 
 
 class Tangible(Artifact):
