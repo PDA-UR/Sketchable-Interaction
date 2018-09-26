@@ -11,9 +11,16 @@ class InteractiveRegion:
 
     class EffectType(Enum):
         NONE = 0
+        SKETCH = 1
 
     class RoleType(Enum):
         NONE = 0
+        BRUSH = 1
+
+    class EffectApplicationType(Enum):
+        EMIT = 0
+        RECEIVE = 1
+        BOTH = 2
 
     def __init__(self, point_set, effect, role, directionality, parent_artifact, linkage, links):
         self.point_set = point_set + [point_set[0]]

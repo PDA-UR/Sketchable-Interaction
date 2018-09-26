@@ -55,6 +55,13 @@ class Environment(QtWidgets.QWidget):
 
         return None
 
+    def get_artifact_by_id(self, _id):
+        for i, artifact in enumerate(self.artifacts):
+            if artifact.id == _id:
+                return i, artifact
+
+        return -1, None
+
     def move_artifact(self, index):
         if not self.drawing:
             vector = (self.mouse_cursor.get_current_position()[0] - self.mouse_cursor.get_last_position()[0], self.mouse_cursor.get_current_position()[1] - self.mouse_cursor.get_last_position()[1])
@@ -196,9 +203,40 @@ class Interaction:
     @staticmethod
     def process_artifact_vs_artifacts(target_environment):
         for i in range(len(target_environment.artifacts)):
-            for k in range(i + 1, len(target_environment.artifacts)):
+            b = []
+
+            for k in range(len(target_environment.artifacts)):
+                if i == k:
+                    continue
+
                 if target_environment.artifacts[i].collides_with_other(target_environment.artifacts[k]):
-                    print("collision")
+                    b.append(target_environment.artifacts[k].id)
+
+            # check for lost intersections
+            # for each lost intersection call on_intersection_ended
+
+            last = target_environment.artifacts[i].get_last_intersections_list()
+
+            if len(last) > 0:
+                for _id in last:
+                    index, artifact = target_environment.get_artifact_by_id(_id)
+
+                    if _id in b:
+                        target_environment.artifacts[index].on_intersection()
+                    else:
+                        target_environment.artifacts[index].on_disjunction()
+
+                target_environment.artifacts[i].clear_last_intersections_list()
+
+            for _id in b:
+                # do this once and not twice for each intersection
+                # check for previous artifacts whether this id is in last intersections?
+
+                index, artifact = target_environment.get_artifact_by_id(_id)
+
+                target_environment.artifacts[index].on_receive_effect()
+                target_environment.artifacts[i].on_receive_effect()
+                target_environment.artifacts[i].add_intersection_to_last_intersections_list(_id)
 
 
 class HeartBeat(QtCore.QThread):

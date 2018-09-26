@@ -3,9 +3,10 @@ from enum import Enum
 from sketchable_interaction.interaction.InteractiveRegion import InteractiveRegion
 import uuid
 import math
+from PyQt5 import QtCore
 
 
-class Artifact:
+class Artifact(QtCore.QObject):
     class ArtifactType(Enum):
         SKETCH = 0
         FINGER = 1
@@ -14,9 +15,14 @@ class Artifact:
         CURSOR = 4
 
     def __init__(self, artifact_type):
+        super(Artifact, self).__init__()
         self.id = uuid.uuid4()
         self.type = artifact_type  # finger, sketched region, tangible, etc.
         self.interactive_region = None
+
+        self.last_intersections = []
+
+        self.is_intersecting = False
 
         # raise exceptions in other methods if interactive region is None
 
@@ -31,6 +37,7 @@ class Artifact:
         # needs direction specification
         # linkage
         # effect
+        # role
 
         self.interactive_region = interactive_region
 
@@ -96,6 +103,18 @@ class Artifact:
 
         return False
 
+    def get_last_intersections_list(self):
+        return self.last_intersections
+
+    def set_last_intersections_list(self, intersections):
+        self.last_intersections = intersections
+
+    def add_intersection_to_last_intersections_list(self, intersection):
+        self.last_intersections.append(intersection)
+
+    def clear_last_intersections_list(self):
+        self.last_intersections = []
+
     def __collides_with_aabb(self, other):
         aabb1 = self.get_interactive_region_aabb()
         aabb2 = other.get_interactive_region_aabb()
@@ -104,6 +123,23 @@ class Artifact:
                aabb1[0][0] + aabb1[3][0] - aabb1[0][0] > aabb2[0][0] and \
                aabb1[0][1] < aabb2[0][1] + aabb2[1][1] - aabb2[0][1] and \
                aabb1[0][1] + aabb1[1][1] - aabb1[0][1] > aabb2[0][1]
+
+    def on_emit_effect(self):
+        print("emit effect if able")
+
+    def on_receive_effect(self):
+        if self.is_intersecting:
+            print("receive effect if able")
+
+    def on_intersection(self):
+        if not self.is_intersecting:
+            self.is_intersecting = True
+            print("intersection happening")
+
+    def on_disjunction(self):
+        if self.is_intersecting:
+            self.is_intersecting = False
+            print("intersection lifted")
 
 
 class Sketch(Artifact):
@@ -123,7 +159,7 @@ class Cursor(Artifact):
         self.current_position = None
         self.last_position = None
 
-        self.__create_interactive_region(x, y, 5)
+        self.__create_interactive_region(x, y, 8)
 
     def set_current_position(self, p):
         self.current_position = p
@@ -148,8 +184,8 @@ class Cursor(Artifact):
             temp2.append((x + x_, y - y_))
 
         self.set_interactive_region_from_ordered_point_set(temp1 + list(reversed(temp2)),
-                                                           InteractiveRegion.EffectType.NONE.value,
-                                                           InteractiveRegion.EffectType.NONE.value,
+                                                           InteractiveRegion.EffectType.SKETCH.value,
+                                                           InteractiveRegion.RoleType.BRUSH.value,
                                                            InteractiveRegion.Direction.UNIDIRECTIONAL.value, True,
                                                            [str(self.id)])
 
