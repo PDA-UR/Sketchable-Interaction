@@ -12,10 +12,15 @@ class InteractiveRegion:
     class EffectType(Enum):
         NONE = 0
         SKETCH = 1
+        MOVE = 2
+        DELETE = 3
+        PREVIEW = 4
 
     class RoleType(Enum):
         NONE = 0
         BRUSH = 1
+        MOVE = 2
+        DELETE = 3
 
     class EffectApplicationType(Enum):
         EMIT = 0
