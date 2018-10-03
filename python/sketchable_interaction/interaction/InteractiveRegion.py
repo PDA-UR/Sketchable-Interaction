@@ -15,12 +15,17 @@ class InteractiveRegion:
         MOVE = 2
         DELETE = 3
         PREVIEW = 4
+        TAG = 5
+        EFFECT_PALETTE = 6
 
     class RoleType(Enum):
         NONE = 0
         BRUSH = 1
         MOVE = 2
         DELETE = 3
+        PREVIEW = 4
+        TAG = 5
+        EFFECT_PALETTE = 6
 
     class EffectApplicationType(Enum):
         EMIT = 0

@@ -1,7 +1,8 @@
 
 from PyQt5 import QtWidgets, QtCore, QtGui
 import time
-from sketchable_interaction.interaction.Artifact import Artifact, Sketch, File, Cursor, InteractiveRegion
+from sketchable_interaction.interaction.Artifact import *
+import vectormath as vm
 
 
 class Environment(QtWidgets.QWidget):
@@ -21,12 +22,14 @@ class Environment(QtWidgets.QWidget):
         self.previous_pointer_location = None
 
         self.current_drawn_points = []
-        self.sketch_artifacts = []
+        self.artifacts = []
 
         self.mouse_cursor = Cursor(self.cursor().pos().x(), self.cursor().pos().y(), self)
+        self.mouse_cursor.set_role(InteractiveRegion.RoleType.BRUSH.value)
+        self.mouse_cursor.set_effect(InteractiveRegion.EffectType.EFFECT_PALETTE.value)
         self.update_mouse_cursor()  # appears to be required for the interactive region to be on the right spot at certain spawning contexts
 
-        self.sketch_artifacts.append(File(1, 50, 50, File.FileType.TEXT.value, self))
+        self.artifacts.append(File(1, 50, 50, File.FileType.TEXT.value, self))
 
     def update_all(self):
         self.update_mouse_cursor()
@@ -51,14 +54,14 @@ class Environment(QtWidgets.QWidget):
         In the future requires more thought of which to select or if multiple should be allowed
         """
 
-        for a in self.sketch_artifacts:
+        for a in self.artifacts:
             if a.collides_with_point(p):
                 return a
 
         return None
 
     def get_artifact_by_id(self, _id):
-        for i, artifact in enumerate(self.sketch_artifacts):
+        for i, artifact in enumerate(self.artifacts):
             if artifact.id == _id:
                 return i, artifact
 
@@ -71,29 +74,52 @@ class Environment(QtWidgets.QWidget):
         if self.drawing and self.mouse_cursor.get_role() == InteractiveRegion.RoleType.BRUSH.value:
             self.current_drawn_points.append(self.mouse_cursor.current_position)
 
-    def register_new_sketched_interactive_region(self):
+    def register_new_sketched_interactive_region(self, effect_type):
         self.drawing = False
-        s = Sketch(self)
-        s.set_interactive_region_from_ordered_point_set(self.current_drawn_points,
-                                                        InteractiveRegion.EffectType.NONE.value,
-                                                        InteractiveRegion.RoleType.NONE.value,
-                                                        InteractiveRegion.Direction.UNIDIRECTIONAL.value,
-                                                        False, [])
 
-        self.sketch_artifacts.append(s)
+        if len(self.current_drawn_points) > 0:
+            if effect_type == InteractiveRegion.EffectType.EFFECT_PALETTE.value:
+                parent_sketch = EffectPaletteSketch(self.current_drawn_points, self)
+                self.artifacts.append(parent_sketch)
+
+                parent_index = len(self.artifacts) - 1
+
+                for i, child in enumerate(parent_sketch.get_sub_point_sets()):
+                    child_sketch = EffectPaletteSketch(child, self, True, i)
+                    child_sketch.is_palette_parent_sketch = False
+                    child_sketch.set_parent_uuid(parent_sketch.get_id())
+                    child_sketch.set_interactive_region_linked(True, parent_sketch.get_id())
+
+                    self.artifacts[parent_index].set_interactive_region_linked(True, child_sketch.get_id())
+
+                    self.artifacts.append(child_sketch)
+
+                self.mouse_cursor.set_role(InteractiveRegion.RoleType.BRUSH.value)
+                self.mouse_cursor.set_effect(InteractiveRegion.EffectType.NONE.value)
+            else:
+                # think about blank region integration which is programmable
+
+                effect = self.mouse_cursor.get_effect()
+
+                if effect == InteractiveRegion.EffectType.DELETE.value:
+                    self.artifacts.append(DeletionSketch(self.current_drawn_points, self, False))
+                elif effect == InteractiveRegion.EffectType.PREVIEW.value:
+                    self.artifacts.append(PreviewSketch(self.current_drawn_points, self, False))
+                elif effect == InteractiveRegion.EffectType.TAG.value:
+                    self.artifacts.append(TagSketch(self.current_drawn_points, self, False))
 
         self.current_drawn_points = []
 
     def __handle_right_button(self, ev):
         p = (ev.x(), ev.y())
 
-        for artifact in self.sketch_artifacts:
+        for artifact in self.artifacts:
             if artifact.collides_with_point(p):
                 print("Hit with Point")
 
-        for i in range(len(self.sketch_artifacts)):
-            for k in range(i + 1, len(self.sketch_artifacts)):
-                if self.artifacts[i].collides_with_other(self.sketch_artifacts[k]):
+        for i in range(len(self.artifacts)):
+            for k in range(i + 1, len(self.artifacts)):
+                if self.artifacts[i].collides_with_other(self.artifacts[k]):
                     print("Intersection")
 
     def keyPressEvent(self, ev):
@@ -128,10 +154,10 @@ class Environment(QtWidgets.QWidget):
 
         self.painter.drawPolyline(self.poly(self.current_drawn_points))
 
-        for artifact in self.sketch_artifacts:
-            self.painter.drawPolyline(self.poly(artifact.get_interactive_region_contour()))
+        for i, artifact in enumerate(self.artifacts):
+            artifact.render(self.painter)
 
-        self.painter.drawPolyline(self.poly(self.mouse_cursor.get_interactive_region_contour()))
+        self.mouse_cursor.render(self.painter)
 
         self.painter.end()
 
@@ -141,7 +167,7 @@ class Interaction:
     @staticmethod
     def process(target_environment):
         Interaction.process_cursor_vs_artifacts(target_environment)
-        Interaction.process_sketch_artifacts_vs_sketch_artifacts(target_environment)
+        Interaction.process_artifacts_vs_artifacts(target_environment)
 
     @staticmethod
     def process_cursor_vs_artifacts(target_environment):
@@ -157,35 +183,49 @@ class Interaction:
                     Interaction.__draw_sketch_contour_point(target_environment)
                 else:
                     target_environment.mouse_cursor.set_role(InteractiveRegion.RoleType.MOVE.value)
+
                     Interaction.__move_artifact(target_environment, other)
         else:
             if len(target_environment.current_drawn_points) > 0:
                 Interaction.__finish_sketching(target_environment)
                 target_environment.mouse_cursor.set_role(InteractiveRegion.RoleType.BRUSH.value)
+            else:
+                for i, artifact in enumerate(target_environment.artifacts):
+                    if artifact.is_child:
+                        if artifact.collides_with_other(target_environment.mouse_cursor):
+                            if target_environment.mouse_cursor.left_clicked:
+                                target_environment.mouse_cursor.set_role(InteractiveRegion.RoleType.BRUSH.value)
+                                artifact.on_emit_effect()
+
+                                target_environment.mouse_cursor.on_receive_effect(i)
+
+                                return
 
     @staticmethod
     def __check_link_state_of_artifacts_to_cursor(target_environment):
         collides_with_other = False
         other = -1
 
-        for i, artifact in enumerate(target_environment.sketch_artifacts):
+        for i, artifact in enumerate(target_environment.artifacts):
             if artifact.is_linked():
                 if target_environment.mouse_cursor.id in artifact.get_linked_artifacts():
-                    if target_environment.sketch_artifacts[i].collides_with_other(target_environment.mouse_cursor):
-                        other = i
-                        collides_with_other = True
-                    else:
-                        target_environment.sketch_artifacts[i].remove_link_by_id(target_environment.mouse_cursor.id)
-                    break
+                    if target_environment.artifacts[i].collides_with_others_aabb(target_environment.mouse_cursor):
+                        if target_environment.artifacts[i].collides_with_other(target_environment.mouse_cursor):
+                            other = i
+                            collides_with_other = True
+                        else:
+                            target_environment.artifacts[i].remove_link_by_id(target_environment.mouse_cursor.id)
+                        break
 
         if other == -1 and target_environment.drawing is False:
-            for i, artifact in enumerate(target_environment.sketch_artifacts):
-                if target_environment.sketch_artifacts[i].collides_with_other(target_environment.mouse_cursor):
-                    target_environment.sketch_artifacts[i].set_interactive_region_linked(True, target_environment.mouse_cursor.id)
-                    target_environment.mouse_cursor.set_interactive_region_linked(True, target_environment.sketch_artifacts[i].id)
-                    other = i
-                    collides_with_other = True
-                    break
+            for i, artifact in enumerate(target_environment.artifacts):
+                if target_environment.artifacts[i].collides_with_others_aabb(target_environment.mouse_cursor):
+                    if target_environment.artifacts[i].collides_with_other(target_environment.mouse_cursor):
+                        target_environment.artifacts[i].set_interactive_region_linked(True, target_environment.mouse_cursor.id)
+                        target_environment.mouse_cursor.set_interactive_region_linked(True, target_environment.artifacts[i].id)
+                        other = i
+                        collides_with_other = True
+                        break
 
         return collides_with_other, other
 
@@ -197,63 +237,85 @@ class Interaction:
     @staticmethod
     def __move_artifact(target_environment, other):
         target_environment.drawing = False
-        target_environment.sketch_artifacts[other].on_receive_effect(-1)
+
+        if not target_environment.artifacts[other].is_child:
+            target_environment.artifacts[other].on_receive_effect(-1)
+
+        Interaction.__move_effect_palette_components(target_environment, other)
+
+    @staticmethod
+    def __move_effect_palette_components(target_environment, other):
+        if target_environment.artifacts[other].is_palette_parent_sketch:
+            for i, artifact in enumerate(target_environment.artifacts):
+                if i == other:
+                    continue
+
+                if artifact.is_child and artifact.parent_uuid == target_environment.artifacts[other].get_id():
+                    target_environment.mouse_cursor.set_interactive_region_linked(True, artifact.get_id())
+                    target_environment.artifacts[i].on_receive_effect(-1)
 
     @staticmethod
     def __finish_sketching(target_environment):
-        target_environment.register_new_sketched_interactive_region()
+        target_environment.register_new_sketched_interactive_region(target_environment.mouse_cursor.get_effect())
         target_environment.drawing = False
 
     @staticmethod
-    def process_sketch_artifacts_vs_sketch_artifacts(target_environment):
-        for i in range(len(target_environment.sketch_artifacts)):
+    def process_artifacts_vs_artifacts(target_environment):
+        for i in range(len(target_environment.artifacts)):
             current = Interaction.__compute_current_intersections(target_environment, i)
 
-            Interaction.__handle_intersection_start_and_ending_occurrences(target_environment, i, current)
-            Interaction.__handle_effect_emission_and_reception(target_environment, i, current)
+            if len(current) > 0:
+                Interaction.__handle_intersection_start_and_ending_occurrences(target_environment, i, current)
+                Interaction.__handle_effect_emission_and_reception(target_environment, i, current)
 
     @staticmethod
     def __compute_current_intersections(target_environment, index):
         ret = []
 
-        for i in range(len(target_environment.sketch_artifacts)):
+        if target_environment.artifacts[index].is_palette_parent_sketch:
+            return ret
+
+        for i in range(len(target_environment.artifacts)):
             if i == index:
                 continue
 
-            if target_environment.sketch_artifacts[index].collides_with_other(target_environment.sketch_artifacts[i]):
-                ret.append(target_environment.sketch_artifacts[i].id)
+            if target_environment.artifacts[index].is_child and target_environment.artifacts[i].is_palette_parent_sketch:
+                return ret
+            else:
+                if target_environment.artifacts[index].collides_with_other(target_environment.artifacts[i]):
+                    ret.append(target_environment.artifacts[i].id)
 
         return ret
 
     @staticmethod
     def __handle_intersection_start_and_ending_occurrences(target_environment, index, current_intersections):
-        last = target_environment.sketch_artifacts[index].get_last_intersections_list()
+        last = target_environment.artifacts[index].get_last_intersections_list()
 
         if len(last) > 0:
             for _id in last:
                 i, artifact = target_environment.get_artifact_by_id(_id)
 
                 if _id in current_intersections:
-                    target_environment.sketch_artifacts[i].on_intersection()
+                    target_environment.artifacts[i].on_intersection()
                 else:
-                    target_environment.sketch_artifacts[i].on_disjunction()
+                    target_environment.artifacts[i].on_disjunction()
 
-            target_environment.sketch_artifacts[index].clear_last_intersections_list()
+            target_environment.artifacts[index].clear_last_intersections_list()
 
     @staticmethod
     def __handle_effect_emission_and_reception(target_environment, index, current_intersections):
         for _id in current_intersections:
             for i in range(index):
-                if not (_id in target_environment.sketch_artifacts[i].get_last_intersections_list()):
+                if not (_id in target_environment.artifacts[i].get_last_intersections_list()):
                     _i, artifact = target_environment.get_artifact_by_id(_id)
 
-                    target_environment.sketch_artifacts[_i].on_emit_effect()
-                    target_environment.sketch_artifacts[_i].on_receive_effect(index)
+                    target_environment.artifacts[_i].on_emit_effect()
+                    target_environment.artifacts[_i].on_receive_effect(index)
 
-                    target_environment.sketch_artifacts[index].on_emit_effect()
-                    target_environment.sketch_artifacts[index].on_receive_effect(i)
+                    target_environment.artifacts[index].on_emit_effect()
+                    target_environment.artifacts[index].on_receive_effect(i)
 
-            target_environment.sketch_artifacts[index].add_intersection_to_last_intersections_list(_id)
+            target_environment.artifacts[index].add_intersection_to_last_intersections_list(_id)
 
 
 class HeartBeat(QtCore.QThread):

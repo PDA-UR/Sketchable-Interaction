@@ -4,6 +4,7 @@ from sketchable_interaction.interaction.InteractiveRegion import InteractiveRegi
 import uuid
 import math
 from PyQt5 import QtCore, QtWidgets, QtGui
+import vectormath as vm
 
 
 class Artifact(QtCore.QObject):
@@ -21,13 +22,27 @@ class Artifact(QtCore.QObject):
         self.type = artifact_type  # finger, sketched region, tangible, etc.
         self.interactive_region = None
         self.setParent(parent)
-
         self.last_intersections = []
 
         self.is_intersecting = False
         self.effect_eligibility = {}
+        self.effect_color = QtGui.QColor(0, 0, 0)
+        self.is_child = False
+        self.is_palette_parent_sketch = False
 
         # raise exceptions in other methods if interactive region is None
+
+    def get_id(self):
+        return self.id
+
+    def compute_center_of_polygon(self, polygon):
+        if len(polygon) > 0:
+            x_values = [vertex[0] for vertex in polygon]
+            y_values = [vertex[1] for vertex in polygon]
+
+            return sum(x_values) / len(polygon), sum(y_values) / len(polygon)
+
+        return -1, -1
 
     def set_interactive_region_from_ordered_point_set(self, points, effect, role, directionality, linkage=False, links=[]):
         self.interactive_region = InteractiveRegion(points, effect, role, directionality, self, linkage, links)
@@ -49,6 +64,13 @@ class Artifact(QtCore.QObject):
             raise ValueError("Interactive Region is None")
         else:
             self.interactive_region.set_linked(toggle, link_id)
+
+    def set_parent_uuid(self, uuid):
+        if self.is_child:
+            self.parent_uuid = uuid
+
+    def get_parent_uuid(self):
+        return self.parent_uuid
 
     def set_effect(self, effect):
         if self.interactive_region is None:
@@ -135,13 +157,18 @@ class Artifact(QtCore.QObject):
         return (self.interactive_region.collision_mask[int(p[1])][int(p[0])] == 1) if not (int(p[0]) > 1919 or int(p[0]) < 0 or int(p[1]) > 1079 or int(p[1]) < 0) else False
 
     def collides_with_other(self, other):
-        if self.__collides_with_aabb(other):
-            for p in other.get_interactive_region_contour():
-                if int(p[0]) > 1919 or int(p[1]) > 1079:
-                    continue
+        for p in other.get_interactive_region_contour():
+            if int(p[0]) > 1919 or int(p[1]) > 1079:
+                continue
 
-                if self.collides_with_point(p):
-                    return True
+            if self.collides_with_point(p):
+                return True
+
+        return False
+
+    def collides_with_others_aabb(self, other):
+        if self.__collides_with_aabb(other):
+                return True
 
         return False
 
@@ -169,6 +196,7 @@ class Artifact(QtCore.QObject):
     def on_emit_effect(self):
         if self.is_intersecting:
             print("emit effect if able")
+            pass
 
         # unsure on how to use this
         # can be used to do stuff before the effect is emitted if needed
@@ -178,7 +206,7 @@ class Artifact(QtCore.QObject):
         if source_artifact_index == -1:
             source_artifact = self.parent().mouse_cursor
         else:
-            source_artifact = self.parent().sketch_artifacts[source_artifact_index]
+            source_artifact = self.parent().artifacts[source_artifact_index]
 
         _id = source_artifact.id
         effect = source_artifact.get_effect()
@@ -199,9 +227,11 @@ class Artifact(QtCore.QObject):
         elif _type == Artifact.ArtifactType.SKETCH.value:
             if self.is_intersecting:
                 print("receive effect if able")
+                pass
+        elif _type == Artifact.ArtifactType.FILE.value:
+            print("file collision")
         else:
-            raise TypeError("Currently not supported artifact type %", _type)
-
+            raise TypeError("Currently not supported artifact type", _type)
 
     def on_intersection(self):
         if not self.is_intersecting:
@@ -213,17 +243,335 @@ class Artifact(QtCore.QObject):
             self.is_intersecting = False
             print("intersection lifted")
 
+    def render(self, painter):
+        pass
+
+    def poly(self, pts):
+        return QtGui.QPolygonF(map(lambda p: QtCore.QPointF(*p), pts))
+
 
 class Sketch(Artifact):
-    def __init__(self, parent):
+    def __init__(self, point_set, effect, role, directionality, linkage, links, parent, is_child=False):
         super(Sketch, self).__init__(Artifact.ArtifactType.SKETCH.value, parent)
+
+        self.effect_type = effect
+        self.role_type = role
 
         self.effect_eligibility = {
             "emit": [],
             "receive": [
-                InteractiveRegion.EffectType.MOVE.value
+                InteractiveRegion.EffectType.MOVE.value,
+                InteractiveRegion.EffectType.EFFECT_PALETTE.value
             ]
         }
+
+        #self.center = self.__compute_center_of_polygon(point_set)
+        self.is_child = is_child
+
+        self.set_interactive_region_from_ordered_point_set(point_set,
+                                                           effect,
+                                                           role,
+                                                           directionality, linkage,
+                                                           links)
+
+    def render(self, painter):
+        painter.drawPolyline(self.poly(self.get_interactive_region_contour()))
+
+        path = QtGui.QPainterPath()
+        first_point = self.get_interactive_region_contour()[0]
+        path.moveTo(first_point[0], first_point[1])
+
+        for point in self.get_interactive_region_contour()[1:]:
+            path.lineTo(point[0], point[1])
+
+        path.lineTo(first_point[0], first_point[1])
+
+        painter.fillPath(path, self.effect_color)
+
+
+"""
+Here are the classes derived from sketch; potentially required in this way for better decomposition and adding of effects at runtime
+"""
+
+
+class EffectPaletteSketch(Sketch):
+    class TransferEffectTypes(Enum):  # standard library effects
+        DELETE = InteractiveRegion.EffectType.DELETE.value
+        PREVIEW = InteractiveRegion.EffectType.PREVIEW.value
+        TAG = InteractiveRegion.EffectType.TAG.value
+
+    class TransferEffectColor(Enum):
+        DELETE = QtGui.QColor("#BB3333")
+        PREVIEW = QtGui.QColor("#33BB33")
+        TAG = QtGui.QColor("#A05A09")
+
+    def __init__(self, point_set, parent, is_child=False, child_num=-1):
+        super(EffectPaletteSketch, self).__init__(point_set, InteractiveRegion.EffectType.EFFECT_PALETTE.value, InteractiveRegion.RoleType.EFFECT_PALETTE.value, InteractiveRegion.Direction.UNIDIRECTIONAL.value, False, [], parent, is_child)
+
+        self.effect_collection = EffectPaletteSketch.TransferEffectTypes
+        self.effect_collection_colors = EffectPaletteSketch.TransferEffectColor
+        self.effect_collection_size = len(EffectPaletteSketch.TransferEffectTypes)
+
+        self.sub_point_sets = []
+        self.parent_uuid = -1
+        self.point_resampling_size = 84
+        self.effect_palette_modulo_divisor = self.point_resampling_size / self.effect_collection_size
+        self.is_child = is_child
+        self.center = self.compute_center_of_polygon(point_set)
+        self.transfer_effect = None
+
+        if is_child:
+            self.is_palette_parent_sketch = False
+
+            if child_num != -1:
+                for i, n in enumerate(self.effect_collection_colors):
+                    if child_num == i:
+                        self.effect_color = n.value
+
+                for i, n in enumerate(self.effect_collection):
+                    if child_num == i:
+                        self.transfer_effect = n.value
+        else:
+            self.is_palette_parent_sketch = True
+
+        self.__create_effect_palette(point_set)
+
+    # add a new type to the enum at runtime
+    def add_transfer_type_to_enum(self, _type_name, color):
+        names = [m.name for m in self.effect_collection] + [_type_name]
+
+        self.effect_collection = Enum('TransferEffectTypes', names)
+
+        self.effect_palette_modulo_divisor = self.point_resampling_size / len(names)
+
+        names = [m.name for m in self.effect_collection_colors] + [_type_name]
+        values = [m.value for m in self.effect_collection_colors] + [color]
+
+        d = {}
+
+        for i in range(len(self.effect_collection_colors)):
+            d[names[i]] = values[i]
+
+        self.effect_collection_colors = Enum('TransferEffectColors', d)
+
+    def get_sub_point_sets(self):
+        return self.sub_point_sets
+
+    def __create_effect_palette(self, points):
+        if not self.is_child:
+            points = self.__resample_points(self.__compute_circle(self.center[0], self.center[1], int(sum((vm.Vector2(p[0], p[1]) - vm.Vector2(self.center[0], self.center[1])).length for p in points)) / len(points)), self.point_resampling_size)
+
+            self.set_interactive_region_from_ordered_point_set(points, self.effect_type, self.role_type, InteractiveRegion.Direction.UNIDIRECTIONAL.value)
+
+            if len(self.get_interactive_region_contour()) > 0:
+                temp = [self.get_interactive_region_contour()[0]]
+
+                for i, p in enumerate(self.get_interactive_region_contour()[1:]):
+                    temp.append(p)
+
+                    if i > 0 and i % self.effect_palette_modulo_divisor == 0:
+                        self.sub_point_sets.append([self.center] + temp + [self.center])
+                        temp = [p]
+
+                self.sub_point_sets.append([self.center] + temp + [self.center])
+
+            self.is_palette_parent_sketch = True
+        else:
+            self.set_interactive_region_from_ordered_point_set(points, self.effect_type, self.role_type, InteractiveRegion.Direction.UNIDIRECTIONAL.value)
+
+    def __compute_circle(self, x, y, r):
+        temp1 = []
+        temp2 = []
+
+        for x_ in range(int(-r), int(r)):
+            y_ = int(math.sqrt(int(r * r) - x_ * x_) + 0.5)
+
+            temp1.append((x + x_, y + y_))
+            temp2.append((x + x_, y - y_))
+
+        return temp1 + list(reversed(temp2))
+
+    def __resample_points(self, points, num_desired_points=64):
+        I = self.__path_length(points) / (num_desired_points - 1)
+        D = 0.0
+
+        new_points = [points[0]]
+
+        i = 1
+
+        while i < len(points):
+            d = vm.Vector2(points[i - 1][0] - points[i][0], points[i - 1][1] - points[i][1]).length
+
+            if (D + d) >= I:
+                qx = points[i - 1][0] + ((I - D) / d) * (points[i][0] - points[i - 1][0])
+                qy = points[i - 1][1] + ((I - D) / d) * (points[i][1] - points[i - 1][1])
+                new_points.append((qx, qy))
+                points.insert(i, (qx, qy))
+
+                D = 0.0
+            else:
+                D += d
+
+            i += 1
+
+        if len(new_points) == num_desired_points - 1:
+            new_points.append(points[-1])
+
+        return new_points
+
+    def __path_length(self, points):
+        d = 0.0
+
+        for i in range(1, len(points)):
+            d += vm.Vector2(points[i - 1][0] - points[i][0], points[i - 1][1] - points[i][1]).length
+
+        return d
+
+    def on_emit_effect(self):
+        print("emit override", self.transfer_effect)
+
+    def on_receive_effect(self, source_artifact_index):
+        if source_artifact_index == -1:
+            source_artifact = self.parent().mouse_cursor
+        else:
+            source_artifact = self.parent().artifacts[source_artifact_index]
+
+        _id = source_artifact.id
+        effect = source_artifact.get_effect()
+        role = source_artifact.get_role()
+        directionality = source_artifact.get_directionality()
+        _type = source_artifact.type
+        linked = source_artifact.is_linked()
+        links = source_artifact.get_linked_artifacts()
+        emits = source_artifact.effect_eligibility["emit"]
+        receptions = source_artifact.effect_eligibility["receive"]
+
+        if _type == Artifact.ArtifactType.CURSOR.value:
+            if self.id in links:
+                if role == InteractiveRegion.RoleType.MOVE.value:
+                    if InteractiveRegion.EffectType.MOVE.value in emits and InteractiveRegion.EffectType.MOVE.value in self.effect_eligibility["receive"]:
+                        self.move_interactive_region(self.parent().get_mouse_cursor_delta())
+
+    def on_intersection(self):
+        if not self.is_intersecting:
+            print("intersect override")
+            self.is_intersecting = True
+
+    def on_disjunction(self):
+        if self.is_intersecting:
+            print("disjunct override")
+            self.is_intersecting = False
+
+
+class DeletionSketch(Sketch):
+    def __init__(self, point_set, parent, is_child):
+        super(DeletionSketch, self).__init__(point_set, InteractiveRegion.EffectType.DELETE.value, InteractiveRegion.RoleType.DELETE.value, InteractiveRegion.Direction.UNIDIRECTIONAL.value, False, [], parent, is_child)
+
+        self.effect_color = QtGui.QColor("#BB3333")
+
+        self.effect_eligibility = {
+            "emit": [
+                InteractiveRegion.EffectType.DELETE.value
+            ],
+
+            "receive": [
+
+            ]
+        }
+
+    def on_emit_effect(self):
+        print("delete emit override")
+
+    def on_receive_effect(self, source_artifact_index):
+        print("receive override")
+
+    def on_intersection(self):
+        if not self.is_intersecting:
+            print("intersect override")
+            self.is_intersecting = True
+
+    def on_disjunction(self):
+        if self.is_intersecting:
+            print("disjunct override")
+            self.is_intersecting = False
+
+    @staticmethod
+    def get_effect_color():
+        return QtGui.QColor("#BB3333")
+
+
+class PreviewSketch(Sketch):
+    def __init__(self, point_set, parent, is_child):
+        super(PreviewSketch, self).__init__(point_set, InteractiveRegion.EffectType.PREVIEW.value, InteractiveRegion.RoleType.PREVIEW.value, InteractiveRegion.Direction.UNIDIRECTIONAL.value, False, [], parent, is_child)
+
+        self.effect_color = QtGui.QColor("#33BB33")
+
+        self.effect_eligibility = {
+            "emit": [
+                InteractiveRegion.EffectType.PREVIEW.value
+            ],
+
+            "receive": [
+
+            ]
+        }
+
+    def on_emit_effect(self):
+        print("preview emit override")
+
+    def on_receive_effect(self, source_artifact_index):
+        print("receive override")
+
+    def on_intersection(self):
+        if not self.is_intersecting:
+            print("intersect override")
+            self.is_intersecting = True
+
+    def on_disjunction(self):
+        if self.is_intersecting:
+            print("disjunct override")
+            self.is_intersecting = False
+
+    @staticmethod
+    def get_effect_color():
+        return QtGui.QColor("#33BB33")
+
+
+class TagSketch(Sketch):
+    def __init__(self, point_set, parent, is_child):
+        super(TagSketch, self).__init__(point_set, InteractiveRegion.EffectType.TAG.value, InteractiveRegion.RoleType.TAG.value, InteractiveRegion.Direction.UNIDIRECTIONAL.value, False, [], parent, is_child)
+
+        self.effect_color = QtGui.QColor("#A05A09")
+
+        self.effect_eligibility = {
+            "emit": [
+                InteractiveRegion.EffectType.TAG.value
+            ],
+
+            "receive": [
+
+            ]
+        }
+
+    def on_emit_effect(self):
+        print("tag emit override")
+
+    def on_receive_effect(self, source_artifact_index):
+        print("receive override")
+
+    def on_intersection(self):
+        if not self.is_intersecting:
+            print("intersect override")
+            self.is_intersecting = True
+
+    def on_disjunction(self):
+        if self.is_intersecting:
+            print("disjunct override")
+            self.is_intersecting = False
+
+    @staticmethod
+    def get_effect_color():
+        return QtGui.QColor("#A05A09")
 
 
 class Cursor(Artifact):
@@ -245,9 +593,13 @@ class Cursor(Artifact):
                 InteractiveRegion.EffectType.MOVE.value,
                 InteractiveRegion.EffectType.SKETCH.value],
             "receive": [
-
+                InteractiveRegion.EffectType.DELETE.value,
+                InteractiveRegion.EffectType.PREVIEW.value,
+                InteractiveRegion.EffectType.TAG.value
             ]
         }
+
+        self.transferable_effect_type = InteractiveRegion.EffectType.NONE.value
 
     def set_current_position(self, p):
         self.current_position = p
@@ -276,6 +628,39 @@ class Cursor(Artifact):
                                                            InteractiveRegion.RoleType.BRUSH.value,
                                                            InteractiveRegion.Direction.UNIDIRECTIONAL.value, True,
                                                            [str(self.id)])
+
+    def on_emit_effect(self):
+        if self.is_intersecting:
+            pass
+
+    def on_receive_effect(self, source_artifact_index):
+        source_artifact = self.parent().artifacts[source_artifact_index]
+
+        _id = source_artifact.id
+        effect = source_artifact.get_effect()
+        role = source_artifact.get_role()
+        directionality = source_artifact.get_directionality()
+        _type = source_artifact.type
+        linked = source_artifact.is_linked()
+        links = source_artifact.get_linked_artifacts()
+        emits = source_artifact.effect_eligibility["emit"]
+        receptions = source_artifact.effect_eligibility["receive"]
+
+        if self.get_role() == InteractiveRegion.RoleType.BRUSH.value:
+            self.set_effect(source_artifact.transfer_effect)
+
+    def on_intersection(self):
+        if not self.is_intersecting:
+            self.is_intersecting = True
+            print("intersection happening")
+
+    def on_disjunction(self):
+        if self.is_intersecting:
+            self.is_intersecting = False
+            print("intersection lifted")
+
+    def render(self, painter):
+        painter.drawPolyline(self.poly(self.get_interactive_region_contour()))
 
 
 class Tangible(Artifact):
