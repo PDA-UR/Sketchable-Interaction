@@ -1,8 +1,6 @@
 
-from PyQt5 import QtWidgets, QtCore, QtGui
 import time
 from sketchable_interaction.interaction.Artifact import *
-import vectormath as vm
 
 
 class Environment(QtWidgets.QWidget):
@@ -51,7 +49,7 @@ class Environment(QtWidgets.QWidget):
 
     def point_collides_with_artifacts(self, p):
         """
-        In the future requires more thought of which to select or if multiple should be allowed
+        In the future that requires more thought of which to select or if multiple should be allowed
         """
 
         for a in self.artifacts:
@@ -150,7 +148,8 @@ class Environment(QtWidgets.QWidget):
         self.painter.setBrush(QtGui.QColor(0, 0, 0))
         self.painter.drawRect(ev.rect())
         self.painter.setBrush(QtGui.QColor(0, 255, 0))
-        self.painter.setPen(QtGui.QPen(QtGui.QColor(0, 155, 0), 5))
+
+        self.painter.setPen(QtGui.QPen(self.mouse_cursor.get_color_pen(), 5))
 
         self.painter.drawPolyline(self.poly(self.current_drawn_points))
 

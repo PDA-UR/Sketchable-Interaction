@@ -195,7 +195,6 @@ class Artifact(QtCore.QObject):
 
     def on_emit_effect(self):
         if self.is_intersecting:
-            print("emit effect if able")
             pass
 
         # unsure on how to use this
@@ -203,51 +202,30 @@ class Artifact(QtCore.QObject):
         # actual emission is in conjunction with the on_receive_effect() function where effects are actually applied and transfered
 
     def on_receive_effect(self, source_artifact_index):
-        if source_artifact_index == -1:
-            source_artifact = self.parent().mouse_cursor
-        else:
-            source_artifact = self.parent().artifacts[source_artifact_index]
-
-        _id = source_artifact.id
-        effect = source_artifact.get_effect()
-        role = source_artifact.get_role()
-        directionality = source_artifact.get_directionality()
-        _type = source_artifact.type
-        linked = source_artifact.is_linked()
-        links = source_artifact.get_linked_artifacts()
-        emits = source_artifact.effect_eligibility["emit"]
-        receptions = source_artifact.effect_eligibility["receive"]
-
-        if _type == Artifact.ArtifactType.CURSOR.value:
-            if self.id in links:
-                if role == InteractiveRegion.RoleType.MOVE.value:
-                    if InteractiveRegion.EffectType.MOVE.value in emits and InteractiveRegion.EffectType.MOVE.value in self.effect_eligibility["receive"]:
-                        self.move_interactive_region(self.parent().get_mouse_cursor_delta())
-
-        elif _type == Artifact.ArtifactType.SKETCH.value:
-            if self.is_intersecting:
-                print("receive effect if able")
-                pass
-        elif _type == Artifact.ArtifactType.FILE.value:
-            print("file collision")
-        else:
-            raise TypeError("Currently not supported artifact type", _type)
+        pass
 
     def on_intersection(self):
         if not self.is_intersecting:
             self.is_intersecting = True
-            print("intersection happening")
+            pass
 
     def on_disjunction(self):
         if self.is_intersecting:
             self.is_intersecting = False
-            print("intersection lifted")
+            pass
 
     def render(self, painter):
         pass
 
     def poly(self, pts):
         return QtGui.QPolygonF(map(lambda p: QtCore.QPointF(*p), pts))
+
+    def perform_standard_movement(self):
+        if self.id in self.parent().mouse_cursor.get_linked_artifacts():
+            if self.parent().mouse_cursor.get_role() == InteractiveRegion.RoleType.MOVE.value:
+                if InteractiveRegion.EffectType.MOVE.value in self.parent().mouse_cursor.effect_eligibility["emit"] and InteractiveRegion.EffectType.MOVE.value in \
+                        self.effect_eligibility["receive"]:
+                    self.move_interactive_region(self.parent().get_mouse_cursor_delta())
 
 
 class Sketch(Artifact):
@@ -265,7 +243,6 @@ class Sketch(Artifact):
             ]
         }
 
-        #self.center = self.__compute_center_of_polygon(point_set)
         self.is_child = is_child
 
         self.set_interactive_region_from_ordered_point_set(point_set,
@@ -274,9 +251,9 @@ class Sketch(Artifact):
                                                            directionality, linkage,
                                                            links)
 
-    def render(self, painter):
-        painter.drawPolyline(self.poly(self.get_interactive_region_contour()))
+        self.is_movement_allowed = False
 
+    def render(self, painter):
         path = QtGui.QPainterPath()
         first_point = self.get_interactive_region_contour()[0]
         path.moveTo(first_point[0], first_point[1])
@@ -319,6 +296,16 @@ class EffectPaletteSketch(Sketch):
         self.is_child = is_child
         self.center = self.compute_center_of_polygon(point_set)
         self.transfer_effect = None
+
+        self.effect_eligibility = {
+            "emit": [],
+            "receive": [
+                InteractiveRegion.EffectType.MOVE.value,
+                InteractiveRegion.EffectType.EFFECT_PALETTE.value
+            ]
+        }
+
+        self.is_movement_allowed = True
 
         if is_child:
             self.is_palette_parent_sketch = False
@@ -428,7 +415,55 @@ class EffectPaletteSketch(Sketch):
         return d
 
     def on_emit_effect(self):
-        print("emit override", self.transfer_effect)
+        pass
+
+    def on_receive_effect(self, source_artifact_index):
+        if source_artifact_index == -1:
+            source_artifact = self.parent().mouse_cursor
+        else:
+            source_artifact = self.parent().artifacts[source_artifact_index]
+
+        _id = source_artifact.id
+        effect = source_artifact.get_effect()
+        role = source_artifact.get_role()
+        directionality = source_artifact.get_directionality()
+        _type = source_artifact.type
+        linked = source_artifact.is_linked()
+        links = source_artifact.get_linked_artifacts()
+        emits = source_artifact.effect_eligibility["emit"]
+        receptions = source_artifact.effect_eligibility["receive"]
+
+        if _type == Artifact.ArtifactType.CURSOR.value and self.is_movement_allowed:
+            self.perform_standard_movement()
+
+    def on_intersection(self):
+        if not self.is_intersecting:
+            self.is_intersecting = True
+
+    def on_disjunction(self):
+        if self.is_intersecting:
+            self.is_intersecting = False
+
+
+class DeletionSketch(Sketch):
+    def __init__(self, point_set, parent, is_child):
+        super(DeletionSketch, self).__init__(point_set, InteractiveRegion.EffectType.DELETE.value, InteractiveRegion.RoleType.DELETE.value, InteractiveRegion.Direction.UNIDIRECTIONAL.value, False, [], parent, is_child)
+
+        self.effect_color = QtGui.QColor("#BB3333")
+
+        self.effect_eligibility = {
+            "emit": [
+                InteractiveRegion.EffectType.DELETE.value
+            ],
+            "receive": [
+                InteractiveRegion.EffectType.MOVE.value,
+            ]
+        }
+
+        self.is_movement_allowed = True
+
+    def on_emit_effect(self):
+        pass
 
     def on_receive_effect(self, source_artifact_index):
         if source_artifact_index == -1:
@@ -447,52 +482,15 @@ class EffectPaletteSketch(Sketch):
         receptions = source_artifact.effect_eligibility["receive"]
 
         if _type == Artifact.ArtifactType.CURSOR.value:
-            if self.id in links:
-                if role == InteractiveRegion.RoleType.MOVE.value:
-                    if InteractiveRegion.EffectType.MOVE.value in emits and InteractiveRegion.EffectType.MOVE.value in self.effect_eligibility["receive"]:
-                        self.move_interactive_region(self.parent().get_mouse_cursor_delta())
+            if self.is_movement_allowed:
+                self.perform_standard_movement()
 
     def on_intersection(self):
         if not self.is_intersecting:
-            print("intersect override")
             self.is_intersecting = True
 
     def on_disjunction(self):
         if self.is_intersecting:
-            print("disjunct override")
-            self.is_intersecting = False
-
-
-class DeletionSketch(Sketch):
-    def __init__(self, point_set, parent, is_child):
-        super(DeletionSketch, self).__init__(point_set, InteractiveRegion.EffectType.DELETE.value, InteractiveRegion.RoleType.DELETE.value, InteractiveRegion.Direction.UNIDIRECTIONAL.value, False, [], parent, is_child)
-
-        self.effect_color = QtGui.QColor("#BB3333")
-
-        self.effect_eligibility = {
-            "emit": [
-                InteractiveRegion.EffectType.DELETE.value
-            ],
-
-            "receive": [
-
-            ]
-        }
-
-    def on_emit_effect(self):
-        print("delete emit override")
-
-    def on_receive_effect(self, source_artifact_index):
-        print("receive override")
-
-    def on_intersection(self):
-        if not self.is_intersecting:
-            print("intersect override")
-            self.is_intersecting = True
-
-    def on_disjunction(self):
-        if self.is_intersecting:
-            print("disjunct override")
             self.is_intersecting = False
 
     @staticmethod
@@ -510,26 +508,42 @@ class PreviewSketch(Sketch):
             "emit": [
                 InteractiveRegion.EffectType.PREVIEW.value
             ],
-
             "receive": [
-
+                InteractiveRegion.EffectType.MOVE.value,
             ]
         }
 
+        self.is_movement_allowed = True
+
     def on_emit_effect(self):
-        print("preview emit override")
+        pass
 
     def on_receive_effect(self, source_artifact_index):
-        print("receive override")
+        if source_artifact_index == -1:
+            source_artifact = self.parent().mouse_cursor
+        else:
+            source_artifact = self.parent().artifacts[source_artifact_index]
+
+        _id = source_artifact.id
+        effect = source_artifact.get_effect()
+        role = source_artifact.get_role()
+        directionality = source_artifact.get_directionality()
+        _type = source_artifact.type
+        linked = source_artifact.is_linked()
+        links = source_artifact.get_linked_artifacts()
+        emits = source_artifact.effect_eligibility["emit"]
+        receptions = source_artifact.effect_eligibility["receive"]
+
+        if _type == Artifact.ArtifactType.CURSOR.value:
+            if self.is_movement_allowed:
+                self.perform_standard_movement()
 
     def on_intersection(self):
         if not self.is_intersecting:
-            print("intersect override")
             self.is_intersecting = True
 
     def on_disjunction(self):
         if self.is_intersecting:
-            print("disjunct override")
             self.is_intersecting = False
 
     @staticmethod
@@ -547,26 +561,42 @@ class TagSketch(Sketch):
             "emit": [
                 InteractiveRegion.EffectType.TAG.value
             ],
-
             "receive": [
-
+                InteractiveRegion.EffectType.MOVE.value,
             ]
         }
 
+        self.is_movement_allowed = True
+
     def on_emit_effect(self):
-        print("tag emit override")
+        pass
 
     def on_receive_effect(self, source_artifact_index):
-        print("receive override")
+        if source_artifact_index == -1:
+            source_artifact = self.parent().mouse_cursor
+        else:
+            source_artifact = self.parent().artifacts[source_artifact_index]
+
+        _id = source_artifact.id
+        effect = source_artifact.get_effect()
+        role = source_artifact.get_role()
+        directionality = source_artifact.get_directionality()
+        _type = source_artifact.type
+        linked = source_artifact.is_linked()
+        links = source_artifact.get_linked_artifacts()
+        emits = source_artifact.effect_eligibility["emit"]
+        receptions = source_artifact.effect_eligibility["receive"]
+
+        if _type == Artifact.ArtifactType.CURSOR.value:
+            if self.is_movement_allowed:
+                self.perform_standard_movement()
 
     def on_intersection(self):
         if not self.is_intersecting:
-            print("intersect override")
             self.is_intersecting = True
 
     def on_disjunction(self):
         if self.is_intersecting:
-            print("disjunct override")
             self.is_intersecting = False
 
     @staticmethod
@@ -600,6 +630,8 @@ class Cursor(Artifact):
         }
 
         self.transferable_effect_type = InteractiveRegion.EffectType.NONE.value
+        self.painter_pen = QtGui.QPen(QtGui.QColor(255, 255, 255), 2)
+        self.painter_color = QtGui.QColor(0, 255, 0)
 
     def set_current_position(self, p):
         self.current_position = p
@@ -629,6 +661,9 @@ class Cursor(Artifact):
                                                            InteractiveRegion.Direction.UNIDIRECTIONAL.value, True,
                                                            [str(self.id)])
 
+    def get_color_pen(self):
+        return self.painter_color
+
     def on_emit_effect(self):
         if self.is_intersecting:
             pass
@@ -649,17 +684,37 @@ class Cursor(Artifact):
         if self.get_role() == InteractiveRegion.RoleType.BRUSH.value:
             self.set_effect(source_artifact.transfer_effect)
 
+            if self.get_effect() == InteractiveRegion.EffectType.DELETE.value:
+                self.painter_color = DeletionSketch.get_effect_color()
+            if self.get_effect() == InteractiveRegion.EffectType.TAG.value:
+                self.painter_color = TagSketch.get_effect_color()
+            if self.get_effect() == InteractiveRegion.EffectType.PREVIEW.value:
+                self.painter_color =PreviewSketch.get_effect_color()
+            if self.get_effect() == InteractiveRegion.EffectType.NONE.value:
+                self.painter_color = QtGui.QColor(255, 255, 255)
+
     def on_intersection(self):
         if not self.is_intersecting:
             self.is_intersecting = True
-            print("intersection happening")
 
     def on_disjunction(self):
         if self.is_intersecting:
             self.is_intersecting = False
-            print("intersection lifted")
 
     def render(self, painter):
+        painter.setPen(self.painter_pen)
+
+        path = QtGui.QPainterPath()
+        first_point = self.get_interactive_region_contour()[0]
+        path.moveTo(first_point[0], first_point[1])
+
+        for point in self.get_interactive_region_contour()[1:]:
+            path.lineTo(point[0], point[1])
+
+        path.lineTo(first_point[0], first_point[1])
+
+        painter.fillPath(path, self.painter_color)
+
         painter.drawPolyline(self.poly(self.get_interactive_region_contour()))
 
 
@@ -693,6 +748,8 @@ class File(Artifact):
 
         self.widget.setScaledContents(False)
 
+        self.is_movement_allowed = True
+
         if _type == File.FileType.TEXT.value:
             self.widget.setPixmap(QtGui.QPixmap('res/img/file_icon.png').scaledToWidth(self.default_width_icon))
         elif _type == File.FileType.IMAGE.value:
@@ -709,8 +766,61 @@ class File(Artifact):
 
         self.effect_eligibility = {
             "emit": [],
-            "receive": [InteractiveRegion.EffectType.MOVE.value]
+            "receive": [
+                InteractiveRegion.EffectType.MOVE.value,
+                InteractiveRegion.EffectType.DELETE.value,
+                InteractiveRegion.EffectType.TAG.value,
+                InteractiveRegion.EffectType.PREVIEW.value
+            ]
         }
 
     def move_widget(self, vector):
         self.widget.setGeometry(self.widget.x() + vector[0], self.widget.y() + vector[1], self.widget.width(), self.widget.height())
+
+    def render(self, painter):
+        painter.drawPolyline(self.poly(self.get_interactive_region_contour()))
+
+        path = QtGui.QPainterPath()
+        first_point = self.get_interactive_region_contour()[0]
+        path.moveTo(first_point[0], first_point[1])
+
+        for point in self.get_interactive_region_contour()[1:]:
+            path.lineTo(point[0], point[1])
+
+        path.lineTo(first_point[0], first_point[1])
+
+        painter.fillPath(path, self.effect_color)
+
+    def on_emit_effect(self):
+        if self.is_intersecting:
+            pass
+
+    def on_receive_effect(self, source_artifact_index):
+        if source_artifact_index == -1:
+            source_artifact = self.parent().mouse_cursor
+        else:
+            source_artifact = self.parent().artifacts[source_artifact_index]
+
+        _id = source_artifact.id
+        effect = source_artifact.get_effect()
+        role = source_artifact.get_role()
+        directionality = source_artifact.get_directionality()
+        _type = source_artifact.type
+        linked = source_artifact.is_linked()
+        links = source_artifact.get_linked_artifacts()
+        emits = source_artifact.effect_eligibility["emit"]
+        receptions = source_artifact.effect_eligibility["receive"]
+
+        if _type == Artifact.ArtifactType.CURSOR.value:
+            if self.is_movement_allowed:
+                self.perform_standard_movement()
+
+    def on_intersection(self):
+        if not self.is_intersecting:
+            self.is_intersecting = True
+            print("intersection happening")
+
+    def on_disjunction(self):
+        if self.is_intersecting:
+            self.is_intersecting = False
+            print("intersection lifted")
