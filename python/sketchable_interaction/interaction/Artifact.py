@@ -32,6 +32,9 @@ class Artifact(QtCore.QObject):
 
         # raise exceptions in other methods if interactive region is None
 
+    def __repr__(self):
+        return '\nType: {0}\nId: {1}\n'.format(self.type, self.id)
+
     def get_id(self):
         return self.id
 
@@ -226,6 +229,15 @@ class Artifact(QtCore.QObject):
                 if InteractiveRegion.EffectType.MOVE.value in self.parent().mouse_cursor.effect_eligibility["emit"] and InteractiveRegion.EffectType.MOVE.value in \
                         self.effect_eligibility["receive"]:
                     self.move_interactive_region(self.parent().get_mouse_cursor_delta())
+
+    def delete(self):
+        pass
+
+    def tag(self, *args):
+        pass
+
+    def preview(self, *args):
+        pass
 
 
 class Sketch(Artifact):
@@ -631,7 +643,7 @@ class Cursor(Artifact):
 
         self.transferable_effect_type = InteractiveRegion.EffectType.NONE.value
         self.painter_pen = QtGui.QPen(QtGui.QColor(255, 255, 255), 2)
-        self.painter_color = QtGui.QColor(0, 255, 0)
+        self.painter_color = QtGui.QColor(255, 255, 255)
 
     def set_current_position(self, p):
         self.current_position = p
@@ -778,6 +790,8 @@ class File(Artifact):
         self.widget.setGeometry(self.widget.x() + vector[0], self.widget.y() + vector[1], self.widget.width(), self.widget.height())
 
     def render(self, painter):
+        painter.setPen(QtGui.QPen(QtGui.QColor(0, 255, 0), 5))
+
         painter.drawPolyline(self.poly(self.get_interactive_region_contour()))
 
         path = QtGui.QPainterPath()
@@ -814,13 +828,24 @@ class File(Artifact):
         if _type == Artifact.ArtifactType.CURSOR.value:
             if self.is_movement_allowed:
                 self.perform_standard_movement()
+        if _type == Artifact.ArtifactType.SKETCH.value:
+            if effect in emits and effect in self.effect_eligibility["receive"]:
+                self.get_interactive_region().get_effect_function(effect)(self)
 
     def on_intersection(self):
         if not self.is_intersecting:
             self.is_intersecting = True
-            print("intersection happening")
 
     def on_disjunction(self):
         if self.is_intersecting:
             self.is_intersecting = False
-            print("intersection lifted")
+
+    def delete(self):
+        self.widget.close()
+        self.interactive_region = None
+
+    def tag(self, *args):
+        pass
+
+    def preview(self, *args):
+        pass

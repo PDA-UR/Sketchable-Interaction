@@ -45,6 +45,27 @@ class InteractiveRegion:
 
         self.collision_mask = Mask.create_mask(self.point_set)
 
+        self.effect_functions = {
+            0: lambda artifact: None,
+            1: lambda artifact: None,
+            2: lambda artifact: None,
+            3: self.perform_delete,
+            4: self.perform_preview,
+            5: self.perform_tag
+        }
+
+    def perform_delete(self, target_artifact):
+        self.parent_artifact.parent().delete_artifact(target_artifact.get_id())
+
+    def perform_preview(self, target_artifact):  # requires further data
+        self.parent_artifact.parent().preview_artifact(target_artifact.get_id())
+
+    def perform_tag(self, target_artifact):  # requires further data
+        self.parent_artifact.parent().tag_artifact(target_artifact.get_id())
+
+    def get_effect_function(self,_type):
+        return self.effect_functions[_type]
+
     def get_contour(self):
         return self.point_set
 

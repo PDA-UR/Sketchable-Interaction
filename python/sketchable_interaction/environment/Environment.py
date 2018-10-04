@@ -108,6 +108,31 @@ class Environment(QtWidgets.QWidget):
 
         self.current_drawn_points = []
 
+    def delete_artifact(self, uuid, *args):
+        k = -1
+
+        for i, a in enumerate(self.artifacts):
+            if a.get_id() == uuid:
+                self.artifacts[i].delete()
+                k = i
+
+                break
+
+        if k != -1:
+            self.artifacts.pop(k)
+
+        self.mouse_cursor.pressed_moved = False
+
+    def preview_artifact(self, uuid, *args):
+        for i, a in enumerate(self.artifacts):
+            if a.get_id() == uuid:
+                self.artifacts[i].preview()
+
+    def tag_artifact(self, uuid, *args):
+        for i, a in enumerate(self.artifacts):
+            if a.get_id() == uuid:
+                self.artifacts[i].tag()
+
     def __handle_right_button(self, ev):
         p = (ev.x(), ev.y())
 
@@ -308,13 +333,20 @@ class Interaction:
                 if not (_id in target_environment.artifacts[i].get_last_intersections_list()):
                     _i, artifact = target_environment.get_artifact_by_id(_id)
 
-                    target_environment.artifacts[_i].on_emit_effect()
-                    target_environment.artifacts[_i].on_receive_effect(index)
+                    if len(target_environment.artifacts) > 1 and index < len(target_environment.artifacts):
+                        target_environment.artifacts[_i].on_emit_effect()
+                        target_environment.artifacts[_i].on_receive_effect(index)
 
-                    target_environment.artifacts[index].on_emit_effect()
-                    target_environment.artifacts[index].on_receive_effect(i)
+                    if len(target_environment.artifacts) > 1 and index < len(target_environment.artifacts):
+                        target_environment.artifacts[index].on_emit_effect()
+                        target_environment.artifacts[index].on_receive_effect(i)
 
-            target_environment.artifacts[index].add_intersection_to_last_intersections_list(_id)
+            if len(target_environment.artifacts) > 1 and index < len(target_environment.artifacts):
+                target_environment.artifacts[index].add_intersection_to_last_intersections_list(_id)
+
+            """
+            This ifs are part of checking whether the deletion effect is applied
+            """
 
 
 class HeartBeat(QtCore.QThread):
