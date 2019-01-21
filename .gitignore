@@ -12,3 +12,25 @@ python/sketchable_interaction/environment/__pycache__/
 python/sketchable_interaction/environment/__init__\.py
 
 python/sketchable_interaction/interaction/__pycache__/
+
+architecture_implementation_test_code/callback_test/python/\.idea/
+
+architecture_implementation_test_code/callback_test/python/venv/
+
+architecture_implementation_test_code/callback_test/python/\.pytest_cache/
+
+architecture_implementation_test_code/callback_test/cpp/\.idea/
+
+architecture_implementation_test_code/callback_test/cpp/cmake-build-debug/CMakeFiles/
+
+architecture_implementation_test_code/callback_test/cpp/cmake-build-debug/cmake_install\.cmake
+
+architecture_implementation_test_code/callback_test/cpp/cmake-build-debug/CMakeCache\.txt
+
+architecture_implementation_test_code/callback_test/cpp/cmake-build-debug/cpp\.cbp
+
+architecture_implementation_test_code/callback_test/cpp/cmake-build-debug/Makefile
+
+architecture_implementation_test_code/callback_test/python/main\.py
+
+architecture_implementation_test_code/callback_test/cpp/CMakeLists\.txt

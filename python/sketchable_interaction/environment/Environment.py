@@ -178,6 +178,8 @@ class Environment(QtWidgets.QWidget):
 
         self.painter.drawPolyline(self.poly(self.current_drawn_points))
 
+        self.painter.setPen(QtGui.QPen(QtGui.QColor(0, 255, 0), 5))
+
         for i, artifact in enumerate(self.artifacts):
             artifact.render(self.painter)
 
@@ -214,23 +216,30 @@ class Interaction:
                 Interaction.__finish_sketching(target_environment)
                 target_environment.mouse_cursor.set_role(InteractiveRegion.RoleType.BRUSH.value)
             else:
-                for i, artifact in enumerate(target_environment.artifacts):
+                for i in range(len(target_environment.artifacts) - 1, -1, -1):
+                    artifact = target_environment.artifacts[i]
+
                     if artifact.is_child:
                         if artifact.collides_with_other(target_environment.mouse_cursor):
                             if target_environment.mouse_cursor.left_clicked:
                                 target_environment.mouse_cursor.set_role(InteractiveRegion.RoleType.BRUSH.value)
                                 artifact.on_emit_effect()
 
-                                target_environment.mouse_cursor.on_receive_effect(i)
+                                target_environment.mouse_cursor.on_receive_effect(artifact.get_id())
 
                                 return
-
+                            else:
+                                target_environment.artifacts[i].set_hovering(True)
+                        else:
+                            target_environment.artifacts[i].set_hovering(False)
     @staticmethod
     def __check_link_state_of_artifacts_to_cursor(target_environment):
         collides_with_other = False
         other = -1
 
-        for i, artifact in enumerate(target_environment.artifacts):
+        for i in range(len(target_environment.artifacts) - 1, -1, -1):
+            artifact = target_environment.artifacts[i]
+
             if artifact.is_linked():
                 if target_environment.mouse_cursor.id in artifact.get_linked_artifacts():
                     if target_environment.artifacts[i].collides_with_others_aabb(target_environment.mouse_cursor):
@@ -263,7 +272,7 @@ class Interaction:
         target_environment.drawing = False
 
         if not target_environment.artifacts[other].is_child:
-            target_environment.artifacts[other].on_receive_effect(-1)
+            target_environment.artifacts[other].on_receive_effect(target_environment.mouse_cursor.get_id())
 
         Interaction.__move_effect_palette_components(target_environment, other)
 
@@ -276,7 +285,7 @@ class Interaction:
 
                 if artifact.is_child and artifact.parent_uuid == target_environment.artifacts[other].get_id():
                     target_environment.mouse_cursor.set_interactive_region_linked(True, artifact.get_id())
-                    target_environment.artifacts[i].on_receive_effect(-1)
+                    target_environment.artifacts[i].on_receive_effect(target_environment.mouse_cursor.get_id())
 
     @staticmethod
     def __finish_sketching(target_environment):
@@ -285,7 +294,7 @@ class Interaction:
 
     @staticmethod
     def process_artifacts_vs_artifacts(target_environment):
-        for i in range(len(target_environment.artifacts)):
+        for i in range(len(target_environment.artifacts) -1, -1, -1):
             current = Interaction.__compute_current_intersections(target_environment, i)
 
             if len(current) > 0:
@@ -329,23 +338,34 @@ class Interaction:
     @staticmethod
     def __handle_effect_emission_and_reception(target_environment, index, current_intersections):
         for _id in current_intersections:
-            for i in range(index):
+            for i in range(index - 1, -1, -1):
                 if not (_id in target_environment.artifacts[i].get_last_intersections_list()):
                     _i, artifact = target_environment.get_artifact_by_id(_id)
 
-                    if len(target_environment.artifacts) > 1 and index < len(target_environment.artifacts):
-                        target_environment.artifacts[_i].on_emit_effect()
-                        target_environment.artifacts[_i].on_receive_effect(index)
+                    # need case for two delete regions
 
-                    if len(target_environment.artifacts) > 1 and index < len(target_environment.artifacts):
-                        target_environment.artifacts[index].on_emit_effect()
-                        target_environment.artifacts[index].on_receive_effect(i)
+                    if target_environment.artifacts[_i].get_effect() == InteractiveRegion.EffectType.DELETE.value and target_environment.artifacts[index].get_effect() == InteractiveRegion.EffectType.DELETE.value:
+                        if  target_environment.artifacts[_i].get_id() in target_environment.mouse_cursor.get_linked_artifacts():
+                            print("hit")
+                        elif target_environment.artifacts[index].get_id() in target_environment.mouse_cursor.get_linked_artifacts():
+                            print("hit2")
+                    else:
+                        if len(target_environment.artifacts) > 1 and index < len(target_environment.artifacts):
+                            target_environment.artifacts[_i].on_emit_effect()
+
+                            target_environment.artifacts[_i].on_receive_effect(target_environment.artifacts[index].get_id())
+
+
+                        if len(target_environment.artifacts) > 1 and index < len(target_environment.artifacts):
+                            target_environment.artifacts[index].on_emit_effect()
+
+                            target_environment.artifacts[index].on_receive_effect(target_environment.artifacts[i].get_id())
 
             if len(target_environment.artifacts) > 1 and index < len(target_environment.artifacts):
                 target_environment.artifacts[index].add_intersection_to_last_intersections_list(_id)
 
             """
-            This ifs are part of checking whether the deletion effect is applied
+            These ifs are part of checking whether the deletion effect is applied
             """
 
 

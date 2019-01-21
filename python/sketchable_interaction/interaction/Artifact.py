@@ -29,6 +29,7 @@ class Artifact(QtCore.QObject):
         self.effect_color = QtGui.QColor(0, 0, 0)
         self.is_child = False
         self.is_palette_parent_sketch = False
+        self.is_hovered_over = False
 
         # raise exceptions in other methods if interactive region is None
 
@@ -137,6 +138,8 @@ class Artifact(QtCore.QObject):
 
             if self.type == Artifact.ArtifactType.FILE.value:
                 self.move_widget(vector)
+            elif self.type == Artifact.ArtifactType.SKETCH.value:
+                self.move_image(vector)
 
     def is_linked(self):
         if self.interactive_region is None:
@@ -239,6 +242,9 @@ class Artifact(QtCore.QObject):
     def preview(self, *args):
         pass
 
+    def set_hovering(self, toggle):
+        self.is_hovered_over = toggle
+
 
 class Sketch(Artifact):
     def __init__(self, point_set, effect, role, directionality, linkage, links, parent, is_child=False):
@@ -265,6 +271,9 @@ class Sketch(Artifact):
 
         self.is_movement_allowed = False
 
+        self.center = self.compute_center_of_polygon(point_set)
+        self.img = None
+
     def render(self, painter):
         path = QtGui.QPainterPath()
         first_point = self.get_interactive_region_contour()[0]
@@ -277,6 +286,38 @@ class Sketch(Artifact):
 
         painter.fillPath(path, self.effect_color)
 
+    def set_image(self):
+        img_path = 'res/img/placeholder.png'
+
+        if self.effect_type == InteractiveRegion.EffectType.DELETE.value:
+            img_path = 'res/img/rubbish-bin.png'
+        elif self.effect_type == InteractiveRegion.EffectType.TAG.value:
+            img_path = 'res/img/down-arrow.png'
+        elif self.effect_type == InteractiveRegion.EffectType.PREVIEW.value:
+            img_path = 'res/img/magnifying-glass.png'
+
+        self.img = QtWidgets.QLabel()
+        self.img.setParent(self.parent())
+        self.img.setObjectName("region_image")
+        self.img.setScaledContents(True)
+        self.img.setAttribute(QtCore.Qt.WA_TranslucentBackground)
+
+        pixmap = QtGui.QPixmap(img_path).scaledToWidth(45)
+        width, height = pixmap.width(), pixmap.height()
+
+        self.img.setPixmap(pixmap)
+        self.img.setGeometry(self.center[0] - width / 2, self.center[1] - height / 2, width, height)
+
+        self.img.show()
+
+    def move_image(self, vector):
+        if self.img is not None:
+            self.img.setGeometry(self.img.x() + vector[0], self.img.y() + vector[1], self.img.width(), self.img.height())
+
+    def delete(self):
+        if self.effect_type != InteractiveRegion.EffectType.EFFECT_PALETTE.value:
+            if self.img is not None:
+                self.img.close()
 
 """
 Here are the classes derived from sketch; potentially required in this way for better decomposition and adding of effects at runtime
@@ -306,7 +347,6 @@ class EffectPaletteSketch(Sketch):
         self.point_resampling_size = 84
         self.effect_palette_modulo_divisor = self.point_resampling_size / self.effect_collection_size
         self.is_child = is_child
-        self.center = self.compute_center_of_polygon(point_set)
         self.transfer_effect = None
 
         self.effect_eligibility = {
@@ -334,6 +374,7 @@ class EffectPaletteSketch(Sketch):
             self.is_palette_parent_sketch = True
 
         self.__create_effect_palette(point_set)
+        self.set_image()
 
     # add a new type to the enum at runtime
     def add_transfer_type_to_enum(self, _type_name, color):
@@ -429,11 +470,14 @@ class EffectPaletteSketch(Sketch):
     def on_emit_effect(self):
         pass
 
-    def on_receive_effect(self, source_artifact_index):
-        if source_artifact_index == -1:
+    def on_receive_effect(self, source_artifact_uuid):
+        if source_artifact_uuid == self.parent().mouse_cursor.get_id():
             source_artifact = self.parent().mouse_cursor
         else:
-            source_artifact = self.parent().artifacts[source_artifact_index]
+            for i, a in enumerate(self.parent().artifacts):
+                if a.get_id() == source_artifact_uuid:
+                    source_artifact = self.parent().artifacts[i]
+                    break
 
         _id = source_artifact.id
         effect = source_artifact.get_effect()
@@ -456,6 +500,46 @@ class EffectPaletteSketch(Sketch):
         if self.is_intersecting:
             self.is_intersecting = False
 
+    def render(self, painter):
+        painter.drawPolyline(self.poly(self.get_interactive_region_contour()))
+
+        if self.is_hovered_over:
+            path = QtGui.QPainterPath()
+            first_point = self.get_interactive_region_contour()[0]
+            path.moveTo(first_point[0], first_point[1])
+
+            for point in self.get_interactive_region_contour()[1:]:
+                path.lineTo(point[0], point[1])
+
+            path.lineTo(first_point[0], first_point[1])
+
+            painter.fillPath(path, self.effect_color)
+
+    def set_image(self):
+        if self.is_child:
+            img_path = 'res/img/placeholder.png'
+
+            if self.transfer_effect == InteractiveRegion.EffectType.DELETE.value:
+                img_path = 'res/img/rubbish-bin.png'
+            elif self.transfer_effect == InteractiveRegion.EffectType.TAG.value:
+                img_path = 'res/img/down-arrow.png'
+            elif self.transfer_effect == InteractiveRegion.EffectType.PREVIEW.value:
+                img_path = 'res/img/magnifying-glass.png'
+
+            self.img = QtWidgets.QLabel()
+            self.img.setParent(self.parent())
+            self.img.setObjectName("region_image")
+            self.img.setScaledContents(True)
+            self.img.setAttribute(QtCore.Qt.WA_TranslucentBackground)
+
+            pixmap = QtGui.QPixmap(img_path).scaledToWidth(45)
+            width, height = pixmap.width(), pixmap.height()
+
+            self.img.setPixmap(pixmap)
+            self.img.setGeometry(self.center[0] - width / 2, self.center[1] - height / 2, width, height)
+
+            self.img.show()
+
 
 class DeletionSketch(Sketch):
     def __init__(self, point_set, parent, is_child):
@@ -469,19 +553,26 @@ class DeletionSketch(Sketch):
             ],
             "receive": [
                 InteractiveRegion.EffectType.MOVE.value,
+                InteractiveRegion.EffectType.DELETE.value,
             ]
         }
 
         self.is_movement_allowed = True
+        self.set_image()
 
     def on_emit_effect(self):
         pass
 
-    def on_receive_effect(self, source_artifact_index):
-        if source_artifact_index == -1:
+    def on_receive_effect(self, source_artifact_uuid):
+        source_artifact = None
+
+        if source_artifact_uuid == self.parent().mouse_cursor.get_id():
             source_artifact = self.parent().mouse_cursor
         else:
-            source_artifact = self.parent().artifacts[source_artifact_index]
+            for i, a in enumerate(self.parent().artifacts):
+                if a.get_id() == source_artifact_uuid:
+                    source_artifact = self.parent().artifacts[i]
+                    break
 
         _id = source_artifact.id
         effect = source_artifact.get_effect()
@@ -496,6 +587,9 @@ class DeletionSketch(Sketch):
         if _type == Artifact.ArtifactType.CURSOR.value:
             if self.is_movement_allowed:
                 self.perform_standard_movement()
+        elif _type == Artifact.ArtifactType.SKETCH.value:
+            if effect in emits and effect in self.effect_eligibility["receive"]:
+                self.get_interactive_region().get_effect_function(effect)(self)
 
     def on_intersection(self):
         if not self.is_intersecting:
@@ -522,19 +616,26 @@ class PreviewSketch(Sketch):
             ],
             "receive": [
                 InteractiveRegion.EffectType.MOVE.value,
+                InteractiveRegion.EffectType.DELETE.value,
             ]
         }
 
         self.is_movement_allowed = True
+        self.set_image()
 
     def on_emit_effect(self):
         pass
 
-    def on_receive_effect(self, source_artifact_index):
-        if source_artifact_index == -1:
+    def on_receive_effect(self, source_artifact_uuid):
+        source_artifact = None
+
+        if source_artifact_uuid == self.parent().mouse_cursor.get_id():
             source_artifact = self.parent().mouse_cursor
         else:
-            source_artifact = self.parent().artifacts[source_artifact_index]
+            for i, a in enumerate(self.parent().artifacts):
+                if a.get_id() == source_artifact_uuid:
+                    source_artifact = self.parent().artifacts[i]
+                    break
 
         _id = source_artifact.id
         effect = source_artifact.get_effect()
@@ -549,6 +650,9 @@ class PreviewSketch(Sketch):
         if _type == Artifact.ArtifactType.CURSOR.value:
             if self.is_movement_allowed:
                 self.perform_standard_movement()
+        elif _type == Artifact.ArtifactType.SKETCH.value:
+            if effect in emits and effect in self.effect_eligibility["receive"]:
+                self.get_interactive_region().get_effect_function(effect)(self)
 
     def on_intersection(self):
         if not self.is_intersecting:
@@ -575,19 +679,26 @@ class TagSketch(Sketch):
             ],
             "receive": [
                 InteractiveRegion.EffectType.MOVE.value,
+                InteractiveRegion.EffectType.DELETE.value,
             ]
         }
 
         self.is_movement_allowed = True
+        self.set_image()
 
     def on_emit_effect(self):
         pass
 
-    def on_receive_effect(self, source_artifact_index):
-        if source_artifact_index == -1:
+    def on_receive_effect(self, source_artifact_uuid):
+        isource_artifact = None
+
+        if source_artifact_uuid == self.parent().mouse_cursor.get_id():
             source_artifact = self.parent().mouse_cursor
         else:
-            source_artifact = self.parent().artifacts[source_artifact_index]
+            for i, a in enumerate(self.parent().artifacts):
+                if a.get_id() == source_artifact_uuid:
+                    source_artifact = self.parent().artifacts[i]
+                    break
 
         _id = source_artifact.id
         effect = source_artifact.get_effect()
@@ -602,6 +713,9 @@ class TagSketch(Sketch):
         if _type == Artifact.ArtifactType.CURSOR.value:
             if self.is_movement_allowed:
                 self.perform_standard_movement()
+        elif _type == Artifact.ArtifactType.SKETCH.value:
+            if effect in emits and effect in self.effect_eligibility["receive"]:
+                self.get_interactive_region().get_effect_function(effect)(self)
 
     def on_intersection(self):
         if not self.is_intersecting:
@@ -680,30 +794,39 @@ class Cursor(Artifact):
         if self.is_intersecting:
             pass
 
-    def on_receive_effect(self, source_artifact_index):
-        source_artifact = self.parent().artifacts[source_artifact_index]
+    def on_receive_effect(self, source_artifact_uuid):
+        source_artifact = None
 
-        _id = source_artifact.id
-        effect = source_artifact.get_effect()
-        role = source_artifact.get_role()
-        directionality = source_artifact.get_directionality()
-        _type = source_artifact.type
-        linked = source_artifact.is_linked()
-        links = source_artifact.get_linked_artifacts()
-        emits = source_artifact.effect_eligibility["emit"]
-        receptions = source_artifact.effect_eligibility["receive"]
+        if source_artifact_uuid == self.parent().mouse_cursor.get_id():
+            source_artifact = self.parent().mouse_cursor
+        else:
+            for i, a in enumerate(self.parent().artifacts):
+                if a.get_id() == source_artifact_uuid:
+                    source_artifact = self.parent().artifacts[i]
+                    break
 
-        if self.get_role() == InteractiveRegion.RoleType.BRUSH.value:
-            self.set_effect(source_artifact.transfer_effect)
+        if source_artifact is not None:
+            _id = source_artifact.id
+            effect = source_artifact.get_effect()
+            role = source_artifact.get_role()
+            directionality = source_artifact.get_directionality()
+            _type = source_artifact.type
+            linked = source_artifact.is_linked()
+            links = source_artifact.get_linked_artifacts()
+            emits = source_artifact.effect_eligibility["emit"]
+            receptions = source_artifact.effect_eligibility["receive"]
 
-            if self.get_effect() == InteractiveRegion.EffectType.DELETE.value:
-                self.painter_color = DeletionSketch.get_effect_color()
-            if self.get_effect() == InteractiveRegion.EffectType.TAG.value:
-                self.painter_color = TagSketch.get_effect_color()
-            if self.get_effect() == InteractiveRegion.EffectType.PREVIEW.value:
-                self.painter_color =PreviewSketch.get_effect_color()
-            if self.get_effect() == InteractiveRegion.EffectType.NONE.value:
-                self.painter_color = QtGui.QColor(255, 255, 255)
+            if self.get_role() == InteractiveRegion.RoleType.BRUSH.value:
+                self.set_effect(source_artifact.transfer_effect)
+
+                if self.get_effect() == InteractiveRegion.EffectType.DELETE.value:
+                    self.painter_color = DeletionSketch.get_effect_color()
+                if self.get_effect() == InteractiveRegion.EffectType.TAG.value:
+                    self.painter_color = TagSketch.get_effect_color()
+                if self.get_effect() == InteractiveRegion.EffectType.PREVIEW.value:
+                    self.painter_color = PreviewSketch.get_effect_color()
+                if self.get_effect() == InteractiveRegion.EffectType.NONE.value:
+                    self.painter_color = QtGui.QColor(255, 255, 255)
 
     def on_intersection(self):
         if not self.is_intersecting:
@@ -809,11 +932,14 @@ class File(Artifact):
         if self.is_intersecting:
             pass
 
-    def on_receive_effect(self, source_artifact_index):
-        if source_artifact_index == -1:
+    def on_receive_effect(self, source_artifact_uuid):
+        if source_artifact_uuid == self.parent().mouse_cursor.get_id():
             source_artifact = self.parent().mouse_cursor
         else:
-            source_artifact = self.parent().artifacts[source_artifact_index]
+            for i, a in enumerate(self.parent().artifacts):
+                if a.get_id() == source_artifact_uuid:
+                    source_artifact = self.parent().artifacts[i]
+                    break
 
         _id = source_artifact.id
         effect = source_artifact.get_effect()
