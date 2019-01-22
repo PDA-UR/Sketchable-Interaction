@@ -34,3 +34,19 @@ architecture_implementation_test_code/callback_test/cpp/cmake-build-debug/Makefi
 architecture_implementation_test_code/callback_test/python/main\.py
 
 architecture_implementation_test_code/callback_test/cpp/CMakeLists\.txt
+
+application/\.idea/
+
+application/__pycache__/
+
+si_engine/core/\.idea/
+
+si_engine/core/cmake-build-debug/CMakeFiles/
+
+si_engine/core/cmake-build-debug/CMakeCache\.txt
+
+si_engine/core/cmake-build-debug/core\.cbp
+
+si_engine/core/cmake-build-debug/cmake_install\.cmake
+
+si_engine/core/cmake-build-debug/Makefile
