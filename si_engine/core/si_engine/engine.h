@@ -5,47 +5,52 @@
 #ifndef CORE_ENGINE_H
 #define CORE_ENGINE_H
 
-#include "timing.h"
+#include <QApplication>
+#include <QObject>
+#include <QtCore>
+#include <QMainWindow>
+#include "../si_plugin/plugin.h"
+#include "step.h"
 
 namespace si
 {
-    class engine
-    {
+    class Engine : public QMainWindow
+    { Q_OBJECT
+
     public:
-        static  engine *__instance__();
+        static Engine *__instance__();
 
         void start();
-        void pause();
         void stop();
-        void resume();
-        void register_plugin(void * plugin);
+        void add_plugin(const plugin &plugin);
+
     private:
-        static engine *s_instance;
+        step *p_step;
 
-        engine();
-        engine(const engine &);
-        ~engine();
+        static Engine *s_instance;
 
-        void run();
-
-        static const double sc_DESIRED_FPS;
-        double d_frame_time;
-
-        bool d_is_running;
+        Engine();
+        Engine(const Engine &);
+        ~Engine() override;
 
         class CGuard
         {
         public:
             ~CGuard()
             {
-                if(engine::s_instance != nullptr)
+                if(Engine::s_instance != nullptr)
                 {
-                    delete engine::s_instance;
-                    engine::s_instance = nullptr;
+                    delete Engine::s_instance;
+                    Engine::s_instance = nullptr;
                 }
             }
         };
+
+    private slots:
+        void on_step();
     };
+
+
 }
 
 #endif //CORE_ENGINE_H

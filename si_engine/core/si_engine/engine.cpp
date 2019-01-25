@@ -4,109 +4,95 @@
 
 #include "engine.h"
 #include "../si_debug/debug.h"
-#include "timing.h"
+#include "signal_handler.h"
 
 namespace si
 {
+    /* Engine */
 
     /* PUBLIC */
-    engine * engine::s_instance = nullptr;
-    const double engine::sc_DESIRED_FPS = 60.0;
+    Engine * Engine::s_instance = nullptr;
 
-    si::engine *si::engine::__instance__()
+    Engine *Engine::__instance__()
     {
-        static CGuard cg;
+        static CGuard guard;
 
         if(!s_instance)
-            s_instance = new engine();
+            s_instance = new Engine();
 
         return s_instance;
     }
 
-    void si::engine::start()
+    void Engine::start()
     {
-        if (d_is_running)
-            return;
-
-        run();
+        connect(p_step, &step::on_step, this, &Engine::on_step);
+        p_step->start();
+        show();
     }
 
-    void si::engine::pause()
+    void Engine::stop()
     {
-
+        close();
     }
 
-    void si::engine::stop()
+    void Engine::add_plugin(const plugin &plugin)
     {
-        if (!d_is_running)
-            return;
+        // transform plugin to region or trackable
+        // add region or trackable to its dedicated datastructure where all are stored
 
-        d_is_running = false;
-    }
-
-    void si::engine::resume()
-    {
-
-    }
-
-    void engine::register_plugin(void *plugin)
-    {
-
-    }
-
-    /*PRIVATE*/
-    si::engine::engine() :
-        d_frame_time(1.0 / 60.0),
-        d_is_running(false)
-    {}
-
-    engine::engine(const engine &)
-    {}
-
-    si::engine::~engine()
-    {}
-
-    void si::engine::run()
-    {
-        d_is_running = true;
-
-        double last_time = time::get_time();
-        double unprocessed_time = 0.0;
-        double frame_counter = 0.0;
-
-        int frames = 0;
-
-        while(d_is_running)
+        if (plugin.type() == "region")
         {
-            bool render = false;
+            // appears to be the most common type
+        }
+        else if(plugin.type() == "trackable")
+        {
 
-            double start_time = time::get_time();
-            double passed_time = start_time - last_time;
 
-            last_time += passed_time;
-            unprocessed_time += passed_time;
-            frame_counter += passed_time;
+            //debug::print(i);
 
-            if(frame_counter > 1.0)
-            {
-                debug::print("Current FPS: ", frames);
-                frame_counter = 0.0;
-                frames = 0;
-            }
+            //plugin.on_enter(i);
 
-            while(unprocessed_time > d_frame_time)
-            {
-                render = true;
+            plugin.on_enter(5);
 
-                time::set_time_delta(d_frame_time);
-
-                unprocessed_time -= d_frame_time;
-            }
-
-            if(render)
-            {
-                frames++;
-            }
+            plugin.on_leave(this->findChild<QWidget *>("hello")->winId());
+            //plugin.on_continuous();
+            //plugin.on_destroy();
         }
     }
+
+    /* PRIVATE */
+
+    Engine::Engine() : QMainWindow(), p_step(new step(33.0))
+    {
+        signal(SIGINT, signal_handler::handle);
+    }
+
+    Engine::Engine(const Engine &) : QMainWindow(), p_step(new step(33.0))
+    {
+        signal(SIGINT, signal_handler::handle);
+    }
+
+    Engine::~Engine()
+    {
+        debug::print("called");
+
+        p_step->stop();
+
+        while (!p_step->isFinished())
+        {
+        }
+
+        delete p_step;
+        p_step = nullptr;
+        debug::print("called");
+
+    }
+
+    /* SLOT */
+    void Engine::on_step()
+    {
+        debug::print("Hello");
+    }
+
+    /* End of Engine */
 }

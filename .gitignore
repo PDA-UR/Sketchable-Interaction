@@ -50,3 +50,7 @@ si_engine/core/cmake-build-debug/core\.cbp
 si_engine/core/cmake-build-debug/cmake_install\.cmake
 
 si_engine/core/cmake-build-debug/Makefile
+
+si_engine/core/cmake-build-debug/si_engine_test
+
+si_engine/core/cmake-build-debug/si-core_autogen/

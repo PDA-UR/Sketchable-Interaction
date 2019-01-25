@@ -31,6 +31,8 @@ namespace si
         template <class... Args>
         void print(Args&&... args)
         {
+            std::cout << "SI-Engine: ";
+
             auto arguments = std::make_tuple(std::forward<Args>(args)...);
 
             for_each(arguments, [](const auto &x)
