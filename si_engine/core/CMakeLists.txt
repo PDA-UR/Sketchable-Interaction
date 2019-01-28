@@ -11,10 +11,8 @@ SET(SRCS
         si_engine/engine.h
         si_engine/signal_handler.cpp
         si_engine/signal_handler.h
-        si_plugin/plugin.cpp
-        si_plugin/plugin.h
-        si_region/region.cpp
-        si_region/region.h si_engine/step.cpp si_engine/step.h si_region/region_template.cpp si_region/region_template.h)
+        si_interaction/region.cpp
+        si_interaction/region.h si_engine/step.cpp si_engine/step.h si_interaction/mask.cpp si_interaction/mask.h si_interaction/effect.cpp si_interaction/effect.h si_stdlib/canvas.cpp si_stdlib/canvas.h si_stdlib/neutral.cpp si_stdlib/neutral.h)
 
 SET(SRCS_TEST si_test/main.cpp)
 

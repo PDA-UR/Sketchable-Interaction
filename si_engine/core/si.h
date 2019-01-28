@@ -7,7 +7,6 @@
 
 #include "si_engine/engine.h"
 #include <new>
-#include "si_plugin/plugin.h"
 
 namespace si
 {
@@ -31,7 +30,6 @@ namespace si
        void *si_create_instance(int argc, char **argv);
        void si_delete_instance(void *instance);
        int si_run(void * instance);
-       int si_register_plugin(void *instance, void *plugin);
    }
 }
 

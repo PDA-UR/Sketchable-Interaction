@@ -9,8 +9,12 @@
 #include <QObject>
 #include <QtCore>
 #include <QMainWindow>
-#include "../si_plugin/plugin.h"
 #include "step.h"
+#include "../si_interaction/region.h"
+#include <vector>
+#include "../si_stdlib/canvas.h"
+#include "../si_stdlib/neutral.h"
+#include <QGridLayout>
 
 namespace si
 {
@@ -22,16 +26,25 @@ namespace si
 
         void start();
         void stop();
-        void add_plugin(const plugin &plugin);
 
     private:
+        QWidget *central;
         step *p_step;
+        canvas *main_canvas_region;
+        neutral *mouse_region;
+
+        QGridLayout *layout;
 
         static Engine *s_instance;
+
+        bool is_mouse_pressed = false;
+
+        std::vector<QWidget *> active_regions;
 
         Engine();
         Engine(const Engine &);
         ~Engine() override;
+
 
         class CGuard
         {
@@ -48,9 +61,19 @@ namespace si
 
     private slots:
         void on_step();
+
+    protected:
+        void keyPressEvent(QKeyEvent *event) override;
+
+        void mousePressEvent(QMouseEvent *event) override;
+
+        void mouseReleaseEvent(QMouseEvent *event) override;
+
+        void mouseMoveEvent(QMouseEvent *event) override;
+
+    protected:
+
     };
-
-
 }
 
 #endif //CORE_ENGINE_H
