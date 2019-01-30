@@ -12,8 +12,8 @@
 #include "step.h"
 #include "../si_interaction/region.h"
 #include <vector>
-#include "../si_stdlib/canvas.h"
-#include "../si_stdlib/neutral.h"
+#include "../si_stdlib/canvas_region.h"
+#include "../si_stdlib/mouse_region.h"
 #include <QGridLayout>
 
 namespace si
@@ -27,19 +27,17 @@ namespace si
         void start();
         void stop();
 
+        void add_region_template(region *r);
+
     private:
-        QWidget *central;
         step *p_step;
         canvas *main_canvas_region;
-        neutral *mouse_region;
-
-        QGridLayout *layout;
 
         static Engine *s_instance;
 
         bool is_mouse_pressed = false;
 
-        std::vector<QWidget *> active_regions;
+        std::vector<std::unique_ptr<region>> d_active_regions;
 
         Engine();
         Engine(const Engine &);

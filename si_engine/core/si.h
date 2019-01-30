@@ -16,7 +16,7 @@ namespace si
    public:
        SI(int argc, char **argv);
        int run();
-       void register_plugin(void *plugin);
+       void add_region(void *region);
 
    private:
        QApplication *p_qapp;
@@ -29,7 +29,9 @@ namespace si
    {
        void *si_create_instance(int argc, char **argv);
        void si_delete_instance(void *instance);
-       int si_run(void * instance);
+       int si_run(void *instance);
+       void si_add_region(void *instance, void *region);
+       void *si_region_create_instance(region_callback rce, region_callback rcc, region_callback rcl);
    }
 }
 

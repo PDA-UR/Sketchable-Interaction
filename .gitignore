@@ -54,3 +54,5 @@ si_engine/core/cmake-build-debug/Makefile
 si_engine/core/cmake-build-debug/si_engine_test
 
 si_engine/core/cmake-build-debug/si-core_autogen/
+
+application/plugins/__pycache__/

@@ -1,25 +1,20 @@
 from PyQt5 import QtWidgets, QtCore
-from si import SIPlugin
+from si import SIRegion
 
 
-class Test(SIPlugin):
+class Test(SIRegion):
     def __init__(self):
-        super(Test, self).__init__("trackable", self.on_region_enter, self.on_region_continuous, self.on_region_leave, self.on_create, self.on_destroy)
+        super(Test, self).__init__( self.on_region_enter, self.on_region_continuous, self.on_region_leave)
 
-    def on_region_enter(self, integer):
-        self.setObjectName("hello")
+    def on_region_enter(self, uuid):
+        print("Hello Enter Python")
         return 0
 
-    def on_region_continuous(self):
+    def on_region_continuous(self, uuid):
+        print("Hello Conti Python")
         return 0
 
-    def on_region_leave(self, integer):
-        print(int(self.winId()) == integer)
+    def on_region_leave(self, uuid):
+        print("Hello Leave Python")
 
-        return 0
-
-    def on_create(self):
-        return 0
-
-    def on_destroy(self):
         return 0

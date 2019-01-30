@@ -22,6 +22,11 @@ namespace si
         return p_qapp->exec();
     }
 
+    void SI::add_region(void *r)
+    {
+        Engine::__instance__()->add_region_template(reinterpret_cast<region *>(r));
+    }
+
     void SI::stop()
     {
         Engine::__instance__()->stop();
@@ -50,6 +55,27 @@ namespace si
         {
             return -1;
         }
+    }
+
+    void si_add_region(void *instance, void *region)
+    {
+        try{
+            SI *ref = reinterpret_cast<SI *>(instance);
+
+            // construct actual region object type?
+
+            ref->add_region(region);
+        }
+        catch  (std::exception e)
+        {
+            return;
+        }
+
+    }
+
+    void *si_region_create_instance(region_callback rce, region_callback rcc, region_callback rcl)
+    {
+        return new(std::nothrow) si::region(rce, rcc, rcl);
     }
 }
 
