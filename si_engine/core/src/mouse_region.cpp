@@ -2,8 +2,8 @@
 // Created by juergen on 28/01/19.
 //
 
-#include "mouse_region.h"
-#include "../si_debug/debug.h"
+#include "../include/mouse_region.h"
+#include "../include/debug.h"
 #include <QPaintEvent>
 #include <QPainter>
 #include <math.h>

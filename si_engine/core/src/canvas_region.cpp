@@ -2,11 +2,11 @@
 // Created by juergen on 28/01/19.
 //
 
-#include "canvas_region.h"
-#include "../si_debug/debug.h"
+#include "../include/canvas_region.h"
+#include "../include/debug.h"
 #include <QPaintEvent>
 #include <QtGui/QPainter>
-#include "../si_util/util.h"
+#include "../include/util.h"
 #include <QApplication>
 #include <QDesktopWidget>
 #include <stdlib.h>

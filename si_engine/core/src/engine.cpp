@@ -5,11 +5,11 @@
 #include <QtGui/QPainter>
 #include <QKeyEvent>
 #include <QPaintEvent>
-#include "engine.h"
-#include "../si_debug/debug.h"
-#include "signal_handler.h"
-#include "../si_stdlib/canvas_region.h"
-#include "../si_stdlib/mouse_region.h"
+#include "../include/engine.h"
+#include "../include/debug.h"
+#include "../include/signal_handler.h"
+#include "../include/canvas_region.h"
+#include "../include/mouse_region.h"
 #include <QMouseEvent>
 #include <QBitmap>
 #include <QtWidgets/QGridLayout>

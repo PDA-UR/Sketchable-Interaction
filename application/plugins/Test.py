@@ -1,10 +1,13 @@
-from PyQt5 import QtWidgets, QtCore
+from PyQt5 import QtWidgets, QtCore, QtGui
 from si import SIRegion
 
 
 class Test(SIRegion):
     def __init__(self):
-        super(Test, self).__init__( self.on_region_enter, self.on_region_continuous, self.on_region_leave)
+        super(Test, self).__init__(self.on_region_enter, self.on_region_continuous, self.on_region_leave)
+
+        self.qp = QtGui.QPainter()
+        self.show()
 
     def on_region_enter(self, uuid):
         print("Hello Enter Python")
@@ -18,3 +21,11 @@ class Test(SIRegion):
         print("Hello Leave Python")
 
         return 0
+
+    def paintEvent(self, ev) -> None:
+        self.qp.begin(self)
+
+        print("Hell0???")
+
+        self.qp.end()
+

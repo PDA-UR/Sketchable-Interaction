@@ -5,7 +5,7 @@
 #ifndef CORE_NEUTRAL_H
 #define CORE_NEUTRAL_H
 
-#include "../si_interaction/region.h"
+#include "region.h"
 
 namespace si
 {

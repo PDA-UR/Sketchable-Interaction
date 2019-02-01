@@ -2,7 +2,7 @@
 // Created by juergen on 22/01/19.
 //
 
-#include "signal_handler.h"
+#include "../include/signal_handler.h"
 
 namespace si
 {

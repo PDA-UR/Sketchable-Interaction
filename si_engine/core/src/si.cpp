@@ -2,9 +2,9 @@
 // Created by juergen on 21/01/19.
 //
 
-#include "si.h"
-#include "si_engine/engine.h"
-#include "si_debug/debug.h"
+#include "../include/si.h"
+#include "../include/engine.h"
+#include "../include/debug.h"
 #include <QApplication>
 
 namespace si
@@ -24,7 +24,10 @@ namespace si
 
     void SI::add_region(void *r)
     {
-        Engine::__instance__()->add_region_template(reinterpret_cast<region *>(r));
+        if(r)
+            Engine::__instance__()->add_region_template(reinterpret_cast<region *>(r));
+        else
+            throw std::runtime_error("Passed argument r is nullptr");
     }
 
     void SI::stop()
@@ -42,6 +45,7 @@ namespace si
     void si_delete_instance(void *instance)
     {
         delete instance;
+        instance = nullptr;
     }
 
     int si_run(void *instance)
@@ -53,13 +57,19 @@ namespace si
         }
         catch (std::exception e)
         {
-            return -1;
+            std::__throw_runtime_error(e.what());
         }
+
+        return 0;
     }
 
     void si_add_region(void *instance, void *region)
     {
-        try{
+        if(region == nullptr)
+            std::__throw_runtime_error("Given region argument is a nullptr");
+
+        try
+        {
             SI *ref = reinterpret_cast<SI *>(instance);
 
             // construct actual region object type?
@@ -68,13 +78,21 @@ namespace si
         }
         catch  (std::exception e)
         {
-            return;
+            std::__throw_runtime_error(e.what());
         }
-
     }
 
     void *si_region_create_instance(region_callback rce, region_callback rcc, region_callback rcl)
     {
+        if(!rce)
+            std::__throw_runtime_error("callback function on_region_enter not set");
+
+        if(!rcc)
+            std::__throw_runtime_error("callback function on_region_continuous not set");
+
+        if(!rcl)
+            std::__throw_runtime_error("callback function on_region_leave not set");
+
         return new(std::nothrow) si::region(rce, rcc, rcl);
     }
 }

@@ -7,7 +7,7 @@
 
 #include <QWidget>
 
-#include "../si_interaction/region.h"
+#include "region.h"
 #include <vector>
 #include <memory>
 #include <algorithm>

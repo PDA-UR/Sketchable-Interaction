@@ -56,3 +56,11 @@ si_engine/core/cmake-build-debug/si_engine_test
 si_engine/core/cmake-build-debug/si-core_autogen/
 
 application/plugins/__pycache__/
+
+si_engine/googlemock/
+
+si_engine/googletest/
+
+application/venv/
+
+si_engine/core/cmake-build-debug/unit_tests_run

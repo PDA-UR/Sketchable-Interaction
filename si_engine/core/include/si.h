@@ -5,7 +5,7 @@
 #ifndef CORE_SI_CORE_H
 #define CORE_SI_CORE_H
 
-#include "si_engine/engine.h"
+#include "../include/engine.h"
 #include <new>
 
 namespace si

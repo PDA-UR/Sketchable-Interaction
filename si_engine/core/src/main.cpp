@@ -3,7 +3,7 @@
 //
 
 #include <iostream>
-#include "../si.h"
+#include "../include/si.h"
 
 int main(int argc, char ** argv)
 {

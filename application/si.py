@@ -6,7 +6,7 @@ import sys
 class SI:
     lib = cdll.LoadLibrary('../si_engine/core/cmake-build-debug/libsi-core.so')
 
-    def __init__(self):
+    def __init__(self, advanced_init=False):
 
         argc = len(sys.argv)
         argv = (POINTER(c_char) * (argc + 1))()
@@ -15,10 +15,14 @@ class SI:
             enc_arg = arg.encode('utf-8')
             argv[i] = create_string_buffer(enc_arg)
 
-        self.si_instance = self.lib.si_create_instance(argc, argv)
+        self.si_instance = self.lib.si_create_instance(argc, argv, advanced_init)
 
     def run(self):
         return self.lib.si_run(self.si_instance)
+
+    # rather override
+    def set_main_canvas(self, canvas):
+        return self.lib.si_set_main_canvas(self.si_instance, canvas)
 
     def add_region(self, region):
         return self.lib.si_add_region(self.si_instance, region)

@@ -2,9 +2,9 @@
 // Created by juergen on 25/01/19.
 //
 
-#include "region.h"
-#include "../si_debug/debug.h"
-#include "../si_util/util.h"
+#include "../include/region.h"
+#include "../include/debug.h"
+#include "../include/util.h"
 
 namespace si
 {

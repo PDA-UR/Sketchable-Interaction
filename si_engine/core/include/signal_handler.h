@@ -6,7 +6,7 @@
 #define CORE_SIGNAL_HANDLER_H
 
 #include <csignal>
-#include "../si_debug/debug.h"
+#include "../include/debug.h"
 
 namespace si
 {

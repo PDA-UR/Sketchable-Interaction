@@ -10,10 +10,10 @@
 #include <QtCore>
 #include <QMainWindow>
 #include "step.h"
-#include "../si_interaction/region.h"
+#include "region.h"
 #include <vector>
-#include "../si_stdlib/canvas_region.h"
-#include "../si_stdlib/mouse_region.h"
+#include "canvas_region.h"
+#include "mouse_region.h"
 #include <QGridLayout>
 
 namespace si
@@ -62,11 +62,8 @@ namespace si
 
     protected:
         void keyPressEvent(QKeyEvent *event) override;
-
         void mousePressEvent(QMouseEvent *event) override;
-
         void mouseReleaseEvent(QMouseEvent *event) override;
-
         void mouseMoveEvent(QMouseEvent *event) override;
 
     protected:
