@@ -64,3 +64,11 @@ si_engine/googletest/
 application/venv/
 
 si_engine/core/cmake-build-debug/unit_tests_run
+
+application_android/\.idea/
+
+application_android/android-sources/\.idea/
+
+application_android/doc/src/qtandroidextras-example-notification\.qdoc
+
+*.user
