@@ -22,10 +22,8 @@ class Test(SIRegion):
 
         return 0
 
-    def paintEvent(self, ev) -> None:
+    def paintEvent(self, ev):
         self.qp.begin(self)
-
-        print("Hell0???")
 
         self.qp.end()
 

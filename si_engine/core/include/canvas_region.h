@@ -22,14 +22,16 @@ namespace si
         void closeEvent(QCloseEvent *event) override;
 
     public:
-        canvas(const QPolygon &s, QWidget *parent = nullptr);
+        canvas(const QPolygon &s, QWidget *parent= nullptr);
         canvas(QWidget * parent = nullptr);
+        canvas(const canvas &copy, QWidget *parent= nullptr);
+        virtual ~canvas();
 
         int on_enter_for_callback(long uuid);
         int on_continuous_for_callback(long uuid);
         int on_leave_for_callback(long uuid);
 
-        void push_active_regions(std::vector<std::unique_ptr<region>> &active_regions);
+        void push_active_regions(std::vector<std::unique_ptr<region>> *active_regions);
 
     private:
         QPainter *q_painter;

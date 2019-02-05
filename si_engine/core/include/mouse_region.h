@@ -17,7 +17,12 @@ namespace si
 
     public:
         neutral(const QPolygon &s, QWidget *parent = nullptr);
-        neutral(QWidget * parent = nullptr);
+        neutral(QWidget *parent = nullptr);
+
+        //copy ctor
+        neutral(const neutral &copy, QWidget *parent= nullptr);
+
+        ~neutral() override;
 
         int on_enter_for_callback(long uuid);
         int on_continuous_for_callback(long uuid);

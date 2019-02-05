@@ -8,7 +8,7 @@
 
 namespace si
 {
-    region::region(const QPolygon &s, QWidget * parent) : QWidget(parent), d_shape(s)
+    region::region(const QPolygon &s, QWidget *parent) : QWidget(parent), d_shape(s)
     {
         d_shape_aabb = d_shape.boundingRect();
     }
@@ -22,6 +22,9 @@ namespace si
         set_continuous_callback(rcc);
         set_leave_callback(rcl);
     }
+
+    region::region(const region &copy, QWidget *parent) : QWidget(parent)
+    {}
 
     const QPolygon &region::shape() const
     {

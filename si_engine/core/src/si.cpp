@@ -11,9 +11,9 @@ namespace si
 {
     /* Start of SI class */
 
-    SI::SI(int argc, char **argv) : p_qapp(new QApplication(argc, argv))
+    SI::SI(int argc, char **argv, bool test) : p_qapp(new QApplication(argc, argv))
     {
-        Engine::__instance__()->start();
+        Engine::__instance__()->start(test);
     }
 
     int SI::run()

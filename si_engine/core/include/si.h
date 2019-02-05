@@ -14,7 +14,7 @@ namespace si
    {Q_OBJECT
 
    public:
-       SI(int argc, char **argv);
+       SI(int argc, char **argv, bool test=false);
        int run();
        void add_region(void *region);
 

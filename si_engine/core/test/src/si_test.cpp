@@ -14,6 +14,8 @@ TEST_F(SITest, cpp_constructor)
 
     EXPECT_NE(si, nullptr);
 
+    QApplication::instance()->quit();
+
     delete si;
     si = nullptr;
 }
@@ -29,6 +31,8 @@ TEST_F(SITest, c_instance_creation)
     EXPECT_NE(_si, nullptr);
     EXPECT_NO_THROW(si::si_create_instance(e_argc, e_argv));
 
+    QApplication::instance()->quit();
+
     si = nullptr;
 
     delete _si;
@@ -40,6 +44,8 @@ TEST_F(SITest, c_delete_instance)
     void *si = si::si_create_instance(e_argc, e_argv);
 
     EXPECT_NO_THROW(si::si_delete_instance(si));
+
+    QApplication::instance()->quit();
 }
 
 TEST_F(SITest, cpp_add_region)
@@ -48,6 +54,8 @@ TEST_F(SITest, cpp_add_region)
 
     EXPECT_ANY_THROW(si->add_region(nullptr));
     EXPECT_NO_THROW(si->add_region((void *) new si::region()));
+
+    QApplication::instance()->quit();
 
     delete si;
     si = nullptr;
@@ -59,6 +67,8 @@ TEST_F(SITest, c_add_region)
 
     EXPECT_ANY_THROW(si::si_add_region(si, nullptr));
     EXPECT_NO_THROW(si::si_add_region(si, (void *) new si::region()));
+
+    QApplication::instance()->quit();
 }
 
 TEST_F(SITest, c_create_region_instance)
@@ -84,6 +94,8 @@ TEST_F(SITest, c_create_region_instance)
     rcl = nullptr;
 
     EXPECT_ANY_THROW(si::si_region_create_instance(rce, rcc, rcl));
+
+    QApplication::instance()->quit();
 
     delete si;
     si = nullptr;

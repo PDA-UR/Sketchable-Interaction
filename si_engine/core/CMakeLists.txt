@@ -34,10 +34,13 @@ SET(SRC_GTEST_RUNNER
         test/include/si_test.h
         test/include/cmd_args.h
         test/src/si_engine_test.cpp
-        test/include/si_engine_test.h)
+        test/include/si_engine_test.h
+        test/src/QComponentTestrunner.cpp
+        test/include/QComponentTestrunner.h)
 
 # SI CORE LIBRARY
 find_package(Qt5Widgets REQUIRED)
+find_package(Qt5Test REQUIRED)
 add_library(si-core SHARED ${SRC})
 set_target_properties(si-core PROPERTIES AUTOMOC TRUE)
 target_link_libraries(si-core Qt5::Widgets)
@@ -51,4 +54,5 @@ target_link_libraries(si_engine_test si-core)
 include_directories(${GTEST_INCLUDE_DIRS})
 find_package(GTest REQUIRED)
 add_executable(unit_tests_run ${SRC_GTEST_RUNNER})
-target_link_libraries(unit_tests_run si-core gtest gtest_main pthread)
+set_target_properties(unit_tests_run PROPERTIES AUTOMOC TRUE)
+target_link_libraries(unit_tests_run Qt5::Widgets Qt5::Test si-core gtest gtest_main pthread)

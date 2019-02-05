@@ -33,25 +33,37 @@ namespace si
         return s_instance;
     }
 
-    void Engine::start()
+    void Engine::start(bool test)
     {
+        d_is_running = true;
         setMouseTracking(true);
         setWindowState(Qt::WindowFullScreen);
 
-        connect(p_step, &step::on_step, this, &Engine::on_step);
+        connect(p_step.get(), &step::on_step, this, &Engine::on_step);
         p_step->start();
 
         main_canvas_region->setObjectName("main_canvas");
 
-        setCentralWidget(main_canvas_region);
+        setCentralWidget(main_canvas_region.get());
 
-        d_active_regions.emplace_back(new neutral(main_canvas_region));
+        d_active_regions.emplace_back(new neutral(main_canvas_region.get()));
 
         show();
     }
 
     void Engine::stop()
     {
+        d_is_running = false;
+
+        p_step->stop();
+
+        while (!p_step->isFinished());
+
+        d_active_regions.clear();
+
+        main_canvas_region->setParent(nullptr);
+        main_canvas_region->close();
+
         close();
     }
 
@@ -60,6 +72,21 @@ namespace si
         r->on_enter(1);
         r->on_continuous(1);
         r->on_leave(1);
+    }
+
+    bool Engine::is_running()
+    {
+        return d_is_running;
+    }
+
+    const std::unique_ptr<step> &Engine::i_step() const
+    {
+        return p_step;
+    }
+
+    const std::unique_ptr<canvas> &Engine::i_main_canvas_region() const
+    {
+        return main_canvas_region;
     }
 
     /* PRIVATE */
@@ -75,20 +102,7 @@ namespace si
     }
 
     Engine::~Engine()
-    {
-        p_step->stop();
-
-        while (!p_step->isFinished());
-
-        delete p_step;
-        p_step = nullptr;
-
-        d_active_regions.resize(0); // get rid of all pointers to active regions
-
-        main_canvas_region->close();
-        delete main_canvas_region;
-        main_canvas_region = nullptr;
-    }
+    {}
 
     /* SLOT */
 
@@ -110,7 +124,7 @@ namespace si
             }
         }
 
-        main_canvas_region->push_active_regions(d_active_regions);
+        main_canvas_region->push_active_regions(&d_active_regions);
         main_canvas_region->update();
     }
 

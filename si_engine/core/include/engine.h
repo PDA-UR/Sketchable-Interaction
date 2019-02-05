@@ -24,14 +24,23 @@ namespace si
     public:
         static Engine *__instance__();
 
-        void start();
+        void start(bool test=false);
         void stop();
 
         void add_region_template(region *r);
 
+        bool is_running();
+
+        const std::unique_ptr<step> &i_step() const;
+        const std::unique_ptr<canvas> &i_main_canvas_region() const;
+
     private:
-        step *p_step;
-        canvas *main_canvas_region;
+        std::unique_ptr<step> p_step;
+        std::unique_ptr<canvas> main_canvas_region;
+
+        bool d_is_running = false;
+
+        std::chrono::high_resolution_clock::time_point d_engine_start;
 
         static Engine *s_instance;
 

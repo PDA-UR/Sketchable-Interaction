@@ -38,6 +38,16 @@ namespace si
     canvas::canvas(QWidget *parent) : region(QPolygon(), parent)
     {}
 
+    canvas::canvas(const canvas &copy, QWidget *parent)
+    {
+
+    }
+
+    canvas::~canvas()
+    {
+
+    }
+
     int si::canvas::on_enter_for_callback(long uuid)
     {
         debug::print("Hello There Enter", uuid);
@@ -53,9 +63,9 @@ namespace si
         debug::print("Hello There Leave", uuid);
     }
 
-    void canvas::push_active_regions(std::vector<std::unique_ptr<region>> &active_regions)
+    void canvas::push_active_regions(std::vector<std::unique_ptr<region>> *active_regions)
     {
-        d_active_regions = &active_regions;
+        d_active_regions = active_regions;
     }
 
     void canvas::paintEvent(QPaintEvent *event)
@@ -89,8 +99,7 @@ namespace si
 
     void canvas::closeEvent(QCloseEvent *event)
     {
-        d_active_regions = nullptr;
-        delete d_active_regions;
+
     }
 }
 

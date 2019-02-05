@@ -5,11 +5,18 @@
 #ifndef CORE_SI_TEST_H
 #define CORE_SI_TEST_H
 
+#include "cmd_args.h"
+
 class SITest : public ::testing::Test
 {
 public:
-    virtual void SetUp() {}
-    virtual void TearDown() {}
+    virtual void SetUp()
+    {
+    }
+
+    virtual void TearDown()
+    {
+    }
 };
 
 extern int callback_test(long uuid)

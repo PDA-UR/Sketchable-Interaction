@@ -24,6 +24,14 @@ namespace si
         explicit region(QWidget *parent= nullptr);
         explicit region(region_callback rce, region_callback rcc, region_callback rcl);
 
+        //copy ctor
+        region(const region &copy, QWidget *parent= nullptr);
+
+        virtual ~region()
+        {
+            setParent(nullptr);
+        }
+
         //on interaction callbacks aka the effect (own class appears weird)
 
         std::function<int(long)> on_region_enter;

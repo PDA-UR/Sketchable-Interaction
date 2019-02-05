@@ -72,3 +72,13 @@ application_android/android-sources/\.idea/
 application_android/doc/src/qtandroidextras-example-notification\.qdoc
 
 *.user
+
+application_python/venv/
+
+application_python/__pycache__/
+
+application_python/\.idea/
+
+application_python/plugins/__pycache__/
+
+si_engine/core/cmake-build-debug/unit_tests_run_autogen/

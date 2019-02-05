@@ -22,6 +22,14 @@ namespace si
         d_is_standard_lib = true;
     }
 
+    neutral::neutral(const neutral &copy, QWidget *parent) : region(parent)
+    {}
+
+    neutral::~neutral()
+    {
+
+    }
+
     int neutral::on_enter_for_callback(long uuid)
     {
         if (!d_is_standard_lib)
