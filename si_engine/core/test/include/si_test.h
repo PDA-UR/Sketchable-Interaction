@@ -5,6 +5,7 @@
 #ifndef CORE_SI_TEST_H
 #define CORE_SI_TEST_H
 
+#include <gtest/gtest.h>
 #include "cmd_args.h"
 
 class SITest : public ::testing::Test

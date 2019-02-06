@@ -14,7 +14,6 @@
 #include <vector>
 #include "canvas_region.h"
 #include "mouse_region.h"
-#include <QGridLayout>
 
 namespace si
 {
@@ -26,12 +25,14 @@ namespace si
 
         void start(bool test=false);
         void stop();
-
         void add_region_template(region *r);
+        void clear_active_regions();
 
         bool is_running();
+        bool has_active_regions();
 
         const std::unique_ptr<step> &i_step() const;
+
         const std::unique_ptr<canvas> &i_main_canvas_region() const;
 
     private:

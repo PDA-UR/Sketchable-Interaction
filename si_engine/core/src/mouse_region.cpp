@@ -10,12 +10,12 @@
 
 namespace si
 {
-    neutral::neutral(const QPolygon &s, QWidget *parent) : region(s, parent), q_painter(new QPainter(this))
+    neutral::neutral(const QPolygon &s, QWidget *parent) : region(s, parent)
     {
 
     }
 
-    neutral::neutral(QWidget *parent) : region(parent), q_painter(new QPainter(this))
+    neutral::neutral(QWidget *parent) : region(parent)
     {
         setObjectName("Mouse Region");
         setVisible(false);
@@ -27,7 +27,6 @@ namespace si
 
     neutral::~neutral()
     {
-
     }
 
     int neutral::on_enter_for_callback(long uuid)
@@ -40,6 +39,8 @@ namespace si
         {
             debug::print("Hello From Std Lib Enter!");
         }
+
+        return 0;
     }
 
     int neutral::on_continuous_for_callback(long uuid)
@@ -52,6 +53,8 @@ namespace si
         {
             debug::print("Hello From Std Lib Continuous!");
         }
+
+        return 0;
     }
 
     int neutral::on_leave_for_callback(long uuid)
@@ -64,6 +67,8 @@ namespace si
         {
             debug::print("Hello From Std Lib Leave!");
         }
+
+        return 0;
     }
 
     void neutral::update_shape_coords(int x, int y)
@@ -75,11 +80,12 @@ namespace si
 
     void neutral::paintEvent(QPaintEvent *event)
     {
-        q_painter->begin(this);
+        QPainter q_painter;
+        q_painter.begin(this);
 
 
 
-        q_painter->end();
+        q_painter.end();
     }
 
     // PRIVATE

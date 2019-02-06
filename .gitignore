@@ -82,3 +82,13 @@ application_python/\.idea/
 application_python/plugins/__pycache__/
 
 si_engine/core/cmake-build-debug/unit_tests_run_autogen/
+
+googletest/
+
+si_engine/core/cmake-build-debug/lib/
+
+si_engine/core/cmake-build-debug/CMakeDoxyfile\.in
+
+si_engine/core/cmake-build-debug/CMakeDoxygenDefaults\.cmake
+
+si_engine/core/cmake-build-debug/Doxyfile

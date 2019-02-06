@@ -31,8 +31,6 @@ namespace si
         void update_shape_coords(int x, int y) override;
 
     private:
-        QPainter *q_painter;
-
         const int C_DEFAULT_RADIUS = 10;
         const int C_DEFAULT_NUM_SEGMENTS = 30;
 

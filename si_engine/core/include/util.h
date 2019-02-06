@@ -11,14 +11,11 @@
 namespace si
 {
     template <typename T>
-    int contains( const std::vector<T> &v, const T &x)
+    int contains(const std::vector<T> &v, const T &x)
     {
         auto it = std::find(v.begin(), v.end(), x);
 
-        if (it != v.end())
-            return (int) (it - v.begin());
-
-        return  -1;
+        return (it != v.end()) ? ((int) (it - v.begin())) : -1;
     }
 }
 

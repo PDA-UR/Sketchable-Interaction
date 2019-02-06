@@ -34,7 +34,6 @@ namespace si
         void push_active_regions(std::vector<std::unique_ptr<region>> *active_regions);
 
     private:
-        QPainter *q_painter;
         std::vector<std::unique_ptr<region>> *d_active_regions = nullptr;
     };
 }

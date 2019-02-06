@@ -90,6 +90,8 @@ namespace si
                 on_region_enter(uuid);
             }
         }
+
+        return 0;
     }
 
     int region::on_continuous(long uuid)
@@ -98,6 +100,8 @@ namespace si
         {
             on_region_continuous(uuid);
         }
+
+        return 0;
     }
 
     int region::on_leave(long uuid)
@@ -110,6 +114,8 @@ namespace si
 
             on_region_leave(uuid);
         }
+
+        return 0;
     }
 
 }

@@ -7,12 +7,8 @@
 #include <QPaintEvent>
 #include "../include/engine.h"
 #include "../include/debug.h"
-#include "../include/signal_handler.h"
 #include "../include/canvas_region.h"
 #include "../include/mouse_region.h"
-#include <QMouseEvent>
-#include <QBitmap>
-#include <QtWidgets/QGridLayout>
 #include <QMouseEvent>
 #include <QEvent>
 
@@ -55,28 +51,37 @@ namespace si
     {
         d_is_running = false;
 
-        p_step->stop();
-
-        while (!p_step->isFinished());
-
-        d_active_regions.clear();
-
-        main_canvas_region->setParent(nullptr);
-        main_canvas_region->close();
-
         close();
     }
 
     void Engine::add_region_template(region *r)
     {
-        r->on_enter(1);
-        r->on_continuous(1);
-        r->on_leave(1);
+        if(r)
+        {
+            r->on_enter(1);
+            r->on_continuous(1);
+            r->on_leave(1);
+        }
+        else
+        {
+            throw std::runtime_error("Passed argument r is nullptr");
+        }
     }
 
     bool Engine::is_running()
     {
         return d_is_running;
+    }
+
+    void Engine::clear_active_regions()
+    {
+        if(!d_active_regions.empty())
+            d_active_regions.clear();
+    }
+
+    bool Engine::has_active_regions()
+    {
+        return !d_active_regions.empty();
     }
 
     const std::unique_ptr<step> &Engine::i_step() const
@@ -93,16 +98,23 @@ namespace si
 
     Engine::Engine() : QMainWindow(), p_step(new step(33.0)), main_canvas_region(new canvas(QPolygon(QVector<QPoint>({QPoint(0, 0), QPoint(0, 1080), QPoint(1920, 1080), QPoint(1920, 0)})), this))
     {
-        signal(SIGINT, signal_handler::handle);
     }
 
     Engine::Engine(const Engine &) : QMainWindow(), p_step(new step(33.0)), main_canvas_region(new canvas(QPolygon(QVector<QPoint>({QPoint(0, 0), QPoint(0, 1080), QPoint(1920, 1080), QPoint(1920, 0)})), this))
     {
-        signal(SIGINT, signal_handler::handle);
     }
 
     Engine::~Engine()
-    {}
+    {
+        p_step->stop();
+
+        while (!p_step->isFinished());
+
+        d_active_regions.clear();
+
+        main_canvas_region->setParent(nullptr);
+        main_canvas_region->close();
+    }
 
     /* SLOT */
 

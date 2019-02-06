@@ -25,7 +25,7 @@ private:
     bool d_sleep = true;
 
     signals:
-            void on_step();
+        void on_step();
 };
 
 }

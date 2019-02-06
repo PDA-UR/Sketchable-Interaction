@@ -13,7 +13,7 @@
 
 namespace si
 {
-    canvas::canvas(const QPolygon &s, QWidget *parent) : region(s, parent), q_painter(new QPainter())
+    canvas::canvas(const QPolygon &s, QWidget *parent) : region(s, parent)
     {
         setMouseTracking(true);
         setCursor(Qt::BlankCursor);
@@ -45,22 +45,27 @@ namespace si
 
     canvas::~canvas()
     {
-
     }
 
     int si::canvas::on_enter_for_callback(long uuid)
     {
         debug::print("Hello There Enter", uuid);
+
+        return 0;
     }
 
     int si::canvas::on_continuous_for_callback(long uuid)
     {
         debug::print("Hello There Continuous", uuid);
+
+        return 0;
     }
 
     int si::canvas::on_leave_for_callback(long uuid)
     {
         debug::print("Hello There Leave", uuid);
+
+        return 0;
     }
 
     void canvas::push_active_regions(std::vector<std::unique_ptr<region>> *active_regions)
@@ -70,31 +75,32 @@ namespace si
 
     void canvas::paintEvent(QPaintEvent *event)
     {
-        q_painter->begin(this);
+        QPainter q_painter;
+        q_painter.begin(this);
 
-        q_painter->setBrush(QColor(0, 0, 0));
-        q_painter->drawRect(event->rect());
-        q_painter->setBrush(QColor(0, 255, 0));
-        q_painter->setPen(QPen(QColor(0, 255, 0), 3));
+        q_painter.setBrush(QColor(0, 0, 0));
+        q_painter.drawRect(event->rect());
+        q_painter.setBrush(QColor(0, 255, 0));
+        q_painter.setPen(QPen(QColor(0, 255, 0), 3));
 
         if(d_active_regions)
         {
-            for(std::unique_ptr<region> &r : *d_active_regions)
+            for(const std::unique_ptr<region> &r : *d_active_regions)
             {
                 QPainterPath p;
 
                 p.addPolygon(r->shape());
 
-                q_painter->drawPath(p);
+                q_painter.drawPath(p);
             }
 
-            for(QPoint &p : d_shape)
+            for(const QPoint &p : d_shape)
             {
-                q_painter->drawEllipse(p, 20, 20);
+                q_painter.drawEllipse(p, 20, 20);
             }
         }
 
-        q_painter->end();
+        q_painter.end();
     }
 
     void canvas::closeEvent(QCloseEvent *event)

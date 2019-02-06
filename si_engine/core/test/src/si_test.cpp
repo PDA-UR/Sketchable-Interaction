@@ -2,11 +2,13 @@
 // Created by juergen on 01/02/19.
 //
 
+#include <QtTest/QSignalSpy>
 #include "../../include/si.h"
-#include "gtest/gtest.h"
 #include "../include/si_test.h"
 #include "../include/cmd_args.h"
 #include "../../include/engine.h"
+#include <gtest/gtest.h>
+#include <gmock/gmock.h>
 
 TEST_F(SITest, cpp_constructor)
 {
@@ -14,7 +16,7 @@ TEST_F(SITest, cpp_constructor)
 
     EXPECT_NE(si, nullptr);
 
-    QApplication::instance()->quit();
+    si->quit();
 
     delete si;
     si = nullptr;
@@ -31,7 +33,7 @@ TEST_F(SITest, c_instance_creation)
     EXPECT_NE(_si, nullptr);
     EXPECT_NO_THROW(si::si_create_instance(e_argc, e_argv));
 
-    QApplication::instance()->quit();
+    _si->quit();
 
     si = nullptr;
 
@@ -45,7 +47,14 @@ TEST_F(SITest, c_delete_instance)
 
     EXPECT_NO_THROW(si::si_delete_instance(si));
 
-    QApplication::instance()->quit();
+    si::SI *_si = reinterpret_cast<si::SI *>(si::si_create_instance(e_argc, e_argv));
+
+    _si->quit();
+
+    si = nullptr;
+
+    delete _si;
+    _si = nullptr;
 }
 
 TEST_F(SITest, cpp_add_region)
@@ -55,7 +64,7 @@ TEST_F(SITest, cpp_add_region)
     EXPECT_ANY_THROW(si->add_region(nullptr));
     EXPECT_NO_THROW(si->add_region((void *) new si::region()));
 
-    QApplication::instance()->quit();
+    si->quit();
 
     delete si;
     si = nullptr;
@@ -68,7 +77,14 @@ TEST_F(SITest, c_add_region)
     EXPECT_ANY_THROW(si::si_add_region(si, nullptr));
     EXPECT_NO_THROW(si::si_add_region(si, (void *) new si::region()));
 
-    QApplication::instance()->quit();
+    si::SI *_si = reinterpret_cast<si::SI *>(si::si_create_instance(e_argc, e_argv));
+
+    _si->quit();
+
+    si = nullptr;
+
+    delete _si;
+    si = nullptr;
 }
 
 TEST_F(SITest, c_create_region_instance)
@@ -95,7 +111,7 @@ TEST_F(SITest, c_create_region_instance)
 
     EXPECT_ANY_THROW(si::si_region_create_instance(rce, rcc, rcl));
 
-    QApplication::instance()->quit();
+    si->quit();
 
     delete si;
     si = nullptr;

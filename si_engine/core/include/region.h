@@ -29,7 +29,11 @@ namespace si
 
         virtual ~region()
         {
-            setParent(nullptr);
+            if(this)
+            {
+                if(parentWidget())
+                    setParent(nullptr);
+            }
         }
 
         //on interaction callbacks aka the effect (own class appears weird)
@@ -79,11 +83,6 @@ namespace si
         bool d_is_standard_lib = false;
         std::vector<long> d_collider_uuids;
     };
-
-    extern "C"
-    {
-
-    }
 }
 
 #endif //CORE_REGION_H

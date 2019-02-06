@@ -7,6 +7,7 @@
 
 #include "../include/engine.h"
 #include <new>
+#include <csignal>
 
 namespace si
 {
@@ -16,7 +17,11 @@ namespace si
    public:
        SI(int argc, char **argv, bool test=false);
        int run();
+       int quit();
+
        void add_region(void *region);
+
+       static void signal_handler(int signum);
 
    private:
        QApplication *p_qapp;

@@ -6,6 +6,7 @@
 #include "../include/engine.h"
 #include "../include/debug.h"
 #include <QApplication>
+#include <csignal>
 
 namespace si
 {
@@ -13,6 +14,13 @@ namespace si
 
     SI::SI(int argc, char **argv, bool test) : p_qapp(new QApplication(argc, argv))
     {
+        signal(SIGABRT, signal_handler);
+        signal(SIGFPE, signal_handler);
+        signal(SIGILL, signal_handler);
+        signal(SIGINT, signal_handler);
+        signal(SIGSEGV, signal_handler);
+        signal(SIGTERM, signal_handler);
+
         Engine::__instance__()->start(test);
     }
 
@@ -22,12 +30,26 @@ namespace si
         return p_qapp->exec();
     }
 
+    int SI::quit()
+    {
+        stop();
+
+        return 0;
+    }
+
     void SI::add_region(void *r)
     {
         if(r)
             Engine::__instance__()->add_region_template(reinterpret_cast<region *>(r));
         else
             throw std::runtime_error("Passed argument r is nullptr");
+    }
+
+    void SI::signal_handler(int signum)
+    {
+        debug::print("Interrupt Signal (", signum, ") received.");
+
+        QApplication::instance()->exit(signum);
     }
 
     void SI::stop()
@@ -44,7 +66,6 @@ namespace si
 
     void si_delete_instance(void *instance)
     {
-        delete instance;
         instance = nullptr;
     }
 
