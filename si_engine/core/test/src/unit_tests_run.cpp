@@ -3,6 +3,7 @@
 //
 
 #include <QTest>
+#include <gmock/gmock.h>
 #include "gtest/gtest.h"
 
 #include "../include/cmd_args.h"
@@ -17,6 +18,8 @@ int main(int argc, char **argv)
 
     e_argc = argc;
     e_argv = argv;
+
+    ::testing::InitGoogleMock(&argc, argv);
 
     return RUN_ALL_TESTS();
 }

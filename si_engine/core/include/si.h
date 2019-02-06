@@ -19,6 +19,7 @@ namespace si
        int run();
        int quit();
 
+       virtual ~SI() = default;
        void add_region(void *region);
 
        static void signal_handler(int signum);

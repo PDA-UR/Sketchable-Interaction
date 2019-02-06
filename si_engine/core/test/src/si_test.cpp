@@ -116,3 +116,30 @@ TEST_F(SITest, c_create_region_instance)
     delete si;
     si = nullptr;
 }
+
+// These appear to have to be placed in cpp
+class MockSI : public si::SI
+{
+public:
+    MockSI() : si::SI(e_argc, e_argv)
+    {}
+
+    MOCK_METHOD1(add_region, void(void *));
+};
+
+
+TEST(SIClassMock, add_region)
+{
+    MockSI msi;
+
+    void *vp_dummy = (void *) new si::region();
+    void *np_dummy = nullptr;
+
+    EXPECT_CALL(msi, add_region(vp_dummy)).WillOnce(testing::Return());
+    EXPECT_CALL(msi, add_region(np_dummy)).WillRepeatedly(testing::Return());
+
+    msi.add_region(vp_dummy);
+    msi.add_region(np_dummy);
+
+    msi.quit();
+}

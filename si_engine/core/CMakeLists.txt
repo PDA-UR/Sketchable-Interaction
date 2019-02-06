@@ -37,7 +37,6 @@ SET(SRC_GTEST_RUNNER
 find_package(Qt5Widgets REQUIRED)
 find_package(Qt5Test REQUIRED)
 
-# check if Doxygen is installed
 find_package(Doxygen)
 
 if (DOXYGEN_FOUND)

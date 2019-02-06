@@ -7,6 +7,9 @@
 
 #include <gtest/gtest.h>
 #include "cmd_args.h"
+#include <gmock/gmock.h>
+#include "../../include/si.h"
+
 
 class SITest : public ::testing::Test
 {
