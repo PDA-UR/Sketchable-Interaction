@@ -14,6 +14,7 @@
 #include <vector>
 #include "canvas_region.h"
 #include "mouse_region.h"
+#include <chrono>
 
 namespace si
 {
