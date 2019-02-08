@@ -73,7 +73,7 @@ target_link_libraries(si-core Qt5::Widgets)
 
 # SI TESTING APPLICATION
 add_executable(si_engine_test ${SRC_TEST_APPLICATION})
-target_link_libraries(si_engine_test cmake-build-debug/si-core)
+target_link_libraries(si_engine_test Qt5::Widgets cmake-build-debug/si-core)
 
 # SI GTEST UNIT TEST RUNNER
 
