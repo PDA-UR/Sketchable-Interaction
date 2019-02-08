@@ -57,10 +57,6 @@ si_engine/core/cmake-build-debug/si-core_autogen/
 
 application/plugins/__pycache__/
 
-si_engine/googlemock/
-
-si_engine/googletest/
-
 application/venv/
 
 si_engine/core/cmake-build-debug/unit_tests_run
@@ -83,8 +79,6 @@ application_python/plugins/__pycache__/
 
 si_engine/core/cmake-build-debug/unit_tests_run_autogen/
 
-googletest/
-
 si_engine/core/cmake-build-debug/lib/
 
 si_engine/core/cmake-build-debug/CMakeDoxyfile\.in
@@ -92,3 +86,5 @@ si_engine/core/cmake-build-debug/CMakeDoxyfile\.in
 si_engine/core/cmake-build-debug/CMakeDoxygenDefaults\.cmake
 
 si_engine/core/cmake-build-debug/Doxyfile
+
+si_engine/core/cmake-build-debug/googletest/
