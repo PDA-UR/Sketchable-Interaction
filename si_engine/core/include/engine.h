@@ -5,7 +5,6 @@
 #ifndef CORE_ENGINE_H
 #define CORE_ENGINE_H
 
-#include <QApplication>
 #include <QObject>
 #include <QtCore>
 #include <QMainWindow>
