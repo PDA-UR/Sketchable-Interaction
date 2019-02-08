@@ -71,10 +71,9 @@ add_library(si-core SHARED ${SRC})
 set_target_properties(si-core PROPERTIES AUTOMOC TRUE)
 target_link_libraries(si-core Qt5::Widgets)
 
-
 # SI TESTING APPLICATION
 add_executable(si_engine_test ${SRC_TEST_APPLICATION})
-target_link_libraries(si_engine_test si-core)
+target_link_libraries(si_engine_test cmake-build-debug/si-core)
 
 # SI GTEST UNIT TEST RUNNER
 
@@ -86,5 +85,5 @@ add_subdirectory(../../googletest googletest)
 
 add_executable(unit_tests_run ${SRC_GTEST_RUNNER})
 set_target_properties(unit_tests_run PROPERTIES AUTOMOC TRUE)
-target_link_libraries(unit_tests_run Qt5::Widgets Qt5::Test si-core gtest gtest_main gmock gmock_main pthread)
+target_link_libraries(unit_tests_run Qt5::Widgets Qt5::Test cmake-build-debug/si-core gtest gtest_main gmock gmock_main pthread)
 
