@@ -69,7 +69,7 @@ endif (DOXYGEN_FOUND)
 # SI CORE LIBRARY
 add_library(si-core SHARED ${SRC})
 set_target_properties(si-core PROPERTIES AUTOMOC TRUE)
-target_link_libraries(si-core Qt5::Widgets)
+target_link_libraries(si-core -DQT_NO_VERSION_TAGGING Qt5::Widgets)
 
 # SI TESTING APPLICATION
 #add_executable(si_engine_test ${SRC_TEST_APPLICATION})
