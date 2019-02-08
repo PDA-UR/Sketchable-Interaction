@@ -16,11 +16,12 @@ namespace si
 
    public:
        SI(int argc, char **argv, bool test=false);
-       int run();
-       int quit();
-
        virtual ~SI() = default;
-       void add_region(void *region);
+
+       virtual int run();
+       virtual int quit();
+
+       virtual void add_region(void *region);
 
        static void signal_handler(int signum);
 
