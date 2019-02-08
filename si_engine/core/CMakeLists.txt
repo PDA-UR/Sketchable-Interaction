@@ -85,5 +85,5 @@ add_subdirectory(../../googletest googletest)
 
 add_executable(unit_tests_run ${SRC_GTEST_RUNNER})
 set_target_properties(unit_tests_run PROPERTIES AUTOMOC TRUE)
-target_link_libraries(unit_tests_run DQT_NO_VERSION_TAGGING Qt5::Widgets Qt5::Test si-core gtest gtest_main gmock gmock_main pthread)
+target_link_libraries(unit_tests_run -DQT_NO_VERSION_TAGGING Qt5::Widgets Qt5::Test si-core gtest gtest_main gmock gmock_main pthread)
 
