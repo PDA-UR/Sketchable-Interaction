@@ -19,6 +19,8 @@ public:
     void run() override;
     void stop();
 
+    ~step() = default;
+
 private:
     bool d_is_running = false;
     double d_frequency = 0.0;

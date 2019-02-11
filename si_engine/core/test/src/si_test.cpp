@@ -124,9 +124,31 @@ public:
     MockSI() : si::SI(e_argc, e_argv)
     {}
 
+    MOCK_METHOD0(run, int());
+    MOCK_METHOD0(quit, int());
     MOCK_METHOD1(add_region, void(void *));
 };
 
+TEST(SIClassMock, run)
+{
+    MockSI msi;
+
+    msi.run();
+
+    EXPECT_CALL(msi, run()).WillRepeatedly(testing::Return(0));
+
+    msi.quit();
+}
+
+TEST(SIClassMock, quit)
+{
+    MockSI msi;
+    msi.run();
+
+    msi.quit();
+
+    EXPECT_CALL(msi, quit()).WillRepeatedly(testing::Return(0));
+}
 
 TEST(SIClassMock, add_region)
 {

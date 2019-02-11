@@ -34,7 +34,7 @@ SET(SRC_GTEST_RUNNER
         test/src/si_engine_test.cpp
         test/include/si_engine_test.h
         test/src/si_util_test.cpp
-        test/include/si_util_test.h)
+        test/include/si_util_test.h test/src/si_debug_test.cpp test/include/si_debug_test.h)
 
 find_package(Qt5Widgets REQUIRED)
 find_package(Qt5Test REQUIRED)
@@ -69,15 +69,16 @@ endif (DOXYGEN_FOUND)
 # SI CORE LIBRARY
 add_library(si-core SHARED ${SRC})
 set_target_properties(si-core PROPERTIES AUTOMOC TRUE)
-target_link_libraries(si-core -DQT_NO_VERSION_TAGGING Qt5::Widgets)
+target_link_libraries(si-core Qt5::Widgets)
 
 # SI TESTING APPLICATION
-#add_executable(si_engine_test ${SRC_TEST_APPLICATION})
-#target_link_libraries(si_engine_test Qt5::Widgets si-core)
+add_executable(si_engine_test ${SRC_TEST_APPLICATION})
+target_link_libraries(si_engine_test Qt5::Widgets si-core)
 
 # SI GTEST UNIT TEST RUNNER
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src
+        ${CMAKE_CURRENT_SOURCE_DIR}/include
         ${gmock_SOURCE_DIR}/include
         ${gtest_SOURCE_DIR}/include)
 
@@ -85,5 +86,5 @@ add_subdirectory(../../googletest googletest)
 
 add_executable(unit_tests_run ${SRC_GTEST_RUNNER})
 set_target_properties(unit_tests_run PROPERTIES AUTOMOC TRUE)
-target_link_libraries(unit_tests_run -DQT_NO_VERSION_TAGGING Qt5::Widgets Qt5::Test si-core gtest gtest_main gmock gmock_main pthread)
+target_link_libraries(unit_tests_run Qt5::Widgets Qt5::Test si-core gtest gtest_main gmock gmock_main pthread)
 

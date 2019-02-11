@@ -25,7 +25,7 @@ namespace si
         canvas(const QPolygon &s, QWidget *parent= nullptr);
         canvas(QWidget * parent = nullptr);
         canvas(const canvas &copy, QWidget *parent= nullptr);
-        virtual ~canvas();
+        virtual ~canvas() = default;
 
         int on_enter_for_callback(long uuid);
         int on_continuous_for_callback(long uuid);

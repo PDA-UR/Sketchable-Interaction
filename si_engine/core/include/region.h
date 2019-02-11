@@ -27,14 +27,7 @@ namespace si
         //copy ctor
         region(const region &copy, QWidget *parent= nullptr);
 
-        virtual ~region()
-        {
-            if(this)
-            {
-                if(parentWidget())
-                    setParent(nullptr);
-            }
-        }
+        virtual ~region() = default;
 
         //on interaction callbacks aka the effect (own class appears weird)
 

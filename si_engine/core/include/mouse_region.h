@@ -22,7 +22,7 @@ namespace si
         //copy ctor
         neutral(const neutral &copy, QWidget *parent= nullptr);
 
-        ~neutral() override;
+        ~neutral() = default;
 
         int on_enter_for_callback(long uuid);
         int on_continuous_for_callback(long uuid);

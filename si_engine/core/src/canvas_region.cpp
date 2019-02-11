@@ -43,10 +43,6 @@ namespace si
 
     }
 
-    canvas::~canvas()
-    {
-    }
-
     int si::canvas::on_enter_for_callback(long uuid)
     {
         debug::print("Hello There Enter", uuid);
