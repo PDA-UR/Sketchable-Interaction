@@ -65,11 +65,11 @@ namespace si
     {
         if(r)
         {
-            r->on_enter(1);
-            r->on_continuous(1);
-            r->on_leave(1);
+            //r->on_enter(1);
+            //r->on_continuous(1);
+            //r->on_leave(1);
             //r->on_create(1);
-            //r->on_destroy(1);
+            r->on_destroy(1);
         }
         else
         {
