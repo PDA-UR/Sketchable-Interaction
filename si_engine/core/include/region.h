@@ -22,7 +22,7 @@ namespace si
     public:
         region(const QPolygon &s, QWidget *parent= nullptr);
         explicit region(QWidget *parent= nullptr);
-        explicit region(region_callback rce, region_callback rcc, region_callback rcl);
+        explicit region(region_callback rce, region_callback rcc, region_callback rcl, region_callback rocc, region_callback rdc);
 
         //copy ctor
         region(const region &copy, QWidget *parent= nullptr);
@@ -34,10 +34,8 @@ namespace si
         std::function<int(long)> on_region_enter;
         std::function<int(long)> on_region_continuous;
         std::function<int(long)> on_region_leave;
-
-        region_callback on_region_enter_callback;
-        region_callback on_region_continuous_callback;
-        region_callback on_region_leave_callback;
+        std::function<int(long)> on_region_create;
+        std::function<int(long)> on_region_destroy;
 
         // getter
         const QPolygon &shape() const;
@@ -62,10 +60,19 @@ namespace si
         void set_leave_callback(const std::function<int(long)> &callback);
         void set_leave_callback(region_callback rc);
 
+        void set_create_callback(const std::function<int(long)> &callback);
+        void set_create_callback(region_callback rc);
+
+        void set_destroy_callback(const std::function<int(long)> &callback);
+        void set_destroy_callback(region_callback rc);
+
         virtual void update_shape_coords(int x, int y);
+
         int on_enter(long uuid);
         int on_continuous(long uuid);
         int on_leave(long uuid);
+        int on_create(long uuid);
+        int on_destroy(long uuid);
 
     protected:
         QPolygon d_shape;

@@ -18,7 +18,6 @@ namespace si
         signal(SIGFPE, signal_handler);
         signal(SIGILL, signal_handler);
         signal(SIGINT, signal_handler);
-        signal(SIGSEGV, signal_handler);
         signal(SIGTERM, signal_handler);
 
         Engine::__instance__()->start(test);
@@ -103,7 +102,7 @@ namespace si
         }
     }
 
-    void *si_region_create_instance(region_callback rce, region_callback rcc, region_callback rcl)
+    void *si_region_create_instance(region_callback rce, region_callback rcc, region_callback rcl, region_callback rocc, region_callback rdc)
     {
         if(!rce)
             std::__throw_runtime_error("callback function on_region_enter not set");
@@ -114,7 +113,13 @@ namespace si
         if(!rcl)
             std::__throw_runtime_error("callback function on_region_leave not set");
 
-        return new(std::nothrow) si::region(rce, rcc, rcl);
+        if(!rocc)
+            std::__throw_runtime_error("callback function on_region_create not set");
+
+        if(!rdc)
+            std::__throw_runtime_error("callback function on_region_destroy not set");
+
+        return new(std::nothrow) si::region(rce, rcc, rcl, rocc, rdc);
     }
 }
 

@@ -27,6 +27,8 @@ namespace si
         int on_enter_for_callback(long uuid);
         int on_continuous_for_callback(long uuid);
         int on_leave_for_callback(long uuid);
+        int on_create_for_callback(long uuid);
+        int on_destroy_for_callback(long uuid);
 
         void update_shape_coords(int x, int y) override;
 

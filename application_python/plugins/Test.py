@@ -7,7 +7,7 @@ class Test(SIRegion):
         super(Test, self).__init__(self.on_region_enter, self.on_region_continuous, self.on_region_leave)
 
         self.qp = QtGui.QPainter()
-        self.show()
+        # self.show()
 
     def on_region_enter(self, uuid):
         print("Hello Enter Python")

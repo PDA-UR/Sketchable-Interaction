@@ -94,22 +94,34 @@ TEST_F(SITest, c_create_region_instance)
     si::region_callback rce = callback_test;
     si::region_callback rcc = callback_test;
     si::region_callback rcl = callback_test;
+    si::region_callback rocc = callback_test;
+    si::region_callback rdc = callback_test;
 
-    EXPECT_NO_THROW(si::si_region_create_instance(rce, rcc, rcl));
+    EXPECT_NO_THROW(si::si_region_create_instance(rce, rcc, rcl, rocc, rdc));
 
     rce = nullptr;
 
-    EXPECT_ANY_THROW(si::si_region_create_instance(rce, rcc, rcl));
+    EXPECT_ANY_THROW(si::si_region_create_instance(rce, rcc, rcl, rocc, rdc));
 
     rce = callback_test;
     rcc = nullptr;
 
-    EXPECT_ANY_THROW(si::si_region_create_instance(rce, rcc, rcl));
+    EXPECT_ANY_THROW(si::si_region_create_instance(rce, rcc, rcl, rocc, rdc));
 
     rcc = callback_test;
     rcl = nullptr;
 
-    EXPECT_ANY_THROW(si::si_region_create_instance(rce, rcc, rcl));
+    EXPECT_ANY_THROW(si::si_region_create_instance(rce, rcc, rcl, rocc, rdc));
+
+    rcl = callback_test;
+    rocc = nullptr;
+
+    EXPECT_ANY_THROW(si::si_region_create_instance(rce, rcc, rcl, rocc, rdc));
+
+    rocc = callback_test;
+    rdc = nullptr;
+
+    EXPECT_ANY_THROW(si::si_region_create_instance(rce, rcc, rcl, rocc, rdc));
 
     si->quit();
 

@@ -67,6 +67,22 @@ namespace si
         return 0;
     }
 
+    int neutral::on_create_for_callback(long uuid)
+    {
+
+        debug::print("Hello From Std Lib Create!");
+
+        return 0;
+    }
+
+    int neutral::on_destroy_for_callback(long uuid)
+    {
+
+        debug::print("Hello From Std Lib Destroy!");
+
+        return 0;
+    }
+
     void neutral::update_shape_coords(int x, int y)
     {
         set_shape(circle(x, y, C_DEFAULT_RADIUS, C_DEFAULT_NUM_SEGMENTS));

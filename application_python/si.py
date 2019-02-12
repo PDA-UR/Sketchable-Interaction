@@ -35,13 +35,17 @@ class SIRegion(QtWidgets.QWidget):
         orec_type = CFUNCTYPE(c_int, c_long)
         orcc_type = CFUNCTYPE(c_int, c_long)
         orlc_type = CFUNCTYPE(c_int, c_long)
+        orocc_type = CFUNCTYPE(c_int, c_long)
+        ordc_type = CFUNCTYPE(c_int, c_long)
 
         orecf = orec_type(orec)
         orccf = orcc_type(orcc)
         orlcf = orlc_type(orlc)
+        oroccf = orocc_type(self.on_create)
+        ordcf = ordc_type(self.on_destroy)
 
-        self.references = [orecf, orccf, orlcf]
-        self.plugin_instance = SI.lib.si_region_create_instance(orecf, orccf, orlcf)
+        self.references = [orecf, orccf, orlcf, oroccf, ordcf]
+        self.plugin_instance = SI.lib.si_region_create_instance(orecf, orccf, orlcf, oroccf, ordcf)
 
     def findMainWindow(self):
         app = QtWidgets.QApplication.instance()
@@ -50,6 +54,16 @@ class SIRegion(QtWidgets.QWidget):
                 return widget.findChild(QtWidgets.QWidget, "main_canvas")
 
         return None
+
+    def on_destroy(self, uuid):
+        self.setParent(None)
+        self.close()
+        self.references = []
+
+        print("Hello Destroy Python")
+
+    def on_create(self, uuid):
+        print("Hello Create Python")
 
     def get_instance(self):
         return self.plugin_instance

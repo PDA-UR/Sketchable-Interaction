@@ -51,6 +51,13 @@ namespace si
     {
         d_is_running = false;
 
+        if(p_step->isRunning())
+        {
+            p_step->stop();
+
+            while (!p_step->isFinished());
+        }
+
         close();
     }
 
@@ -61,6 +68,8 @@ namespace si
             r->on_enter(1);
             r->on_continuous(1);
             r->on_leave(1);
+            //r->on_create(1);
+            //r->on_destroy(1);
         }
         else
         {
@@ -106,16 +115,23 @@ namespace si
 
     Engine::~Engine()
     {
-        p_step->stop();
+        if (p_step->isRunning())
+        {
+            p_step->stop();
 
-        while (!p_step->isFinished());
+            while (!p_step->isFinished());
+        }
 
         d_active_regions.clear();
 
+        qDeleteAll(main_canvas_region->findChildren<QWidget *>());
+
         main_canvas_region->setParent(nullptr);
         main_canvas_region->close();
-    }
 
+
+        qDeleteAll(findChildren<QWidget *>());
+    }
     /* SLOT */
 
     void Engine::on_step()

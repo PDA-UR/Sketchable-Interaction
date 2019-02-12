@@ -88,3 +88,5 @@ si_engine/core/cmake-build-debug/CMakeDoxygenDefaults\.cmake
 si_engine/core/cmake-build-debug/Doxyfile
 
 si_engine/core/cmake-build-debug/googletest/
+
+si_engine/core/cmake-build-debug/

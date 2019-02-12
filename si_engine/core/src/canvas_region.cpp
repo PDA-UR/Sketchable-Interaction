@@ -31,6 +31,8 @@ namespace si
         set_enter_callback(std::bind(&canvas::on_enter_for_callback, this, std::placeholders::_1));
         set_continuous_callback(std::bind(&canvas::on_continuous_for_callback, this, std::placeholders::_1));
         set_leave_callback(std::bind(&canvas::on_leave_for_callback, this, std::placeholders::_1));
+        set_create_callback(std::bind(&canvas::on_create_for_callback, this, std::placeholders::_1));
+        set_destroy_callback(std::bind(&canvas::on_destroy_for_callback, this, std::placeholders::_1));
 
         show();
     }
@@ -60,6 +62,20 @@ namespace si
     int si::canvas::on_leave_for_callback(long uuid)
     {
         debug::print("Hello There Leave", uuid);
+
+        return 0;
+    }
+
+    int si::canvas::on_create_for_callback(long uuid)
+    {
+        debug::print("Hello There Create", uuid);
+
+        return 0;
+    }
+
+    int si::canvas::on_destroy_for_callback(long uuid)
+    {
+        debug::print("Hello There Destroy");
 
         return 0;
     }
