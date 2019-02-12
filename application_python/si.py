@@ -62,8 +62,12 @@ class SIRegion(QtWidgets.QWidget):
 
         print("Hello Destroy Python")
 
+        return 0
+
     def on_create(self, uuid):
         print("Hello Create Python")
+
+        return 0
 
     def get_instance(self):
         return self.plugin_instance
