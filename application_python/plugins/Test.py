@@ -1,5 +1,5 @@
-from PyQt5 import QtWidgets, QtCore, QtGui
-from si import SIRegion
+from PyQt5 import QtGui
+from lib.si import SIRegion
 
 
 class Test(SIRegion):

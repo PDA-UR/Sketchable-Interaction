@@ -88,3 +88,7 @@ si_engine/core/cmake-build-debug/CMakeDoxygenDefaults\.cmake
 si_engine/core/cmake-build-debug/Doxyfile
 
 si_engine/core/cmake-build-debug/googletest/
+
+application_python/lib/__pycache__/
+
+application_python/bin/libsi-core\.so

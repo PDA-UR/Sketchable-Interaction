@@ -4,10 +4,9 @@ import sys
 
 
 class SI:
-    lib = cdll.LoadLibrary('../si_engine/core/cmake-build-debug/libsi-core.so')
+    lib = cdll.LoadLibrary("bin/libsi-core.so")
 
-    def __init__(self, advanced_init=False):
-
+    def __init__(self):
         argc = len(sys.argv)
         argv = (POINTER(c_char) * (argc + 1))()
 
@@ -15,7 +14,7 @@ class SI:
             enc_arg = arg.encode('utf-8')
             argv[i] = create_string_buffer(enc_arg)
 
-        self.si_instance = self.lib.si_create_instance(argc, argv, advanced_init)
+        self.si_instance = self.lib.si_create_instance(argc, argv, False)
 
     def run(self):
         return self.lib.si_run(self.si_instance)

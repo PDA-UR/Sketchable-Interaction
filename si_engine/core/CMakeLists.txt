@@ -34,7 +34,9 @@ SET(SRC_GTEST_RUNNER
         test/src/si_engine_test.cpp
         test/include/si_engine_test.h
         test/src/si_util_test.cpp
-        test/include/si_util_test.h test/src/si_debug_test.cpp test/include/si_debug_test.h)
+        test/include/si_util_test.h
+        test/src/si_debug_test.cpp
+        test/include/si_debug_test.h)
 
 find_package(Qt5Widgets REQUIRED)
 find_package(Qt5Test REQUIRED)
