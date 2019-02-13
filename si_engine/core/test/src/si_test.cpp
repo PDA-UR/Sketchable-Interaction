@@ -143,7 +143,7 @@ public:
 
 TEST(SIClassMock, run)
 {
-    MockSI msi;
+    testing::NiceMock<MockSI> msi;
 
     msi.run();
 
@@ -154,7 +154,7 @@ TEST(SIClassMock, run)
 
 TEST(SIClassMock, quit)
 {
-    MockSI msi;
+    testing::NiceMock<MockSI> msi;
     msi.run();
 
     msi.quit();
@@ -164,7 +164,7 @@ TEST(SIClassMock, quit)
 
 TEST(SIClassMock, add_region)
 {
-    MockSI msi;
+    testing::NiceMock<MockSI> msi;
 
     void *vp_dummy = (void *) new si::region();
     void *np_dummy = nullptr;

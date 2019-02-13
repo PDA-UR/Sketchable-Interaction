@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.1)
+cmake_minimum_required(VERSION 3.13)
 project(core)
 
 set(CMAKE_CXX_STANDARD 14)
@@ -93,4 +93,3 @@ add_subdirectory(../../googletest googletest)
 add_executable(unit_tests_run ${SRC_GTEST_RUNNER})
 set_target_properties(unit_tests_run PROPERTIES AUTOMOC TRUE)
 target_link_libraries(unit_tests_run Qt5::Widgets Qt5::Test si-core gtest gtest_main gmock gmock_main pthread)
-
