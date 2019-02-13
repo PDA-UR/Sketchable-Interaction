@@ -146,8 +146,3 @@ TEST_F(SIEngineTest, step_tick)
     delete si;
     si = nullptr;
 }
-
-TEST_F(SIEngineTest, test)
-{
-    EXPECT_TRUE(nullptr != nullptr);
-}
