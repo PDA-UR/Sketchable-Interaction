@@ -11,4 +11,5 @@ class SITest(ut.TestCase):
         self.assertNotEqual(si, None)
 
 if __name__ == '__main__':
-    ut.main()
+    suite = ut.TestLoader().discover("test", pattern=test_filename)
+    ut.TextTestRunner(verbosity=2).run(suite)
