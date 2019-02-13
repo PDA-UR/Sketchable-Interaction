@@ -17,14 +17,16 @@ class SI:
         self.si_instance = self.lib.si_create_instance(argc, argv, False)
 
     def run(self):
-        return self.lib.si_run(self.si_instance)
-
-    # rather override
-    def set_main_canvas(self, canvas):
-        return self.lib.si_set_main_canvas(self.si_instance, canvas)
+        return True if self.lib.si_run(self.si_instance) == 0 else False
 
     def add_region(self, region):
-        return self.lib.si_add_region(self.si_instance, region)
+        if region is not None:
+            self.__push_region_to_si_core__(region)
+
+        return False
+
+    def __push_region_to_si_core__(self, region):
+        self.lib.si_add_region(self.si_instance, region)
 
 
 class SIRegion(QtWidgets.QWidget):
@@ -54,10 +56,13 @@ class SIRegion(QtWidgets.QWidget):
 
         return None
 
-    def on_destroy(self, uuid):
+    def clean_up(self):
         self.setParent(None)
-        self.close()
         self.references = []
+
+    def on_destroy(self, uuid):
+        self.clean_up()
+        self.close()
 
         print("Hello Destroy Python")
 
