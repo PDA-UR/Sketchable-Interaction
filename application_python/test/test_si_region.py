@@ -22,7 +22,7 @@ class SIRegionTest(ut.TestCase):
         def test_callback_c():
             pass
 
-        reference = SI()
+        self.reference = SI()
 
         region = SIRegion(test_callback_a, test_callback_b, test_callback_c)
 
