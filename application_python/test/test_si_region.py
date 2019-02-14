@@ -27,7 +27,6 @@ class SIRegionTest(ut.TestCase):
         region = SIRegion(test_callback_a, test_callback_b, test_callback_c)
 
         self.assertTrue(region is not None)
-        self.assertFalse(region.parent() is None)
 
     def si_region_find_main_window(self):
         def test_callback_a():
