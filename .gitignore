@@ -94,5 +94,3 @@ application_python/lib/__pycache__/
 application_python/bin/libsi-core\.so
 
 application_python/test/__pycache__/
-
-si_engine/core/cmake-build-debug/
