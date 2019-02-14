@@ -31,8 +31,11 @@ class SI:
 
 class SIRegion(QtWidgets.QWidget):
     def __init__(self, orec, orcc, orlc):
+        self.references = []
+        self.plugin_instance = None
+
         try:
-            parent = self.findMainWindow()
+            parent = self.find_main_window()
             super(SIRegion, self).__init__(parent)
 
             orec_type = CFUNCTYPE(c_int, c_long)
@@ -52,7 +55,7 @@ class SIRegion(QtWidgets.QWidget):
         except AttributeError:
             raise AttributeError
 
-    def findMainWindow(self):
+    def find_main_window(self):
         app = QtWidgets.QApplication.instance()
 
         if app is None:
@@ -67,6 +70,7 @@ class SIRegion(QtWidgets.QWidget):
     def clean_up(self):
         self.setParent(None)
         self.references = []
+        self.plugin_instance = None
 
     def on_destroy(self, uuid):
         self.clean_up()

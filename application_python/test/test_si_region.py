@@ -7,8 +7,12 @@ from lib.si import SI, SIRegion
 from PyQt5 import QtWidgets
 
 
+"""
+see test_si.py for details concerning testing architecture
+"""
+
 class SIRegionTest(ut.TestCase):
-    def test_init(self):
+    def si_region_init(self):
         def test_callback_a():
             pass
 
@@ -17,14 +21,17 @@ class SIRegionTest(ut.TestCase):
 
         def test_callback_c():
             pass
+
+        self.assertRaises(AttributeError, SIRegion, test_callback_a, test_callback_b, test_callback_c)
 
         reference = SI()
 
         region = SIRegion(test_callback_a, test_callback_b, test_callback_c)
 
         self.assertTrue(region is not None)
+        self.assertFalse(region.parent() is None)
 
-    def test_find_main_window(self):
+    def si_region_find_main_window(self):
         def test_callback_a():
             pass
 
@@ -34,7 +41,12 @@ class SIRegionTest(ut.TestCase):
         def test_callback_c():
             pass
 
-    def test_clean_up(self):
+        region = SIRegion(test_callback_a, test_callback_b, test_callback_c)
+
+        self.assertFalse(region.parent() is None)
+
+    @mock.patch.object(SIRegion, 'clean_up')
+    def si_region_clean_up(self, mock_clean_up):
         def test_callback_a():
             pass
 
@@ -44,7 +56,13 @@ class SIRegionTest(ut.TestCase):
         def test_callback_c():
             pass
 
-    def test_get_instance(self):
+        region = SIRegion(test_callback_a, test_callback_b, test_callback_c)
+
+        region.on_destroy(1)
+
+        self.assertTrue(mock_clean_up.called, "cleaned up")
+
+    def si_region_get_instance(self):
         def test_callback_a():
             pass
 
@@ -54,12 +72,36 @@ class SIRegionTest(ut.TestCase):
         def test_callback_c():
             pass
 
-    def test_callbacks(self):
+        region = SIRegion(test_callback_a, test_callback_b, test_callback_c)
+
+        self.assertTrue(region.get_instance() is not None)
+        self.assertTrue(type(region.get_instance()) is int)
+
+    def si_region_callbacks(self):
         def test_callback_a():
-            pass
+            return 0
 
         def test_callback_b():
-            pass
+            return 1
 
         def test_callback_c():
-            pass
+            return 2
+
+        # untestable as of now; unsure whether this is covered by engine enough or not
+
+
+    def functions(self):
+        return [
+            self.si_region_init,
+            self.si_region_find_main_window,
+            self.si_region_clean_up,
+            self.si_region_get_instance,
+            self.si_region_callbacks
+        ]
+
+    def test_functions(self):
+        for f in self.functions():
+            try:
+                f()
+            except Exception as e:
+                self.fail("{0} failed ({1}: {2})".format(f, type(e), e))

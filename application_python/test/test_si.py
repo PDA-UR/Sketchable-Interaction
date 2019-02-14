@@ -5,14 +5,26 @@ import unittest.mock as mock
 from lib.si import SI, SIRegion
 
 
+"""
+Apparently python3 unittest module sorts functions based on name.
+Therefore, the order of definition of functions in test classes does not matter.
+For integration tests the order generally does not matter.
+However, there are small instances where we want a specific order, such as testing behaviour with or without SI context.
+I prefer setting up a monolithic order to having python3 sort the functions by name and executing them afterwards.
+Of course, both are arbitrary sequences, however the monolithic order is more intuitive and faster to make sense of.
+
+I recommend using the pattern below for future test implementations
+"""
+
+
 class SITest(ut.TestCase):
-    def test_si_init(self):
+    def si_init(self):
         reference = SI()
 
         self.assertNotEqual(reference, None)
 
     @mock.patch.object(SI, 'run')
-    def test_run(self, mock_si_run):
+    def si_run(self, mock_si_run):
         reference = SI()
 
         mock_si_run.return_value = True
@@ -22,7 +34,7 @@ class SITest(ut.TestCase):
         self.assertFalse(reference.run())
 
     @mock.patch.object(SI, "__push_region_to_si_core__")
-    def test_si_add_region(self, mock_si_push_region_to_si_core):
+    def si_add_region(self, mock_si_push_region_to_si_core):
         reference = SI()
 
         reference.add_region(None)
@@ -42,3 +54,17 @@ class SITest(ut.TestCase):
         reference.add_region(region)
         self.assertTrue(mock_si_push_region_to_si_core.called, "region object as region")
         mock_si_push_region_to_si_core.assert_called_with(region)
+
+    def functions(self):
+        return [
+            self.si_init,
+            self.si_run,
+            self.si_add_region]
+
+    def test_functions(self):
+        for f in self.functions():
+            try:
+                f()
+            except Exception as e:
+                self.fail("{0} failed ({1}: {2})".format(f, type(e), e))
+

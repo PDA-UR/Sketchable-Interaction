@@ -5,9 +5,7 @@ from lib.si import SIRegion
 class Test(SIRegion):
     def __init__(self):
         super(Test, self).__init__(self.on_region_enter, self.on_region_continuous, self.on_region_leave)
-
-        self.qp = QtGui.QPainter()
-        # self.show()
+        self.show()
 
     def on_region_enter(self, uuid):
         print("Hello Enter Python")
@@ -23,7 +21,9 @@ class Test(SIRegion):
         return 0
 
     def paintEvent(self, ev):
-        self.qp.begin(self)
+        qp = QtGui.QPainter()
 
-        self.qp.end()
+        qp.begin(self)
+
+        qp.end()
 
