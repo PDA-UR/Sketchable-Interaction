@@ -40,10 +40,5 @@ class SITest(ut.TestCase):
         region = SIRegion(test_callback_a, test_callback_b, test_callback_c).get_instance()
 
         reference.add_region(region)
-        self.assertTrue(mock_si_push_region_to_si_core.called, "None object as region")
+        self.assertTrue(mock_si_push_region_to_si_core.called, "region object as region")
         mock_si_push_region_to_si_core.assert_called_with(region)
-
-if __name__ == '__main__':
-    suite = ut.TestLoader().discover("test", pattern=test_filename)
-    ut.TextTestRunner(verbosity=2).run(suite)
- 

@@ -31,25 +31,33 @@ class SI:
 
 class SIRegion(QtWidgets.QWidget):
     def __init__(self, orec, orcc, orlc):
-        super(SIRegion, self).__init__(self.findMainWindow())
+        try:
+            parent = self.findMainWindow()
+            super(SIRegion, self).__init__(parent)
 
-        orec_type = CFUNCTYPE(c_int, c_long)
-        orcc_type = CFUNCTYPE(c_int, c_long)
-        orlc_type = CFUNCTYPE(c_int, c_long)
-        orocc_type = CFUNCTYPE(c_int, c_long)
-        ordc_type = CFUNCTYPE(c_int, c_long)
+            orec_type = CFUNCTYPE(c_int, c_long)
+            orcc_type = CFUNCTYPE(c_int, c_long)
+            orlc_type = CFUNCTYPE(c_int, c_long)
+            orocc_type = CFUNCTYPE(c_int, c_long)
+            ordc_type = CFUNCTYPE(c_int, c_long)
 
-        orecf = orec_type(orec)
-        orccf = orcc_type(orcc)
-        orlcf = orlc_type(orlc)
-        oroccf = orocc_type(self.on_create)
-        ordcf = ordc_type(self.on_destroy)
+            orecf = orec_type(orec)
+            orccf = orcc_type(orcc)
+            orlcf = orlc_type(orlc)
+            oroccf = orocc_type(self.on_create)
+            ordcf = ordc_type(self.on_destroy)
 
-        self.references = [orecf, orccf, orlcf, oroccf, ordcf]
-        self.plugin_instance = SI.lib.si_region_create_instance(orecf, orccf, orlcf, oroccf, ordcf)
+            self.references = [orecf, orccf, orlcf, oroccf, ordcf]
+            self.plugin_instance = SI.lib.si_region_create_instance(orecf, orccf, orlcf, oroccf, ordcf)
+        except AttributeError:
+            raise AttributeError
 
     def findMainWindow(self):
         app = QtWidgets.QApplication.instance()
+
+        if app is None:
+            raise AttributeError
+
         for widget in app.topLevelWidgets():
             if isinstance(widget, QtWidgets.QMainWindow):
                 return widget.findChild(QtWidgets.QWidget, "main_canvas")
