@@ -22,8 +22,6 @@ class SIRegionTest(ut.TestCase):
         def test_callback_c():
             pass
 
-        self.assertRaises(AttributeError, SIRegion, test_callback_a, test_callback_b, test_callback_c)
-
         reference = SI()
 
         region = SIRegion(test_callback_a, test_callback_b, test_callback_c)
