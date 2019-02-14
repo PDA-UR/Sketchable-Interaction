@@ -44,7 +44,7 @@ class SIRegionTest(ut.TestCase):
 
         region = SIRegion(test_callback_a, test_callback_b, test_callback_c)
 
-        self.assertFalse(region.parent() is None)
+        # self.assertFalse(region.parent() is None)
 
         reference.quit()
 
