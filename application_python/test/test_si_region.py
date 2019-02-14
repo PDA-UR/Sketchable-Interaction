@@ -22,11 +22,13 @@ class SIRegionTest(ut.TestCase):
         def test_callback_c():
             pass
 
-        self.reference = SI()
+        reference = SI()
 
         region = SIRegion(test_callback_a, test_callback_b, test_callback_c)
 
         self.assertTrue(region is not None)
+
+        reference.quit()
 
     def si_region_find_main_window(self):
         def test_callback_a():
@@ -38,9 +40,13 @@ class SIRegionTest(ut.TestCase):
         def test_callback_c():
             pass
 
+        reference = SI()
+
         region = SIRegion(test_callback_a, test_callback_b, test_callback_c)
 
         self.assertFalse(region.parent() is None)
+
+        reference.quit()
 
     @mock.patch.object(SIRegion, 'clean_up')
     def si_region_clean_up(self, mock_clean_up):
@@ -53,11 +59,15 @@ class SIRegionTest(ut.TestCase):
         def test_callback_c():
             pass
 
+        reference = SI()
+
         region = SIRegion(test_callback_a, test_callback_b, test_callback_c)
 
         region.on_destroy(1)
 
         self.assertTrue(mock_clean_up.called, "cleaned up")
+
+        reference.quit()
 
     def si_region_get_instance(self):
         def test_callback_a():
@@ -69,10 +79,14 @@ class SIRegionTest(ut.TestCase):
         def test_callback_c():
             pass
 
+        reference = SI()
+
         region = SIRegion(test_callback_a, test_callback_b, test_callback_c)
 
         self.assertTrue(region.get_instance() is not None)
         self.assertTrue(type(region.get_instance()) is int)
+
+        reference.quit()
 
     def si_region_callbacks(self):
         def test_callback_a():

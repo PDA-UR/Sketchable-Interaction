@@ -23,6 +23,8 @@ class SITest(ut.TestCase):
 
         self.assertNotEqual(reference, None)
 
+        reference.quit()
+
     @mock.patch.object(SI, 'run')
     def si_run(self, mock_si_run):
         reference = SI()
@@ -32,6 +34,8 @@ class SITest(ut.TestCase):
 
         mock_si_run.return_value = False
         self.assertFalse(reference.run())
+
+        reference.quit()
 
     @mock.patch.object(SI, "__push_region_to_si_core__")
     def si_add_region(self, mock_si_push_region_to_si_core):
@@ -54,6 +58,8 @@ class SITest(ut.TestCase):
         reference.add_region(region)
         self.assertTrue(mock_si_push_region_to_si_core.called, "region object as region")
         mock_si_push_region_to_si_core.assert_called_with(region)
+
+        reference.quit()
 
     def functions(self):
         return [

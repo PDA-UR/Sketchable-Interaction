@@ -65,7 +65,13 @@ namespace si
 
     void si_delete_instance(void *instance)
     {
+        SI *ref = reinterpret_cast<SI *>(instance);
         instance = nullptr;
+
+        ref->quit();
+
+        delete ref;
+        ref = nullptr;
     }
 
     int si_run(void *instance)

@@ -25,6 +25,9 @@ class SI:
 
         return False
 
+    def quit(self):
+        self.lib.si_delete_instance(self.si_instance)
+
     def __push_region_to_si_core__(self, region):
         self.lib.si_add_region(self.si_instance, region)
 
