@@ -11,6 +11,8 @@ from PyQt5 import QtWidgets
 see test_si.py for details concerning testing architecture
 """
 
+import os
+os.environ['QT_QPA_PLATFORM'] = 'offscreen'
 
 class SIRegionTest(ut.TestCase):
     def setUp(self):

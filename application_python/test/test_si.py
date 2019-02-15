@@ -16,6 +16,9 @@ Of course, both are arbitrary sequences, however the monolithic order is more in
 I recommend using the pattern below for future test implementations
 """
 
+import os
+os.environ['QT_QPA_PLATFORM'] = 'offscreen'
+
 
 class SITest(ut.TestCase):
     def setUp(self):
