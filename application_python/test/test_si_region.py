@@ -11,8 +11,6 @@ from PyQt5 import QtWidgets
 see test_si.py for details concerning testing architecture
 """
 
-import os
-os.environ['QT_QPA_PLATFORM'] = 'offscreen'
 
 class SIRegionTest(ut.TestCase):
     def setUp(self):
@@ -35,6 +33,8 @@ class SIRegionTest(ut.TestCase):
 
         self.assertTrue(region is not None)
 
+        region.on_destroy(1)
+
     def si_region_find_main_window(self):
         def test_callback_a():
             pass
@@ -49,8 +49,9 @@ class SIRegionTest(ut.TestCase):
 
         self.assertFalse(region.parent() is None)
 
-    @mock.patch.object(SIRegion, 'clean_up')
-    def si_region_clean_up(self, mock_clean_up):
+        region.on_destroy(1)
+
+    def si_region_clean_up(self):
         def test_callback_a():
             pass
 
@@ -61,10 +62,12 @@ class SIRegionTest(ut.TestCase):
             pass
 
         region = SIRegion(test_callback_a, test_callback_b, test_callback_c)
+        region.clean_up()
+
+        self.assertTrue(region.references == [])
+        self.assertTrue(region.plugin_instance is None)
 
         region.on_destroy(1)
-
-        self.assertTrue(mock_clean_up.called, "cleaned up")
 
     def si_region_get_instance(self):
         def test_callback_a():
@@ -80,6 +83,8 @@ class SIRegionTest(ut.TestCase):
 
         self.assertTrue(region.get_instance() is not None)
         self.assertTrue(type(region.get_instance()) is int)
+
+        region.on_destroy(1)
 
     def si_region_callbacks(self):
         def test_callback_a():

@@ -52,11 +52,13 @@ class SITest(ut.TestCase):
         def test_callback_c():
             pass
 
-        region = SIRegion(test_callback_a, test_callback_b, test_callback_c).get_instance()
+        region = SIRegion(test_callback_a, test_callback_b, test_callback_c)
 
-        self.reference.add_region(region)
+        self.reference.add_region(region.get_instance())
         self.assertTrue(mock_si_push_region_to_si_core.called, "region object as region")
-        mock_si_push_region_to_si_core.assert_called_with(region)
+        mock_si_push_region_to_si_core.assert_called_with(region.get_instance())
+
+        region.on_destroy(1)
 
     def functions(self):
         return [
