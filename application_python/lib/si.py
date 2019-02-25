@@ -76,8 +76,9 @@ class SIRegion(QtWidgets.QWidget):
         self.plugin_instance = None
 
     def on_destroy(self, uuid):
-        self.clean_up()
         self.close()
+
+        self.clean_up()
 
         print("Hello Destroy Python")
 

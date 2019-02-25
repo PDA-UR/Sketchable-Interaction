@@ -38,7 +38,10 @@ namespace si
        void si_delete_instance(void *instance);
        int si_run(void *instance);
        void si_add_region(void *instance, void *region);
+
        void *si_region_create_instance(region_callback rce, region_callback rcc, region_callback rcl, region_callback rocc, region_callback rdc);
+
+
    }
 }
 

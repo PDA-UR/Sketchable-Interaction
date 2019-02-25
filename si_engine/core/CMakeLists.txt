@@ -21,7 +21,8 @@ SET(SRC
         include/canvas_region.h
         src/mouse_region.cpp
         include/mouse_region.h
-        include/util.h)
+        include/util.h
+        )
 
 SET(SRC_TEST_APPLICATION
         src/main.cpp)
@@ -84,7 +85,6 @@ add_executable(si_engine_test ${SRC_TEST_APPLICATION})
 target_link_libraries(si_engine_test Qt5::Widgets si-core)
 
 # SI GTEST UNIT TEST RUNNER
-
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src
         ${CMAKE_CURRENT_SOURCE_DIR}/include
         ${gmock_SOURCE_DIR}/include

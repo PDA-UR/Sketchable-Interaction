@@ -32,7 +32,6 @@ namespace si
         bool has_active_regions();
 
         const std::unique_ptr<step> &i_step() const;
-
         const std::unique_ptr<canvas> &i_main_canvas_region() const;
 
     private:
@@ -43,16 +42,17 @@ namespace si
 
         std::chrono::high_resolution_clock::time_point d_engine_start;
 
-        static Engine *s_instance;
-
         bool is_mouse_pressed = false;
 
         std::vector<std::unique_ptr<region>> d_active_regions;
+        std::vector<std::unique_ptr<region>> d_region_blueprints;
+
+    protected:
+        static Engine *s_instance;
 
         Engine();
         Engine(const Engine &);
         ~Engine() override;
-
 
         class CGuard
         {
@@ -75,9 +75,6 @@ namespace si
         void mousePressEvent(QMouseEvent *event) override;
         void mouseReleaseEvent(QMouseEvent *event) override;
         void mouseMoveEvent(QMouseEvent *event) override;
-
-    protected:
-
     };
 }
 

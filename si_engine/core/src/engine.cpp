@@ -42,7 +42,7 @@ namespace si
 
         setCentralWidget(main_canvas_region.get());
 
-        d_active_regions.emplace_back(new neutral(main_canvas_region.get()));
+        //d_active_regions.emplace_back(new mouse_region(main_canvas_region.get()));
 
         show();
     }
@@ -58,23 +58,27 @@ namespace si
             while (!p_step->isFinished());
         }
 
+        if(!d_active_regions.empty())
+        {
+            for(auto &r : d_active_regions)
+            {
+                r->close();
+                r->on_destroy(1);
+                r.release();
+            }
+
+            d_active_regions.clear();
+        }
+
         close();
     }
 
     void Engine::add_region_template(region *r)
     {
         if(r)
-        {
-            //r->on_enter(1);
-            //r->on_continuous(1);
-            //r->on_leave(1);
-            //r->on_create(1);
-            r->on_destroy(1);
-        }
+            d_active_regions.push_back(std::unique_ptr<region>(r));
         else
-        {
             throw std::runtime_error("Passed argument r is nullptr");
-        }
     }
 
     bool Engine::is_running()
@@ -106,32 +110,13 @@ namespace si
     /* PRIVATE */
 
     Engine::Engine() : QMainWindow(), p_step(new step(33.0)), main_canvas_region(new canvas(QPolygon(QVector<QPoint>({QPoint(0, 0), QPoint(0, 1080), QPoint(1920, 1080), QPoint(1920, 0)})), this))
-    {
-    }
+    {}
 
     Engine::Engine(const Engine &) : QMainWindow(), p_step(new step(33.0)), main_canvas_region(new canvas(QPolygon(QVector<QPoint>({QPoint(0, 0), QPoint(0, 1080), QPoint(1920, 1080), QPoint(1920, 0)})), this))
-    {
-    }
+    {}
 
-    Engine::~Engine()
-    {
-        if (p_step->isRunning())
-        {
-            p_step->stop();
+    Engine::~Engine() = default;
 
-            while (!p_step->isFinished());
-        }
-
-        d_active_regions.clear();
-
-        qDeleteAll(main_canvas_region->findChildren<QWidget *>());
-
-        main_canvas_region->setParent(nullptr);
-        main_canvas_region->close();
-
-
-        qDeleteAll(findChildren<QWidget *>());
-    }
     /* SLOT */
 
     void Engine::on_step()
@@ -171,7 +156,8 @@ namespace si
 
     void Engine::mouseMoveEvent(QMouseEvent *event)
     {
-        d_active_regions[0]->update_shape_coords(event->x(), event->y());
+        // mouse move stuff
+        //d_active_regions[0]->update_shape_coords(event->x(), event->y());
     }
 
     void Engine::mouseReleaseEvent(QMouseEvent *event)
