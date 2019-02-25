@@ -32,6 +32,12 @@ namespace si
     void Engine::start(bool test)
     {
         d_is_running = true;
+
+        // evaluate whether a main canvas is part of the d_active_regions
+        // if so move it from the list to the main_canvas_region variable and delete it from the list
+        // if not load default main canvas via its in engine class
+        // evaluate main canvas settings
+
         setMouseTracking(true);
         setWindowState(Qt::WindowFullScreen);
 
@@ -41,9 +47,7 @@ namespace si
         main_canvas_region->setObjectName("main_canvas");
 
         setCentralWidget(main_canvas_region.get());
-
-        //d_active_regions.emplace_back(new mouse_region(main_canvas_region.get()));
-
+        
         show();
     }
 
@@ -68,6 +72,18 @@ namespace si
             }
 
             d_active_regions.clear();
+        }
+
+        if(!d_region_blueprints.empty())
+        {
+            for(auto &r : d_region_blueprints)
+            {
+                r->close();
+                r->on_destroy(1);
+                r.release();
+            }
+
+            d_region_blueprints.clear();
         }
 
         close();
@@ -125,15 +141,15 @@ namespace si
         {
             if(main_canvas_region->shape_aabb().intersects(r->shape_aabb()))
             {
-                main_canvas_region->on_enter((long) r->winId());
-                //r->on_enter((long) r->winId());
-                main_canvas_region->on_continuous((long) r->winId());
-                //r->on_continuous((long) r->winId());
+                //main_canvas_region->on_enter((long) r->winId());
+                r->on_enter((long) r->winId());
+                //main_canvas_region->on_continuous((long) r->winId());
+                r->on_continuous((long) r->winId());
             }
             else
             {
                 main_canvas_region->on_leave((long) r->winId());
-                //r->on_leave((long) r->winId());
+                r->on_leave((long) r->winId());
             }
         }
 
@@ -156,8 +172,8 @@ namespace si
 
     void Engine::mouseMoveEvent(QMouseEvent *event)
     {
-        // mouse move stuff
-        //d_active_regions[0]->update_shape_coords(event->x(), event->y());
+        // mouse move
+        d_active_regions[0]->update_shape_coords(event->x(), event->y());
     }
 
     void Engine::mouseReleaseEvent(QMouseEvent *event)

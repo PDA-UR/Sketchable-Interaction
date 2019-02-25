@@ -51,7 +51,30 @@ namespace si
         return !d_shape.isEmpty();
     }
 
-    void region::update_shape_coords(int x, int y) {}
+    void region::update_shape_coords(int x, int y)
+    {
+        // for each point in shape move by x and y
+        // probably needs capability check
+
+        // check if is a main interaction source
+        // else check if capable to be moved (via interaction, link, etc.)
+
+        if (d_is_main_interaction_source)
+        {
+            QPolygon qp;
+
+            for (const QPoint &p : d_shape)
+            {
+                qp << QPoint(p.x() + x - last_x, p.y() + y - last_y);
+            }
+
+            set_shape(qp);
+        }
+        // else check capability
+
+        last_x = x;
+        last_y = y;
+    }
 
     void region::set_enter_callback(const std::function<int(long)> &callback)
     {
@@ -217,7 +240,7 @@ namespace si
 
     void region::set_as_main_interaction_source()
     {
-        // TODO
+        d_is_main_interaction_source = true;
     }
 
     void region::load_default_interaction_source()

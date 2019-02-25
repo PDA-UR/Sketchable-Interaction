@@ -1,6 +1,7 @@
 from ctypes import *
 from PyQt5 import QtWidgets, QtCore
 import sys
+import math
 
 
 class SI:
@@ -92,6 +93,55 @@ class SIRegion(QtWidgets.QWidget):
     def get_instance(self):
         return self.plugin_instance
 
+
+class MainCanvasRegion(SIRegion):
+    def __init__(self, orec, orcc, orlc):
+        super(MainCanvasRegion, self).__init__(orec, orcc, orlc)
+
+
+class MainInteractionSourceRegion(SIRegion):
+    def __init__(self):
+        super(MainInteractionSourceRegion, self).__init__(self.on_region_enter, self.on_region_continuous, self.on_region_leave)
+
+        x_values, y_values, length = self.circle(0, 0, 10, 30)
+
+        SI.lib.si_region_set_as_main_interaction_source(None, self.plugin_instance, x_values, y_values, length)
+
+    def circle(self, cx, cy, radius, num_segments):
+        x_values = []
+        y_values = []
+
+        for i in range(num_segments):
+            theta = 2.0 * math.pi * i / num_segments
+
+            x = radius * math.cos(theta)
+            y = radius * math.sin(theta)
+
+            x_values.append(cx + x)
+            y_values.append(cy + y)
+
+        length = len(x_values)
+        x_arr = (c_int * length)()
+        y_arr = (c_int * length)()
+
+        for i in range(length):
+            x_arr[i] = int(x_values[i])
+            y_arr[i] = int(y_values[i])
+
+        return x_arr, y_arr, length
+
+    def on_region_enter(self, uuid):
+        print("Hello Enter Mouse Python")
+        return 0
+
+    def on_region_continuous(self, uuid):
+        print("Hello Conti Mouse Python")
+        return 0
+
+    def on_region_leave(self, uuid):
+        print("Hello Leave Mouse Python")
+
+        return 0
 
 if __name__ == '__main__':
     pass

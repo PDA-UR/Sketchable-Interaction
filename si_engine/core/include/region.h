@@ -34,7 +34,7 @@ namespace si
         const QRect &shape_aabb() const;
         void set_shape(const QPolygon &s);
         bool has_shape();
-        virtual void update_shape_coords(int x, int y);
+        void update_shape_coords(int x, int y);
         /* END OF SHAPE HANDLING */
 
         /* EFFECT FUNCTIONS HANDLING */
@@ -95,6 +95,8 @@ namespace si
         /* shape */
         QPolygon d_shape;
         QRect d_shape_aabb;
+
+        int last_x = 0, last_y = 0;
 
         /* misc */
         bool d_is_standard_lib = false;

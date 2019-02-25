@@ -30,7 +30,7 @@ namespace si
         int on_create_for_callback(long uuid);
         int on_destroy_for_callback(long uuid);
 
-        void update_shape_coords(int x, int y) override;
+        //void update_shape_coords(int x, int y) override;
 
     private:
         const int C_DEFAULT_RADIUS = 10;

@@ -83,11 +83,6 @@ namespace si
         return 0;
     }
 
-    void mouse_region::update_shape_coords(int x, int y)
-    {
-        set_shape(circle(x, y, C_DEFAULT_RADIUS, C_DEFAULT_NUM_SEGMENTS));
-    }
-
     // OVERRIDE
 
     void mouse_region::paintEvent(QPaintEvent *event)
