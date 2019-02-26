@@ -10,22 +10,22 @@
 
 namespace si
 {
-    neutral::neutral(const QPolygon &s, QWidget *parent) : region(s, parent)
+    mouse_region::mouse_region(const QPolygon &s, QWidget *parent) : region(s, parent)
     {
 
     }
 
-    neutral::neutral(QWidget *parent) : region(parent)
+    mouse_region::mouse_region(QWidget *parent) : region(parent)
     {
         setObjectName("Mouse Region");
         setVisible(false);
         d_is_standard_lib = true;
     }
 
-    neutral::neutral(const neutral &copy, QWidget *parent) : region(parent)
+    mouse_region::mouse_region(const mouse_region &copy, QWidget *parent) : region(parent)
     {}
 
-    int neutral::on_enter_for_callback(long uuid)
+    int mouse_region::on_enter_for_callback(long uuid)
     {
         if (!d_is_standard_lib)
         {
@@ -39,7 +39,7 @@ namespace si
         return 0;
     }
 
-    int neutral::on_continuous_for_callback(long uuid)
+    int mouse_region::on_continuous_for_callback(long uuid)
     {
         if (!d_is_standard_lib)
         {
@@ -53,7 +53,7 @@ namespace si
         return 0;
     }
 
-    int neutral::on_leave_for_callback(long uuid)
+    int mouse_region::on_leave_for_callback(long uuid)
     {
         if (!d_is_standard_lib)
         {
@@ -67,7 +67,7 @@ namespace si
         return 0;
     }
 
-    int neutral::on_create_for_callback(long uuid)
+    int mouse_region::on_create_for_callback(long uuid)
     {
 
         debug::print("Hello From Std Lib Create!");
@@ -75,7 +75,7 @@ namespace si
         return 0;
     }
 
-    int neutral::on_destroy_for_callback(long uuid)
+    int mouse_region::on_destroy_for_callback(long uuid)
     {
 
         debug::print("Hello From Std Lib Destroy!");
@@ -83,14 +83,9 @@ namespace si
         return 0;
     }
 
-    void neutral::update_shape_coords(int x, int y)
-    {
-        set_shape(circle(x, y, C_DEFAULT_RADIUS, C_DEFAULT_NUM_SEGMENTS));
-    }
-
     // OVERRIDE
 
-    void neutral::paintEvent(QPaintEvent *event)
+    void mouse_region::paintEvent(QPaintEvent *event)
     {
         QPainter q_painter;
         q_painter.begin(this);
@@ -102,7 +97,7 @@ namespace si
 
     // PRIVATE
 
-    const QPolygon neutral::circle(int cx, int cy, int radius, int num_segments)
+    const QPolygon mouse_region::circle(int cx, int cy, int radius, int num_segments)
     {
         QPolygon p;
 

@@ -1,8 +1,8 @@
-from lib.si import SI
-from plugins import Test
+from lib.si import SI, MainInteractionSourceRegion
 
 if __name__ == '__main__':
     si = SI()
-    si.add_region(Test.Test().get_instance())
+
+    si.add_region(MainInteractionSourceRegion().get_instance())
+
     si.run()
-    si.quit()

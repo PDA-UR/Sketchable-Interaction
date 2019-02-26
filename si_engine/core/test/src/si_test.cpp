@@ -145,10 +145,9 @@ TEST(SIClassMock, run)
 {
     testing::NiceMock<MockSI> msi;
 
-    msi.run();
-
     EXPECT_CALL(msi, run()).WillRepeatedly(testing::Return(0));
 
+    msi.run();
     msi.quit();
 }
 
@@ -157,9 +156,9 @@ TEST(SIClassMock, quit)
     testing::NiceMock<MockSI> msi;
     msi.run();
 
-    msi.quit();
-
     EXPECT_CALL(msi, quit()).WillRepeatedly(testing::Return(0));
+
+    msi.quit();
 }
 
 TEST(SIClassMock, add_region)

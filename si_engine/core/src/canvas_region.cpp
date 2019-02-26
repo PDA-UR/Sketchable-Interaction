@@ -47,35 +47,35 @@ namespace si
 
     int si::canvas::on_enter_for_callback(long uuid)
     {
-        debug::print("Hello There Enter", uuid);
+        //debug::print("Hello There Enter", uuid);
 
         return 0;
     }
 
     int si::canvas::on_continuous_for_callback(long uuid)
     {
-        debug::print("Hello There Continuous", uuid);
+        //debug::print("Hello There Continuous", uuid);
 
         return 0;
     }
 
     int si::canvas::on_leave_for_callback(long uuid)
     {
-        debug::print("Hello There Leave", uuid);
+        //debug::print("Hello There Leave", uuid);
 
         return 0;
     }
 
     int si::canvas::on_create_for_callback(long uuid)
     {
-        debug::print("Hello There Create", uuid);
+        //debug::print("Hello There Create", uuid);
 
         return 0;
     }
 
     int si::canvas::on_destroy_for_callback(long uuid)
     {
-        debug::print("Hello There Destroy");
+        //debug::print("Hello There Destroy");
 
         return 0;
     }

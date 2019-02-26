@@ -51,6 +51,31 @@ namespace si
         return !d_shape.isEmpty();
     }
 
+    void region::update_shape_coords(int x, int y)
+    {
+        // for each point in shape move by x and y
+        // probably needs capability check
+
+        // check if is a main interaction source
+        // else check if capable to be moved (via interaction, link, etc.)
+
+        if (d_is_main_interaction_source)
+        {
+            QPolygon qp;
+
+            for (const QPoint &p : d_shape)
+            {
+                qp << QPoint(p.x() + x - last_x, p.y() + y - last_y);
+            }
+
+            set_shape(qp);
+        }
+        // else check capability
+
+        last_x = x;
+        last_y = y;
+    }
+
     void region::set_enter_callback(const std::function<int(long)> &callback)
     {
         on_region_enter = callback;
@@ -100,8 +125,6 @@ namespace si
     {
         on_region_destroy = rc;
     }
-
-    void region::update_shape_coords(int x, int y) {}
 
     int region::on_enter(long uuid)
     {
@@ -166,6 +189,63 @@ namespace si
         }
 
         return 0;
+    }
+
+    const QColor &region::region_color() const
+    {
+        return d_region_color;
+    }
+
+    void region::set_region_color(int r, int g, int b, int a)
+    {
+        d_region_color = QColor(r, g, b, a);
+    }
+
+    /*
+    const region &region::icon_region() const
+    {
+        return ;
+    }
+    */
+
+    void region::set_icon_region(const std::string &icon_path)
+    {
+
+    }
+
+    const bool region::is_blueprint() const
+    {
+        return d_is_blueprint;
+    }
+
+    void region::set_blueprint(bool flag)
+    {
+        d_is_blueprint = flag;
+    }
+
+    void region::set_as_main_canvas()
+    {
+        d_is_main_canvas = true;
+    }
+
+    void region::load_default_canvas()
+    {
+        // TODO
+    }
+
+    void region::set_fullscreen(bool fullscreen)
+    {
+        // TODO
+    }
+
+    void region::set_as_main_interaction_source()
+    {
+        d_is_main_interaction_source = true;
+    }
+
+    void region::load_default_interaction_source()
+    {
+        // TODO
     }
 }
 

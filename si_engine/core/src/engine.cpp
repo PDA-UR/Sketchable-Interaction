@@ -32,6 +32,12 @@ namespace si
     void Engine::start(bool test)
     {
         d_is_running = true;
+
+        // evaluate whether a main canvas is part of the d_active_regions
+        // if so move it from the list to the main_canvas_region variable and delete it from the list
+        // if not load default main canvas via its in engine class
+        // evaluate main canvas settings
+
         setMouseTracking(true);
         setWindowState(Qt::WindowFullScreen);
 
@@ -41,9 +47,7 @@ namespace si
         main_canvas_region->setObjectName("main_canvas");
 
         setCentralWidget(main_canvas_region.get());
-
-        d_active_regions.emplace_back(new neutral(main_canvas_region.get()));
-
+        
         show();
     }
 
@@ -58,23 +62,39 @@ namespace si
             while (!p_step->isFinished());
         }
 
+        if(!d_active_regions.empty())
+        {
+            for(auto &r : d_active_regions)
+            {
+                r->close();
+                r->on_destroy(1);
+                r.release();
+            }
+
+            d_active_regions.clear();
+        }
+
+        if(!d_region_blueprints.empty())
+        {
+            for(auto &r : d_region_blueprints)
+            {
+                r->close();
+                r->on_destroy(1);
+                r.release();
+            }
+
+            d_region_blueprints.clear();
+        }
+
         close();
     }
 
     void Engine::add_region_template(region *r)
     {
         if(r)
-        {
-            //r->on_enter(1);
-            //r->on_continuous(1);
-            //r->on_leave(1);
-            //r->on_create(1);
-            r->on_destroy(1);
-        }
+            d_active_regions.push_back(std::unique_ptr<region>(r));
         else
-        {
             throw std::runtime_error("Passed argument r is nullptr");
-        }
     }
 
     bool Engine::is_running()
@@ -106,32 +126,13 @@ namespace si
     /* PRIVATE */
 
     Engine::Engine() : QMainWindow(), p_step(new step(33.0)), main_canvas_region(new canvas(QPolygon(QVector<QPoint>({QPoint(0, 0), QPoint(0, 1080), QPoint(1920, 1080), QPoint(1920, 0)})), this))
-    {
-    }
+    {}
 
     Engine::Engine(const Engine &) : QMainWindow(), p_step(new step(33.0)), main_canvas_region(new canvas(QPolygon(QVector<QPoint>({QPoint(0, 0), QPoint(0, 1080), QPoint(1920, 1080), QPoint(1920, 0)})), this))
-    {
-    }
+    {}
 
-    Engine::~Engine()
-    {
-        if (p_step->isRunning())
-        {
-            p_step->stop();
+    Engine::~Engine() = default;
 
-            while (!p_step->isFinished());
-        }
-
-        d_active_regions.clear();
-
-        qDeleteAll(main_canvas_region->findChildren<QWidget *>());
-
-        main_canvas_region->setParent(nullptr);
-        main_canvas_region->close();
-
-
-        qDeleteAll(findChildren<QWidget *>());
-    }
     /* SLOT */
 
     void Engine::on_step()
@@ -140,15 +141,15 @@ namespace si
         {
             if(main_canvas_region->shape_aabb().intersects(r->shape_aabb()))
             {
-                main_canvas_region->on_enter((long) r->winId());
-                //r->on_enter((long) r->winId());
-                main_canvas_region->on_continuous((long) r->winId());
-                //r->on_continuous((long) r->winId());
+                //main_canvas_region->on_enter((long) r->winId());
+                r->on_enter((long) r->winId());
+                //main_canvas_region->on_continuous((long) r->winId());
+                r->on_continuous((long) r->winId());
             }
             else
             {
                 main_canvas_region->on_leave((long) r->winId());
-                //r->on_leave((long) r->winId());
+                r->on_leave((long) r->winId());
             }
         }
 
@@ -171,6 +172,7 @@ namespace si
 
     void Engine::mouseMoveEvent(QMouseEvent *event)
     {
+        // mouse move
         d_active_regions[0]->update_shape_coords(event->x(), event->y());
     }
 

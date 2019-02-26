@@ -43,7 +43,7 @@ TEST_F(SIEngineTest, singleton)
     si = nullptr;
 }
 
-TEST_F(SIEngineTest, is_running)
+TEST_F(SIEngineTest, run_and_stop)
 {
     si::Engine *e = si::Engine::__instance__();
     e->clear_active_regions();
@@ -62,6 +62,7 @@ TEST_F(SIEngineTest, is_running)
     si = nullptr;
 }
 
+/*
 TEST_F(SIEngineTest, active_regions)
 {
     si::Engine *e = si::Engine::__instance__();
@@ -79,6 +80,7 @@ TEST_F(SIEngineTest, active_regions)
     delete si;
     si = nullptr;
 }
+*/
 
 TEST_F(SIEngineTest, main_canvas_reference)
 {

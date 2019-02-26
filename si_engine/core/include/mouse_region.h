@@ -9,20 +9,20 @@
 
 namespace si
 {
-    class neutral : public region
+    class mouse_region : public region
     {Q_OBJECT
 
     protected:
         void paintEvent(QPaintEvent *event) override;
 
     public:
-        neutral(const QPolygon &s, QWidget *parent = nullptr);
-        neutral(QWidget *parent = nullptr);
+        mouse_region(const QPolygon &s, QWidget *parent = nullptr);
+        mouse_region(QWidget *parent = nullptr);
 
         //copy ctor
-        neutral(const neutral &copy, QWidget *parent= nullptr);
+        mouse_region(const mouse_region &copy, QWidget *parent= nullptr);
 
-        ~neutral() = default;
+        ~mouse_region() = default;
 
         int on_enter_for_callback(long uuid);
         int on_continuous_for_callback(long uuid);
@@ -30,7 +30,7 @@ namespace si
         int on_create_for_callback(long uuid);
         int on_destroy_for_callback(long uuid);
 
-        void update_shape_coords(int x, int y) override;
+        //void update_shape_coords(int x, int y) override;
 
     private:
         const int C_DEFAULT_RADIUS = 10;
