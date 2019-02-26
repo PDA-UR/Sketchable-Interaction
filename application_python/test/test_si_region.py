@@ -1,11 +1,7 @@
 
 import unittest as ut
-import unittest.mock as mock
 
-from lib.si import SI, SIRegion
-
-from PyQt5 import QtWidgets
-
+from si.si import SI, SIRegion
 
 """
 see test_si.py for details concerning testing architecture

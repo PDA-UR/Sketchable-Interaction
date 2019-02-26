@@ -88,9 +88,8 @@ namespace si
     void mouse_region::paintEvent(QPaintEvent *event)
     {
         QPainter q_painter;
+
         q_painter.begin(this);
-
-
 
         q_painter.end();
     }

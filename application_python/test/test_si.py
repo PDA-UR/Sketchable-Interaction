@@ -2,7 +2,7 @@
 import unittest as ut
 import unittest.mock as mock
 
-from lib.si import SI, SIRegion
+from si.si import SI, SIRegion
 
 
 """

@@ -1,7 +1,8 @@
 from ctypes import *
-from PyQt5 import QtWidgets, QtCore
+from PyQt5 import QtWidgets, QtCore, QtGui
 import sys
 import math
+from enum import Enum
 
 
 class SI:
@@ -99,26 +100,49 @@ class MainCanvasRegion(SIRegion):
         super(MainCanvasRegion, self).__init__(orec, orcc, orlc)
 
 
-class MainInteractionSourceRegion(SIRegion):
-    def __init__(self):
-        super(MainInteractionSourceRegion, self).__init__(self.on_region_enter, self.on_region_continuous, self.on_region_leave)
+class SIInteractionSourceRegionShapeTypes(Enum):
+    CIRCLE = 0
+    SQUARE = 1
+    CUSTOM = 9
 
-        x_values, y_values, length = self.circle(0, 0, 10, 30)
+
+class SIInteractionSourceType(Enum):
+    MOUSE = 0
+    TOUCH = 1
+    TANGIBLE = 2
+    CUSTOM = 9
+
+
+class MainInteractionSourceRegion(SIRegion):
+    def __init__(self, oce, occ, ocl, source_type, shape_type=SIInteractionSourceRegionShapeTypes.CIRCLE.value, *args, **kwargs):
+        super(MainInteractionSourceRegion, self).__init__(oce, occ, ocl)
+
+        if shape_type is SIInteractionSourceRegionShapeTypes.CIRCLE.value:
+            if len(args) == 0:
+                x_values, y_values, length = self.circle((0, 0, 10), num_segments=30)
+            else:
+                x_values, y_values, length = self.circle(args, num_segments=30)
+        elif shape_type is SIInteractionSourceRegionShapeTypes.SQUARE.value:
+            if len(args) == 0:
+                x_values, y_values, length = self.square((0, 0, 10, 10))
+            else:
+                x_values, y_values, length = self.square(args)
+        else:
+            x_values, y_values, length = kwargs['function'](args)
 
         SI.lib.si_region_set_as_main_interaction_source(None, self.plugin_instance, x_values, y_values, length)
 
-    def circle(self, cx, cy, radius, num_segments):
-        x_values = []
-        y_values = []
+    # args[0] is cx, args[1] is cy, args[2] is width, args[3] is height
+    def square(self, args):
+        cx = args[0]
+        cy = args[1]
+        width = args[2]
+        height = args[3]
 
-        for i in range(num_segments):
-            theta = 2.0 * math.pi * i / num_segments
+        x_values = [cx, cx, cx + width, cx + width]
+        y_values = [cy, cy + height, cy + height, cy]
 
-            x = radius * math.cos(theta)
-            y = radius * math.sin(theta)
-
-            x_values.append(cx + x)
-            y_values.append(cy + y)
+        length = len(x_values)
 
         length = len(x_values)
         x_arr = (c_int * length)()
@@ -130,18 +154,27 @@ class MainInteractionSourceRegion(SIRegion):
 
         return x_arr, y_arr, length
 
-    def on_region_enter(self, uuid):
-        print("Hello Enter Mouse Python")
-        return 0
+    # args[0] is cx, args[1] is cy, args[2] is radius
+    def circle(self, args, num_segments):
+        x_values = []
+        y_values = []
 
-    def on_region_continuous(self, uuid):
-        print("Hello Conti Mouse Python")
-        return 0
+        for i in range(num_segments):
+            theta = 2.0 * math.pi * i / num_segments
 
-    def on_region_leave(self, uuid):
-        print("Hello Leave Mouse Python")
+            x_values.append(args[0] + args[2] * math.cos(theta))
+            y_values.append(args[1] + args[2] * math.sin(theta))
 
-        return 0
+        length = len(x_values)
+        x_arr = (c_int * length)()
+        y_arr = (c_int * length)()
+
+        for i in range(length):
+            x_arr[i] = int(x_values[i])
+            y_arr[i] = int(y_values[i])
+
+        return x_arr, y_arr, length
+
 
 if __name__ == '__main__':
     pass
