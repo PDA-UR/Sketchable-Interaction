@@ -104,3 +104,5 @@ si_engine/core/cmake-build-debug/install_manifest\.txt
 SI-Linking-Prototype/\.idea/
 
 SI-Linking-Prototype/venv/
+
+SI-Linking-Prototype/__pycache__/
