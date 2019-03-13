@@ -94,3 +94,13 @@ application_python/lib/__pycache__/
 application_python/bin/libsi-core\.so
 
 application_python/test/__pycache__/
+
+application_cpp/\.idea/
+
+application_cpp/cmake-build-debug/
+
+si_engine/core/cmake-build-debug/install_manifest\.txt
+
+SI-Linking-Prototype/\.idea/
+
+SI-Linking-Prototype/venv/
