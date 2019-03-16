@@ -12,5 +12,4 @@ if __name__ == '__main__':
 
     canvas = Canvas(1920, 1080)
 
-
     sys.exit(app.exec_())

@@ -1,0 +1,8 @@
+# relationships between regions
+
+A -> C  # Assign A as child to C; is this necessary?
+B -> C  # Assign B as child to C
+
+(A <-> B) => position  # link A pos to B pos
+
+# (A <-> B) => position, scale  # link A pos to B scale

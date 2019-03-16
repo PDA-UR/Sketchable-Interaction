@@ -3,6 +3,9 @@ from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 
 from MoveableRegion import MoveableRegion
+from ScalableRegion import ScalableRegion
+from Region import Region
+
 from Capabiliy import Capability
 from Math import Math
 
@@ -42,22 +45,25 @@ class Canvas(QMainWindow):
         MoveableRegion(450, 0, self)
         MoveableRegion(900, 0, self)
 
+        ScalableRegion(500, 500, self)
+        ScalableRegion(800, 500, self)
+
         self.heart_beat = HeartBeat(33.0)
         self.heart_beat.heart_beat.connect(self.update_all)
         self.heart_beat.start()
 
-        w1, w2, w3 = self.findChildren(MoveableRegion)
+        w1, w2, w3, w4, w5 = self.findChildren(Region)
 
-        self.make_link(w1, w2, Capability.POSITION)
-        self.make_link(w2, w1, Capability.POSITION)
-        self.make_link(w2, w3, Capability.POSITION)
-        self.make_link(w3, w2, Capability.POSITION)
-        self.make_link(w3, w2, Capability.POSITION)
+        self.make_link(w1, w2, Capability.POSITION, Capability.POSITION)
+        self.make_link(w2, w3, Capability.POSITION, Capability.POSITION)
+        self.make_link(w3, w2, Capability.POSITION, Capability.POSITION)
+        self.make_link(w1, w4, Capability.POSITION, Capability.SCALE)
+        self.make_link(w4, w5, Capability.SCALE, Capability.SCALE)
+        self.make_link(w5, w4, Capability.SCALE, Capability.SCALE)
 
         self.show()
 
     def update_all(self):
-
         self.update()
         pass
 
@@ -68,27 +74,20 @@ class Canvas(QMainWindow):
         if ev.key() == Qt.Key_Escape:
             self.close()
         elif ev.key() == Qt.Key_A:
-            # spawn new widget at 0, 0 (or space where it has room)
             pass
         elif ev.key() == Qt.Key_Return:
-            w1, w2, w3 = self.findChildren(MoveableRegion)
-
-            linked, how = w1.is_linked_to(w2, Capability.POSITION)
-
-            if linked:
-                self.undo_link(w1, w2, Capability.POSITION)
-            else:
-                self.make_link(w2, w1, Capability.POSITION)
+           pass
         elif ev.key() == Qt.Key_Space:
             self.toggle_linkage_display()
 
-    def make_link(self, w1, w2, attribute):
-        if attribute == Capability.POSITION:
-            w1.set_is_linked_to(w2, attribute)
+    def make_link(self, w1, w2, attribute_w1, attribute_w2):
+        if w1.has_capability(attribute_w1) and w2.has_capability(attribute_w2):
+            w1.set_is_linked_to(w2, attribute_w1, attribute_w2)
 
-            w1.posi.connect(w2.position)
+            eval('w1.' + w1.get_capability_signal(attribute_w1) + '.connect(w2.' + w2.get_capability_function(attribute_w2) + ')')
 
     def undo_link(self, w1, w2, attribute):
+        """
         linked, how = w1.is_linked_to(w2, attribute)
 
         if linked:
@@ -97,8 +96,17 @@ class Canvas(QMainWindow):
             else:
                 w2.posi.disconnect(w1.position)
 
+        linked, how = w2.is_linked_to(w1, attribute)
+
+        if linked:
+            if how == 0:
+                w2.posi.disconnect(w1.position)
+            else:
+                w1.posi.disconnect(w2.position)
+
         w1.delete_link_to(w2, attribute)
         w2.delete_link_to(w1, attribute)
+        """
 
     def paintEvent(self, ev):
         qp = QPainter()
@@ -113,55 +121,132 @@ class Canvas(QMainWindow):
 
     def draw_links(self, qp):
         if self.is_linkage_shown:
-            qp.setPen(QPen(QColor(0, 255, 0), 5))
-
-            for w1 in self.findChildren(MoveableRegion):
-                for w2 in self.findChildren(MoveableRegion):
+            for w1 in self.findChildren(Region):
+                for w2 in self.findChildren(Region):
                     if w1 == w2:
                         continue
 
-                    is_linked, priority = w1.is_linked_to(w2, Capability.POSITION)  # potential any attribute necessary which then checks for all?
+                    self.visualize_position_position_link(qp, w1, w2)
+                    self.visualize_position_scale_link(qp, w1, w2)
+                    self.visualize_scale_scale_link(qp, w1, w2)
 
-                    if is_linked:
-                        if priority == 0:
-                            radius = 8
+    def visualize_position_position_link(self, qp, w1, w2):
+        is_linked, priority = w1.is_linked_to(w2, Capability.POSITION, Capability.POSITION)  # potential any attribute necessary which then checks for all?
 
-                            distance_min = 9001
-                            p = QPoint()
-                            q = QPoint()
+        if is_linked:
+            qp.setPen(QPen(QColor(0, 255, 0), 5))
 
-                            for r in w1.link_visualization_handles:
-                                for s in w2.link_visualization_handles:
-                                    t = s - r
+            if priority == 0:
+                distance_min = 9001
+                p = QPoint()
+                q = QPoint()
 
-                                    distance = Math.vector_norm([t.x(), t.y()])
+                for r in w1.link_visualization_handles:
+                    for s in w2.link_visualization_handles:
+                        t = s - r
 
-                                    if distance < distance_min:
-                                        distance_min = distance
-                                        p = r
-                                        q = s
+                        distance = Math.vector_norm([t.x(), t.y()])
 
-                            qp.drawLine(p, q)
+                        if distance < distance_min:
+                            distance_min = distance
+                            p = r
+                            q = s
 
-                            v = q - p
+                qp.drawLine(p, q)
 
-                            nv = Math.normalize_vector([v.x(), v.y()])
-                            r = QPointF(nv[0], nv[1])
+                v = q - p
 
-                            nr = QPointF(-r.y(), r.x())
+                nv = Math.normalize_vector([v.x(), v.y()])
+                r = QPointF(nv[0], nv[1])
 
-                            qp.setPen(QPen(QColor(0, 255, 0), 5))
+                nr = QPointF(-r.y(), r.x())
 
-                            arrow_p = q - r * 35 + nr * 20
-                            arrow_q = q - r * 35 - nr * 20
+                qp.setPen(QPen(QColor(0, 255, 0), 5))
 
-                            qpp = QPainterPath()
+                arrow_p = q - r * 35 + nr * 20
+                arrow_q = q - r * 35 - nr * 20
 
-                            qpf = QPolygonF()
-                            qpf.append(arrow_p)
-                            qpf.append(q)
-                            qpf.append(arrow_q)
-                            qpp.addPolygon(qpf)
+                qpp = QPainterPath()
 
-                            qp.fillPath(qpp, QColor(0, 255, 0))
+                qpf = QPolygonF()
+                qpf.append(arrow_p)
+                qpf.append(q)
+                qpf.append(arrow_q)
+                qpp.addPolygon(qpf)
 
+                qp.fillPath(qpp, QColor(0, 255, 0))
+
+    def visualize_position_scale_link(self, qp, w1, w2):
+        is_linked, priority = w1.is_linked_to(w2, Capability.POSITION, Capability.SCALE)
+
+        if is_linked:
+            qp.setPen(QPen(QColor(255, 0, 0), 5))
+
+            if priority == 0:
+                distance_min = 9001
+                p = QPoint()
+                q = QPoint()
+
+                for r in w1.link_visualization_handles:
+                    for s in w2.link_visualization_handles:
+                        t = s - r
+
+                        distance = Math.vector_norm([t.x(), t.y()])
+
+                        if distance < distance_min:
+                            distance_min = distance
+                            p = r
+                            q = s
+
+                qp.drawLine(p, q)
+
+                self.visualize_arrow(qp, p, q)
+
+    def visualize_scale_scale_link(self, qp, w1, w2):
+        is_linked, priority = w1.is_linked_to(w2, Capability.SCALE, Capability.SCALE)
+
+        if is_linked:
+            qp.setPen(QPen(QColor(255, 0, 0), 5))
+
+            if priority == 0:
+                distance_min = 9001
+                p = QPoint()
+                q = QPoint()
+
+                for r in w1.link_visualization_handles:
+                    for s in w2.link_visualization_handles:
+                        t = s - r
+
+                        distance = Math.vector_norm([t.x(), t.y()])
+
+                        if distance < distance_min:
+                            distance_min = distance
+                            p = r
+                            q = s
+
+                qp.drawLine(p, q)
+
+                self.visualize_arrow(qp, p, q)
+
+    def visualize_arrow(self, qp, p, q):
+        v = q - p
+
+        nv = Math.normalize_vector([v.x(), v.y()])
+        r = QPointF(nv[0], nv[1])
+
+        nr = QPointF(-r.y(), r.x())
+
+        qp.setPen(QPen(QColor(0, 255, 0), 5))
+
+        arrow_p = q - r * 35 + nr * 20
+        arrow_q = q - r * 35 - nr * 20
+
+        qpp = QPainterPath()
+
+        qpf = QPolygonF()
+        qpf.append(arrow_p)
+        qpf.append(q)
+        qpf.append(arrow_q)
+        qpp.addPolygon(qpf)
+
+        qp.fillPath(qpp, QColor(255, 0, 0))
