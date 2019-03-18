@@ -1,21 +1,22 @@
 # Linking of Regions 
 
 ## Description
-Linking of regions occurs when the properties of two or more interactive regions are put into a user-defined relationship in order to model more complex functionality with SI.
+Linking of regions occurs when the properties of two or more interactive regions are put into a user-defined relationship in order to model more complex functionality with SI within a SI context.
 Linking of regions is one of the two fundamental concepts of SI with the other being the collision of regions.
 
 ## Purpose
 Linking of regions allows users to model more complex workflows within their workspace.
-Put into the context of a common object-oriented programming language like Java or C++, the linking mechanism is yet another metaphor for a class method or member function as it is the case with collisions of regions.
-However, the linking mechanism can also be a *stack* of functions or *graph*  of functions like a private class member function calling others due to decomposition patterns.
-Therefore, it takes a collision of regions to trigger a certain action and the linking relationship of regions determines the reach,how many regions are affected by this action trigger, and the impact, to what extend are effects applied, region properties mutated, etc..
+Put into the context of a common programming language like Java or C++, the linking mechanism is a metaphor for a method or function as it is the case with collisions of regions.
+However, the linking mechanism can also be a *stack* of functions or *graph*  of functions like a function calling other function due to the application of decomposition.
+Therefore, it takes a collision of regions to trigger a certain action.
+The linking relationship of regions ist determined its **reach**, ergo how many regions are affected by this action trigger. The **impact** specifies, to what extend effects are applied, region properties are mutated, etc..
 
 ## Functionality
-Generally, each region can be linked to every other present region based on region properties and corresponding region linking capabilities.
-An easy example for that is linking regions in terms of their *position* property.
+Generally, each region can be linked to every other present region based on region properties and corresponding region linking *capabilities*.
+An easy example for that is linking two regions in terms of their *position* property.
 Moving one region in a direction immediately causes the linked region to be relatively moved in that direction as well.
 However, only regions sharing the capability to be linked via the position property actually show this behaviour when linked and moved.
-This is generally the case for all kinds of possible linking relationships between regions.
+Generally, this is the case for all kinds of possible linking capabilities and between regions.
 
 In *silang* linking is expressed as follows:
 
@@ -24,26 +25,29 @@ A -> B => property_of_A, property_of_B  # unidirectional
 A <-> B => property_of_A, property_of_B # bidirectional
 
 # short forms if property_of_A equals property_of_B
-A -> B => property
- 
+A -> B => property 
+A <-> B => property
+
+# example with position property
+A -> B => position
 ```
 
 ## Directionality
 
-### Unidirectional Linkage-Graphs
+### Unidirectional Linking-Graphs
 The easiest way to link regions is by establishing a unidirectional link.
-Using the example from above again, regions A and B are linked according to their *position* property, however now it is specified that the relationship is unidirectional.
+Using the example from above again, regions A and B are unidirectionally linked according to their *position* property.
 Therefore, the position property of A is linked to the position property of B.  
 In *silang*, this is expressed as:
 ```
 A -> B => position, position  # or A -> B => position for short
 ```
-Therefore, moving A in a direction has immediately move B into that direction as well.
-But due to the link being unidirectional, moving B directly has no affect on A whatsoever.
+Therefore, moving A in a direction immediately causes B to move in that direction as well.
+But due to the link being unidirectional, moving B directly has no effect on A whatsoever.
 
 <!-- include current prototype example image -->
 
-### Bidirectional Linkage-Graphs
+### Bidirectional Linking-Graphs
 When expanding on the example in the previous section so that movement of B also triggers movement of A, then a bidirectional linking relationship is necessary.
 Therefore, A and B are bidirectionally linked according to their *position* parameter.  
 In *silang*, this is expressed as:
@@ -52,18 +56,18 @@ In *silang*, this is expressed as:
 A <-> B => position, position  # or A <-> B => position for short
 ```
 
-Now, both can be moved directly while the other is also moved to the bidirectional link.
+Now, both can be moved directly while the other is also moved due to the bidirectional link.
 
 <!-- include current prototype example -->
 
 ### Cyclic Linkage-Graphs
-The example in the section above also features the easiest form of a cyclic linkage-graph, due to A's position changes affect B's position and vice versa.
+The example in the section above also features the easiest form of a cyclic linking-graph, due to A's position changes affect B's position and vice versa.
 However, this bears a problem when viewed naively: *infinite recursion*.
 Movement change in A triggers movement change in B, yet this movement of B triggers movement of A anew and does so infinitely. 
-Therefore, SI has to constrain the infinite recursion.
-In order to showcase cyclic linking graphs, the example is expanded with a third region C and cyclically and unidirectionally linking it to A and A to B and B to C, forming a triangular shape.
+Therefore, SI has to deal with that.
+In order to showcase cyclic linking-graphs, the example is expanded with a third region C and cyclically and unidirectionally linking it to A and A to B and B to C, forming a triangular shape.
 Again, the position property of the regions is used.  
-In *silang*, this can looks like this:
+In *silang*, this looks like this:
 
 ```
 A -> B => position
@@ -72,19 +76,19 @@ C -> A => position
 ```
 
 Every action interacting with a graph of linked regions is bound to an universally unique identifier (uuid) generated by the *directly* affected region, the so called *entry region*.
-The uuid is passed to the next region of the linking graph along other data, in this case positional data.
-Once the action reaches its origin region again SI checks whether the uuid and targeted property are equal to ones which originally left the region.
+The uuid is passed to the next region of the linking-graph along other data, in this case positional data.
+Once the action reaches its origin region again SI checks whether the uuid and targeted property are equal to the ones which originally left the *entry region*.
 When this is the case, the action is dropped by SI in order to prevent said *infinite recursion*.
 
 <!-- triangle relationship of current prototype -->
 
 ### Combinations
 
-SI allows to freely combine unidirectional, bidirectional and cyclic relationships within its context.
-It is up to the user of SI to determine which linking graph constructions are reasonable and useful.
+SI allows to freely combine unidirectional, bidirectional and cyclic relationships into one linking-graph within its context.
+It is up to the user of SI to determine which linking-graph constructions are reasonable and useful.
 SI just internally shields against infinite recursion.
 Additionally, it is up to the application programmer, people who code new regions and their effects, to determine which capabilities are reasonable to include or create per region and then how colliding artifacts (regions, data, etc.) behave.  
-The following *silang* code shows a unreasonable and redundantly built linking graph with the position property being modified.
+The following *silang* code shows a unreasonable and redundantly built linking-graph with the position property being modified.
 
 ```
 A -> B => position
@@ -95,37 +99,36 @@ D <-> E => position
 E -> A => positon
 ```
 
-However, multiple different constructions of linking graphs with complexity of that grade and higher are possible within a SI context.
+However, multiple different constructions of linking-graphs with such complexity or more complexity are possible within a SI context.
 
 <!-- image of constructed -->
 
-## Linking Graph Compression 
+## Linking-Graph Compression 
 
 As mentioned above, the linking of regions is a *stack* or *graph* of functions which are called once a *entry region* collides with another region.
-Additionally, this *graph* of functions can metaphorically be seen as a single function calling all member region of the linking graph.
-Complex linking graphs may occur within a SI context when complex workflows are modelled.
+Additionally, this *graph* of functions can metaphorically be seen as a single function calling all member region of the linking-graph.
+Complex linking-graphs may occur within a SI context when complex workflows are modelled.
 This is especially the case when e.g. a processing pipeline for data is modelled.
 
 <!-- demo image/uml of such a process e.g. copy_to\-\>tag\-\>send_by_email -->
 
-In common programming languages large problems are divided into smaller ones which are small enough to be relatively easily coded .
-Therefore, multiple functions are written and put into sequence of a wrapping function which is commonly known as decomposition.  
+In common programming languages large problems are divided into smaller ones until their implementation becomes relatively easy or trivial.
+Therefore, multiple functions are the consequence of refactoring larger chunks of code and put into sequence of a wrapping function which is commonly known as decomposition.  
 However, SI decomposition works exactly the other way around.
 Within an SI context users sketch *atomic* regions.
 These regions have exactly one purpose and only do exactly that one thing based on their capabilities.
 Therefore, in SI users already model their workflow in the traditional, decomposed way.
 However, with SI being a visual programming language users may easily get overwhelmed by great amounts of present regions.
 This phenomenon is called *information clutter*.
-And this gets particularly worse when great amounts of regions are linked into multiple linking graphs.
+And this gets particularly worse when great amounts of regions are linked into multiple linking-graphs.
 
-<!-- example image without linking graph compression--> 
+<!-- example image without linking-graph compression--> 
 
-Therefore, decomposition within an SI context is reducing the amounts of region required to accomplish the target workflow, reducing the information clutter.
-However, this does not mean that SI limits the maximum amount of supported regions or requires users to sketch *performant*.
-SI provides linking graph compression for decomposition.
-Users can decide to compress complex linking graphs within a single region.
-This is analogous to the decomposition pattern used in modern programming languages mentioned earlier.
-
+Therefore, decomposition within an SI context means reducing the amounts of regions required to be rendered in order to accomplish the modelling of the target workflow, which results in a reduction of the information clutter.
+However, this does not mean that SI limits the maximum amount of supported regions or requires users to sketch their workflows *with good performance*.
+Instead, SI provides linking-graph compression as a decomposition method.
+Users can decide to compress complex linking-graphs within a single region.
+This is analogous to the decomposition pattern used in modern programming languages mentioned earlier.  
 In *silang*, users would initially code something like this:
 
 ```
@@ -135,8 +138,8 @@ D -> C => scale
 D <-> E => position, scale
 ```
 
-After due to space limitations or clutter, users may refactor their SI context or workspace and compress the linking graph above.
-In *silang* linking graph compression is expressed as follows:
+Due to space limitations or clutter, users may refactor their SI context or workspace and compress the linking-graph above.
+In *silang* linking-graph compression is expressed as follows:
 
 ```
 C := region => type(composition)
@@ -148,17 +151,19 @@ C := region => type(composition)
             ]
 ```
 
-Region C then has the same behaviour as the original linking graph.
-However, C is **not** an alias for that linking graph.
+Region C then has the same behaviour as the original linking-graph.
+However, C is **not** an alias for that linking-graph.
 All data and behaviour is deep-copied into C and not referenced to the original regions and their linking.
-Additionally, SI forbids to selectively remove one link from a compression region as regions are generally designed to be immutable.
+The original linking-graph is deleted on compresseion.
+Additionally, SI forbids to selectively remove one link from a compression region as regions are designed to be immutable.
+However, users can retrieve the linking-graph from the compression region, destroying it in the process.
 
-<!-- example image with and linking graph compression--> 
+<!-- example image with and linking-graph compression--> 
 
 ## SI Standard Library in terms of Linking
 
 SI's standard library contains several regions and effects with preset capabilities.
-Therefore, which regions can be linked to which others is predetermined.
+Therefore, which regions can be linked to which other regions is predefined.
 However, it is possible to override SI's standard library regions.
 Application programmers simply derive from them and override capabilities and effect functions.
 
