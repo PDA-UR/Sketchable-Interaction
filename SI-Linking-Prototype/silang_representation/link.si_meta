@@ -1,9 +1,9 @@
 # data of regions like shape coordinates
 
-C := region => type(Canvas)
+CANVAS := region => type(Canvas)  # main  (macro style?) ergo C := region => main
 
-A := region => type(MoveableRegion) & shape => type(present) -> [(x0, y0), (x1, y1), ... , (xn, yn)]
-B := region => type(MoveableRegion) & shape => type(meta) -> []
+A := region => type(MoveableRegion) & shape => type(present) := [(x0, y0), (x1, y1), ... , (xn, yn)]
+B := region => type(MoveableRegion) & shape => type(blueprint) := []
 
 # B assignment could be written as
 # B := region => type(MoveableRegion)
