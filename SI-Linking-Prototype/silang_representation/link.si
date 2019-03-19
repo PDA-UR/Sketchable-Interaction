@@ -1,0 +1,12 @@
+# relationships between regions
+
+(A <-> B) => position  # link A pos to B pos
+
+# (A <-> B) => (position, scale)  # link A pos to B scale
+
+C := region => type(composition) & regions := [     # linking graph compression
+                        (A <-> B, position, scale),
+                        (B -> C, position),
+                        (D -> C, scale),
+                        (D <-> E, position, scale)
+                    ]
