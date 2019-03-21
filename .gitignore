@@ -114,3 +114,5 @@ SI-Collision-Prototype/__pycache__/
 silang-compiler/\.idea/
 
 silang-compiler/lexer/__pycache__/
+
+silang-compiler/__pycache__/
