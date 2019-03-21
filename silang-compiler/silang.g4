@@ -17,7 +17,10 @@ expression
     | identifier operator keyword
     | TYPE OPEN_PAREN identifier CLOSE_PAREN
     | TYPE OPEN_PAREN keyword CLOSE_PAREN
-    | OPEN_SB point* CLOSE_SB
+    | OPEN_SB expression CLOSE_SB
+    | OPEN_SB CLOSE_SB
+    | point
+    | point separator expression
     | keyword
     ;
 
