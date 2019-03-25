@@ -1,6 +1,8 @@
 
 from lexer import Lexer
 from parser import Parser
+from context import Context
+
 import os
 
 
@@ -20,6 +22,7 @@ if __name__ == '__main__':
 
     for src_file in source_files:
         with open(src_file, 'r') as src:
+            c = Context()
             data = ("".join(src.read().split())).split(';')
 
             if data[-1] is not '':
@@ -36,4 +39,4 @@ if __name__ == '__main__':
                 pg = Parser()
                 pg.parse()
                 parser = pg.get_parser()
-                parser.parse(tokens).eval()
+                parser.parse(tokens, c).eval()

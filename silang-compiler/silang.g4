@@ -10,8 +10,7 @@ statement
     ;
 
 expression
-    :
-    | expression operator expression
+    : expression operator expression
     | identifier operator identifier
     | capability separator capability
     | identifier operator keyword

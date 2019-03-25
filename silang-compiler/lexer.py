@@ -7,19 +7,18 @@ class Lexer(LexerGenerator):
         self._add_tokens()
 
     def _add_tokens(self):
-
-        self.add('NUMBER', r'\d+')
         self.add('CAPABILITY', r'position')
-        self.add('KEYWORD', r'type')
-        self.add('KEYWORD', r'region')
-        self.add('KEYWORD', r'present')
-        self.add('KEYWORD', r'blueprint')
-        self.add('KEYWORD', r'shape')
+        self.add('NUMBER', r'\d+')
+        self.add('TYPE', r'type')
+        self.add('REGION', r'region')
+        self.add('PRESENT', r'present')
+        self.add('BLUEPRINT', r'blueprint')
+        self.add('SHAPE', r'shape')
         self.add('OPEN_PAREN', r'\(')
         self.add('CLOSE_PAREN', r'\)')
         self.add('OPEN_SB', r'\[')
         self.add('CLOSE_SB', r'\]')
-        self.add('IDENTIFIER', r'[a-zA-Z]+')
+        self.add('IDENTIFIER', r'[a-zA-Z][a-zA-Z0-9]*')
         self.add('SEPARATOR', "\,")
         self.add('END', r'\;')
         self.add('UNI_LINK', r'->')
@@ -36,15 +35,3 @@ class Lexer(LexerGenerator):
 
 if __name__ == '__main__':
     pass
-
-"""
-Token('PRINT', 'print')
-Token('OPEN_PAREN', '(')
-Token('NUMBER', '4')
-Token('SUM', '+')
-Token('NUMBER', '4')
-Token('SUB', '-')
-Token('NUMBER', '2')
-Token('CLOSE_PAREN', ')')
-Token('SEMI_COLON', ';')
-"""
