@@ -67,7 +67,7 @@ class Parser:
 
         @self.pg.production('point : OPEN_PAREN NUMBER SEPARATOR NUMBER CLOSE_PAREN')
         def point(state, p):
-            return Point(p[1], p[3])
+            return Point(p[1].getstr(), p[3].getstr())
 
         @self.pg.error
         def error_handle(token):
