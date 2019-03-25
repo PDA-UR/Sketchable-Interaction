@@ -1,26 +1,30 @@
 grammar silang;
 
 program
-    : statement+
-    ;
-
-statement
-    : expression operator expression end_of_statement
-    | end_of_statement
+    : expression+ SEMICOLON
     ;
 
 expression
-    : expression operator expression
-    | identifier operator identifier
-    | capability separator capability
-    | identifier operator keyword
-    | TYPE OPEN_PAREN identifier CLOSE_PAREN
-    | TYPE OPEN_PAREN keyword CLOSE_PAREN
-    | OPEN_SB expression CLOSE_SB
+    : identifier UNI_LINK identifier ASSIGN_PROPERTY capability COMMA capability
+    | identifier BI_LINK identifier ASSIGN_PROPERTY capability COMMA capability
+    | identifier ASSIGN_VALUE expression
+    | REGION ASSIGN_PROPERTY TYPE OPEN_PAREN identifier CLOSE_PAREN
+    | REGION ASSIGN_PROPERTY TYPE OPEN_PAREN identifier CLOSE_PAREN ASSIGN_ATTRIBUTE expression
+    | present_shape_assignment expression
+    | blueprint_shape_assignment expression
     | OPEN_SB CLOSE_SB
+    | OPEN_SB expression CLOSE_SB
+    | point COMMA expression
     | point
-    | point separator expression
-    | keyword
+    | SEMICOLON
+    ;
+
+present_shape_assignment
+    : SHAPE ASSIGN_PROPERTY TYPE OPEN_PAREN PRESENT CLOSE_PAREN ASSIGN_VALUE
+    ;
+
+blueprint_shape_assignment
+    :SHAPE ASSIGN_PROPERTY TYPE OPEN_PAREN BLUEPRINT CLOSE_PAREN ASSIGN_VALUE
     ;
 
 identifier
@@ -36,8 +40,8 @@ keyword
     ;
 
 point
-    : OPEN_PAREN NUMBER separator NUMBER CLOSE_PAREN
-    | OPEN_PAREN NUMBER separator NUMBER CLOSE_PAREN separator
+    : OPEN_PAREN NUMBER COMMA NUMBER CLOSE_PAREN
+    | OPEN_PAREN NUMBER COMMA NUMBER CLOSE_PAREN COMMA
     ;
 
 operator
@@ -52,11 +56,11 @@ capability
     : 'position' //needs dynamic addition of those as keyword or other rules
     ;
 
-separator
+COMMA
     : ','
     ;
 
-end_of_statement
+SEMICOLON
     : ';'
     ;
 

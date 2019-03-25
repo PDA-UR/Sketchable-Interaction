@@ -129,9 +129,9 @@ class Link(BaseBox):
 
 class UnidirectionalLink(Link):
     def __init__(self, left, right, left_cap, right_cap):
-        super(UnidirectionalLink, self).__init__(left, right, left_cap, right_cap, "unidirectional_link")
+        super(UnidirectionalLink, self).__init__(left, right, left_cap, right_cap, "UnidirectionalLink")
 
 
 class BidirectionalLink(Link):
     def __init__(self, left, right, left_cap, right_cap):
-        super(BidirectionalLink, self).__init__(left, right, left_cap, right_cap, 'bidirectional_link')
+        super(BidirectionalLink, self).__init__(left, right, left_cap, right_cap, 'BidirectionalLink')
