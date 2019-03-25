@@ -23,7 +23,11 @@ if __name__ == '__main__':
     for src_file in source_files:
         with open(src_file, 'r') as src:
             c = Context()
-            data = ("".join(src.read().split())).split(';')
+            data = ("".join(src.read().split()))
+
+            print(data)
+
+            data = data.split(';')
 
             if data[-1] is not '':
                 raise ValueError("Missing semicolon! {0} `;` required".format(data[-1]))
@@ -39,4 +43,8 @@ if __name__ == '__main__':
                 pg = Parser()
                 pg.parse()
                 parser = pg.get_parser()
-                parser.parse(tokens, c).eval()
+
+                try:
+                    parser.parse(tokens, c).eval()
+                except TypeError:
+                    raise ValueError("Missing semicolon between statements! {0}".format(line))

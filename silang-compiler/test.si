@@ -1,5 +1,5 @@
 
-A := region => type(MoveableRegion) & shape => type(present) := [(0, 0), (1, 1), (2, 2)];
-B := region => type(ScalableRegion) & shape => type(blueprint) := [];
+A := region => type(MoveableRegion) & shape => type(present) := [(0, 0)]
+B := region => type(MoveableRegion) & shape => type(present) := []
 
 A <-> B => position, position;

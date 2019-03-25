@@ -18,6 +18,10 @@ class Parser:
         def statement(state, p):
             return Statement(p[0], state)
 
+        @self.pg.production('expression : IDENTIFIER')
+        def expression_for_identifier(state, p):
+            return Variable(p[0].getstr())
+
         @self.pg.production('expression : IDENTIFIER UNI_LINK IDENTIFIER ASSIGN_PROPERTY CAPABILITY SEPARATOR CAPABILITY')
         @self.pg.production('expression : IDENTIFIER BI_LINK IDENTIFIER ASSIGN_PROPERTY CAPABILITY SEPARATOR CAPABILITY')
         def expression_link_two_regions_by_two_capabilities(state, p):

@@ -1,7 +1,7 @@
 grammar silang;
 
 program
-    : expression+ SEMICOLON
+    : expression* SEMICOLON
     ;
 
 expression
@@ -16,6 +16,7 @@ expression
     | OPEN_SB expression CLOSE_SB
     | point COMMA expression
     | point
+    | identifier
     | SEMICOLON
     ;
 
