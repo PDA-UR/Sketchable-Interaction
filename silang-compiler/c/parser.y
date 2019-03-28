@@ -1,36 +1,80 @@
 %{
-void yyerror(char* s);
+int yylex(void);
+void yyerror(char *s);
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
 #define NVARS 100
-char *vars[NVARS];
-double vals[NVARS];
-int nvars=0;
+
+char* vars[NVARS];
+char* vals[NVARS];
+int nvars = 0;
+
+
 %}
 
-
-%union { char *id; int num; int ivar; double dval;}
+%union { char* strval; int num; int ivar; double dval;}
 
 %token <ivar> identifier
-%type <ivar> expression
+%token assign_property "=>"
+%token assign_value ":="
+%token region "region"
+%token shape "shape"
+%token type "type"
+%token present "present"
+%token blueprint "blueprint"
+
+%type <strval> expression
+
 %%
 
-program : line ';' program                          {;}
-        | line ';'                                  {;}
+program : expression ';'                                            {;}
+        | program expression ';'                                    {;}
         ;
 
-line : assignment_value                             {;}
-     ;
+expression : identifier ":=" expression                             {printf("variable %s, assigned %s\n", vars[$1], $3);}
+           | identifier                                             {$$ = vars[$1];}
+           | region "=>" type '(' identifier ')'                    {
+                                                                        char* s = "region of type ";
 
-assignment_value : identifier '=' expression        {vals[$1] = $3; printf("BBQ %s, ROFL %s\n", vars[$1], vars[$3]);}
-                 ;
+                                                                        int size = (strlen(s) + strlen(vars[$5])) * sizeof(char) + 1;
 
-expression : identifier                             {$$ = $1;}
+                                                                        char* target = malloc(size);
+
+                                                                        target[0] = '\0';
+
+                                                                        strcat(strcat(target, s), vars[$5]);
+
+                                                                        target[size] = '\0';
+
+                                                                        $$ = strdup(target);
+
+                                                                        free(target);
+                                                                    }
+
+           | region "=>" type '(' identifier ')' '&' expression     {
+                                                                        $$ = $8; printf("new exp: %s", $8);
+                                                                    }
+
+           | shape "=>" type '(' present ')' ":=" expression        {
+                                                                        $$ = $8;
+                                                                    }
+
+           | shape "=>" type '(' blueprint ')' ":=" expression      {
+
+                                                                    }
+
+           | '[' ']'                                                {
+                                                                        char* s = "[]";
+                                                                        $$ = s;
+                                                                    }
+
+           | '[' expression ']'                                     {
+
+                                                                    }
            ;
-
 
 %%
 
@@ -44,13 +88,6 @@ int varindex(char* var)
     vars[nvars] = strdup(var);
 
     return nvars++;
-}
-
-int main(void)
-{
-    yyparse();
-
-    return 0;
 }
 
 void yyerror(char* s)

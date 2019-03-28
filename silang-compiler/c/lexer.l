@@ -7,10 +7,18 @@ int varindex(char *var);
 
 %%
 
-[a-zA-Z][a-zA-Z0-9]*            {yylval.ivar = varindex(yytext); return identifier;}
-[ \t\n\r\s]                     ;
-[',', ';', '=', '&']            {return yytext[0];}
-.                               {yyerror("unexpected character");}
+"region"                                    {return region;}
+"shape"                                     {return shape;}
+"type"                                      {return type;}
+"present"                                   {return present;}
+"blueprint"                                 {return blueprint;}
+
+[a-zA-Z][a-zA-Z0-9]*                        {yylval.ivar = varindex(strdup(yytext)); return identifier;}
+[ \t\n\r]                                   ;
+"=>"                                        {return assign_property;}
+":="                                        {return assign_value;}
+[,;&()\[\]]                               {return yytext[0];}
+.                                           {yyerror("unexpected character");}
 
 %%
 

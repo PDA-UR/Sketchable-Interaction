@@ -49,21 +49,35 @@ extern int yydebug;
 # define YYTOKENTYPE
   enum yytokentype
   {
-    identifier = 258
+    identifier = 258,
+    assign_property = 259,
+    assign_value = 260,
+    region = 261,
+    shape = 262,
+    type = 263,
+    present = 264,
+    blueprint = 265
   };
 #endif
 /* Tokens.  */
 #define identifier 258
+#define assign_property 259
+#define assign_value 260
+#define region 261
+#define shape 262
+#define type 263
+#define present 264
+#define blueprint 265
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 
 union YYSTYPE
 {
-#line 15 "/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/parser.y" /* yacc.c:1921  */
- char *id; int num; int ivar; double dval;
+#line 18 "/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/parser.y" /* yacc.c:1921  */
+ char* strval; int num; int ivar; double dval;
 
-#line 67 "/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/cmake-build-debug/parser.h" /* yacc.c:1921  */
+#line 81 "/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/cmake-build-debug/parser.h" /* yacc.c:1921  */
 };
 
 typedef union YYSTYPE YYSTYPE;

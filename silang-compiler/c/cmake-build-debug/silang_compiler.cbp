@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6"/>
+	<Project>
+		<Option title="silang_compiler"/>
+		<Option makefile_is_custom="1"/>
+		<Option compiler="gcc"/>
+		<Option virtualFolders="CMake Files\;"/>
+		<Build>
+			<Target title="all">
+				<Option working_dir="/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/cmake-build-debug/Makefile&quot;  VERBOSE=1 all"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="rebuild_cache">
+				<Option working_dir="/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/cmake-build-debug/Makefile&quot;  VERBOSE=1 rebuild_cache"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="edit_cache">
+				<Option working_dir="/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/cmake-build-debug/Makefile&quot;  VERBOSE=1 edit_cache"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="parser">
+				<Option working_dir="/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/cmake-build-debug/Makefile&quot;  VERBOSE=1 parser"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="silang_compiler">
+				<Option output="/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/cmake-build-debug/silang_compiler" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/cmake-build-debug"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/8/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/8/include-fixed"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/cmake-build-debug/Makefile&quot;  VERBOSE=1 silang_compiler"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="silang_compiler/fast">
+				<Option output="/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/cmake-build-debug/silang_compiler" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/cmake-build-debug"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/8/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/8/include-fixed"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/cmake-build-debug/Makefile&quot;  VERBOSE=1 silang_compiler/fast"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+		</Build>
+		<Unit filename="/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/cmake-build-debug/lexer.c">
+			<Option target="silang_compiler"/>
+		</Unit>
+		<Unit filename="/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/cmake-build-debug/parser.c">
+			<Option target="silang_compiler"/>
+		</Unit>
+		<Unit filename="/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/cmake-build-debug/parser.h">
+			<Option target="silang_compiler"/>
+		</Unit>
+		<Unit filename="/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\"/>
+		</Unit>
+	</Project>
+</CodeBlocks_project_file>
