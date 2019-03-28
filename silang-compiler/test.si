@@ -1,0 +1,5 @@
+
+A := region => type(MoveableRegion) & shape => type(present) := [(0, 0)]
+B := region => type(MoveableRegion) & shape => type(present) := []
+
+A <-> B => position, position;

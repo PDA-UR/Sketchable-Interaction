@@ -160,6 +160,11 @@ However, users can retrieve the linking-graph from the compression region, destr
 
 <!-- example image with and linking-graph compression--> 
 
+**DISCLAIMER: THIS IS Work-in-Progress. Linking Graphs are far more complex than this early depection! Further Details are added once worked out!**
+
+### Full Linking Graph Compression
+### Partial Linking Graph Compression
+
 ## SI Standard Library in terms of Linking
 
 SI's standard library contains several regions and effects with preset capabilities.

@@ -86,6 +86,8 @@ class Canvas(QMainWindow):
 
             eval('w1.' + w1.get_capability_signal(attribute_w1) + '.connect(w2.' + w2.get_capability_function(attribute_w2) + ')')
 
+            
+
     def undo_link(self, w1, w2, attribute):
         """
         linked, how = w1.is_linked_to(w2, attribute)
