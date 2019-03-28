@@ -68,6 +68,7 @@
 /* First part of user prologue.  */
 #line 1 "/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/parser.y" /* yacc.c:337  */
 
+
 int yylex(void);
 void yyerror(char *s);
 
@@ -77,10 +78,9 @@ void yyerror(char *s);
 
 #define NVARS 100
 
-char* vars[NVARS];
-char* vals[NVARS];
-int nvars = 0;
+char* vars[NVARS], vals[NVARS];
 
+int nvars = 0;
 
 
 #line 87 "/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/cmake-build-debug/parser.c" /* yacc.c:337  */
@@ -122,24 +122,26 @@ extern int yydebug;
   enum yytokentype
   {
     identifier = 258,
-    assign_property = 259,
-    assign_value = 260,
-    region = 261,
-    shape = 262,
-    type = 263,
-    present = 264,
-    blueprint = 265
+    number = 259,
+    assign_property = 260,
+    assign_value = 261,
+    region = 262,
+    shape = 263,
+    type = 264,
+    present = 265,
+    blueprint = 266
   };
 #endif
 /* Tokens.  */
 #define identifier 258
-#define assign_property 259
-#define assign_value 260
-#define region 261
-#define shape 262
-#define type 263
-#define present 264
-#define blueprint 265
+#define number 259
+#define assign_property 260
+#define assign_value 261
+#define region 262
+#define shape 263
+#define type 264
+#define present 265
+#define blueprint 266
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
@@ -147,9 +149,9 @@ extern int yydebug;
 union YYSTYPE
 {
 #line 18 "/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/parser.y" /* yacc.c:352  */
- char* strval; int num; int ivar; double dval;
+ char* strval; int num; int ivar;
 
-#line 153 "/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/cmake-build-debug/parser.c" /* yacc.c:352  */
+#line 155 "/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/cmake-build-debug/parser.c" /* yacc.c:352  */
 };
 
 typedef union YYSTYPE YYSTYPE;
@@ -395,21 +397,21 @@ union yyalloc
 #endif /* !YYCOPY_NEEDED */
 
 /* YYFINAL -- State number of the termination state.  */
-#define YYFINAL  12
+#define YYFINAL  15
 /* YYLAST -- Last index in YYTABLE.  */
-#define YYLAST   38
+#define YYLAST   47
 
 /* YYNTOKENS -- Number of terminals.  */
-#define YYNTOKENS  17
+#define YYNTOKENS  19
 /* YYNNTS -- Number of nonterminals.  */
-#define YYNNTS  3
+#define YYNNTS  4
 /* YYNRULES -- Number of rules.  */
-#define YYNRULES  11
+#define YYNRULES  14
 /* YYNSTATES -- Number of states.  */
-#define YYNSTATES  34
+#define YYNSTATES  42
 
 #define YYUNDEFTOK  2
-#define YYMAXUTOK   265
+#define YYMAXUTOK   266
 
 /* YYTRANSLATE(TOKEN-NUM) -- Symbol number corresponding to TOKEN-NUM
    as returned by yylex, with out-of-bounds checking.  */
@@ -423,13 +425,13 @@ static const yytype_uint8 yytranslate[] =
        0,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-       2,     2,     2,     2,     2,     2,     2,     2,    14,     2,
-      12,    13,     2,     2,     2,     2,     2,     2,     2,     2,
-       2,     2,     2,     2,     2,     2,     2,     2,     2,    11,
+       2,     2,     2,     2,     2,     2,     2,     2,    15,     2,
+      13,    14,     2,     2,    18,     2,     2,     2,     2,     2,
+       2,     2,     2,     2,     2,     2,     2,     2,     2,    12,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-       2,    15,     2,    16,     2,     2,     2,     2,     2,     2,
+       2,    16,     2,    17,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
@@ -446,15 +448,15 @@ static const yytype_uint8 yytranslate[] =
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     1,     2,     3,     4,
-       5,     6,     7,     8,     9,    10
+       5,     6,     7,     8,     9,    10,    11
 };
 
 #if YYDEBUG
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,    33,    33,    34,    37,    38,    39,    57,    61,    65,
-      69,    74
+       0,    34,    34,    35,    38,    40,    42,    60,    78,    96,
+     114,   119,   134,   150,   153
 };
 #endif
 
@@ -463,10 +465,10 @@ static const yytype_uint8 yyrline[] =
    First, the terminals, then, starting at YYNTOKENS, nonterminals.  */
 static const char *const yytname[] =
 {
-  "$end", "error", "$undefined", "identifier", "\"=>\"", "\":=\"",
-  "\"region\"", "\"shape\"", "\"type\"", "\"present\"", "\"blueprint\"",
-  "';'", "'('", "')'", "'&'", "'['", "']'", "$accept", "program",
-  "expression", YY_NULLPTR
+  "$end", "error", "$undefined", "identifier", "number", "\"=>\"",
+  "\":=\"", "\"region\"", "\"shape\"", "\"type\"", "\"present\"",
+  "\"blueprint\"", "';'", "'('", "')'", "'&'", "'['", "']'", "','",
+  "$accept", "program", "expression", "point", YY_NULLPTR
 };
 #endif
 
@@ -476,7 +478,7 @@ static const char *const yytname[] =
 static const yytype_uint16 yytoknum[] =
 {
        0,   256,   257,   258,   259,   260,   261,   262,   263,   264,
-     265,    59,    40,    41,    38,    91,    93
+     265,   266,    59,    40,    41,    38,    91,    93,    44
 };
 # endif
 
@@ -494,10 +496,11 @@ static const yytype_uint16 yytoknum[] =
      STATE-NUM.  */
 static const yytype_int8 yypact[] =
 {
-      15,    -1,    10,    11,     4,     2,    -5,    15,     8,    19,
-      -6,     7,    -6,    17,    -6,    -6,    20,    21,    -6,    -6,
-      26,     3,    18,    22,    23,    24,    29,    32,    15,    15,
-      15,    -6,    -6,    -6
+      21,    -3,     1,     3,    10,     4,     2,     7,    -2,    21,
+      16,    17,     9,    -6,    13,    -6,    23,    -6,    21,    -6,
+      25,    26,    32,    -6,    -6,    -6,    37,    12,    27,    28,
+      29,    30,    -6,    31,    39,    41,    21,    21,    21,    -6,
+      -6,    -6
 };
 
   /* YYDEFACT[STATE-NUM] -- Default reduction number in state STATE-NUM.
@@ -505,22 +508,23 @@ static const yytype_int8 yypact[] =
      means the default is an error.  */
 static const yytype_uint8 yydefact[] =
 {
-       0,     5,     0,     0,     0,     0,     0,     0,     0,     0,
-      10,     0,     1,     0,     2,     4,     0,     0,    11,     3,
-       0,     0,     0,     0,     0,     6,     0,     0,     0,     0,
-       0,     7,     8,     9
+       0,     5,     0,     0,     0,     0,     0,     0,    13,     0,
+       0,     0,     0,    10,     0,     1,     0,     2,     0,     4,
+       0,     0,     0,    11,     3,    12,     0,     0,     0,     0,
+       0,     0,    14,     6,     0,     0,     0,     0,     0,     7,
+       8,     9
 };
 
   /* YYPGOTO[NTERM-NUM].  */
 static const yytype_int8 yypgoto[] =
 {
-      -6,    -6,    -4
+      -6,    -6,    -5,    -6
 };
 
   /* YYDEFGOTO[NTERM-NUM].  */
 static const yytype_int8 yydefgoto[] =
 {
-      -1,     5,     6
+      -1,     6,     7,     8
 };
 
   /* YYTABLE[YYPACT[STATE-NUM]] -- What to do in state STATE-NUM.  If
@@ -528,42 +532,45 @@ static const yytype_int8 yydefgoto[] =
      number is the opposite.  If YYTABLE_NINF, syntax error.  */
 static const yytype_uint8 yytable[] =
 {
-      11,    13,    12,    15,     7,     1,    14,     1,     2,     3,
-       2,     3,    23,    24,     8,     9,    16,     4,     1,     4,
-      10,     2,     3,    18,    31,    32,    33,    17,    19,    22,
-       4,    25,    20,    21,    29,    26,    27,    30,    28
+      14,    16,    15,     9,    19,     1,    10,     1,    11,     2,
+       3,     2,     3,    25,    12,     4,    18,     4,     5,    17,
+       5,    13,    30,    31,     1,    20,    21,    22,     2,     3,
+      23,    39,    40,    41,     4,    24,    28,     5,    26,    27,
+      29,    32,    33,    34,    35,    37,    36,    38
 };
 
 static const yytype_uint8 yycheck[] =
 {
-       4,     5,     0,     7,     5,     3,    11,     3,     6,     7,
-       6,     7,     9,    10,     4,     4,     8,    15,     3,    15,
-      16,     6,     7,    16,    28,    29,    30,     8,    11,     3,
-      15,    13,    12,    12,     5,    13,    13,     5,    14
+       5,     6,     0,     6,     9,     3,     5,     3,     5,     7,
+       8,     7,     8,    18,     4,    13,    18,    13,    16,    12,
+      16,    17,    10,    11,     3,     9,     9,    18,     7,     8,
+      17,    36,    37,    38,    13,    12,     4,    16,    13,    13,
+       3,    14,    14,    14,    14,     6,    15,     6
 };
 
   /* YYSTOS[STATE-NUM] -- The (internal number of the) accessing
      symbol of state STATE-NUM.  */
 static const yytype_uint8 yystos[] =
 {
-       0,     3,     6,     7,    15,    18,    19,     5,     4,     4,
-      16,    19,     0,    19,    11,    19,     8,     8,    16,    11,
-      12,    12,     3,     9,    10,    13,    13,    13,    14,     5,
-       5,    19,    19,    19
+       0,     3,     7,     8,    13,    16,    20,    21,    22,     6,
+       5,     5,     4,    17,    21,     0,    21,    12,    18,    21,
+       9,     9,    18,    17,    12,    21,    13,    13,     4,     3,
+      10,    11,    14,    14,    14,    14,    15,     6,     6,    21,
+      21,    21
 };
 
   /* YYR1[YYN] -- Symbol number of symbol that rule YYN derives.  */
 static const yytype_uint8 yyr1[] =
 {
-       0,    17,    18,    18,    19,    19,    19,    19,    19,    19,
-      19,    19
+       0,    19,    20,    20,    21,    21,    21,    21,    21,    21,
+      21,    21,    21,    21,    22
 };
 
   /* YYR2[YYN] -- Number of symbols on the right hand side of rule YYN.  */
 static const yytype_uint8 yyr2[] =
 {
        0,     2,     2,     3,     3,     1,     6,     8,     8,     8,
-       2,     3
+       2,     3,     3,     1,     5
 };
 
 
@@ -1249,31 +1256,31 @@ yyreduce:
   switch (yyn)
     {
         case 2:
-#line 33 "/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/parser.y" /* yacc.c:1652  */
+#line 34 "/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/parser.y" /* yacc.c:1652  */
     {;}
-#line 1255 "/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/cmake-build-debug/parser.c" /* yacc.c:1652  */
+#line 1262 "/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/cmake-build-debug/parser.c" /* yacc.c:1652  */
     break;
 
   case 3:
-#line 34 "/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/parser.y" /* yacc.c:1652  */
+#line 35 "/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/parser.y" /* yacc.c:1652  */
     {;}
-#line 1261 "/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/cmake-build-debug/parser.c" /* yacc.c:1652  */
+#line 1268 "/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/cmake-build-debug/parser.c" /* yacc.c:1652  */
     break;
 
   case 4:
-#line 37 "/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/parser.y" /* yacc.c:1652  */
+#line 38 "/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/parser.y" /* yacc.c:1652  */
     {printf("variable %s, assigned %s\n", vars[(yyvsp[-2].ivar)], (yyvsp[0].strval));}
-#line 1267 "/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/cmake-build-debug/parser.c" /* yacc.c:1652  */
+#line 1274 "/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/cmake-build-debug/parser.c" /* yacc.c:1652  */
     break;
 
   case 5:
-#line 38 "/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/parser.y" /* yacc.c:1652  */
+#line 40 "/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/parser.y" /* yacc.c:1652  */
     {(yyval.strval) = vars[(yyvsp[0].ivar)];}
-#line 1273 "/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/cmake-build-debug/parser.c" /* yacc.c:1652  */
+#line 1280 "/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/cmake-build-debug/parser.c" /* yacc.c:1652  */
     break;
 
   case 6:
-#line 39 "/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/parser.y" /* yacc.c:1652  */
+#line 42 "/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/parser.y" /* yacc.c:1652  */
     {
                                                                         char* s = "region of type ";
 
@@ -1291,52 +1298,156 @@ yyreduce:
 
                                                                         free(target);
                                                                     }
-#line 1295 "/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/cmake-build-debug/parser.c" /* yacc.c:1652  */
+#line 1302 "/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/cmake-build-debug/parser.c" /* yacc.c:1652  */
     break;
 
   case 7:
-#line 57 "/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/parser.y" /* yacc.c:1652  */
+#line 60 "/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/parser.y" /* yacc.c:1652  */
     {
-                                                                        (yyval.strval) = (yyvsp[0].strval); printf("new exp: %s", (yyvsp[0].strval));
+                                                                        char* s = "region of type ";
+
+                                                                        int size = (strlen(s) + strlen(vars[(yyvsp[-3].ivar)]) + strlen((yyvsp[0].strval))) * sizeof(char) + 1;
+
+                                                                        char* target = malloc(size);
+
+                                                                        target[0] = '\0';
+
+                                                                        strcat(strcat(strcat(target, s), vars[(yyvsp[-3].ivar)]), (yyvsp[0].strval));
+
+                                                                        target[size] = '\0';
+
+                                                                        (yyval.strval) = strdup(target);
+
+                                                                        free(target);
                                                                     }
-#line 1303 "/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/cmake-build-debug/parser.c" /* yacc.c:1652  */
+#line 1324 "/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/cmake-build-debug/parser.c" /* yacc.c:1652  */
     break;
 
   case 8:
-#line 61 "/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/parser.y" /* yacc.c:1652  */
+#line 78 "/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/parser.y" /* yacc.c:1652  */
     {
-                                                                        (yyval.strval) = (yyvsp[0].strval);
+                                                                        char* s = " shape of type present with points: ";
+
+                                                                        int size = (strlen(s) + strlen((yyvsp[0].strval))) * sizeof(char) + 1;
+
+                                                                        char* target = malloc(size);
+
+                                                                        target[0] = '\0';
+
+                                                                        strcat(strcat(target, s), (yyvsp[0].strval));
+
+                                                                        target[size] = '\0';
+
+                                                                        (yyval.strval) = strdup(target);
+
+                                                                        free(target);
                                                                     }
-#line 1311 "/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/cmake-build-debug/parser.c" /* yacc.c:1652  */
+#line 1346 "/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/cmake-build-debug/parser.c" /* yacc.c:1652  */
     break;
 
   case 9:
-#line 65 "/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/parser.y" /* yacc.c:1652  */
+#line 96 "/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/parser.y" /* yacc.c:1652  */
     {
+                                                                        char* s = " with shape of type present with points: ";
 
+                                                                        int size = (strlen(s) + strlen((yyvsp[0].strval))) * sizeof(char) + 1;
+
+                                                                        char* target = malloc(size);
+
+                                                                        target[0] = '\0';
+
+                                                                        strcat(strcat(target, s), (yyvsp[0].strval));
+
+                                                                        target[size] = '\0';
+
+                                                                        (yyval.strval) = strdup(target);
+
+                                                                        free(target);
                                                                     }
-#line 1319 "/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/cmake-build-debug/parser.c" /* yacc.c:1652  */
+#line 1368 "/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/cmake-build-debug/parser.c" /* yacc.c:1652  */
     break;
 
   case 10:
-#line 69 "/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/parser.y" /* yacc.c:1652  */
+#line 114 "/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/parser.y" /* yacc.c:1652  */
     {
                                                                         char* s = "[]";
                                                                         (yyval.strval) = s;
                                                                     }
-#line 1328 "/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/cmake-build-debug/parser.c" /* yacc.c:1652  */
+#line 1377 "/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/cmake-build-debug/parser.c" /* yacc.c:1652  */
     break;
 
   case 11:
-#line 74 "/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/parser.y" /* yacc.c:1652  */
+#line 119 "/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/parser.y" /* yacc.c:1652  */
     {
+                                                                        int size = (2 + strlen((yyvsp[-1].strval))) * sizeof(char) + 1;
 
+                                                                        char* target = malloc(size);
+
+                                                                        target[0] = '\0';
+
+                                                                        strcat(strcat(strcat(target, "["), (yyvsp[-1].strval)), "]");
+
+                                                                        target[size] = '\0';
+                                                                        (yyval.strval) = strdup(target);
+
+                                                                        free(target);
                                                                     }
-#line 1336 "/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/cmake-build-debug/parser.c" /* yacc.c:1652  */
+#line 1396 "/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/cmake-build-debug/parser.c" /* yacc.c:1652  */
+    break;
+
+  case 12:
+#line 134 "/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/parser.y" /* yacc.c:1652  */
+    {
+                                                                        int size = (strlen((yyvsp[-2].strval)) + 1 + strlen((yyvsp[0].strval))) * sizeof(char) + 1;
+
+                                                                        char* target = malloc(size);
+
+                                                                        target[0] = '\0';
+
+                                                                        strcat(strcat(strcat(target, (yyvsp[-2].strval)), ","), (yyvsp[0].strval));
+
+                                                                        target[size] = '\0';
+
+                                                                        (yyval.strval) = strdup(target);
+
+                                                                        free(target);
+                                                                    }
+#line 1416 "/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/cmake-build-debug/parser.c" /* yacc.c:1652  */
+    break;
+
+  case 13:
+#line 150 "/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/parser.y" /* yacc.c:1652  */
+    {(yyval.strval) = (yyvsp[0].strval);}
+#line 1422 "/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/cmake-build-debug/parser.c" /* yacc.c:1652  */
+    break;
+
+  case 14:
+#line 153 "/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/parser.y" /* yacc.c:1652  */
+    {
+                                                                        char x[12], y[12];
+
+                                                                        sprintf(x, "%d", (int) (yyvsp[-3].num));
+                                                                        sprintf(y, "%d", (int) (yyvsp[-1].num));
+
+                                                                        int size = (3 + strlen(x) + strlen(y)) * sizeof(char) + 1;
+
+                                                                        char *target = malloc(size);
+
+                                                                        target[0] = '\0';
+
+                                                                        strcat(strcat(strcat(strcat(strcat(target, "("), x), ","), y), ")");
+
+                                                                        target[size] = '\0';
+
+                                                                        (yyval.strval) = strdup(target);
+
+                                                                        free(target);
+                                                                    }
+#line 1447 "/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/cmake-build-debug/parser.c" /* yacc.c:1652  */
     break;
 
 
-#line 1340 "/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/cmake-build-debug/parser.c" /* yacc.c:1652  */
+#line 1451 "/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/cmake-build-debug/parser.c" /* yacc.c:1652  */
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -1567,7 +1678,7 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 79 "/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/parser.y" /* yacc.c:1918  */
+#line 175 "/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/parser.y" /* yacc.c:1918  */
 
 
 int varindex(char* var)

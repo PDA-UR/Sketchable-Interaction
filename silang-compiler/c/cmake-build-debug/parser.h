@@ -50,24 +50,26 @@ extern int yydebug;
   enum yytokentype
   {
     identifier = 258,
-    assign_property = 259,
-    assign_value = 260,
-    region = 261,
-    shape = 262,
-    type = 263,
-    present = 264,
-    blueprint = 265
+    number = 259,
+    assign_property = 260,
+    assign_value = 261,
+    region = 262,
+    shape = 263,
+    type = 264,
+    present = 265,
+    blueprint = 266
   };
 #endif
 /* Tokens.  */
 #define identifier 258
-#define assign_property 259
-#define assign_value 260
-#define region 261
-#define shape 262
-#define type 263
-#define present 264
-#define blueprint 265
+#define number 259
+#define assign_property 260
+#define assign_value 261
+#define region 262
+#define shape 263
+#define type 264
+#define present 265
+#define blueprint 266
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
@@ -75,9 +77,9 @@ extern int yydebug;
 union YYSTYPE
 {
 #line 18 "/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/parser.y" /* yacc.c:1921  */
- char* strval; int num; int ivar; double dval;
+ char* strval; int num; int ivar;
 
-#line 81 "/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/cmake-build-debug/parser.h" /* yacc.c:1921  */
+#line 83 "/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/cmake-build-debug/parser.h" /* yacc.c:1921  */
 };
 
 typedef union YYSTYPE YYSTYPE;

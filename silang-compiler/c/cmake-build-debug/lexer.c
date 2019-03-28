@@ -352,8 +352,8 @@ static void yynoreturn yy_fatal_error ( const char* msg  );
 	(yy_hold_char) = *yy_cp; \
 	*yy_cp = '\0'; \
 	(yy_c_buf_p) = yy_cp;
-#define YY_NUM_RULES 12
-#define YY_END_OF_BUFFER 13
+#define YY_NUM_RULES 13
+#define YY_END_OF_BUFFER 14
 /* This struct is not used in this scanner,
    but its presence is necessary. */
 struct yy_trans_info
@@ -361,13 +361,13 @@ struct yy_trans_info
 	flex_int32_t yy_verify;
 	flex_int32_t yy_nxt;
 	};
-static const flex_int16_t yy_accept[46] =
+static const flex_int16_t yy_accept[48] =
     {   0,
-        0,    0,   13,   11,    7,    7,   10,   11,   11,    6,
-        6,    6,    6,    6,    6,    9,    8,    6,    6,    6,
+        0,    0,   14,   12,    8,    8,   11,    7,   12,   12,
+        6,    6,    6,    6,    6,    6,    7,   10,    9,    6,
         6,    6,    6,    6,    6,    6,    6,    6,    6,    6,
-        6,    6,    3,    6,    6,    6,    2,    6,    6,    1,
-        6,    4,    6,    5,    0
+        6,    6,    6,    6,    3,    6,    6,    6,    2,    6,
+        6,    1,    6,    4,    6,    5,    0
     } ;
 
 static const YY_CHAR yy_ec[256] =
@@ -409,46 +409,48 @@ static const YY_CHAR yy_meta[25] =
         2,    2,    2,    2
     } ;
 
-static const flex_int16_t yy_base[47] =
+static const flex_int16_t yy_base[49] =
     {   0,
-        0,    0,   54,   55,   55,   55,   55,   46,   44,    0,
-       35,   30,   37,   34,   23,   55,   55,    0,   23,   33,
-       31,   33,   23,   29,   19,   24,   19,   25,   17,   23,
-       16,   21,    0,   12,   14,   13,    0,   14,    6,    0,
-       10,    0,    4,    0,   55,   23
+        0,    0,   56,   57,   57,   57,   57,   50,   47,   45,
+        0,   36,   31,   38,   35,   24,   42,   57,   57,    0,
+       23,   33,   31,   33,   23,   29,   19,   24,   19,   25,
+       17,   23,   16,   21,    0,   12,   14,   13,    0,   14,
+        6,    0,   10,    0,    4,    0,   57,   23
     } ;
 
-static const flex_int16_t yy_def[47] =
+static const flex_int16_t yy_def[49] =
     {   0,
-       45,    1,   45,   45,   45,   45,   45,   45,   45,   46,
-       46,   46,   46,   46,   46,   45,   45,   46,   46,   46,
-       46,   46,   46,   46,   46,   46,   46,   46,   46,   46,
-       46,   46,   46,   46,   46,   46,   46,   46,   46,   46,
-       46,   46,   46,   46,    0,   45
+       47,    1,   47,   47,   47,   47,   47,   47,   47,   47,
+       48,   48,   48,   48,   48,   48,   47,   47,   47,   48,
+       48,   48,   48,   48,   48,   48,   48,   48,   48,   48,
+       48,   48,   48,   48,   48,   48,   48,   48,   48,   48,
+       48,   48,   48,   48,   48,   48,    0,   47
     } ;
 
-static const flex_int16_t yy_nxt[80] =
+static const flex_int16_t yy_nxt[82] =
     {   0,
-        4,    5,    6,    7,    4,    8,    9,    4,   10,   10,
-       11,   10,   10,   10,   10,   10,   10,   10,   12,   13,
-       14,   15,   10,   10,   18,   44,   43,   42,   41,   40,
-       39,   38,   37,   36,   35,   34,   33,   32,   31,   30,
-       29,   28,   27,   26,   25,   24,   23,   22,   21,   20,
-       19,   17,   16,   45,    3,   45,   45,   45,   45,   45,
-       45,   45,   45,   45,   45,   45,   45,   45,   45,   45,
-       45,   45,   45,   45,   45,   45,   45,   45,   45
+        4,    5,    6,    7,    8,    9,   10,    4,   11,   11,
+       12,   11,   11,   11,   11,   11,   11,   11,   13,   14,
+       15,   16,   11,   11,   20,   46,   45,   44,   43,   42,
+       41,   40,   39,   38,   37,   36,   35,   34,   33,   32,
+       31,   30,   29,   28,   27,   26,   17,   25,   24,   23,
+       22,   21,   19,   18,   17,   47,    3,   47,   47,   47,
+       47,   47,   47,   47,   47,   47,   47,   47,   47,   47,
+       47,   47,   47,   47,   47,   47,   47,   47,   47,   47,
+       47
     } ;
 
-static const flex_int16_t yy_chk[80] =
+static const flex_int16_t yy_chk[82] =
     {   0,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
-        1,    1,    1,    1,   46,   43,   41,   39,   38,   36,
-       35,   34,   32,   31,   30,   29,   28,   27,   26,   25,
-       24,   23,   22,   21,   20,   19,   15,   14,   13,   12,
-       11,    9,    8,    3,   45,   45,   45,   45,   45,   45,
-       45,   45,   45,   45,   45,   45,   45,   45,   45,   45,
-       45,   45,   45,   45,   45,   45,   45,   45,   45
+        1,    1,    1,    1,   48,   45,   43,   41,   40,   38,
+       37,   36,   34,   33,   32,   31,   30,   29,   28,   27,
+       26,   25,   24,   23,   22,   21,   17,   16,   15,   14,
+       13,   12,   10,    9,    8,    3,   47,   47,   47,   47,
+       47,   47,   47,   47,   47,   47,   47,   47,   47,   47,
+       47,   47,   47,   47,   47,   47,   47,   47,   47,   47,
+       47
     } ;
 
 static yy_state_type yy_last_accepting_state;
@@ -471,8 +473,8 @@ char *yytext;
 #include <stdio.h>
 
 int varindex(char *var);
-#line 475 "/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/cmake-build-debug/lexer.c"
-#line 476 "/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/cmake-build-debug/lexer.c"
+#line 477 "/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/cmake-build-debug/lexer.c"
+#line 478 "/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/cmake-build-debug/lexer.c"
 
 #define INITIAL 0
 
@@ -692,7 +694,7 @@ YY_DECL
 #line 8 "/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/lexer.l"
 
 
-#line 696 "/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/cmake-build-debug/lexer.c"
+#line 698 "/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/cmake-build-debug/lexer.c"
 
 	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
@@ -719,13 +721,13 @@ yy_match:
 			while ( yy_chk[yy_base[yy_current_state] + yy_c] != yy_current_state )
 				{
 				yy_current_state = (int) yy_def[yy_current_state];
-				if ( yy_current_state >= 46 )
+				if ( yy_current_state >= 48 )
 					yy_c = yy_meta[yy_c];
 				}
 			yy_current_state = yy_nxt[yy_base[yy_current_state] + yy_c];
 			++yy_cp;
 			}
-		while ( yy_base[yy_current_state] != 55 );
+		while ( yy_base[yy_current_state] != 57 );
 
 yy_find_action:
 		yy_act = yy_accept[yy_current_state];
@@ -780,37 +782,42 @@ YY_RULE_SETUP
 {yylval.ivar = varindex(strdup(yytext)); return identifier;}
 	YY_BREAK
 case 7:
-/* rule 7 can match eol */
 YY_RULE_SETUP
 #line 17 "/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/lexer.l"
-;
+{yylval.num = atoi(yytext); return number;}
 	YY_BREAK
 case 8:
+/* rule 8 can match eol */
 YY_RULE_SETUP
 #line 18 "/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/lexer.l"
-{return assign_property;}
+;
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
 #line 19 "/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/lexer.l"
-{return assign_value;}
+{return assign_property;}
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
 #line 20 "/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/lexer.l"
-{return yytext[0];}
+{return assign_value;}
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
 #line 21 "/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/lexer.l"
-{yyerror("unexpected character");}
+{return yytext[0];}
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 23 "/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/lexer.l"
+#line 22 "/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/lexer.l"
+{yyerror("unexpected character");}
+	YY_BREAK
+case 13:
+YY_RULE_SETUP
+#line 24 "/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/lexer.l"
 ECHO;
 	YY_BREAK
-#line 814 "/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/cmake-build-debug/lexer.c"
+#line 821 "/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/cmake-build-debug/lexer.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -1107,7 +1114,7 @@ static int yy_get_next_buffer (void)
 		while ( yy_chk[yy_base[yy_current_state] + yy_c] != yy_current_state )
 			{
 			yy_current_state = (int) yy_def[yy_current_state];
-			if ( yy_current_state >= 46 )
+			if ( yy_current_state >= 48 )
 				yy_c = yy_meta[yy_c];
 			}
 		yy_current_state = yy_nxt[yy_base[yy_current_state] + yy_c];
@@ -1135,11 +1142,11 @@ static int yy_get_next_buffer (void)
 	while ( yy_chk[yy_base[yy_current_state] + yy_c] != yy_current_state )
 		{
 		yy_current_state = (int) yy_def[yy_current_state];
-		if ( yy_current_state >= 46 )
+		if ( yy_current_state >= 48 )
 			yy_c = yy_meta[yy_c];
 		}
 	yy_current_state = yy_nxt[yy_base[yy_current_state] + yy_c];
-	yy_is_jam = (yy_current_state == 45);
+	yy_is_jam = (yy_current_state == 47);
 
 		return yy_is_jam ? 0 : yy_current_state;
 }
@@ -1815,7 +1822,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 23 "/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/lexer.l"
+#line 24 "/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/lexer.l"
 
 
 int yywrap(void)

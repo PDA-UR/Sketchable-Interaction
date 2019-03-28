@@ -1,1 +1,3 @@
 B := region => type(MoveableRegion) & shape => type(present) := [];
+B := region => type(MoveableRegion) & shape => type(present) := [(1, 1)];
+B := region => type(MoveableRegion) & shape => type(present) := [(1, 1), (2, 2), (3, 3)];
