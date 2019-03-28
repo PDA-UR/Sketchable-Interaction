@@ -25,8 +25,6 @@ if __name__ == '__main__':
             c = Context()
             data = ("".join(src.read().split()))
 
-            print(data)
-
             data = data.split(';')
 
             if data[-1] is not '':

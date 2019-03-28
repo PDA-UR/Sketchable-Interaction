@@ -116,3 +116,25 @@ silang-compiler/\.idea/
 silang-compiler/lexer/__pycache__/
 
 silang-compiler/__pycache__/
+
+silang-compiler/c/\.idea/
+
+silang-compiler/c/cmake-build-debug/CMakeFiles/
+
+silang-compiler/c/cmake-build-debug/cmake_install\.cmake
+
+silang-compiler/c/cmake-build-debug/CMakeCache\.txt
+
+silang-compiler/c/cmake-build-debug/Makefile
+
+silang-compiler/c/cmake-build-debug/silang
+
+silang-compiler/c/cmake-build-debug/silang_compiler
+
+silang-compiler/c/cmake-build-debug/silang_compiler\.cbp
+
+silang-compiler/c/cmake-build-debug/silang\.cbp
+
+silang-compiler/python/\.idea/
+
+silang-compiler/python/__pycache__/
