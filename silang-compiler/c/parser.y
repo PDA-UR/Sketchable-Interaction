@@ -15,162 +15,125 @@ int nvars = 0;
 
 %}
 
-%union { char* strval; int num; int ivar;}
+%code requires
+{
+#include "../ast.h"
+
+void assign_point(Point* p, int x, int y);
+void assign_list(List* dest, Point* current, List* others);
+void assign_shape(Shape* s, int _type, List* points);
+void assign_region(Region* r, char* type, Shape* s);
+void assign_link(Expression* exp, char* leftv, char* rightv, char* leftc, char* rightc, int _link_type);
+void assign_variable_region(Expression* exp, char* var_name, Region* r);
+}
+
+%union { char* strval; int num; int ivar; Point pt; List li; Shape sha; Region re; Expression expr;};
 
 %token <ivar> identifier
 %token <num> number
 %token assign_property "=>"
 %token assign_value ":="
+%token assign_unidirectional_link "->"
+%token assign_bidirectional_link "<->"
 %token region "region"
 %token shape "shape"
 %token type "type"
 %token present "present"
 %token blueprint "blueprint"
+%token <strval> capability
 
-%type <strval> expression, point
+%type <pt> point
+%type <li> list
+%type <re> region_assignment
+%type <sha> shape_assignment
+%type <expr> expression
 
 %%
 
-program : expression ';'                                            {;}
-        | program expression ';'                                    {;}
-        ;
+program
+: expression ';'
+{
+    printf("%s\n", expression_to_string(&$<expr>1));
+}
 
-expression : identifier ":=" expression                             {printf("variable %s, assigned %s\n", vars[$1], $3);}
+| program expression ';'
+{
+    printf("%s\n", expression_to_string(&$<expr>2));
+}
+;
 
-           | identifier                                             {$$ = vars[$1];}
+expression
+: identifier ":=" region_assignment
+{
+    assign_variable_region(&$$, vars[$1], &$3);
+}
 
-           | region "=>" type '(' identifier ')'                    {
-                                                                        char* s = "region of type ";
+| identifier "->" identifier "=>" capability ',' capability
+{
+    assign_link(&$$, vars[$1], vars[$3], strdup($5), strdup($7), UNIDIRECTIONAL_LINK);
+}
 
-                                                                        int size = (strlen(s) + strlen(vars[$5])) * sizeof(char) + 1;
+| identifier "->" identifier "=>" capability
+{
+    assign_link(&$$, vars[$1], vars[$3], strdup($5), strdup($5), UNIDIRECTIONAL_LINK);
+}
 
-                                                                        char* target = malloc(size);
+| identifier "<->" identifier "=>" capability ',' capability
+{
+    assign_link(&$$, vars[$1], vars[$3], strdup($5), strdup($7), BIDIRECTIONAL_LINK);
+}
 
-                                                                        target[0] = '\0';
+| identifier "<->" identifier "=>" capability
+{
+    assign_link(&$$, vars[$1], vars[$3], strdup($5), strdup($5), BIDIRECTIONAL_LINK);
+}
+;
 
-                                                                        strcat(strcat(target, s), vars[$5]);
+region_assignment
+:  region "=>" type '(' identifier ')'
+{
+    assign_region(&$$, strdup(vars[$5]), NULL);
+}
 
-                                                                        target[size] = '\0';
+| region "=>" type '(' identifier ')' '&' shape_assignment
+{
+    assign_region(&$$, strdup(vars[$5]), &$8);
+}
+;
 
-                                                                        $$ = strdup(target);
+shape_assignment
+: shape "=>" type '(' present ')' ":=" '[' list ']'
+{
+    assign_shape(&$$, TYPE_PRESENT, &$<li>9);
+}
 
-                                                                        free(target);
-                                                                    }
+| shape "=>" type '(' blueprint ')' ":=" '[' list ']'
+{
+    assign_shape(&$$, TYPE_BLUEPRINT, &$<li>9);
+}
+;
 
-           | region "=>" type '(' identifier ')' '&' expression     {
-                                                                        char* s = "region of type ";
+list
+: point ',' list
+{
+    assign_list(&$$, &$1, &$3);
+}
 
-                                                                        int size = (strlen(s) + strlen(vars[$5]) + strlen($8)) * sizeof(char) + 1;
+| point
+{
+    add(&$<li>$, $1);
+}
 
-                                                                        char* target = malloc(size);
+|
+{;}
+;
 
-                                                                        target[0] = '\0';
-
-                                                                        strcat(strcat(strcat(target, s), vars[$5]), $8);
-
-                                                                        target[size] = '\0';
-
-                                                                        $$ = strdup(target);
-
-                                                                        free(target);
-                                                                    }
-
-           | shape "=>" type '(' present ')' ":=" expression        {
-                                                                        char* s = " shape of type present with points: ";
-
-                                                                        int size = (strlen(s) + strlen($8)) * sizeof(char) + 1;
-
-                                                                        char* target = malloc(size);
-
-                                                                        target[0] = '\0';
-
-                                                                        strcat(strcat(target, s), $8);
-
-                                                                        target[size] = '\0';
-
-                                                                        $$ = strdup(target);
-
-                                                                        free(target);
-                                                                    }
-
-           | shape "=>" type '(' blueprint ')' ":=" expression      {
-                                                                        char* s = " with shape of type present with points: ";
-
-                                                                        int size = (strlen(s) + strlen($8)) * sizeof(char) + 1;
-
-                                                                        char* target = malloc(size);
-
-                                                                        target[0] = '\0';
-
-                                                                        strcat(strcat(target, s), $8);
-
-                                                                        target[size] = '\0';
-
-                                                                        $$ = strdup(target);
-
-                                                                        free(target);
-                                                                    }
-
-           | '[' ']'                                                {
-                                                                        char* s = "[]";
-                                                                        $$ = s;
-                                                                    }
-
-           | '[' expression ']'                                     {
-                                                                        int size = (2 + strlen($2)) * sizeof(char) + 1;
-
-                                                                        char* target = malloc(size);
-
-                                                                        target[0] = '\0';
-
-                                                                        strcat(strcat(strcat(target, "["), $2), "]");
-
-                                                                        target[size] = '\0';
-                                                                        $$ = strdup(target);
-
-                                                                        free(target);
-                                                                    }
-
-           | point ',' expression                                   {
-                                                                        int size = (strlen($1) + 1 + strlen($3)) * sizeof(char) + 1;
-
-                                                                        char* target = malloc(size);
-
-                                                                        target[0] = '\0';
-
-                                                                        strcat(strcat(strcat(target, $1), ","), $3);
-
-                                                                        target[size] = '\0';
-
-                                                                        $$ = strdup(target);
-
-                                                                        free(target);
-                                                                    };
-
-           | point                                                  {$$ = $1;}
-           ;
-
-point : '(' number ',' number ')'                                   {
-                                                                        char x[12], y[12];
-
-                                                                        sprintf(x, "%d", (int) $2);
-                                                                        sprintf(y, "%d", (int) $4);
-
-                                                                        int size = (3 + strlen(x) + strlen(y)) * sizeof(char) + 1;
-
-                                                                        char *target = malloc(size);
-
-                                                                        target[0] = '\0';
-
-                                                                        strcat(strcat(strcat(strcat(strcat(target, "("), x), ","), y), ")");
-
-                                                                        target[size] = '\0';
-
-                                                                        $$ = strdup(target);
-
-                                                                        free(target);
-                                                                    }
-      ;
+point
+: '(' number ',' number ')'
+{
+    assign_point(&$$, $2, $4);
+}
+;
 
 %%
 
@@ -189,4 +152,71 @@ int varindex(char* var)
 void yyerror(char* s)
 {
     fprintf(stderr, "ERROR: %s\n", s);
+}
+
+void assign_point(Point* p, int x, int y)
+{
+    p->x = x;
+    p->y = y;
+}
+
+void assign_list(List* dest, Point* current, List* others)
+{
+    add(dest, *current);
+
+    Point* p = others->first;
+
+    while(p != NULL)
+    {
+        add(dest, *p);
+
+        p = p->next;
+    }
+}
+
+void assign_shape(Shape* s, int _type, List* points)
+{
+    s->_type = _type;
+    s->_points = *points;
+}
+
+void assign_region(Region* r, char* _type, Shape* s)
+{
+    r->_type = _type;
+
+    if(s != NULL)
+        r->_shape = *s;
+}
+
+void assign_link(Expression* exp, char* leftv, char* rightv, char* leftc, char* rightc, int _link_type)
+{
+    // check if leftv and rightv are defined
+
+    exp->value_num = LINK_ASSIGNMENT;
+
+    Link link;
+    link.left_var = leftv;
+    link.right_var = rightv;
+    link.left_cap = leftc;
+    link.right_cap = rightc;
+    link._type = _link_type;
+
+    exp->values.link = link;
+}
+
+void assign_variable_region(Expression* exp, char* var_name, Region* r)
+{
+    Variable var;
+
+    var.name = var_name;
+    var.values._region = *r;
+    var.value_num = REGION_VARIABLE;
+
+    RegionAssignment ra;
+
+    ra.var = var;
+    ra._region = *r;
+
+    exp->values.ra = ra;
+    exp->value_num = REGION_ASSIGNMENT;
 }
