@@ -1,0 +1,4 @@
+/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/cmake-build-debug/CMakeFiles/edit_cache.dir
+/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/cmake-build-debug/CMakeFiles/parser.dir
+/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/cmake-build-debug/CMakeFiles/rebuild_cache.dir
+/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/cmake-build-debug/CMakeFiles/silang.dir

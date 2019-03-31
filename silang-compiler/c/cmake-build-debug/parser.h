@@ -43,27 +43,62 @@
 #if YYDEBUG
 extern int yydebug;
 #endif
+/* "%code requires" blocks.  */
+#line 19 "/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/parser.y" /* yacc.c:1921  */
+
+#include "../ast.h"
+
+void assign_point(Point* p, int x, int y);
+void assign_list(List* dest, Point* current, List* others);
+void assign_shape(Shape* s, int _type, List* points);
+void assign_region(Region* r, char* type, Shape* s);
+void assign_link(Expression* exp, char* leftv, char* rightv, char* leftc, char* rightc, int _link_type);
+void assign_variable_region(Expression* exp, char* var_name, Region* r);
+
+#line 59 "/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/cmake-build-debug/parser.h" /* yacc.c:1921  */
 
 /* Token type.  */
 #ifndef YYTOKENTYPE
 # define YYTOKENTYPE
   enum yytokentype
   {
-    identifier = 258
+    identifier = 258,
+    number = 259,
+    assign_property = 260,
+    assign_value = 261,
+    assign_unidirectional_link = 262,
+    assign_bidirectional_link = 263,
+    region = 264,
+    shape = 265,
+    type = 266,
+    present = 267,
+    blueprint = 268,
+    capability = 269
   };
 #endif
 /* Tokens.  */
 #define identifier 258
+#define number 259
+#define assign_property 260
+#define assign_value 261
+#define assign_unidirectional_link 262
+#define assign_bidirectional_link 263
+#define region 264
+#define shape 265
+#define type 266
+#define present 267
+#define blueprint 268
+#define capability 269
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 
 union YYSTYPE
 {
-#line 15 "/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/parser.y" /* yacc.c:1921  */
- char *id; int num; int ivar; double dval;
+#line 30 "/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/parser.y" /* yacc.c:1921  */
+ char* strval; int num; int ivar; Point pt; List li; Shape sha; Region re; Expression expr;
 
-#line 67 "/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/cmake-build-debug/parser.h" /* yacc.c:1921  */
+#line 102 "/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/cmake-build-debug/parser.h" /* yacc.c:1921  */
 };
 
 typedef union YYSTYPE YYSTYPE;

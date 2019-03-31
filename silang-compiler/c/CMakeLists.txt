@@ -33,6 +33,5 @@ SET_SOURCE_FILES_PROPERTIES(${CMAKE_CURRENT_BINARY_DIR}/parser.c GENERATED)
 # Include binary directory to include lexer.c in parser.c
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_BINARY_DIR}/)
 
-
-add_executable(silang lexer.c parser.c)
+add_executable(silang lexer.c parser.c main.c ast.c ast.h)
 add_dependencies(silang parser)

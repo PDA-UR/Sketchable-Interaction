@@ -1,0 +1,10 @@
+
+A := region => type(MoveableRegion) & shape => type(blueprint) := [];
+B := region => type(MoveableRegion);
+C := region => type(MoveableRegion) & shape => type(present) := [(1, 1)];
+D := region => type(MoveableRegion) & shape => type(present) := [(1, 1),(2,2),(3,3)];
+
+A -> B => position, position;
+A -> B => position;
+A <-> B => position;
+A <-> B => position, position;
