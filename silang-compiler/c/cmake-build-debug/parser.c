@@ -69,6 +69,8 @@
 #line 1 "/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/parser.y" /* yacc.c:337  */
 
 
+extern int yylineno;
+
 int yylex(void);
 void yyerror(char *s);
 
@@ -76,14 +78,16 @@ void yyerror(char *s);
 #include <stdlib.h>
 #include <string.h>
 
-#define NVARS 100
+#include "error.h"
 
-char* vars[NVARS], vals[NVARS];
+#define NVARS 1000
+
+char* var_names[NVARS];
 
 int nvars = 0;
 
 
-#line 87 "/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/cmake-build-debug/parser.c" /* yacc.c:337  */
+#line 91 "/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/cmake-build-debug/parser.c" /* yacc.c:337  */
 # ifndef YY_NULLPTR
 #  if defined __cplusplus
 #   if 201103L <= __cplusplus
@@ -116,9 +120,13 @@ int nvars = 0;
 extern int yydebug;
 #endif
 /* "%code requires" blocks.  */
-#line 19 "/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/parser.y" /* yacc.c:352  */
+#line 24 "/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/parser.y" /* yacc.c:352  */
+
 
 #include "../ast.h"
+
+
+Variable variables[1000];
 
 void assign_point(Point* p, int x, int y);
 void assign_list(List* dest, Point* current, List* others);
@@ -127,7 +135,7 @@ void assign_region(Region* r, char* type, Shape* s);
 void assign_link(Expression* exp, char* leftv, char* rightv, char* leftc, char* rightc, int _link_type);
 void assign_variable_region(Expression* exp, char* var_name, Region* r);
 
-#line 131 "/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/cmake-build-debug/parser.c" /* yacc.c:352  */
+#line 139 "/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/cmake-build-debug/parser.c" /* yacc.c:352  */
 
 /* Token type.  */
 #ifndef YYTOKENTYPE
@@ -167,10 +175,10 @@ void assign_variable_region(Expression* exp, char* var_name, Region* r);
 
 union YYSTYPE
 {
-#line 30 "/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/parser.y" /* yacc.c:352  */
+#line 39 "/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/parser.y" /* yacc.c:352  */
  char* strval; int num; int ivar; Point pt; List li; Shape sha; Region re; Expression expr;
 
-#line 174 "/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/cmake-build-debug/parser.c" /* yacc.c:352  */
+#line 182 "/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/cmake-build-debug/parser.c" /* yacc.c:352  */
 };
 
 typedef union YYSTYPE YYSTYPE;
@@ -474,8 +482,8 @@ static const yytype_uint8 yytranslate[] =
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,    54,    54,    59,    66,    71,    76,    81,    86,    93,
-      98,   105,   110,   117,   122,   128,   132
+       0,    63,    63,    68,    75,    80,    85,    90,    95,   102,
+     107,   114,   119,   126,   131,   137,   141
 };
 #endif
 
@@ -1282,125 +1290,125 @@ yyreduce:
   switch (yyn)
     {
         case 2:
-#line 55 "/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/parser.y" /* yacc.c:1652  */
-    {
-    printf("%s\n", expression_to_string(&(yyvsp[-1].expr)));
-}
-#line 1290 "/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/cmake-build-debug/parser.c" /* yacc.c:1652  */
-    break;
-
-  case 3:
-#line 60 "/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/parser.y" /* yacc.c:1652  */
+#line 64 "/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/parser.y" /* yacc.c:1652  */
     {
     printf("%s\n", expression_to_string(&(yyvsp[-1].expr)));
 }
 #line 1298 "/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/cmake-build-debug/parser.c" /* yacc.c:1652  */
     break;
 
-  case 4:
-#line 67 "/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/parser.y" /* yacc.c:1652  */
+  case 3:
+#line 69 "/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/parser.y" /* yacc.c:1652  */
     {
-    assign_variable_region(&(yyval.expr), vars[(yyvsp[-2].ivar)], &(yyvsp[0].re));
+    printf("%s\n", expression_to_string(&(yyvsp[-1].expr)));
 }
 #line 1306 "/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/cmake-build-debug/parser.c" /* yacc.c:1652  */
     break;
 
-  case 5:
-#line 72 "/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/parser.y" /* yacc.c:1652  */
+  case 4:
+#line 76 "/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/parser.y" /* yacc.c:1652  */
     {
-    assign_link(&(yyval.expr), vars[(yyvsp[-6].ivar)], vars[(yyvsp[-4].ivar)], strdup((yyvsp[-2].strval)), strdup((yyvsp[0].strval)), UNIDIRECTIONAL_LINK);
+    assign_variable_region(&(yyval.expr), var_names[(yyvsp[-2].ivar)], &(yyvsp[0].re));
 }
 #line 1314 "/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/cmake-build-debug/parser.c" /* yacc.c:1652  */
     break;
 
-  case 6:
-#line 77 "/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/parser.y" /* yacc.c:1652  */
+  case 5:
+#line 81 "/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/parser.y" /* yacc.c:1652  */
     {
-    assign_link(&(yyval.expr), vars[(yyvsp[-4].ivar)], vars[(yyvsp[-2].ivar)], strdup((yyvsp[0].strval)), strdup((yyvsp[0].strval)), UNIDIRECTIONAL_LINK);
+    assign_link(&(yyval.expr), var_names[(yyvsp[-6].ivar)], var_names[(yyvsp[-4].ivar)], strdup((yyvsp[-2].strval)), strdup((yyvsp[0].strval)), UNIDIRECTIONAL_LINK);
 }
 #line 1322 "/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/cmake-build-debug/parser.c" /* yacc.c:1652  */
     break;
 
-  case 7:
-#line 82 "/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/parser.y" /* yacc.c:1652  */
+  case 6:
+#line 86 "/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/parser.y" /* yacc.c:1652  */
     {
-    assign_link(&(yyval.expr), vars[(yyvsp[-6].ivar)], vars[(yyvsp[-4].ivar)], strdup((yyvsp[-2].strval)), strdup((yyvsp[0].strval)), BIDIRECTIONAL_LINK);
+    assign_link(&(yyval.expr), var_names[(yyvsp[-4].ivar)], var_names[(yyvsp[-2].ivar)], strdup((yyvsp[0].strval)), strdup((yyvsp[0].strval)), UNIDIRECTIONAL_LINK);
 }
 #line 1330 "/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/cmake-build-debug/parser.c" /* yacc.c:1652  */
     break;
 
-  case 8:
-#line 87 "/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/parser.y" /* yacc.c:1652  */
+  case 7:
+#line 91 "/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/parser.y" /* yacc.c:1652  */
     {
-    assign_link(&(yyval.expr), vars[(yyvsp[-4].ivar)], vars[(yyvsp[-2].ivar)], strdup((yyvsp[0].strval)), strdup((yyvsp[0].strval)), BIDIRECTIONAL_LINK);
+    assign_link(&(yyval.expr), var_names[(yyvsp[-6].ivar)], var_names[(yyvsp[-4].ivar)], strdup((yyvsp[-2].strval)), strdup((yyvsp[0].strval)), BIDIRECTIONAL_LINK);
 }
 #line 1338 "/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/cmake-build-debug/parser.c" /* yacc.c:1652  */
     break;
 
-  case 9:
-#line 94 "/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/parser.y" /* yacc.c:1652  */
+  case 8:
+#line 96 "/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/parser.y" /* yacc.c:1652  */
     {
-    assign_region(&(yyval.re), strdup(vars[(yyvsp[-1].ivar)]), NULL);
+    assign_link(&(yyval.expr), var_names[(yyvsp[-4].ivar)], var_names[(yyvsp[-2].ivar)], strdup((yyvsp[0].strval)), strdup((yyvsp[0].strval)), BIDIRECTIONAL_LINK);
 }
 #line 1346 "/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/cmake-build-debug/parser.c" /* yacc.c:1652  */
     break;
 
-  case 10:
-#line 99 "/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/parser.y" /* yacc.c:1652  */
+  case 9:
+#line 103 "/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/parser.y" /* yacc.c:1652  */
     {
-    assign_region(&(yyval.re), strdup(vars[(yyvsp[-3].ivar)]), &(yyvsp[0].sha));
+    assign_region(&(yyval.re), strdup(var_names[(yyvsp[-1].ivar)]), NULL);
 }
 #line 1354 "/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/cmake-build-debug/parser.c" /* yacc.c:1652  */
     break;
 
-  case 11:
-#line 106 "/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/parser.y" /* yacc.c:1652  */
+  case 10:
+#line 108 "/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/parser.y" /* yacc.c:1652  */
     {
-    assign_shape(&(yyval.sha), TYPE_PRESENT, &(yyvsp[-1].li));
+    assign_region(&(yyval.re), strdup(var_names[(yyvsp[-3].ivar)]), &(yyvsp[0].sha));
 }
 #line 1362 "/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/cmake-build-debug/parser.c" /* yacc.c:1652  */
     break;
 
-  case 12:
-#line 111 "/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/parser.y" /* yacc.c:1652  */
+  case 11:
+#line 115 "/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/parser.y" /* yacc.c:1652  */
     {
-    assign_shape(&(yyval.sha), TYPE_BLUEPRINT, &(yyvsp[-1].li));
+    assign_shape(&(yyval.sha), TYPE_PRESENT, &(yyvsp[-1].li));
 }
 #line 1370 "/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/cmake-build-debug/parser.c" /* yacc.c:1652  */
     break;
 
-  case 13:
-#line 118 "/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/parser.y" /* yacc.c:1652  */
+  case 12:
+#line 120 "/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/parser.y" /* yacc.c:1652  */
     {
-    assign_list(&(yyval.li), &(yyvsp[-2].pt), &(yyvsp[0].li));
+    assign_shape(&(yyval.sha), TYPE_BLUEPRINT, &(yyvsp[-1].li));
 }
 #line 1378 "/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/cmake-build-debug/parser.c" /* yacc.c:1652  */
     break;
 
-  case 14:
-#line 123 "/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/parser.y" /* yacc.c:1652  */
+  case 13:
+#line 127 "/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/parser.y" /* yacc.c:1652  */
     {
-    add(&(yyval.li), (yyvsp[0].pt));
+    assign_list(&(yyval.li), &(yyvsp[-2].pt), &(yyvsp[0].li));
 }
 #line 1386 "/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/cmake-build-debug/parser.c" /* yacc.c:1652  */
     break;
 
-  case 15:
-#line 128 "/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/parser.y" /* yacc.c:1652  */
-    {;}
-#line 1392 "/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/cmake-build-debug/parser.c" /* yacc.c:1652  */
+  case 14:
+#line 132 "/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/parser.y" /* yacc.c:1652  */
+    {
+    add(&(yyval.li), (yyvsp[0].pt));
+}
+#line 1394 "/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/cmake-build-debug/parser.c" /* yacc.c:1652  */
     break;
 
-  case 16:
-#line 133 "/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/parser.y" /* yacc.c:1652  */
-    {
-    assign_point(&(yyval.pt), (yyvsp[-3].num), (yyvsp[-1].num));
-}
+  case 15:
+#line 137 "/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/parser.y" /* yacc.c:1652  */
+    {;}
 #line 1400 "/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/cmake-build-debug/parser.c" /* yacc.c:1652  */
     break;
 
+  case 16:
+#line 142 "/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/parser.y" /* yacc.c:1652  */
+    {
+    assign_point(&(yyval.pt), (yyvsp[-3].num), (yyvsp[-1].num));
+}
+#line 1408 "/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/cmake-build-debug/parser.c" /* yacc.c:1652  */
+    break;
 
-#line 1404 "/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/cmake-build-debug/parser.c" /* yacc.c:1652  */
+
+#line 1412 "/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/cmake-build-debug/parser.c" /* yacc.c:1652  */
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -1631,17 +1639,17 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 138 "/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/parser.y" /* yacc.c:1918  */
+#line 147 "/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/parser.y" /* yacc.c:1918  */
 
 
 int varindex(char* var)
 {
     int i;
     for (i = 0; i < nvars; i++)
-        if (strcmp(var, vars[i]) == 0)
+        if (strcmp(var, var_names[i]) == 0)
             return i;
 
-    vars[nvars] = strdup(var);
+    var_names[nvars] = strdup(var);
 
     return nvars++;
 }
@@ -1687,7 +1695,13 @@ void assign_region(Region* r, char* _type, Shape* s)
 
 void assign_link(Expression* exp, char* leftv, char* rightv, char* leftc, char* rightc, int _link_type)
 {
-    // check if leftv and rightv are defined
+    if(variables[varindex(leftv)].value_num == 0)
+        undefined_variable_error(leftv, &yyerror, yylineno);
+
+    if(variables[varindex(rightv)].value_num == 0)
+        undefined_variable_error(rightv, &yyerror, yylineno);
+
+    illegal_link_assignment_shape_type_error(&variables[varindex(leftv)], &variables[varindex((rightv))], &yyerror, yylineno);
 
     exp->value_num = LINK_ASSIGNMENT;
 
@@ -1708,6 +1722,8 @@ void assign_variable_region(Expression* exp, char* var_name, Region* r)
     var.name = var_name;
     var.values._region = *r;
     var.value_num = REGION_VARIABLE;
+
+    variables[varindex(var_name)] = var;
 
     RegionAssignment ra;
 

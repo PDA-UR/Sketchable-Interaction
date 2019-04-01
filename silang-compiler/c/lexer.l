@@ -3,7 +3,12 @@
 #include <stdio.h>
 
 int varindex(char *var);
+int yyerror(char* error);
+
 %}
+
+%option yylineno
+
 
 %%
 

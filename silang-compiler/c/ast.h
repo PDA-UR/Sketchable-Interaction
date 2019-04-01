@@ -67,14 +67,16 @@ const char* region_to_string(Region* region);
 
 #define REGION_VARIABLE 1
 
+typedef union
+{
+    Region _region;
+
+} VariableValues;
+
 typedef struct
 {
     char* name;
-    union
-    {
-        Region _region;
-
-    } values;
+    VariableValues values;
 
     int value_num;
 

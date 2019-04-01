@@ -44,9 +44,13 @@
 extern int yydebug;
 #endif
 /* "%code requires" blocks.  */
-#line 19 "/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/parser.y" /* yacc.c:1921  */
+#line 24 "/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/parser.y" /* yacc.c:1921  */
+
 
 #include "../ast.h"
+
+
+Variable variables[1000];
 
 void assign_point(Point* p, int x, int y);
 void assign_list(List* dest, Point* current, List* others);
@@ -55,7 +59,7 @@ void assign_region(Region* r, char* type, Shape* s);
 void assign_link(Expression* exp, char* leftv, char* rightv, char* leftc, char* rightc, int _link_type);
 void assign_variable_region(Expression* exp, char* var_name, Region* r);
 
-#line 59 "/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/cmake-build-debug/parser.h" /* yacc.c:1921  */
+#line 63 "/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/cmake-build-debug/parser.h" /* yacc.c:1921  */
 
 /* Token type.  */
 #ifndef YYTOKENTYPE
@@ -95,10 +99,10 @@ void assign_variable_region(Expression* exp, char* var_name, Region* r);
 
 union YYSTYPE
 {
-#line 30 "/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/parser.y" /* yacc.c:1921  */
+#line 39 "/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/parser.y" /* yacc.c:1921  */
  char* strval; int num; int ivar; Point pt; List li; Shape sha; Region re; Expression expr;
 
-#line 102 "/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/cmake-build-debug/parser.h" /* yacc.c:1921  */
+#line 106 "/home/juergen/1_dev/projects/Sketchable-Interaction/silang-compiler/c/cmake-build-debug/parser.h" /* yacc.c:1921  */
 };
 
 typedef union YYSTYPE YYSTYPE;
