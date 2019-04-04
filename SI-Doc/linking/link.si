@@ -4,7 +4,7 @@
 
 # (A <-> B) => (position, scale)  # link A pos to B scale
 
-C := region => type(composition) & regions := [     # linking graph compression
+C := region => type(composition) & regions := [     # linking graph compression, not yet implemented in silang
                         (A <-> B, position, scale),
                         (B -> C, position),
                         (D -> C, scale),
