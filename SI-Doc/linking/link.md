@@ -7,7 +7,7 @@ Linking of regions is one of the two fundamental concepts of SI with the other b
 ## Purpose
 Linking of regions allows users to model more complex workflows within their workspace.
 Put into the context of common programmings language like Java or C++, the linking mechanism is a metaphor for a method or function as it is the case with collisions of regions.
-However, the linking mechanism can also be a *stack* of functions or *graph*  of functions - the linking-graph.
+However, the linking mechanism can also be a *queue* of functions or *graph*  of functions - the linking-graph.
 This sequence of function can also be viewed as a function calling other function due to the application of decomposition.
 Therefore, a region collision triggers a certain action (calls a function) and region linking triggers further actions according to the number of linked regions and their linking relationship (calling a set of functions).
 The linking relationship of regions ist determined by its **reach**, ergo how many regions are affected by this action trigger. 
@@ -109,7 +109,7 @@ However, multiple different constructions of linking-graphs with such complexity
 
 ### Idea
 
-As mentioned above, the linking of regions is a *stack* or *graph* of functions which are called once a *entry region* collides with another region.
+As mentioned above, the linking of regions is a *queue* or *graph* of functions which are called once a *entry region* collides with another region.
 Additionally, this *graph* of functions can metaphorically be seen as a single function calling all member region of the linking-graph.
 Complex linking-graphs may occur within a SI context when complex workflows are modelled.
 This is especially the case when e.g. a data processing pipeline is modelled.
