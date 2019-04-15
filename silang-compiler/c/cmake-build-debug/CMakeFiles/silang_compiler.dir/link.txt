@@ -1,1 +1,0 @@
-/usr/bin/cc -g  -rdynamic CMakeFiles/silang_compiler.dir/lexer.c.o CMakeFiles/silang_compiler.dir/parser.c.o  -o silang_compiler 
