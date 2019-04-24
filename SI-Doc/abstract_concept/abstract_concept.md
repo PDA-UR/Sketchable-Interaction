@@ -4,9 +4,10 @@
 Compared to physical workspaces, digital workspaces allow little customization for end-users.
 We present *Sketchable Interaction*, a direct-manipulation environment that allows end-users to define and modify custom ad-hoc user interfaces, workspaces and workflows that fit their preferences and requirements.
 Sketchable Interaction is based on four primitives: 
-Users can create *interactive regions* by *sketching*.
-The regions apply *effects* to other intersecting regions. 
-Regions may be *attached* to digital or physical objects. 
+* Users can create *interactive regions* by *sketching*.
+* The regions apply *effects* to other intersecting regions. 
+* Regions can be *linked* to digital or physical *artifacts*. 
+
 Within *sketchable interaction*, a small set of generic region effects allows for building a variety of workflows and user interfaces.
 As a concrete example, a user might sketch a simple document management workflow by drawing a region that shows a preview of files dragged onto it, drawing another region that deletes files, and attaching a *tag as 'to do'* effect to a tangible stamp widget. 
 
@@ -16,26 +17,40 @@ Sketchable Interaction (SI) aims to enable end-users to build ad-hoc user interf
 
 ## Inspiration
 
-cite isenberg stuff
+Isenberg et al.'s *Buffer Framework*[1] inspired SI from the technical point of view.
+It targets large displays, such as multi-touch tables and augmented desks or walls.
+They propose to outfit interactive surfaces with underlying layers of buffers which rasterize the complete screen into equally sized squares with pixels being the smallest possible peculiarity.
+Once objects are moved around the screen each buffer applies its effect to the object according to its location on the grid.
+Such effects, however, only modify the graphical representation of an object in regard to its location on the interactive surface and buffer grid.
+Underlying information is untouched.
+For example, file icons or images can be seamlessly magnified in this way by moving them across a buffer which is modelled to allow a gradual increase in magnification.
+
+Isenberg et al. extended on this concept by proposing further applications and usages of the *Buffer Framework* in regard to mobile spatial tools [2].
+They defined tools for either swiping an area clear of objects, pile them together or change their alignment either in order to face the user or to be perpendicular to the screen.
+They achieved this by attaching *buffers* to tools, which are either moved around, e.g. via touch, and apply their action locally and instantaneously or change the underlying buffer composition by overwriting its values with the ones of the tool's buffer.
+
+SI builds upon the *Buffer Framework* [1] in two major ways:
+* allowing the arbitrary sketching of a *buffer* instead of a fixed grid 
+* allowing the manipulation of data as well instead of focusing on graphical representations
 
 ## Concept 
 Sketchable Interaction's core elements are *interactive regions* and their interplay.
 Every interaction is performed and every action is triggered with the involvement of interactive regions.
 Therefore, a SI environment or context is an interactive region serving as a canvas on which users are able to sketch other interactive regions.
 In order to make the most basic interaction with SI -sketching- work, interactive regions have to satisfy certain qualities:
-* interactive regions trigger effects when colliding based on *capabilities*
-* interactive region can be linked to another region based on *capabilities* 
+* interactive regions trigger effects when colliding with regard to their *capabilities*
+* interactive region can be linked to another region with regard to their *capabilities* 
 
-For realizing sketching on the SI context, an interactive region has to be linked to the mouse cursor or detected finger blob via the *position* capability (the interaction technique for linking also involves interactive regions of course).
-Now, this can be viewed as a brush for the canvas users want to sketch in.
+For realizing sketching within a SI context, an interactive region has to be linked to the mouse cursor or detected finger blob via the *position* capability (the interaction technique for linking also involves interactive regions of course).
+Now, the mouse cursor or finger can be seen as a brush for the canvas.
 In order to paint on a canvas, the brush has to collide with it. 
 Moving the mouse cursor across the SI context region triggers numerous collisions allowing the sketching of shapes.
 In order to do so, the canvas region has the capability to *receive color information* from an colliding interactive region as long as the colliding regions satisfies the *send color information* capability.
-Therefore, the colliding mouse region applies its *effect* to the SI context region, ergo the SI context's area of collision with the mouse region is colored according to the mouse region's color data.
+Therefore, the colliding mouse region applies its *effect* to the SI context region, ergo the SI context's area of collision with the brush region is colored according to the brush region's color data.
 
-From here, users can sketch interactive regions which are capable to show a seamless preview of a file on the desktop once the file's interactive region collides with it.
-Or for a more advanced example, users can build a workflow such as: Tag a file, compress it to zip and then send it by email to a co-worker.
-All achieved by simply colliding the involved regions potentially linked to *artifacts*.
+From here, users can sketch numerous interactive regions which are capable to send and receive a multitude of effects, so users can sketch their workspaces and workflows as they see fit.
+For example, a potential interactive region displays a seamless preview (read the content of a text-file or see the image stored in an image file) of a file on the desktop once the file's interactive region collides with it.
+Or for a more advanced example, users can build a workflow such as: Tag a file, compress it to zip and then send the zip-archive by email to another person.
 
 <!--image of mtt prototype-->
 
@@ -46,15 +61,20 @@ The following sections provide these definitions while also including previously
 
 ### Collision
 Colliding two interactive regions for triggering actions is one of the three fundamental concepts of interactive regions.
-As shown in the example of the previous section *Concept*, every interaction which users can perform with SI always requires interactive regions to collide, beginning from sketching other interactive regions, over assigning linking relationships or manipulation of data associated to an artifact a region is liked to.
+As shown in the example in the previous section *Concept*, every interaction which users can perform with SI always requires interactive regions to collide, beginning from sketching other interactive regions, over assigning linking relationships or manipulation of data associated to an artifact a region is liked to.
 
 ### Effect
 
 Actions occur once regions collide or are part of a user-defined *process-graph*.
 In order to trigger effects, region involved in the collision must satisfy the effect's *capability* requirement.
-If both regions are capable to handle effects (e.g. one is capable of emitting an effect, and the other ,is capable of receiving that effect), the effects are applied to the regions.
+If both regions are capable to handle effects (e.g. one is capable of emitting an effect, and the other, is capable of receiving that effect), the effects are applied to the regions.
 For example, moving a delete region into another region triggers the *deletion effect* which every region by default is capable of receiving.
 Therefore, the other region is deleted.
+However, the *deletion effect* is special, due to the fact that two *deletion regions* can intersect and it is not entirely intuitive to determine which region is to be deleted if not both.
+This is due to the fact, that every region must have the *capability* to be deleted.
+Here, SI checks the *linking* states of those regions.
+Therefore, a *deletion region* linked to a mouse courser or finger which is explicitly moved by a user will always delete the other colliding *deletion region*.
+Sketching a new *deletion region* so that it interects with another *deletion region* will always lead to the older one being deleted.
 
 ### Capability
 Capabilities describe whether effects are legal to be emitted or received by a specific type of region.
@@ -74,9 +94,15 @@ Therefore, regions are the nodes of a process-graph.
 Edges represent the connection between nodes and define the possible paths through the process-graph.
 These connections can be unidirectional or bidirectional.
 
+### Process-Graph Compression
+
+SI performs Process-Graph Compression once a user wants to condense a set of sequenced regions -Process-Graph- into a single region called *Compound Region*.
+SI checks whether the selected graph can be compressed.
+(The underlying rules will be featured in a separate blog post, purely dedicated towards Process-Graphs and their compression)
+
 ### Compound Region
 
-A compound region is the result of process-graph compression.
+A compound region is the result of *process-graph compression*.
 A compound region contains the sequence of effects of the originally sketched and then compressed process-graph.
 Therefore, it groups multiple regions forming a process-graph (or process-sub-graph) and represents this group as a single region.
 When put into the context of common programming languages, a compound region fills the role of a *function* or *method*, while *atomic* regions are lines of code.
@@ -85,9 +111,9 @@ When put into the context of common programming languages, a compound region fil
 
 ### Link
 
-The Linking of regions, the third concept of the three fundamental concepts of interactive regions, is also crucial for interacting with SI.
+Last but not least, the Linking of regions is the third concept and last fundamental concept of interactive regions and crucial for interacting with SI.
 Regions can be linked via *attributes* according to their capabilities.
-This works similar to the connection of regions to process-graphs, however, does not incorporate a region's effect as it is no attribute.
+This works similar to the connection of regions to process-graphs, however, does not incorporate a region's effect as an effect is not an attribute.
 
 ### Attribute
 
@@ -100,9 +126,10 @@ However, as can be seen in the section *Expandability*, new attributes can be cr
 
 ### Atomic Region
 
-An atomic region is a single region which exactly does one thing and only this thing once colliding with another region with regard to capabilities.
+An atomic region is a single region which exactly does one thing and only this one thing once colliding with another region with regard to capabilities.
 Therefore, it is a region generated via normal sketching.
-Its direct counterpart is a compound region, a region grouping multiple regions into once storing a sequence of effects to be applied once another region collides.
+Its direct counterpart is a compound region, a region grouping multiple regions into one storing a sequence of effects to be applied once another region collides.
+In the context of common programming languages, atomic regions can be thought of lines of code.
 
 ### Artifact
 
@@ -119,3 +146,7 @@ The SI Runtime is designed (and still wil be designed) to support the following 
 * new capabilities can be easily defined and added to SI as plugins
 * new region attributes can be easily specified and added as plugins
 
+## References
+
+1. Tobias Isenberg, André Miede, and Sheelagh Carpendale. 2006. A buffer framework for supporting responsive interaction in information visualization interfaces. In Creating, Connecting and Collaborating through Computing, 2006. C5’06. The Fourth International Conference on, 262–269.
+2. Tobias Isenberg, Simon Nix, Martin Schwarz, André Miede, Stacey D Scott, and Sheelagh Carpendale. 2007. Mobile spatial tools for fluid interaction.
