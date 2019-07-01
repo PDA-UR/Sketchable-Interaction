@@ -1,5 +1,6 @@
 #include <iostream>
 #include <vector>
+#include <algorithm>
 
 template <typename T>
 void print(T value)
@@ -39,6 +40,21 @@ private:
     Point d_p, d_q;
 };
 
+bool point_in_polygon(Point& point, std::vector<Point>&  points)
+{
+    int i, j, nvert = points.size();
+
+    bool c = false;
+
+    for(i = 0, j = nvert - 1; i < nvert; j = i++) {
+        if(((points[i].y() >= point.y() ) != (points[j].y() >= point.y()) ) &&
+           (point.x() <= (points[j].x() - points[i].x()) * (point.y() - points[i].y()) / (points[j].y() - points[i].y()) + points[i].x()))
+            c = !c;
+    }
+
+    return c;
+}
+
 class Mask
 {
 public:
@@ -48,6 +64,9 @@ public:
 
         std::vector<Line> edges;
 
+        for(int& d_value : d_values)
+            d_value = 0;
+
         retrieve_edges(edges, contour);
         retrieve_y_minumum_maximum_of_contour(ymin, ymax, contour);
         fill_contour_scanline(ymin, ymax, edges, contour);
@@ -55,21 +74,21 @@ public:
 
     void set_bit(Point p)
     {
-        int index = 1919 * p.y() + p.x();
+        int index = 1920 * p.y() + p.x();
 
         d_values[index / 32] |= 1 << (index % 32);
     }
 
     void clear_bit(Point p)
     {
-        int index = 1919  * p.y() + p.x();
+        int index = 1920  * p.y() + p.x();
 
         d_values[index / 32] &= ~(1 << (index % 32));
     }
 
     int test_bit(Point p)
     {
-        int index = 1919   * p.y() + p.x();
+        int index = 1920 * p.y() + p.x();
 
         return ((d_values[index / 32] & (1 << (index % 32))) != 0);
     }
@@ -77,57 +96,31 @@ public:
 private:
     Point* intersect(Line& l, Line& m)
     {
+        float epsilon = 0.1;
+
         Point p1 = l.p(), p2 = l.q(), p3 = m.p(), p4 = m.q();
 
-        int x1 = p1.x(), x2 = p2.x(), x3 = p3.x(), x4 = p4.x();
-        int y1 = p1.y(), y2 = p2.y(), y3 = p3.y(), y4 = p4.y();
+        float x1 = p1.x(), x2 = p2.x(), x3 = p3.x(), x4 = p4.x();
+        float y1 = p1.y(), y2 = p2.y(), y3 = p3.y(), y4 = p4.y();
 
-        int d = (x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4);
+        float d = (x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4);
 
-        if (d == 0) return nullptr;
+        if (d == 0)
+            return nullptr;
 
-        int  pre = (x1 * y2 - y1 * x2), post = (x3 * y4 - y3 * x4);
+        float pre = (x1 * y2 - y1 * x2);
+        float post = (x3 * y4 - y3 * x4);
 
-        int x = ( pre * (x3 - x4) - (x1 - x2) * post ) / d;
-        int y = ( pre * (y3 - y4) - (y1 - y2) * post ) / d;
+        float x = (pre * (x3 - x4) - (x1 - x2) * post) / d;
+        float y = (pre * (y3 - y4) - (y1 - y2) * post) / d;
 
-        if ( x < std::min(x1, x2) || x > std::max(x1, x2) ||
-             x < std::min(x3, x4) || x > std::max(x3, x4) ) return nullptr;
-        if ( y < std::min(y1, y2) || y > std::max(y1, y2) ||
-             y < std::min(y3, y4) || y > std::max(y3, y4) ) return nullptr;
+        if (x < (std::min(x1, x2) - epsilon) || x > (std::max(x1, x2) + epsilon) ||  x < (std::min(x3, x4) - epsilon) || x > (std::max(x3, x4) + epsilon))
+            return nullptr;
 
-        return new Point(x, y);
-    }
+        if (y < (std::min(y1, y2) - epsilon) || y > (std::max(y1, y2) + epsilon) || y < (std::min(y3, y4) - epsilon)|| y > (std::max(y3, y4) + epsilon))
+            return nullptr;
 
-    bool point_in_polygon(Point& point, std::vector<Point>&  points) {
-        int i, j, nvert = points.size();
-
-        bool c = false;
-
-        for(i = 0, j = nvert - 1; i < nvert; j = i++) {
-            if(((points[i].y() >= point.y() ) != (points[j].y() >= point.y()) ) &&
-                (point.x() <= (points[j].x() - points[i].x()) * (point.y() - points[i].y()) / (points[j].y() - points[i].y()) + points[i].x()))
-                c = !c;
-        }
-
-        return c;
-    }
-
-    const Point contour_center(std::vector<Point>& vertices)
-    {
-        int px = 0;
-        int py = 0;
-
-        for(auto &p : vertices)
-        {
-            px += p.x();
-            py += p.y();
-        }
-
-        px /= vertices.size();
-        py /= vertices.size();
-
-        return Point(px, py);
+        return new Point((int) x, (int) y);
     }
 
     void retrieve_edges(std::vector<Line>& edges, const std::vector<Point>& contour)
@@ -153,9 +146,9 @@ private:
 
     void fill_contour_scanline(int ymin, int ymax, std::vector<Line>& edges, std::vector<Point>& contour)
     {
-        for(int k = ymin; k < ymax; k++)
+        for(int k = ymax; k > ymin; k--)
         {
-            Line l(Point(0, k), Point(1079, k));
+            Line l(Point(0, k), Point(1080, k));
 
             std::vector<Point> intersections;
 
@@ -166,6 +159,16 @@ private:
                 if(p)
                     intersections.push_back(*p);
             }
+
+            std::sort(intersections.begin(), intersections.end(), [&](Point& p, Point& q)
+            {
+                return p.x() < q.x();
+            });
+
+            //for (auto& p : intersections)
+                //std::cout << p.x() << " " << p.y() << " | ";
+
+            //std::cout << std::endl;
 
             std::vector<std::vector<Point>> pairs_to_fill;
 
@@ -190,12 +193,21 @@ int main()
 {
     std::vector<Point> pts =
     {
-            Point(100, 100), Point(100, 600), Point(350, 375), Point(600, 600), Point(600, 100), Point(350, 325)
+        Point(100, 100),
+        Point(100, 600),
+        Point(350, 375),
+        Point(600, 600),
+        Point(600, 100),
+        Point(350, 325),
+        Point(100, 100)
     };
 
     Mask m(pts);
 
-    std::cout << m.test_bit(Point(350, 100)) << std::endl;
+    Point p(350, 350);
+
+    print((m.test_bit(p) ? "Mask: In Polygon" : "Mask: Not in Polygon"));
+    print(point_in_polygon(p, pts) ? "Conventional: In Polygon" : "Conventional: Not in Polygon");
 
     return 0;
 }
