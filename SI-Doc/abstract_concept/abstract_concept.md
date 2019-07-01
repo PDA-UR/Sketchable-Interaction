@@ -6,7 +6,7 @@ We present *Sketchable Interaction*, a direct-manipulation environment that allo
 Sketchable Interaction is based on four primitives: 
 * Users can create *interactive regions* by *sketching*.
 * The regions apply *effects* to other intersecting regions. 
-* Regions can be *linked* to digital or physical *artifacts*. 
+* Regions can be *linked* to other regions or other digital or physical *artifacts*. 
 
 Within *sketchable interaction*, a small set of generic region effects allows for building a variety of workflows and user interfaces.
 As a concrete example, a user might sketch a simple document management workflow by drawing a region that shows a preview of files dragged onto it, drawing another region that deletes files, and attaching a *tag as 'to do'* effect to a tangible stamp widget. 
@@ -65,8 +65,10 @@ As shown in the example in the previous section *Concept*, every interaction whi
 
 ### Effect
 
-Actions occur once regions collide or are part of a user-defined *process-graph*.
+Interactions occur once regions collide or are part of a user-defined *process-graph*.
 In order to trigger effects, region involved in the collision must satisfy the effect's *capability* requirement.
+Therefore, effects are a special kind of *attributes* which are unique for each class of interactive region. 
+Attributes such as *position* and *scale* are present in every interactive region.
 If both regions are capable to handle effects (e.g. one is capable of emitting an effect, and the other, is capable of receiving that effect), the effects are applied to the regions.
 For example, moving a delete region into another region triggers the *deletion effect* which every region by default is capable of receiving.
 Therefore, the other region is deleted.
@@ -107,17 +109,17 @@ A compound region contains the sequence of effects of the originally sketched an
 Therefore, it groups multiple regions forming a process-graph (or process-sub-graph) and represents this group as a single region.
 When put into the context of common programming languages, a compound region fills the role of a *function* or *method*, while *atomic* regions are lines of code.
 
-(There will be a dedicated blog post on process-graphs, process-graph compression and compounds in the future)
+(There will be a dedicated blog post on process-graphs, process-graph compression and compounds in the future)F
 
 ### Link
 
 Last but not least, the Linking of regions is the third concept and last fundamental concept of interactive regions and crucial for interacting with SI.
 Regions can be linked via *attributes* according to their capabilities.
-This works similar to the connection of regions to process-graphs, however, does not incorporate a region's effect as an effect is not an attribute.
+An interactive region either *references* an attribute or *transfers* it. 
 
 ### Attribute
 
-An attribute is a property of an interactive region which can be linked to attributes of other interactive regions if capable.
+An attribute is a property of an interactive region which can be linked to attributes of other interactive regions if capable either by *referencing* or *transferring*.
 
 SI aims to define a standard library set of attributes.
 However, as can be seen in the section *Expandability*, new attributes can be created and added to SI as a plugin. 
@@ -137,7 +139,7 @@ Artifact is the SI terminology for objects of any kind not originating from a SI
 Therefore, interactive regions can be seen as objects, however not as artifacts.
 Artifacs include digital objects like the mouse cursor, files, images as well as physical objects like fingers, tangibles, documents or sheets of paper.
 
-SI aims to support the combination of digital and physical artifacts and their respective affordances in a SI context, in order to compose workflows (*SI programs*) capable of accepting various digital and physical artifacts as sources of data, input or storage. 
+SI aims to support the combination of digital and physical artifacts and their respective affordances in a context, in order to compose workflows (*SI programs*) capable of accepting various digital and physical artifacts as sources of data, input or output. 
 
 ## Expandability
 

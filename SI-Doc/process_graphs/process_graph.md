@@ -1,116 +1,62 @@
-# Linking of Regions 
+# Process-Graphs of Regions and Process-Graph Compression
 
 ## Description
-Linking of regions occurs when the properties of two or more interactive regions are put into a user-defined relationship in order to model more complex functionality within a SI context.
-Linking of regions is one of the two fundamental concepts of SI with the other being the collision of regions (link to that post will come soon).
+Process-Graphs (PG) occur when the effects of two or more interactive regions are put into a user-defined sequence in order to model more complex functionality within a SI context.
+PGs are one of the three fundamental concepts of SI with the other being the collision of regions and linking of regions (links to these blog posts will release soon).
 
 ## Purpose
-Linking of regions allows users to model more complex workflows within their workspace.
-Put into the context of common programmings language like Java or C++, the linking mechanism is a metaphor for a method or function as it is the case with collisions of regions.
-However, the linking mechanism can also be a *queue* of functions or *graph*  of functions - the linking-graph.
+Process-Graphs allow users to model more complex workflows within their workspace.
+Put into the context of common programmings language like Java or C++, the process-graph mechanism is a metaphor for a method or function as two or more effects are sequenced.
+Therefore, this mechanism can also be a *queue* of functions or eventually be viewed as a *graph*  of functions - the processing-graph (PG).
 This sequence of function can also be viewed as a function calling other function due to the application of decomposition.
-Therefore, a region collision triggers a certain action (calls a function) and region linking triggers further actions according to the number of linked regions and their linking relationship (calling a set of functions).
-The linking relationship of regions ist determined by its **reach**, ergo how many regions are affected by this action trigger. 
-The linking relationship's **impact** specifies, to what extend effects are applied, region properties are mutated, etc..
+Therefore, a region collision triggers a certain action (calls a function) and PGs trigger further actions according to the number of sequenced regions and their effects (calling a set of functions).
+The PG is determined by its **reach**, ergo how many regions are affected by this action trigger. 
+The PG's **impact** specifies, to what extend effects are applied, region properties are mutated, etc..
 
 ## Functionality
-Generally, each region can be linked to every other present region based on region *properties* and corresponding region linking *capabilities*.
-An easy example for that is linking two regions in terms of their *position* property.
-Moving one region in a direction immediately causes the linked region to be relatively moved in that direction as well.
-However, only regions sharing the capability to be linked via the 'position' property actually show this behaviour when linked and moved.
-Generally, this is the case for all kinds of possible linking capabilities and between regions.
+Generally, each region can be added to a PG sequence.
+An easy example for that is sequencing two regions in order to first *tag* a file and lastly *send* it to a co-worker.
 
-In *silang* (a link to the silang blogpost will follow soon) linking is expressed as follows:
+<!-- example image --> 
 
-```
-A -> B => property_of_A, property_of_B;  # unidirectional
-A <-> B => property_of_A, property_of_B; # bidirectional
+Colliding an interactive region *linked* to a file icon with the PG's designated *entry region* -the *tag* region- will first tag that file and immediately send that file to the specified co-worker via the *exit region -the *send* region-.
+<!-- example image of above with file icon touching entry region -->
 
-# short forms if property_of_A equals property_of_B
-A -> B => property;
-A <-> B => property;
+However, the file never directly collides with the *send region*, yet that region's effect is applied.
 
-# example with position property
-A -> B => position;
-```
+Of course, the file also can be sent via the *send region* by colliding with it directly.
+Then, the tagging step is skipped.
+Here, the current *viewing-state* (see the dedicated section for details) of the SI context determines with what amount of flexibility indiviual regions or sub-graphs of PGs can be used.
+Above's example assumes that the *default-viewing-state* is active.
+*Capabilities* determine whether effects can be triggered and applied or not.
+Therefore, a colliding region has to satisfy all the capabilities required by the process-graph sequence effects.
+Nothing happens if one or more capabilities are not met.
+This also true for the sequences of subsets of the target PG.
+
+## Viewing-State
 
 ## Directionality
 
-### Unidirectional Linking-Graphs
-The easiest way to link regions is by establishing a unidirectional link.
-Using the example from above again, regions A and B are unidirectionally linked according to their *position* property.
-Therefore, the position property of A is linked to the position property of B.  
-In *silang*, this is expressed as:
-```
-A -> B => position, position;  # or A -> B => position for short
-```
-Therefore, moving A in a direction immediately causes B to move in that direction as well.
-But due to the link being unidirectional, moving B directly has no effect on A whatsoever.
+### Unidirectional Process-Graphs
+this should be the only possible and reasonable one because it is defined as sequence
 
-<!-- include current prototype example image -->
+### Bidirectional Process-Graphs
 
-### Bidirectional Linking-Graphs
-When expanding on the example in the previous section so that movement of B also triggers movement of A, then a bidirectional linking relationship is necessary.
-Therefore, A and B are bidirectionally linked according to their *position* parameter.  
-In *silang*, this is expressed as:
 
-```
-A <-> B => position, position;  # or A <-> B => position for short
-```
+### Cyclic Process-Graphs
 
-Now, both can be moved directly while the other is also moved due to the bidirectional link.
-
-<!-- include current prototype example -->
-
-### Cyclic Linking-Graphs
-The example in the section above also features the easiest form of a cyclic linking-graph, due to A's position changes affect B's position and vice versa.
-However, this bears a problem when viewed naively: *infinite recursion*.
-Movement change in A triggers movement change in B, yet this movement of B triggers movement of A anew and does so infinitely. 
-Therefore, SI has to deal with that.
-In order to showcase cyclic linking-graphs, the example is expanded with a third region C and cyclically and unidirectionally linking it to A and A to B and B to C, forming a triangular shape.
-Again, the position property of the regions is used.  
-In *silang*, this looks like this:
-
-```
-A -> B => position;
-B -> C => position;
-C -> A => position;
-```
-
-Every action interacting with a graph of linked regions is bound to an universally unique identifier (uuid) generated by the *directly* affected region, the so called *entry region*.
-The uuid is passed to the next region of the linking-graph along other data, in this case positional data.
-Once the action reaches a region which already processed the event with a specific uuid, SI checks whether that region's linked property is equal to the one which originally left that region.
-When this is the case, the action is dropped by SI in order to prevent said *infinite recursion*.
-
-<!-- AA triangle relationship of current prototype -->
 
 ### Combinations
 
-SI allows to freely combine unidirectional, bidirectional and cyclic relationships into one linking-graph within its context.
-It is up to the user of SI to determine which linking-graph constructions are reasonable and useful.
-SI just internally shields against infinite recursion.
-Additionally, it is up to the application programmer, people who code new regions and their effects, to determine which capabilities are reasonable to include or create per region and then how colliding artifacts (regions, data, etc.) behave.  
-The following *silang* code shows a unreasonable and redundantly built linking-graph with the position property being modified.
 
-```
-A -> B => position;
-B <-> C => position;
-C -> D => position;
-D -> B => position;
-D <-> E => position;
-E -> A => position;
-```
 
-However, multiple different constructions of linking-graphs with such complexity or more complexity are possible within a SI context.
 
-<!-- BB image of constructed -->
-
-## Linking-Graph Compression
+## Process-Graph Compression
 
 ### Idea
 
 As mentioned above, the linking of regions is a *queue* or *graph* of functions which are called once a *entry region* collides with another region.
-Additionally, this *graph* of functions can metaphorically be seen as a single function calling all member region of the linking-graph.
+Additionally, this *graph* of functions can metaphorically be seen as a single function calling all member region of the process-graph.
 Complex linking-graphs may occur within a SI context when complex workflows are modelled.
 This is especially the case when e.g. a data processing pipeline is modelled.
 
@@ -169,7 +115,7 @@ The *exit region* on the other hand represents the desired absolute ending of th
 Based on *entry* and *exit* nodes, the SI context then determines whether the linking-graph can be logically compressed as the user desires.
 SI differentiates between Full Linking-Graph Compression and Partial Linking-Graph Compression.
 
-### Full Linking-Graph Compression
+### Full Process-Graph Compression
 
 Full Linking-Graph Compression is probably the most occurring type of Linking-Graph Compression users of SI encounter.
 It occurs when a linking-graph can be fully compressed dependent on the specified *entry region and *exit region*.
@@ -181,7 +127,7 @@ In this procedure, all non-user-deterministic rules come to effect.
 
 <!-- example graph image -->
 
-### Partial Linking-Graph Compression
+### Partial Process-Graph Compression
 
 #### Rules
 The following rules are key to Linking-Graph Compression and are listed below.
@@ -190,7 +136,7 @@ Additionally, further below are rule specifications.
 * A linking-graph must have a path from the *entry region* to the *exit region*
 * A linking-graph has to be self-contained
 
-#### A linking-graph can be a sub-graph of another graph
+#### A Process-graph can be a sub-graph of another Process-graph
 
 As users may model more complex workflows within a SI context, the more users may want to apply decomposition to their workspace.
 Also, users may want to apply that technique to a subset (or sub-graph) of their complex linking-graph model.
@@ -204,12 +150,12 @@ However, that example linking-graph may not be something feasible users would ac
 The compression of a specific sub-graph, however, is not bound to defining an *entry* and *exit region* by a user as well as logical rules determined by the SI Runtime powering the SI context of the linking-graph.
 These logical rules are described in the following chapters.
 
-#### A linking-graph must have a path from the *entry region* to the *exit region*
+#### A Process-graph must have a path from the *entry region* to the *exit region*
 This rule is paramount to the linking process because it determines whether there is a graph to be compressed in the first place.
 Immediately after the users defined the *entry region* and *exit region*, the SI Runtime checks whether there is a path from entry to exit.
 If the SI Runtime evaluates an existing path, the next rule applies.
 
-#### A linking-graph has to be self-contained
+#### A Process-graph has to be self-contained
 Being able to reach the *exit region* when starting from the *entry region* unfortunately is not enough for logical error prevention.
 *Self-containment* in terms of linking-graphs means, that no region outside of the linking-graph unidirectionally links towards a region inside of the linking-graph except for the *entry region* dependent on the *exit region*.
 When looking back at Figure DD1 containing a complex linking-graph with unidirectional and bidirectional linking relationships, several problems can occur based on the choice of the *entry region* and *exit region*.
@@ -224,7 +170,7 @@ The following figures show most of the self-contained linkin-graphs for this exa
 
 <!-- imgs -->
 
-## SI Standard Library in terms of Linking
+## SI Standard Library in terms of Process-Graphs
 
 SI's standard library contains several regions and effects with preset capabilities.
 Therefore, which regions can be linked to which other regions is predefined.

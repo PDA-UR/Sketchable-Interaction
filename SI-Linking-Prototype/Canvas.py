@@ -43,23 +43,24 @@ class Canvas(QMainWindow):
 
         MoveableRegion(0, 0, self)
         MoveableRegion(450, 0, self)
-        MoveableRegion(900, 0, self)
+        MoveableRegion(225, 200, self)
 
-        ScalableRegion(500, 500, self)
-        ScalableRegion(800, 500, self)
+        #ScalableRegion(500, 500, self)
+        #ScalableRegion(800, 500, self)
 
         self.heart_beat = HeartBeat(33.0)
         self.heart_beat.heart_beat.connect(self.update_all)
         self.heart_beat.start()
 
-        w1, w2, w3, w4, w5 = self.findChildren(Region)
+        w1, w2, w3 = self.findChildren(Region) #, # w3, w4, w5 = self.findChildren(Region)
 
         self.make_link(w1, w2, Capability.POSITION, Capability.POSITION)
         self.make_link(w2, w3, Capability.POSITION, Capability.POSITION)
-        self.make_link(w3, w2, Capability.POSITION, Capability.POSITION)
-        self.make_link(w1, w4, Capability.POSITION, Capability.SCALE)
-        self.make_link(w4, w5, Capability.SCALE, Capability.SCALE)
-        self.make_link(w5, w4, Capability.SCALE, Capability.SCALE)
+        self.make_link(w3, w1, Capability.POSITION, Capability.POSITION)
+        #self.make_link(w3, w2, Capability.POSITION, Capability.POSITION)
+        #self.make_link(w1, w4, Capability.POSITION, Capability.SCALE)
+        #self.make_link(w4, w5, Capability.SCALE, Capability.SCALE)
+        #self.make_link(w5, w4, Capability.SCALE, Capability.SCALE)
 
         self.show()
 

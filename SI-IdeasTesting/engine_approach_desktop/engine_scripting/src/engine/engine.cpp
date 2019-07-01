@@ -29,6 +29,7 @@ void engine::add_region_plugin(boost::python::object pyObject)
     SIRegion r;
 
     r.set_pyregion(pyObject);
+    r.on_enter();
 }
 
 void engine::start()
