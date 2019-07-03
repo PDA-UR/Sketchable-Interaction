@@ -2,6 +2,8 @@
 #ifndef SILANG_AST_H
 #define SILANG_AST_H
 
+typedef struct __Region Region;
+
 /* point         */
 
 typedef struct __Point Point;
@@ -48,17 +50,36 @@ typedef struct
 
 } Shape;
 
+/* Process Graph */
+
+typedef struct __ProcessGraph ProcessGraph;
+typedef struct __Variable Variable;
+
+/*****************/
+
 const char* shape_to_string(Shape* shape);
 const char* shape_type_to_string(int type);
 
 /* region        */
 
-typedef struct
+struct __ProcessGraph
 {
-    char* _type;
-    Shape _shape;
+    Variable* list, * first, * last;
 
-} Region;
+    int size;
+
+};
+
+struct __Region
+{
+    char *_type;
+    Shape _shape;
+    ProcessGraph pg;
+};
+/*****************/
+
+
+/* Process Graph */
 
 const char* region_to_string(Region* region);
 /*****************/
@@ -66,21 +87,24 @@ const char* region_to_string(Region* region);
 /* variable      */
 
 #define REGION_VARIABLE 1
+#define PROCESS_GRAPH_VARIABLE 2
 
 typedef union
 {
     Region _region;
+    ProcessGraph pg;
 
 } VariableValues;
 
-typedef struct
+struct __Variable
 {
     char* name;
     VariableValues values;
+    ProcessGraph pg;
+    Variable* next;
 
     int value_num;
-
-} Variable;
+};
 
 /*****************/
 

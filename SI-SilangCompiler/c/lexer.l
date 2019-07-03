@@ -12,7 +12,9 @@ int yyerror(char* error);
 
 %%
 
+"composition"                               {return composition;}
 "region"                                    {return region;}
+"sequence"                                  {return sequence;}
 "shape"                                     {return shape;}
 "type"                                      {return type;}
 "present"                                   {return present;}
@@ -28,6 +30,9 @@ int yyerror(char* error);
 "->"                                        {return assign_unidirectional_link;}
 "<->"                                       {return assign_bidirectional_link;}
 [,;&()\[\]]                                 {return yytext[0];}
+"#".*                                       {}
+[/][*][^*]*[*]+([^*/][^*]*[*]+)*[/]         {}
+
 .                                           {yyerror("unexpected character");}
 
 %%

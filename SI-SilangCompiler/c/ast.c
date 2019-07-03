@@ -164,12 +164,12 @@ const char* shape_type_to_string(int type)
 
 const char* region_to_string(Region* region)
 {
-    const char* type = region->_type;
-    const char* shape = shape_to_string(&region->_shape);
+    const char *type = region->_type;
+    const char *shape = shape_to_string(&region->_shape);
 
     int size = (15 + strlen(type) + strlen(shape)) * sizeof(char) + 1;
 
-    char* s = malloc(size);
+    char *s = malloc(size);
 
     s[0] = '\0';
 
@@ -177,7 +177,7 @@ const char* region_to_string(Region* region)
 
     s[size] = '\0';
 
-    char* ret = strdup(s);
+    char *ret = strdup(s);
 
     free(s);
 
@@ -198,11 +198,48 @@ const char* variable_to_string(Variable* var)
 
             int size = (16 + strlen(var_name) + strlen(region)) * sizeof(char) + 1;
 
+            int pg_size = var->pg.size;
+
+            if (pg_size > 0)
+            {
+                int num_commas = pg_size - 1;
+
+                size += num_commas;
+
+                Variable* v = var->pg.first;
+
+                while (v != NULL)
+                {
+                    size += strlen(v->values._region._type);
+
+                    v = v->next;
+                }
+            }
+
+            size += 2 + 12; // [ ] + , sequence( )
+
             char* s = malloc(size);
 
             s[0] = '\0';
 
             sprintf(s, "name(%s), Region(%s)", var_name, region);
+
+            Variable* v = var->pg.first;
+
+            strcat(s, ", sequence([");
+
+            while (v != NULL)
+            {
+                if (var->pg.last == v)
+                    strcat(s, v->values._region._type);
+                else
+                    strcat(strcat(s, v->values._region._type), ",");
+
+                v = v->next;
+            }
+
+            strcat(s, "])");
+
 
             s[size] = '\0';
 
