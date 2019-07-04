@@ -6,7 +6,7 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 
-#include "../../src/SI.hpp"
+#include "SI.hpp"
 
 class SITest : public ::testing::Test
 {
