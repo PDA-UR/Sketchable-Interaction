@@ -186,3 +186,7 @@ SI-SilangCompiler/python/__pycache__/
 SI-Collision-Prototype/si_collision_mask/\.idea/
 
 SI-Collision-Prototype/si_collision_mask/cmake-build-debug/
+
+SI/\.idea/
+
+SI/cmake-build-debug/
