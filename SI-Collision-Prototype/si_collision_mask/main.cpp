@@ -36,7 +36,7 @@ public:
         c.push_back(c[0]);
 
         int ymin = std::min_element(contour.begin(), contour.end(), [&](const Vector& v, const Vector& u) { return v.y() < u.y(); }).base()->y();
-        int ymax = std::min_element(contour.begin(), contour.end(), [&](const Vector& v, const Vector& u) { return v.y() > u.y(); }).base()->y();
+        int ymax = std::max_element(contour.begin(), contour.end(), [&](const Vector& v, const Vector& u) { return v.y() < u.y(); }).base()->y();
 
         retrieve_edges(edges, c);
         fill_contour_scanline(ymin, ymax, edges, c);
@@ -165,7 +165,7 @@ int main()
 
     Mask<WIDTH, HEIGHT> m(contour);
 
-    //debug_print_mask(m);
+    debug_print_mask(m);
 
     return 0;
 }
