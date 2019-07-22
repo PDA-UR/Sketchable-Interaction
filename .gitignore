@@ -190,3 +190,17 @@ SI-Collision-Prototype/si_collision_mask/cmake-build-debug/
 SI/\.idea/
 
 SI/cmake-build-debug/
+
+googletest/
+
+SI/build/debug/
+
+SI/build/release/
+
+*.so
+
+SI/plugins/__pycache__/
+
+SI/tests/res/__pycache__/
+
+SI-IdeasTesting/opengl_based_rendering/
