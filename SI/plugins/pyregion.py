@@ -1,9 +1,14 @@
-from libsi_scripting_lib import PySiRegion
+from libPySI import PySiRegion
 
 
 class PyRegion(PySiRegion):
    def __init__(self):
       super(PyRegion, self).__init__()
+
+      self.name = "PyRegion"
+
+   def __repr__(self):
+      return "Name: {}".format(self.name)
 
    def on_enter(self):
       print("from PyRegion on_enter")
@@ -15,4 +20,4 @@ class PyRegion(PySiRegion):
       print("from PyRegion on_leave")
 
 if __name__ == '__main__':
-    pass
+   pass

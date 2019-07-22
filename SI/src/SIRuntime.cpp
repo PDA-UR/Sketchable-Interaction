@@ -3,25 +3,10 @@
 #include <core/Core.hpp>
 #include "SIRuntime.hpp"
 
-int SI_initialize(const char *plugin_path)
-{
-    if(plugin_path == nullptr)
-    {
-        return 1;
-    }
-
-    if(!strcmp(plugin_path, ""))
-    {
-        return 2;
-    }
-
-    return 0;
-}
-
-int SI_start()
+int SI_start(const char* plugin_path)
 {
     Core c = Core();
-    c.initialize();
+    c.start(plugin_path);
 
     return 0;
 }

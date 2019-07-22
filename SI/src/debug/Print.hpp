@@ -58,6 +58,31 @@ public:
         else
             std::cout << bp::extract<std::string>(bp::str(obj))() << " ";
     }
+
+    template<typename T>
+    static void print(const std::vector<T>& list)
+    {
+        int i = 0;
+
+        for(i = 0; i < list.size() - 1; i++)
+            print(list[i]);
+
+        print(list[i], true);
+    }
+
+    template <typename T>
+    static void print(const std::vector<std::vector<T>>& list_of_lists)
+    {
+        for(auto& list : list_of_lists)
+        {
+            int i = 0;
+
+            for(i = 0; i < list.size() - 1; i++)
+                print(list[i]);
+
+            print(list[i], true);
+        }
+    }
 };
 
 #endif //SI_PRINT_HPP

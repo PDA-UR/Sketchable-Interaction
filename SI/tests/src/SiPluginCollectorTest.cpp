@@ -1,6 +1,6 @@
 
 
-#include <resource/PluginCollector.hpp>
+#include <python3_plugin/PluginCollector.hpp>
 #include "include/SiPluginCollectorTest.hpp"
 
 TEST_F(SiPluginCollectorTest, collect)
