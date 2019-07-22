@@ -1,19 +1,56 @@
 cmake_minimum_required(VERSION 3.13)
 project(SI)
 
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+find_package(PythonLibs 3 REQUIRED)
+find_package(Python3)
+find_package(Boost 1.69.0 COMPONENTS system python3.7 REQUIRED)
+
+include_directories(${Boost_INCLUDE_DIRS})
+include_directories( ${PYTHON_INCLUDE_DIRS})
+
+# add_definitions(-DQT_NO_KEYWORDS)
+
+# SI PYTHON3 MODULE
+add_library(PySI MODULE
+        src/resource/Plugin.cpp
+        src/resource/Plugin.hpp)
+
+target_link_libraries(PySI ${PYTHON_LIBRARIES} ${Boost_LIBRARIES})
 
 # SI LIBRARY
 add_library(SI SHARED
         src/core/Core.cpp
         src/core/Core.hpp
-        src/SI.cpp
-        src/SI.hpp)
+        src/SIRuntime.cpp
+        src/SIRuntime.hpp
+        src/resource/Plugin.cpp
+        src/resource/Plugin.hpp
+        src/resource/Scripting.cpp
+        src/resource/Scripting.hpp
+        src/core/region/Region.cpp
+        src/core/region/Region.hpp
+        src/debug/Print.cpp
+        src/debug/Print.hpp
+        src/resource/PluginCollector.cpp
+        src/resource/PluginCollector.hpp
+        src/core/collision/CollisionMask.cpp
+        src/core/collision/CollisionMask.hpp
+        src/core/collision/CollisionManager.cpp
+        src/core/collision/CollisionManager.hpp
+        include/SI/SI.hpp)
+
+target_link_libraries(SI ${PYTHON_LIBRARIES} ${Boost_LIBRARIES})
+add_custom_command(TARGET SI POST_BUILD COMMAND cp ${CMAKE_BINARY_DIR}/libSI.so ${CMAKE_SOURCE_DIR}/libs)
+add_dependencies(SI PySI)
 
 # SI TEST APPLICATION
-add_executable(si_test_application test/app/src/main.cpp)
+add_executable(si_test_application examples/app/src/main.cpp)
 target_link_libraries(si_test_application SI)
+add_dependencies(si_test_application PySI)
+
 
 # SI GTEST UNIT TEST RUNNER
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src
@@ -23,5 +60,8 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src
 
 add_subdirectory(../googletest googletest)
 
-add_executable(unit_tests_run test/unit_tests/src/unit_test_run.cpp test/unit_tests/src/SI_test.cpp test/unit_tests/src/SI_test.hpp)
-target_link_libraries(unit_tests_run SI gtest gtest_main gmock gmock_main pthread)
+add_executable(unit_tests_run tests/src/unit_test_run.cpp tests/src/SIRuntime_test.cpp tests/src/include/SIRuntime_test.hpp tests/src/SiPluginTest.cpp tests/src/include/SiPluginTest.hpp tests/src/SiScriptingTest.cpp tests/src/include/SiScriptingTest.hpp tests/src/SiPluginCollectorTest.cpp tests/src/include/SiPluginCollectorTest.hpp tests/src/SiPrintTest.cpp tests/src/include/SiPrintTest.hpp)
+target_link_libraries(unit_tests_run ${PYTHON_LIBRARIES} ${Boost_LIBRARIES} SI gtest gtest_main gmock gmock_main pthread)
+
+add_custom_command(TARGET PySI POST_BUILD COMMAND cp ${CMAKE_BINARY_DIR}/libPySI.so ${CMAKE_SOURCE_DIR}/libs)
+add_dependencies(unit_tests_run PySI)
