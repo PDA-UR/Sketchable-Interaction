@@ -203,3 +203,5 @@ SI-IdeasTesting/old_engine_approach/googletest/
 SI/build/debug/
 
 SI/build/release/
+
+SI/tests/res/__init__\.py
