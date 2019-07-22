@@ -127,9 +127,8 @@ private:
 
             std::sort(intersections.begin(), intersections.end(), [&](const Vector& v, const Vector& u) { return v.x() < u.x(); });
 
-            for(int n = 1; n < intersections.size(); n++)
-                if(n & 1)
-                    pairs_to_fill.emplace_back(std::vector<Vector> { intersections[n - 1], intersections[n] });
+            for(int n = 1; n < intersections.size(); n += 2)
+                pairs_to_fill.emplace_back(std::vector<Vector> { intersections[n - 1], intersections[n] });
 
             for(auto& pair : pairs_to_fill)
                 for (int x = pair[0].x(); x <= pair[1].x(); x++)

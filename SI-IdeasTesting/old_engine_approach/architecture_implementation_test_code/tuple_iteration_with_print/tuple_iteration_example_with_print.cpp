@@ -24,6 +24,11 @@ void for_each(TupleType&& t, FunctionType f)
     for_each(std::forward<TupleType>(t), f, std::integral_constant<size_t, 0>());
 }
 
+void print()
+{
+    std::cout << std::endl;
+}
+
 template <class... Args>
 void print(Args&&... args)
 {
@@ -34,13 +39,10 @@ void print(Args&&... args)
         std::cout << x << " ";
     });
 
-    std::cout << std::endl;
+    print();
 }
 
-void print()
-{
-    std::cout << std::endl;
-}
+
 
 int main()
 {
