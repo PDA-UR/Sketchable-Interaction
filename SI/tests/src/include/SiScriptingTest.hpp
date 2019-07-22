@@ -3,7 +3,7 @@
 #ifndef SI_SISCRIPTINGTEST_HPP
 #define SI_SISCRIPTINGTEST_HPP
 
-#include <resource/Scripting.hpp>
+#include <python3_plugin/Scripting.hpp>
 #include <gtest/gtest.h>
 
 class SIScriptingTest: public ::testing::Test

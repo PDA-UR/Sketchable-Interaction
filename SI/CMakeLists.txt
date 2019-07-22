@@ -13,37 +13,46 @@ include_directories( ${PYTHON_INCLUDE_DIRS})
 
 # add_definitions(-DQT_NO_KEYWORDS)
 
+set(xlib TRUE)
+if(xlib)
+    add_definitions(-Dxlib)
+endif()
+
 # SI PYTHON3 MODULE
 add_library(PySI MODULE
-        src/resource/Plugin.cpp
-        src/resource/Plugin.hpp)
+        src/python3_plugin/Plugin.cpp
+        src/python3_plugin/Plugin.hpp src/context/Context.cpp src/context/Context.hpp src/context/LayerManager.cpp src/context/LayerManager.hpp src/context/Layer.cpp src/context/Layer.hpp)
 
 target_link_libraries(PySI ${PYTHON_LIBRARIES} ${Boost_LIBRARIES})
 
 # SI LIBRARY
+
 add_library(SI SHARED
         src/core/Core.cpp
         src/core/Core.hpp
         src/SIRuntime.cpp
         src/SIRuntime.hpp
-        src/resource/Plugin.cpp
-        src/resource/Plugin.hpp
-        src/resource/Scripting.cpp
-        src/resource/Scripting.hpp
+        src/python3_plugin/Plugin.cpp
+        src/python3_plugin/Plugin.hpp
+        src/python3_plugin/Scripting.cpp
+        src/python3_plugin/Scripting.hpp
         src/core/region/Region.cpp
         src/core/region/Region.hpp
-        src/debug/Print.cpp
         src/debug/Print.hpp
-        src/resource/PluginCollector.cpp
-        src/resource/PluginCollector.hpp
+        src/python3_plugin/PluginCollector.cpp
+        src/python3_plugin/PluginCollector.hpp
         src/core/collision/CollisionMask.cpp
         src/core/collision/CollisionMask.hpp
         src/core/collision/CollisionManager.cpp
         src/core/collision/CollisionManager.hpp
         include/SI/SI.hpp)
 
-target_link_libraries(SI ${PYTHON_LIBRARIES} ${Boost_LIBRARIES})
-add_custom_command(TARGET SI POST_BUILD COMMAND cp ${CMAKE_BINARY_DIR}/libSI.so ${CMAKE_SOURCE_DIR}/libs)
+if (xlib)
+    target_link_libraries(SI ${PYTHON_LIBRARIES} ${Boost_LIBRARIES} -lX11)
+else()
+    target_link_libraries(SI ${PYTHON_LIBRARIES} ${Boost_LIBRARIES})
+endif()
+
 add_dependencies(SI PySI)
 
 # SI TEST APPLICATION
@@ -62,6 +71,17 @@ add_subdirectory(../googletest googletest)
 
 add_executable(unit_tests_run tests/src/unit_test_run.cpp tests/src/SIRuntime_test.cpp tests/src/include/SIRuntime_test.hpp tests/src/SiPluginTest.cpp tests/src/include/SiPluginTest.hpp tests/src/SiScriptingTest.cpp tests/src/include/SiScriptingTest.hpp tests/src/SiPluginCollectorTest.cpp tests/src/include/SiPluginCollectorTest.hpp tests/src/SiPrintTest.cpp tests/src/include/SiPrintTest.hpp)
 target_link_libraries(unit_tests_run ${PYTHON_LIBRARIES} ${Boost_LIBRARIES} SI gtest gtest_main gmock gmock_main pthread)
-
-add_custom_command(TARGET PySI POST_BUILD COMMAND cp ${CMAKE_BINARY_DIR}/libPySI.so ${CMAKE_SOURCE_DIR}/libs)
 add_dependencies(unit_tests_run PySI)
+
+if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+    add_custom_command(TARGET PySI POST_BUILD COMMAND cp ${CMAKE_SOURCE_DIR}/build/debug/libPySI.so ${CMAKE_SOURCE_DIR}/libs)
+    add_custom_command(TARGET SI POST_BUILD COMMAND cp ${CMAKE_SOURCE_DIR}/build/debug/libSI.so ${CMAKE_SOURCE_DIR}/libs)
+
+    add_custom_command(TARGET PySI POST_BUILD COMMAND mv ${CMAKE_SOURCE_DIR}/libs/libPySI.so ${CMAKE_SOURCE_DIR}/libs/libPySId.so)
+    add_custom_command(TARGET SI POST_BUILD COMMAND mv ${CMAKE_SOURCE_DIR}/libs/libSI.so ${CMAKE_SOURCE_DIR}/libs/libSId.so)
+endif()
+
+if(CMAKE_BUILD_TYPE STREQUAL "Release")
+    add_custom_command(TARGET PySI POST_BUILD COMMAND cp ${CMAKE_SOURCE_DIR}/build/release/libPySI.so ${CMAKE_SOURCE_DIR}/libs)
+    add_custom_command(TARGET SI POST_BUILD COMMAND cp ${CMAKE_SOURCE_DIR}/build/release/libSI.so ${CMAKE_SOURCE_DIR}/libs)
+endif()
