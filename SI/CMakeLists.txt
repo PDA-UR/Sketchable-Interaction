@@ -100,15 +100,5 @@ add_dependencies(unit_tests_run PySI)
 add_dependencies(unit_tests_run SI)
 
 
-if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-    add_custom_command(TARGET PySI POST_BUILD COMMAND cp ${CMAKE_SOURCE_DIR}/build/debug/libPySI.so ${CMAKE_SOURCE_DIR}/libs)
-    add_custom_command(TARGET SI POST_BUILD COMMAND cp ${CMAKE_SOURCE_DIR}/build/debug/libSI.so ${CMAKE_SOURCE_DIR}/libs)
-
-    add_custom_command(TARGET PySI POST_BUILD COMMAND mv ${CMAKE_SOURCE_DIR}/libs/libPySI.so ${CMAKE_SOURCE_DIR}/libs/libPySId.so)
-    add_custom_command(TARGET SI POST_BUILD COMMAND mv ${CMAKE_SOURCE_DIR}/libs/libSI.so ${CMAKE_SOURCE_DIR}/libs/libSId.so)
-endif()
-
-if(CMAKE_BUILD_TYPE STREQUAL "Release")
-    add_custom_command(TARGET PySI POST_BUILD COMMAND cp ${CMAKE_SOURCE_DIR}/build/release/libPySI.so ${CMAKE_SOURCE_DIR}/libs)
-    add_custom_command(TARGET SI POST_BUILD COMMAND cp ${CMAKE_SOURCE_DIR}/build/release/libSI.so ${CMAKE_SOURCE_DIR}/libs)
-endif()
+#add_custom_command(TARGET PySI POST_BUILD COMMAND cp ${CMAKE_SOURCE_DIR}/build/release/libPySI.so ${CMAKE_SOURCE_DIR}/libs)
+#add_custom_command(TARGET SI POST_BUILD COMMAND cp ${CMAKE_SOURCE_DIR}/build/release/libSI.so ${CMAKE_SOURCE_DIR}/libs)
