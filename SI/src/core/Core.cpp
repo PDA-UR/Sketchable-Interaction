@@ -53,12 +53,16 @@ void Core::start(const std::string& plugin_path)
             plugins.push_back(script.si_plugin(module_name, rpath, ref));
     }
 
-    // pass all region plugins to context (blueprint)
+    p_ctx = new Context(d_target_width, d_target_height, plugins);
+    p_ctx->begin();
 }
 
 void Core::stop()
 {
+    p_ctx->end();
 
+    delete p_ctx;
+    p_ctx = nullptr;
 }
 
 const int Core::width() const

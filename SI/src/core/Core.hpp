@@ -5,6 +5,7 @@
 
 
 #include <python3_plugin/Scripting.hpp>
+#include <context/Context.hpp>
 
 #ifdef xlib
 #include <X11/Xlib.h>
@@ -29,6 +30,8 @@ public:
 private:
     int d_target_width, d_target_height;
     std::string d_plugin_path;
+
+    Context* p_ctx;
 };
 
 
