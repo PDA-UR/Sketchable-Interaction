@@ -25,7 +25,7 @@ set(PySISrc
 # SI PYTHON3 MODULE
 add_library(PySI MODULE ${PySISrc})
 
-target_link_libraries(PySI ${PYTHON_LIBRARIES} ${Boost_LIBRARIES} -fPIC)
+target_link_libraries(PySI ${PYTHON_LIBRARIES} ${Boost_LIBRARIES})
 
 # SI LIBRARY
 
@@ -58,9 +58,9 @@ set(SISrc
 add_library(SI SHARED ${SISrc})
 
 if (xlib)
-    target_link_libraries(SI ${PYTHON_LIBRARIES} ${Boost_LIBRARIES} -lX11 -fPIC)
+    target_link_libraries(SI ${PYTHON_LIBRARIES} ${Boost_LIBRARIES} -lX11)
 else()
-    target_link_libraries(SI ${PYTHON_LIBRARIES} ${Boost_LIBRARIES} -fPIC)
+    target_link_libraries(SI ${PYTHON_LIBRARIES} ${Boost_LIBRARIES})
 endif()
 
 add_dependencies(SI PySI)
@@ -95,7 +95,7 @@ add_executable(unit_tests_run tests/src/unit_test_run.cpp
         tests/src/SiPrintTest.cpp
         tests/src/include/SiPrintTest.hpp)
 
-target_link_libraries(unit_tests_run ${PYTHON_LIBRARIES} ${Boost_LIBRARIES} SI gtest gtest_main gmock gmock_main pthread)
+target_link_libraries(unit_tests_run ${PYTHON_LIBRARIES} ${Boost_LIBRARIES} SI gtest gtest_main gmock gmock_main pthread -ldl)
 add_dependencies(unit_tests_run PySI)
 add_dependencies(unit_tests_run SI)
 
