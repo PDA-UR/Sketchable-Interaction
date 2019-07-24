@@ -7,7 +7,7 @@
 Context::Context(int width, int height, const std::vector<bp::object>& plugins) : d_width(width), d_height(height), d_plugins(plugins)
 {
     // LayerManager Stuff
-    
+
     LayerManager::add_layer();
     LayerManager::remove_layer(0);
 }
