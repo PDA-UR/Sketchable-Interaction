@@ -1,14 +1,26 @@
 
 
 #include "Context.hpp"
+#include "LayerManager.hpp"
+#include "debug/Print.hpp"
 
-
-Context::Context(int width, int height) : d_width(width), d_height(height)
+Context::Context(int width, int height, const std::vector<bp::object>& plugins) : d_width(width), d_height(height), d_plugins(plugins)
 {
-    // check if is initial start, therefore create the first layer and add it to layermanager
+    LayerManager::add_layer();
+    LayerManager::remove_layer(0);
 }
 
 Context::~Context()
+{
+    LayerManager::clear();
+}
+
+void Context::begin()
+{
+
+}
+
+void Context::end()
 {
 
 }
@@ -31,4 +43,16 @@ int Context::height() const
 void Context::set_height(int height)
 {
     d_height = height;
+}
+
+const std::vector<bp::object>& Context::plugins() const
+{
+    return d_plugins;
+}
+
+void Context::add_plugin(const bp::object &plugin)
+{
+    // do check whether it is already present later
+
+    d_plugins.push_back(plugin);
 }

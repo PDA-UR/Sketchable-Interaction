@@ -3,11 +3,35 @@
 #ifndef SI_LAYERMANAGER_HPP
 #define SI_LAYERMANAGER_HPP
 
+#include <map>
+#include <iterator>
+
+#include "Layer.hpp"
+#include <string>
 
 class LayerManager
 {
 public:
+    static Layer* active_layer();
+    static Layer* next();
+    static Layer* previous();
+    static Layer* layer(const int id);
+
+    static std::map<int, Layer*>& layers();
+
+    static void add_layer();
+    static void remove_layer(const int id);
+    static void set_active_layer(int id);
+    static void clear();
+
+    static int num_layers();
+    static int consecutive_id();
+    static int active_layer_id();
+
 private:
+    static std::map<int, Layer*> s_layers;
+    static int s_consecutive_id;
+    static int s_active_layer_id;
 protected:
 };
 

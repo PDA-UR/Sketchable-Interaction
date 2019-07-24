@@ -2271,7 +2271,7 @@ class PointwiseMatcher {
     // We pass the LHS value and the RHS value to the inner matcher by
     // reference, as they may be expensive to copy.  We must use tuple
     // instead of pair here, as a pair cannot hold references (C++ 98,
-    // 20.2.2 [lib.pairs]).
+    // 20.2.2 [libs.pairs]).
     typedef ::std::tuple<const LhsValue&, const RhsValue&> InnerMatcherArg;
 
     Impl(const TupleMatcher& tuple_matcher, const RhsStlContainer& rhs)

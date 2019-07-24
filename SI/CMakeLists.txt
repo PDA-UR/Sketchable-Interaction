@@ -6,7 +6,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 find_package(PythonLibs 3 REQUIRED)
 find_package(Python3)
-find_package(Boost 1.69.0 COMPONENTS system python3.7 REQUIRED)
+find_package(Boost 1.69.0 COMPONENTS system python3.7)
 
 include_directories(${Boost_INCLUDE_DIRS})
 include_directories( ${PYTHON_INCLUDE_DIRS})
@@ -18,16 +18,18 @@ if(xlib)
     add_definitions(-Dxlib)
 endif()
 
-# SI PYTHON3 MODULE
-add_library(PySI MODULE
+set(PySISrc
         src/python3_plugin/Plugin.cpp
-        src/python3_plugin/Plugin.hpp src/context/Context.cpp src/context/Context.hpp src/context/LayerManager.cpp src/context/LayerManager.hpp src/context/Layer.cpp src/context/Layer.hpp)
+        src/python3_plugin/Plugin.hpp)
+
+# SI PYTHON3 MODULE
+add_library(PySI MODULE ${PySISrc})
 
 target_link_libraries(PySI ${PYTHON_LIBRARIES} ${Boost_LIBRARIES})
 
 # SI LIBRARY
 
-add_library(SI SHARED
+set(SISrc
         src/core/Core.cpp
         src/core/Core.hpp
         src/SIRuntime.cpp
@@ -45,7 +47,15 @@ add_library(SI SHARED
         src/core/collision/CollisionMask.hpp
         src/core/collision/CollisionManager.cpp
         src/core/collision/CollisionManager.hpp
-        include/SI/SI.hpp)
+        include/SI/SI.hpp
+        src/context/Context.cpp
+        src/context/Context.hpp
+        src/context/LayerManager.cpp
+        src/context/LayerManager.hpp
+        src/context/Layer.cpp
+        src/context/Layer.hpp)
+
+add_library(SI SHARED ${SISrc})
 
 if (xlib)
     target_link_libraries(SI ${PYTHON_LIBRARIES} ${Boost_LIBRARIES} -lX11)
@@ -56,9 +66,13 @@ endif()
 add_dependencies(SI PySI)
 
 # SI TEST APPLICATION
-add_executable(si_test_application examples/app/src/main.cpp)
+set(SITestAppSrc
+        examples/app/src/main.cpp)
+
+add_executable(si_test_application ${SITestAppSrc})
 target_link_libraries(si_test_application SI)
 add_dependencies(si_test_application PySI)
+add_dependencies(si_test_application SI)
 
 
 # SI GTEST UNIT TEST RUNNER
@@ -69,19 +83,18 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src
 
 add_subdirectory(../googletest googletest)
 
-add_executable(unit_tests_run tests/src/unit_test_run.cpp tests/src/SIRuntime_test.cpp tests/src/include/SIRuntime_test.hpp tests/src/SiPluginTest.cpp tests/src/include/SiPluginTest.hpp tests/src/SiScriptingTest.cpp tests/src/include/SiScriptingTest.hpp tests/src/SiPluginCollectorTest.cpp tests/src/include/SiPluginCollectorTest.hpp tests/src/SiPrintTest.cpp tests/src/include/SiPrintTest.hpp)
-target_link_libraries(unit_tests_run ${PYTHON_LIBRARIES} ${Boost_LIBRARIES} SI gtest gtest_main gmock gmock_main pthread)
+add_executable(unit_tests_run tests/src/unit_test_run.cpp
+        tests/src/SIRuntime_test.cpp
+        tests/src/include/SIRuntime_test.hpp
+        tests/src/SiPluginTest.cpp
+        tests/src/include/SiPluginTest.hpp
+        tests/src/SiScriptingTest.cpp
+        tests/src/include/SiScriptingTest.hpp
+        tests/src/SiPluginCollectorTest.cpp
+        tests/src/include/SiPluginCollectorTest.hpp
+        tests/src/SiPrintTest.cpp
+        tests/src/include/SiPrintTest.hpp)
+
+target_link_libraries(unit_tests_run ${PYTHON_LIBRARIES} ${Boost_LIBRARIES} SI gtest gtest_main gmock gmock_main pthread -ldl -lutil)
 add_dependencies(unit_tests_run PySI)
-
-if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-    add_custom_command(TARGET PySI POST_BUILD COMMAND cp ${CMAKE_SOURCE_DIR}/build/debug/libPySI.so ${CMAKE_SOURCE_DIR}/libs)
-    add_custom_command(TARGET SI POST_BUILD COMMAND cp ${CMAKE_SOURCE_DIR}/build/debug/libSI.so ${CMAKE_SOURCE_DIR}/libs)
-
-    add_custom_command(TARGET PySI POST_BUILD COMMAND mv ${CMAKE_SOURCE_DIR}/libs/libPySI.so ${CMAKE_SOURCE_DIR}/libs/libPySId.so)
-    add_custom_command(TARGET SI POST_BUILD COMMAND mv ${CMAKE_SOURCE_DIR}/libs/libSI.so ${CMAKE_SOURCE_DIR}/libs/libSId.so)
-endif()
-
-if(CMAKE_BUILD_TYPE STREQUAL "Release")
-    add_custom_command(TARGET PySI POST_BUILD COMMAND cp ${CMAKE_SOURCE_DIR}/build/release/libPySI.so ${CMAKE_SOURCE_DIR}/libs)
-    add_custom_command(TARGET SI POST_BUILD COMMAND cp ${CMAKE_SOURCE_DIR}/build/release/libSI.so ${CMAKE_SOURCE_DIR}/libs)
-endif()
+add_dependencies(unit_tests_run SI)
