@@ -11,7 +11,7 @@ namespace bp = boost::python;
 
 TEST_F(SIScriptingTest, construction)
 {
-    EXPECT_NE(&dsubl, nullptr);
+    EXPECT_NE(&d_script, nullptr);
 }
 
 TEST_F(SIScriptingTest, load_plugin_source)
