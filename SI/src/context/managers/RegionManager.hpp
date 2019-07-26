@@ -8,13 +8,22 @@
 class RegionManager
 {
 public:
-    void add_region(Region r);
+    void add_region(const Region& r);
     void remove_region(int id);
+
+    int num_regions();
+
+    const std::vector<Region>& regions() const;
 private:
     RegionManager();
     ~RegionManager();
 
+    void destroy();
+
     std::vector<Region> d_regions;
+
+    friend class Context;
+    friend class SiRegionManagerTest;
 };
 
 

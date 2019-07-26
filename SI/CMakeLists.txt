@@ -93,7 +93,7 @@ add_executable(unit_tests_run tests/src/unit_test_run.cpp
         tests/src/SiPluginCollectorTest.cpp
         tests/src/include/SiPluginCollectorTest.hpp
         tests/src/SiPrintTest.cpp
-        tests/src/include/SiPrintTest.hpp tests/src/SiLayerManagerTest.cpp tests/src/include/SiLayerManagerTest.hpp tests/src/SiPluginManagerTest.cpp tests/src/include/SiPluginManagerTest.hpp)
+        tests/src/include/SiPrintTest.hpp tests/src/SiLayerManagerTest.cpp tests/src/include/SiLayerManagerTest.hpp tests/src/SiPluginManagerTest.cpp tests/src/include/SiPluginManagerTest.hpp tests/src/SiRegionManagerTest.cpp tests/src/include/SiRegionManagerTest.hpp)
 
 target_link_libraries(unit_tests_run ${PYTHON_LIBRARIES} ${Boost_LIBRARIES} SI gtest gtest_main gmock gmock_main pthread -ldl -lutil)
 add_dependencies(unit_tests_run PySI)

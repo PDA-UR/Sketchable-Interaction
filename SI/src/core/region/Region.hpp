@@ -11,6 +11,7 @@ class Region
 {
 public:
     Region();
+    explicit Region(int id);
     ~Region();
 
     void set_effect(bp::object effect);

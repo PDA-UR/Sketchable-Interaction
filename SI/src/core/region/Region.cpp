@@ -7,6 +7,11 @@ Region::Region()
 
 }
 
+Region::Region(int id) : d_id(id)
+{
+
+}
+
 Region::~Region()
 {
 
