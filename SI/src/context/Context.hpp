@@ -5,7 +5,7 @@
 
 #include <boost/python.hpp>
 #include <vector>
-
+#include "managers/PluginManager.hpp"
 #include "managers/LayerManager.hpp"
 
 namespace bp = boost::python;
@@ -16,10 +16,8 @@ public:
     int width() const;
     int height() const;
 
-    const std::vector<bp::object>& plugins() const;
-    void add_plugin(const bp::object& plugin);
     static LayerManager* layer_manager();
-
+    static PluginManager* plugin_manager();
 
 private:
     Context(int width, int height, const std::vector<bp::object>& plugins);
@@ -32,12 +30,11 @@ private:
     void set_height(int height);
 
     int d_width, d_height;
-    std::vector<bp::object> d_plugins;
 
     friend class Core;
 
     static LayerManager* s_lm;
-
+    static PluginManager* s_pm;
 
 protected:
 };
