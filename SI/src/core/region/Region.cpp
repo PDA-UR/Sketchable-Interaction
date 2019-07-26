@@ -1,3 +1,43 @@
 
 
 #include "Region.hpp"
+
+Region::Region()
+{
+
+}
+
+Region::~Region()
+{
+
+}
+
+void Region::set_effect(bp::object effect)
+{
+    d_effect = effect;
+}
+
+const std::string &Region::name() const
+{
+    return d_name;
+}
+
+const int Region::id() const
+{
+    return d_id;
+}
+
+void Region::on_enter()
+{
+    d_effect.attr("on_enter")();
+}
+
+void Region::on_continuous()
+{
+    d_effect.attr("on_continuous")();
+}
+
+void Region::on_leave()
+{
+    d_effect.attr("on_leave")();
+}
