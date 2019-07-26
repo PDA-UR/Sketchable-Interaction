@@ -5,6 +5,8 @@
 #include <boost/python.hpp>
 #include <tuple>
 #include <iostream>
+#include <map>
+#include "context/Layer.hpp"
 
 namespace bp = boost::python;
 
@@ -59,6 +61,14 @@ public:
             std::cout << bp::extract<std::string>(bp::str(obj))() << " ";
     }
 
+    static void print(Layer* layer, bool new_line= false)
+    {
+        if(new_line)
+            std::cout << "Layer with id: " << layer->id() << std::endl;
+        else
+            std::cout << "Layer with id: " << layer->id() << " ";
+    }
+
     template<typename T>
     static void print(const std::vector<T>& list)
     {
@@ -81,6 +91,22 @@ public:
                 print(list[i]);
 
             print(list[i], true);
+        }
+    }
+
+    template <typename T1, typename T2>
+    static void print(const std::map<T1, T2>& map)
+    {
+        print("Map: ");
+        auto it = map.begin();
+
+        for(it = map.begin(); it != map.end(); it++)
+        {
+            print("(Key: ");
+            print(it->first);
+            print(", Value: ");
+            print(it->second);
+            print(")");
         }
     }
 };
