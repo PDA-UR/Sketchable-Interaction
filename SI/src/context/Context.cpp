@@ -1,20 +1,19 @@
 
 
 #include "Context.hpp"
-#include "LayerManager.hpp"
+#include "context/managers/LayerManager.hpp"
 #include "debug/Print.hpp"
 
 Context::Context(int width, int height, const std::vector<bp::object>& plugins) : d_width(width), d_height(height), d_plugins(plugins)
 {
-    // LayerManager Stuff
-    
-    LayerManager::add_layer();
-    LayerManager::remove_layer(0);
+    LayerManager::add_layer(); // default, starting blank layer?
+    // PersistenceManager
+
 }
 
 Context::~Context()
 {
-    LayerManager::clear();
+    LayerManager::destroy();
 }
 
 void Context::begin()

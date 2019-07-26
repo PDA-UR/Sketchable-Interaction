@@ -9,15 +9,13 @@
 class Layer
 {
 public:
-    Layer();
+    Layer(int id);
     ~Layer();
 
-    const int id() const;
-    const std::string& name() const;
+    int id() const;
 
 protected:
 private:
-    std::string d_name;
     int d_id;
 };
 
