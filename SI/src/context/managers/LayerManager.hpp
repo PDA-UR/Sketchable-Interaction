@@ -6,23 +6,21 @@
 #include <map>
 #include <iterator>
 
-#include "Layer.hpp"
+#include "context/Layer.hpp"
 #include <string>
 
 class LayerManager
 {
 public:
-    static Layer* active_layer();
-    static Layer* next();
-    static Layer* previous();
-    static Layer* layer(const int id);
-
-    static std::map<int, Layer*>& layers();
+    //static Layer* active_layer();
+    //static Layer* next();
+    //static Layer* previous();
+    //static Layer* layer(const int id);
 
     static void add_layer();
     static void remove_layer(const int id);
     static void set_active_layer(int id);
-    static void clear();
+    static void destroy();
 
     static int num_layers();
     static int consecutive_id();

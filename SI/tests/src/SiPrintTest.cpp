@@ -2,6 +2,7 @@
 
 #include "include/SiPrintTest.hpp"
 #include <debug/Print.hpp>
+#include <map>
 
 TEST_F(SiPrintTest, python_object)
 {
@@ -49,4 +50,19 @@ TEST_F(SiPrintTest, vector_of_vectors)
     };
 
     EXPECT_NO_FATAL_FAILURE(Print::print(list));
+}
+
+TEST_F(SiPrintTest, map)
+{
+    std::map<int, Layer*> map;
+    std::map<int, int> map2;
+
+    for(int i = 0; i < 5; i++)
+    {
+        map.insert(std::make_pair<int, Layer*>(reinterpret_cast<int &&>(i), new Layer(i)));
+        map2.insert(std::make_pair<int, int>(reinterpret_cast<int &&>(i), reinterpret_cast<int &&>(i)));
+    }
+
+    EXPECT_NO_FATAL_FAILURE(Print::print(map));
+    EXPECT_NO_FATAL_FAILURE(Print::print(map2));
 }

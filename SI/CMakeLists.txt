@@ -50,10 +50,10 @@ set(SISrc
         include/SI/SI.hpp
         src/context/Context.cpp
         src/context/Context.hpp
-        src/context/LayerManager.cpp
-        src/context/LayerManager.hpp
+        src/context/managers/LayerManager.cpp
+        src/context/managers/LayerManager.hpp
         src/context/Layer.cpp
-        src/context/Layer.hpp)
+        src/context/Layer.hpp src/context/managers/PersistenceManager.cpp src/context/managers/PersistenceManager.hpp)
 
 add_library(SI SHARED ${SISrc})
 
