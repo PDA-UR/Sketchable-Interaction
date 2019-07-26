@@ -8,6 +8,7 @@
 
 extern "C"
 {
+
 int SI_start(const char* plugin_path);
 int SI_pause();
 int SI_end();

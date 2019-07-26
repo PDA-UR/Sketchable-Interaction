@@ -4,16 +4,18 @@
 #include "context/managers/LayerManager.hpp"
 #include "debug/Print.hpp"
 
-Context::Context(int width, int height, const std::vector<bp::object>& plugins) : d_width(width), d_height(height), d_plugins(plugins)
-{
-    LayerManager::add_layer(); // default, starting blank layer?
-    // PersistenceManager
+LayerManager* Context::s_lm = new LayerManager();
 
+Context::Context(int width, int height, const std::vector<bp::object>& plugins)
+    : d_width(width), d_height(height), d_plugins(plugins)
+{
+    s_lm->add_layer();
 }
 
 Context::~Context()
 {
-    LayerManager::destroy();
+    delete s_lm;
+    s_lm = nullptr;
 }
 
 void Context::begin()
@@ -56,4 +58,9 @@ void Context::add_plugin(const bp::object &plugin)
     // do check whether it is already present later
 
     d_plugins.push_back(plugin);
+}
+
+LayerManager* Context::layer_manager()
+{
+    return s_lm;
 }

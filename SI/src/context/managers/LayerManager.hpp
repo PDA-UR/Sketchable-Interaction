@@ -12,25 +12,24 @@
 class LayerManager
 {
 public:
-    //static Layer* active_layer();
-    //static Layer* next();
-    //static Layer* previous();
-    //static Layer* layer(const int id);
+    void add_layer();
+    void remove_layer(const int id);
+    void set_active_layer(int id);
 
-    static void add_layer();
-    static void remove_layer(const int id);
-    static void set_active_layer(int id);
-    static void destroy();
-
-    static int num_layers();
-    static int consecutive_id();
-    static int active_layer_id();
-
+    int num_layers() const;
+    int consecutive_id() const;
+    int active_layer_id() const;
 private:
-    static std::map<int, Layer*> s_layers;
-    static int s_consecutive_id;
-    static int s_active_layer_id;
-protected:
+    LayerManager();
+    ~LayerManager();
+
+    void destroy();
+
+    std::map<int, Layer*> d_layers;
+    int d_consecutive_id, d_active_layer_id;
+
+    friend class SiLayerManagerTest;
+    friend class Context;
 };
 
 
