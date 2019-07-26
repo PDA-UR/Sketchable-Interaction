@@ -30,7 +30,8 @@ Core::Core() : d_target_width(DEFAULT_WIDTH), d_target_height(DEFAULT_HEIGHT)
 
 Core::~Core()
 {
-
+    delete p_ctx;
+    p_ctx = nullptr;
 }
 
 void Core::start(const std::string& plugin_path)
@@ -60,9 +61,6 @@ void Core::start(const std::string& plugin_path)
 void Core::stop()
 {
     p_ctx->end();
-
-    delete p_ctx;
-    p_ctx = nullptr;
 }
 
 const int Core::width() const

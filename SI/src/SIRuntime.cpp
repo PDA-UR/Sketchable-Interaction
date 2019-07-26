@@ -5,8 +5,8 @@
 
 int SI_start(const char* plugin_path)
 {
-    Core c = Core();
-    c.start(plugin_path);
+    p_core = new Core();
+    p_core->start(plugin_path);
 
     return 0;
 }
@@ -19,6 +19,10 @@ int SI_pause()
 
 int SI_end()
 {
+    p_core->stop();
+
+    delete p_core;
+    p_core = nullptr;
 
     return 0;
 }

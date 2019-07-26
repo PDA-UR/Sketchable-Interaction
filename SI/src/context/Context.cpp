@@ -5,17 +5,22 @@
 #include "debug/Print.hpp"
 
 LayerManager* Context::s_lm = new LayerManager();
+PluginManager* Context::s_pm = new PluginManager();
 
 Context::Context(int width, int height, const std::vector<bp::object>& plugins)
-    : d_width(width), d_height(height), d_plugins(plugins)
+    : d_width(width), d_height(height)
 {
-    s_lm->add_layer();
+    Context::s_lm->add_layer();
+    Context::s_pm->add_plugins(plugins);
 }
 
 Context::~Context()
 {
+    delete Context::s_pm;
+    Context::s_pm = nullptr;
+
     delete s_lm;
-    s_lm = nullptr;
+    Context::s_lm = nullptr;
 }
 
 void Context::begin()
@@ -48,19 +53,12 @@ void Context::set_height(int height)
     d_height = height;
 }
 
-const std::vector<bp::object>& Context::plugins() const
-{
-    return d_plugins;
-}
-
-void Context::add_plugin(const bp::object &plugin)
-{
-    // do check whether it is already present later
-
-    d_plugins.push_back(plugin);
-}
-
 LayerManager* Context::layer_manager()
 {
     return s_lm;
+}
+
+PluginManager* Context::plugin_manager()
+{
+    return s_pm;
 }
