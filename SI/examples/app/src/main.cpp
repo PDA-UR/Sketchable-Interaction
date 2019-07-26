@@ -1,3 +1,4 @@
+#include <iostream>
 #include <SI/SI.hpp>
 
 int main(int argc, char** argv)

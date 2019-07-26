@@ -1,0 +1,13 @@
+
+
+#ifndef SI_REGIONPLUGINMANAGER_HPP
+#define SI_REGIONPLUGINMANAGER_HPP
+
+
+class RegionPluginManager
+{
+
+};
+
+
+#endif //SI_REGIONPLUGINMANAGER_HPP

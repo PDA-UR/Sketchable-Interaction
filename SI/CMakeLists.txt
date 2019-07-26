@@ -53,7 +53,7 @@ set(SISrc
         src/context/managers/LayerManager.cpp
         src/context/managers/LayerManager.hpp
         src/context/Layer.cpp
-        src/context/Layer.hpp src/context/managers/PersistenceManager.cpp src/context/managers/PersistenceManager.hpp)
+        src/context/Layer.hpp src/context/managers/PersistenceManager.cpp src/context/managers/PersistenceManager.hpp src/context/managers/RegionPluginManager.cpp src/context/managers/RegionPluginManager.hpp)
 
 add_library(SI SHARED ${SISrc})
 
