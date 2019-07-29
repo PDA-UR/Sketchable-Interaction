@@ -1,6 +1,6 @@
 
 
-#include "include/SIRuntime_test.hpp"
+#include "include/SIRuntimeTest.hpp"
 
 
 TEST_F(SIRuntimeTest, start)

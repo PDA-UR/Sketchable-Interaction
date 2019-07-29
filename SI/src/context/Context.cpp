@@ -4,23 +4,28 @@
 #include "context/managers/LayerManager.hpp"
 #include "debug/Print.hpp"
 
-LayerManager* Context::s_lm = new LayerManager();
-PluginManager* Context::s_pm = new PluginManager();
+LayerManager* Context::sp_lm = new LayerManager();
+PluginManager* Context::sp_pm = new PluginManager();
+RegionManager* Context::sp_rm = new RegionManager();
+int Context::s_width = 0;
+int Context::s_height = 0;
 
 Context::Context(int width, int height, const std::vector<bp::object>& plugins)
-    : d_width(width), d_height(height)
 {
-    Context::s_lm->add_layer();
-    Context::s_pm->add_plugins(plugins);
+    s_width = 0;
+    s_height = 0;
+
+    Context::sp_lm->add_layer();
+    Context::sp_pm->add_plugins(plugins);
 }
 
 Context::~Context()
 {
-    delete Context::s_pm;
-    Context::s_pm = nullptr;
+    delete Context::sp_pm;
+    Context::sp_pm = nullptr;
 
-    delete s_lm;
-    Context::s_lm = nullptr;
+    delete sp_lm;
+    Context::sp_lm = nullptr;
 }
 
 void Context::begin()
@@ -33,32 +38,32 @@ void Context::end()
 
 }
 
-int Context::width() const
+int Context::width()
 {
-    return d_width;
+    return s_width;
 }
 
 void Context::set_width(int width)
 {
-    d_width = width;
+    s_width = width;
 }
 
-int Context::height() const
+int Context::height()
 {
-    return d_height;
+    return s_height;
 }
 
 void Context::set_height(int height)
 {
-    d_height = height;
+    s_height = height;
 }
 
 LayerManager* Context::layer_manager()
 {
-    return s_lm;
+    return sp_lm;
 }
 
 PluginManager* Context::plugin_manager()
 {
-    return s_pm;
+    return sp_pm;
 }

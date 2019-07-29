@@ -1,7 +1,7 @@
 
 
-#ifndef SI_SIRUNTIME_TEST_HPP
-#define SI_SIRUNTIME_TEST_HPP
+#ifndef SI_SIRUNTIMETEST_HPP
+#define SI_SIRUNTIMETEST_HPP
 
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
@@ -22,4 +22,4 @@ public:
     }
 };
 
-#endif //SI_SIRUNTIME_TEST_HPP
+#endif //SI_SIRUNTIMETEST_HPP
