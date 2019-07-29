@@ -5,6 +5,7 @@
 
 
 #include <string>
+#include <iostream>
 
 class Layer
 {
@@ -13,6 +14,9 @@ public:
     ~Layer();
 
     int id() const;
+
+    friend std::ostream& operator <<(std::ostream& stream, const Layer& layer);
+    friend std::ostream& operator <<(std::ostream& stream, const Layer* layer);
 
 protected:
 private:
