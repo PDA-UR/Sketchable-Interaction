@@ -59,19 +59,10 @@ TEST_F(SiPrintTest, map)
 
     for(int i = 0; i < 5; i++)
     {
-        map.insert(std::make_pair<int, Layer*>(reinterpret_cast<int>(i), new Layer(i)));
-        map2.insert(std::make_pair<int, int>(reinterpret_cast<int>(i), reinterpret_cast<int>(i)));
+        map.insert(std::make_pair<int, Layer*>(reinterpret_cast<int &&>(i), new Layer(i)));
+        map2.insert(std::make_pair<int, int>(reinterpret_cast<int &&>(i), reinterpret_cast<int &&>(i)));
     }
 
     EXPECT_NO_FATAL_FAILURE(Print::print(map));
     EXPECT_NO_FATAL_FAILURE(Print::print(map2));
-
-    for(auto it = map.rbegin(); it != map.rend(); it++)
-    {
-        delete it->second;
-        it->second = nullptr;
-    }
-
-    map.clear();
-    map2.clear();
 }
