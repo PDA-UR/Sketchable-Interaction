@@ -10,6 +10,7 @@ TEST_F(SiCollisionMaskTest, construction)
     EXPECT_NO_FATAL_FAILURE(m = new CollisionMask(1920, 1080, std::vector<Vector2<float>>{Vector2<float>(10, 10)}));
     EXPECT_NO_FATAL_FAILURE(m = new CollisionMask(1920, 1080, std::vector<Vector2<float>>{Vector2<float>(10, 10), Vector2<float>(20, 20)}));
     EXPECT_NO_FATAL_FAILURE(m = new CollisionMask(1920, 1080, contour_IXI));
+
     EXPECT_NO_FATAL_FAILURE(delete m) ;
     EXPECT_NO_FATAL_FAILURE(m = nullptr);
 }
@@ -19,6 +20,7 @@ TEST_F(SiCollisionMaskTest, destruction)
     CollisionMask* m;
 
     EXPECT_NO_FATAL_FAILURE(m = new CollisionMask(1920, 1080, contour_IXI));
+
     EXPECT_NO_FATAL_FAILURE(delete m) ;
     EXPECT_NO_FATAL_FAILURE(m = nullptr);
 }
