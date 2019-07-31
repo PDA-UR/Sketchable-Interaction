@@ -87,4 +87,17 @@ public:
     }
 };
 
+class Vector2f : public Vector2<float>
+{
+public:
+
+
+private:
+
+
+protected:
+
+
+};
+
 #endif //SI_SI_MATH_HPP

@@ -1,6 +1,6 @@
 
-#ifndef SI_SIRUNTIME_HPP
-#define SI_SIRUNTIME_HPP
+#ifndef SI_SIENGINE_HPP
+#define SI_SIENGINE_HPP
 
 #include <core/Core.hpp>
 
@@ -20,4 +20,4 @@ Core* p_core;
 #endif
 
 
-#endif //SI_SIRUNTIME_HPP
+#endif //SI_SIENGINE_HPP

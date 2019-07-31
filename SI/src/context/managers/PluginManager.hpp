@@ -5,7 +5,7 @@
 
 #include <python3_plugin/Plugin.hpp>
 #include <boost/python.hpp>
-#include <core/region/Region.hpp>
+#include <core/runtime/region/Region.hpp>
 
 namespace bp = boost::python;
 

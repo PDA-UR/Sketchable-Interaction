@@ -1,7 +1,7 @@
 
 #include <string.h>
 #include <core/Core.hpp>
-#include "SIRuntime.hpp"
+#include "SIEngine.hpp"
 
 int SI_start(const char* plugin_path)
 {
