@@ -3,7 +3,7 @@
 #ifndef SI_REGIONMANAGER_HPP
 #define SI_REGIONMANAGER_HPP
 
-#include <core/region/Region.hpp>
+#include <core/runtime/region/Region.hpp>
 
 class RegionManager
 {

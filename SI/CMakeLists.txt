@@ -22,7 +22,6 @@ set(PySISrc
 
 # SI PYTHON3 MODULE
 add_library(PySI MODULE ${PySISrc})
-
 target_link_libraries(PySI ${PYTHON_LIBRARIES} ${Boost_LIBRARIES})
 
 # SI LIBRARY
@@ -30,36 +29,35 @@ target_link_libraries(PySI ${PYTHON_LIBRARIES} ${Boost_LIBRARIES})
 set(SISrc
         src/core/Core.cpp
         src/core/Core.hpp
-        src/SIRuntime.cpp
-        src/SIRuntime.hpp
+        src/SIEngine.cpp
+        src/SIEngine.hpp
         src/python3_plugin/Plugin.cpp
         src/python3_plugin/Plugin.hpp
         src/python3_plugin/Scripting.cpp
         src/python3_plugin/Scripting.hpp
-        src/core/region/Region.cpp
-        src/core/region/Region.hpp
+        src/core/runtime/region/Region.cpp
+        src/core/runtime/region/Region.hpp
         src/debug/Print.hpp
         src/python3_plugin/PluginCollector.cpp
         src/python3_plugin/PluginCollector.hpp
-        src/core/collision/CollisionMask.cpp
-        src/core/collision/CollisionMask.hpp
-        src/core/collision/CollisionManager.cpp
-        src/core/collision/CollisionManager.hpp
+        src/core/runtime/collision/CollisionMask.cpp
+        src/core/runtime/collision/CollisionMask.hpp
+        src/core/runtime/collision/CollisionManager.cpp
+        src/core/runtime/collision/CollisionManager.hpp
         include/SI/SI.hpp
         src/context/Context.cpp
         src/context/Context.hpp
         src/context/managers/LayerManager.cpp
         src/context/managers/LayerManager.hpp
-        src/context/Layer.cpp
-        src/context/Layer.hpp
+        src/core/runtime/region/Layer.cpp
+        src/core/runtime/region/Layer.hpp
         src/context/managers/PersistenceManager.cpp
         src/context/managers/PersistenceManager.hpp
         src/context/managers/PluginManager.cpp
         src/context/managers/PluginManager.hpp
         src/context/managers/RegionManager.cpp
         src/context/managers/RegionManager.hpp
-        src/core/math/si_math.hpp
-        )
+        src/core/math/si_math.hpp)
 
 add_library(SI SHARED ${SISrc})
 
@@ -74,7 +72,6 @@ add_dependencies(SI PySI)
 # SI TEST APPLICATION
 set(SITestAppSrc
         examples/app/src/main.cpp)
-
 add_executable(si_test_application ${SITestAppSrc})
 target_link_libraries(si_test_application SI)
 add_dependencies(si_test_application PySI)
@@ -86,12 +83,12 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src
         ${CMAKE_CURRENT_SOURCE_DIR}/include
         ${gmock_SOURCE_DIR}/include
         ${gtest_SOURCE_DIR}/include)
-
 add_subdirectory(../googletest googletest)
 
-add_executable(unit_tests_run tests/src/unit_test_run.cpp
-        tests/src/SIRuntimeTest.cpp
-        tests/src/include/SIRuntimeTest.hpp
+set(SIUnitTestSrc
+        tests/src/unit_test_run.cpp
+        tests/src/SIEngineTest.cpp
+        tests/src/include/SIEngineTest.hpp
         tests/src/SiPluginTest.cpp
         tests/src/include/SiPluginTest.hpp
         tests/src/SiScriptingTest.cpp
@@ -111,6 +108,7 @@ add_executable(unit_tests_run tests/src/unit_test_run.cpp
         tests/src/SiCollisionMaskTest.cpp
         tests/src/include/SiCollisionMaskTest.hpp)
 
+add_executable(unit_tests_run ${SIUnitTestSrc})
 target_link_libraries(unit_tests_run ${PYTHON_LIBRARIES} ${Boost_LIBRARIES} SI gtest gtest_main gmock gmock_main pthread -ldl -lutil)
 add_dependencies(unit_tests_run PySI)
 add_dependencies(unit_tests_run SI)
