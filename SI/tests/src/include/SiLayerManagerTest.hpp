@@ -3,15 +3,12 @@
 #ifndef SI_SILAYERMANAGERTEST_HPP
 #define SI_SILAYERMANAGERTEST_HPP
 
-
 #include <boost/python.hpp>
 
 namespace bp = boost::python;
 
-
 #include <gtest/gtest.h>
-#include <context/managers/LayerManager.hpp>
-
+#include <core/context/managers/LayerManager.hpp>
 
 class SiLayerManagerTest : public ::testing::Test
 {

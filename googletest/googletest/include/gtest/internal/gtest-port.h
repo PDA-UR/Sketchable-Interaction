@@ -1151,7 +1151,7 @@ inline To DownCast_(From* f) {  // so we only accept pointers
 // Downcasts the pointer of type Base to Derived.
 // Derived must be a subclass of Base. The parameter MUST
 // point to a class of type Derived, not any subclass of it.
-// When RTTI is available, the function performs a runtime
+// When RTTI is available, the function performs a runtime_core
 // check to enforce this.
 template <class Derived, class Base>
 Derived* CheckedDowncastToActualType(Base* base) {
@@ -1741,7 +1741,7 @@ class MutexBase {
 #define GTEST_DEFINE_STATIC_MUTEX_(mutex) \
   ::testing::internal::MutexBase mutex = {PTHREAD_MUTEX_INITIALIZER, false, 0}
 
-// The Mutex class can only be used for mutexes created at runtime. It
+// The Mutex class can only be used for mutexes created at runtime_core. It
 // shares its API with MutexBase otherwise.
 class Mutex : public MutexBase {
  public:

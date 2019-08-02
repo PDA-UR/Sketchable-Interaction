@@ -5,7 +5,7 @@
 
 // handle saving and loading of contexts
 // work together with silang compiler
-// user settings concerning runtime
+// user settings concerning runtime_core
 
 class PersistenceManager
 {

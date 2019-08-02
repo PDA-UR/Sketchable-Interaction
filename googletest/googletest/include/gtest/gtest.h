@@ -1912,7 +1912,7 @@ class TestWithParam : public Test, public WithParamInterface<T> {
 
 // Macros for indicating success/failure in test code.
 
-// Skips test in runtime.
+// Skips test in runtime_core.
 // Skipping test aborts current function.
 // Skipped tests are neither successful nor failed.
 #define GTEST_SKIP() GTEST_SKIP_("Skipped")
@@ -2418,7 +2418,7 @@ GTEST_API_ std::string TempDir();
 // handles ownership to the caller. The signature of the callable is
 // `Fixture*()`, where `Fixture` is the test fixture class for the test. All
 // tests registered with the same `test_suite_name` must return the same
-// fixture type. This is checked at runtime.
+// fixture type. This is checked at runtime_core.
 //
 // The framework will infer the fixture class from the factory and will call
 // the `SetUpTestSuite` and `TearDownTestSuite` for it.

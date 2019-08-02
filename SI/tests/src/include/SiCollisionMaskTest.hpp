@@ -3,7 +3,7 @@
 #define SI_SICOLLISIONMASKTEST_HPP
 
 #include <gtest/gtest.h>
-#include <core/runtime/collision/CollisionMask.hpp>
+#include <core/runtime_core/collision/CollisionMask.hpp>
 #include <core/math/si_math.hpp>
 
 class SiCollisionMaskTest : public ::testing::Test

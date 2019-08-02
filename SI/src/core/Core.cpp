@@ -1,8 +1,8 @@
 
 
-#include <debug/Print.hpp>
-#include <python3_plugin/PluginCollector.hpp>
-#include "python3_plugin/Plugin.hpp"
+#include <core/debug/Print.hpp>
+#include <core/pysi_core/PluginCollector.hpp>
+#include "core/pysi_core/Plugin.hpp"
 #include "Core.hpp"
 
 #include <boost/python.hpp>
@@ -34,7 +34,7 @@ Core::~Core()
     p_ctx = nullptr;
 }
 
-void Core::start(const std::string& plugin_path)
+void Core::start(const std::string& plugin_path, IRenderEngine* ire)
 {
     std::vector<std::string> files, classes;
     std::vector<bp::object> plugins;
@@ -55,7 +55,11 @@ void Core::start(const std::string& plugin_path)
     }
 
     p_ctx = new Context(d_target_width, d_target_height, plugins);
-    p_ctx->begin();
+    p_ctx->begin(ire);
+    p_ctx->end();
+
+    delete p_ctx;
+    p_ctx = nullptr;
 }
 
 void Core::stop()

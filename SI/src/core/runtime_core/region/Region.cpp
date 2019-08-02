@@ -22,6 +22,11 @@ void Region::set_effect(bp::object effect)
     d_effect = effect;
 }
 
+void Region::set_shape(const std::vector<Vector2<float>> &shape)
+{
+    d_shape = shape;
+}
+
 const std::string &Region::name() const
 {
     return d_name;
@@ -30,6 +35,11 @@ const std::string &Region::name() const
 const int Region::id() const
 {
     return d_id;
+}
+
+const std::vector<Vector2<float>> &Region::shape() const
+{
+    return d_shape;
 }
 
 void Region::on_enter()

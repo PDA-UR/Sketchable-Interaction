@@ -5,9 +5,11 @@
 
 #include <boost/python.hpp>
 #include <vector>
-#include "managers/PluginManager.hpp"
-#include "managers/LayerManager.hpp"
-#include "managers/RegionManager.hpp"
+#include <core/render_engine_core/IRenderEngine.hpp>
+#include <thread>
+#include "core/context/managers/PluginManager.hpp"
+#include "core/context/managers/LayerManager.hpp"
+#include "core/context/managers/RegionManager.hpp"
 
 namespace bp = boost::python;
 
@@ -16,6 +18,7 @@ class Context
 public:
     static LayerManager* layer_manager();
     static PluginManager* plugin_manager();
+    static RegionManager* region_manager();
 
     static int width();
     static int height();
@@ -24,7 +27,7 @@ private:
     Context(int width, int height, const std::vector<bp::object>& plugins);
     ~Context();
 
-    void begin();
+    void begin(IRenderEngine* ire);
     void end();
 
     void set_width(int width);
@@ -37,6 +40,9 @@ private:
     static LayerManager* sp_lm;
     static PluginManager* sp_pm;
     static RegionManager* sp_rm;
+
+    IRenderEngine* p_renderer;
+    std::thread* p_render_thread;
 
 protected:
 };

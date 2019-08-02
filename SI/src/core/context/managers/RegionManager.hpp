@@ -3,7 +3,7 @@
 #ifndef SI_REGIONMANAGER_HPP
 #define SI_REGIONMANAGER_HPP
 
-#include <core/runtime/region/Region.hpp>
+#include <core/runtime_core/region/Region.hpp>
 
 class RegionManager
 {
@@ -13,7 +13,7 @@ public:
 
     int num_regions();
 
-    const std::vector<Region>& regions() const;
+    std::vector<Region>& regions();
 private:
     RegionManager();
     ~RegionManager();

@@ -3,14 +3,14 @@
 #ifndef SI_PLUGINMANAGER_HPP
 #define SI_PLUGINMANAGER_HPP
 
-#include <python3_plugin/Plugin.hpp>
+#include <core/pysi_core/Plugin.hpp>
 #include <boost/python.hpp>
-#include <core/runtime/region/Region.hpp>
+#include <core/runtime_core/region/Region.hpp>
 
 namespace bp = boost::python;
 
-// watchdog for updating plugin list by listening to plugin folder changes
-// at runtime insertion of new plugins
+// watchdog for updating pysi list by listening to pysi folder changes
+// at runtime_core insertion of new plugins
 
 class PluginManager
 {

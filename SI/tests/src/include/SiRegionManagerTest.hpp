@@ -4,7 +4,8 @@
 #define SI_SIREGIONMANAGERTEST_HPP
 
 #include <gtest/gtest.h>
-#include <context/managers/RegionManager.hpp>
+#include <core/context/managers/RegionManager.hpp>
+
 
 class SiRegionManagerTest : public ::testing::Test
 {

@@ -2633,7 +2633,7 @@ namespace internal {
 
 // This method expands all parameterized tests registered with macros TEST_P
 // and INSTANTIATE_TEST_SUITE_P into regular tests and registers those.
-// This will be done just once during the program runtime.
+// This will be done just once during the program runtime_core.
 void UnitTestImpl::RegisterParameterizedTests() {
   if (!parameterized_tests_registered_) {
     parameterized_test_registry_.RegisterTests();

@@ -5,7 +5,8 @@
 
 
 #include <gtest/gtest.h>
-#include <context/managers/PluginManager.hpp>
+#include <core/context/managers/PluginManager.hpp>
+
 
 class SiPluginManagerTest : public ::testing::Test
 {

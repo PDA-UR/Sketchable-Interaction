@@ -1,5 +1,6 @@
 
 
+#include <core/debug/Print.hpp>
 #include "include/SiRegionManagerTest.hpp"
 TEST_F(SiRegionManagerTest, num_regions)
 {
@@ -60,6 +61,7 @@ TEST_F(SiRegionManagerTest, remove_region)
     EXPECT_EQ(2, d_region_manager.regions()[2].id());
 
     EXPECT_NO_FATAL_FAILURE(d_region_manager.remove_region(0));
+
     EXPECT_EQ(2, d_region_manager.num_regions());
     EXPECT_EQ(1, d_region_manager.regions()[0].id());
     EXPECT_EQ(2, d_region_manager.regions()[1].id());

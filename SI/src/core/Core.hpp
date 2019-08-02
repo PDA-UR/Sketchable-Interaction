@@ -4,8 +4,10 @@
 #define SI_CORE_HPP
 
 
-#include <python3_plugin/Scripting.hpp>
-#include <context/Context.hpp>
+#include <core/pysi_core/Scripting.hpp>
+#include "core/context/Context.hpp"
+
+#include "render_engine_core/IRenderEngine.hpp"
 
 #ifdef xlib
 #include <X11/Xlib.h>
@@ -20,7 +22,7 @@ public:
     Core();
     ~Core();
 
-    void start(const std::string& plugin_path);
+    void start(const std::string& plugin_path, IRenderEngine* ire);
     void stop();
 
     const int width() const;

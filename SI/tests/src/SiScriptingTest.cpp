@@ -2,10 +2,10 @@
 
 #include "include/SiScriptingTest.hpp"
 
-#include <python3_plugin/Scripting.hpp>
-#include "python3_plugin/Plugin.hpp"
-#include <python3_plugin/PluginCollector.hpp>
-#include <debug/Print.hpp>
+#include <core/pysi_core/Scripting.hpp>
+#include "core/pysi_core/Plugin.hpp"
+#include <core/pysi_core/PluginCollector.hpp>
+#include <core/debug/Print.hpp>
 
 namespace bp = boost::python;
 

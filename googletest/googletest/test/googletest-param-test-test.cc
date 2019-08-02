@@ -30,7 +30,7 @@
 //
 // Tests for Google Test itself. This file verifies that the parameter
 // generators objects produce correct parameter sequences and that
-// Google Test runtime instantiates correct tests from those sequences.
+// Google Test runtime_core instantiates correct tests from those sequences.
 
 #include "gtest/gtest.h"
 

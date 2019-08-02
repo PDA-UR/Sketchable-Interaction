@@ -28,8 +28,8 @@ macro(fix_default_compiler_settings_)
              CMAKE_CXX_FLAGS_MINSIZEREL CMAKE_CXX_FLAGS_RELWITHDEBINFO)
       if (NOT BUILD_SHARED_LIBS AND NOT gtest_force_shared_crt)
         # When Google Test is built as a shared library, it should also use
-        # shared runtime libraries.  Otherwise, it may end up with multiple
-        # copies of runtime library data in different modules, resulting in
+        # shared runtime_core libraries.  Otherwise, it may end up with multiple
+        # copies of runtime_core library data in different modules, resulting in
         # hard-to-find crashes. When it is built as a static library, it is
         # preferable to use CRT as static libraries, as we don't have to rely
         # on CRT DLLs being available. CMake always defaults to using shared
@@ -295,7 +295,7 @@ function(py_test name)
     else()
       # ${CMAKE_CURRENT_BINARY_DIR} is known at configuration time, so we can
       # directly bind it from cmake. ${CTEST_CONFIGURATION_TYPE} is known
-      # only at ctest runtime (by calling ctest -c <Configuration>), so
+      # only at ctest runtime_core (by calling ctest -c <Configuration>), so
       # we have to escape $ to delay variable substitution here.
       if (WIN32 OR MINGW)
         add_test(NAME ${name}

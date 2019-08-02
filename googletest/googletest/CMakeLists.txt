@@ -5,7 +5,7 @@
 # ctest.  You can select which tests to run using 'ctest -R regex'.
 # For more options, run 'ctest --help'.
 
-# When other libraries are using a shared version of runtime libraries,
+# When other libraries are using a shared version of runtime_core libraries,
 # Google Test also has to use one.
 option(
   gtest_force_shared_crt
