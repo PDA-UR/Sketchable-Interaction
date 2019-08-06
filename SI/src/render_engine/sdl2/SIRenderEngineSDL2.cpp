@@ -2,6 +2,9 @@
 
 #include <core/debug/Print.hpp>
 #include "SIRenderEngineSDL2.hpp"
+#include "render_engine/sdl2/region_sprite/RegionSprite.h"
+#include "render_engine/sdl2/shader/GLSLProgram.h"
+
 
 SIRenderEngineSDL2::SIRenderEngineSDL2()
 {
@@ -26,13 +29,15 @@ void SIRenderEngineSDL2::start(int width, int height)
 
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 
-
+    initialize_shaders();
     run();
 }
 
 void SIRenderEngineSDL2::run()
 {
     d_is_running = true;
+
+    region_sprite_initialize(&rs, -1, -1, 1, 1);
 
     while(!is_stop_requested() && d_state == STATE::ON)
     {
@@ -73,17 +78,17 @@ void SIRenderEngineSDL2::draw()
     glClearDepth(1.0);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    glClearColor(0.0, 0.0, 0.0, 1.0);
-
-    glEnableClientState(GL_COLOR_ARRAY);
-    glBegin(GL_TRIANGLES);
-    glColor3f(1.0f, 0.0f, 0.0f);
-    glVertex2f(0, 0);
-    glVertex2f(0, 500);
-    glVertex2f(500, 500);
-
-    glEnd();
+    glslprogram_use(&color_shader_program);
+    region_sprite_draw(&rs);
+    glslprogram_unuse(&color_shader_program);
 
     SDL_GL_SwapWindow(p_window);
 }
 
+void SIRenderEngineSDL2::initialize_shaders()
+{
+    glslprogram_initialize(&color_shader_program);
+    glslprogram_compile_shaders(&color_shader_program, "src/render_engine/sdl2/res/shaders/color_shading.vert", "src/render_engine/sdl2/res/shaders/color_shading.frag");
+    glslprogram_add_attribute(&color_shader_program, "vertex_position");
+    glslprogram_link_shaders(&color_shader_program);
+}

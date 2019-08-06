@@ -6,6 +6,8 @@
 #include "core/render_engine_core/IRenderEngine.hpp"
 #include <SDL2/SDL.h>
 #include <GL/glew.h>
+#include <render_engine/sdl2/shader/GLSLProgram.h>
+#include "region_sprite/RegionSprite.h"
 
 enum class STATE
 {
@@ -25,6 +27,7 @@ public:
 
 private:
     void draw();
+    void initialize_shaders();
 
     STATE d_state;
     float d_frame_time;
@@ -32,6 +35,9 @@ private:
 
     SDL_Window* p_window = nullptr;
     SDL_GLContext gl_context;
+
+    RegionSprite rs;
+    GLSLProgram color_shader_program;
 };
 
 
