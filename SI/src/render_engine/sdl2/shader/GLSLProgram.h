@@ -24,6 +24,8 @@ typedef struct GLSLProgram_
 void glslprogram_use(GLSLProgram* prog);
 void glslprogram_unuse(GLSLProgram* prog);
 
+GLint glslprogram_uniform_location(GLSLProgram* prog, const char* uniform_name);
+
 void glslprogram_initialize(GLSLProgram* prog);
 void glslprogram_compile_shaders(GLSLProgram* prog, const char* vertex_shader_filepath, const char* fragment_shader_filepath);
 void glslprogram_link_shaders(GLSLProgram* prog);

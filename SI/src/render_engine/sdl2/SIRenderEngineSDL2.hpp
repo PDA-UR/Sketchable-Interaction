@@ -30,7 +30,7 @@ private:
     void initialize_shaders();
 
     STATE d_state;
-    float d_frame_time;
+    float d_frame_time, d_time;
     int d_width, d_height;
 
     SDL_Window* p_window = nullptr;

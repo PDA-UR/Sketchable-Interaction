@@ -17,7 +17,15 @@ set(SIRENDERENGINESrc
         src/render_engine/sdl2/region_sprite/RegionSprite.c
         src/render_engine/sdl2/region_sprite/RegionSprite.h
         src/render_engine/sdl2/shader/GLSLProgram.c
-        src/render_engine/sdl2/shader/GLSLProgram.h)
+        src/render_engine/sdl2/shader/GLSLProgram.h
+        src/render_engine/sdl2/geometry/Vertex.h
+        src/render_engine/sdl2/io/IOManager.c
+        src/render_engine/sdl2/io/IOManager.h
+        src/render_engine/sdl2/lib/picopng.cpp
+        src/render_engine/sdl2/lib/picoPNG.hpp
+        src/render_engine/sdl2/shader/GLTexture.h
+        src/render_engine/sdl2/shader/ImageLoader.cpp
+        src/render_engine/sdl2/shader/ImageLoader.hpp)
 
 add_library(SIRenderEngine SHARED ${SIRENDERENGINESrc})
 target_link_libraries(SIRenderEngine ${OPENGL_LIBRARIES} ${GLEW_LIBRARY} ${SDL2_LIBRARIES} SIRuntime)

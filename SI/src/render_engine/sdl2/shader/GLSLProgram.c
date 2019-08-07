@@ -22,6 +22,19 @@ void glslprogram_unuse(GLSLProgram* prog)
         glDisableVertexAttribArray(i);
 }
 
+GLint glslprogram_uniform_location(GLSLProgram* prog, const char* uniform_name)
+{
+    GLint location = glGetUniformLocation(prog->program_id, uniform_name);
+
+    if(location == GL_INVALID_INDEX)
+    {
+        fprintf(stderr, "Uniform name %s not found in shader!", uniform_name);
+        exit(1);
+    }
+
+    return location;
+}
+
 void glslprogram_initialize(GLSLProgram* prog)
 {
     prog->fragment_shader_id = 0;
@@ -32,6 +45,7 @@ void glslprogram_initialize(GLSLProgram* prog)
 
 void glslprogram_compile_shaders(GLSLProgram* prog, const char* vertex_shader_filepath, const char* fragment_shader_filepath)
 {
+    prog->program_id = glCreateProgram();
     prog->vertex_shader_id = glCreateShader(GL_VERTEX_SHADER);
 
     if(prog->vertex_shader_id == 0)
@@ -48,8 +62,6 @@ void glslprogram_compile_shaders(GLSLProgram* prog, const char* vertex_shader_fi
 
 void glslprogram_link_shaders(GLSLProgram* prog)
 {
-    prog->program_id = glCreateProgram();
-
     glAttachShader(prog->program_id, prog->vertex_shader_id);
     glAttachShader(prog->program_id, prog->fragment_shader_id);
 
@@ -84,8 +96,8 @@ void glslprogram_add_attribute(GLSLProgram* prog, const char* name)
 
 void __glslprogram_compile_shader(GLSLProgram* prog, const char* filepath, const GLuint* id)
 {
-    char* buffer = 0;
-    int length;
+    char* temp;
+    long length;
 
     FILE* file = fopen(filepath, "rb");
 
@@ -95,39 +107,38 @@ void __glslprogram_compile_shader(GLSLProgram* prog, const char* filepath, const
         length = ftell(file);
         fseek(file, 0, SEEK_SET);
 
-        buffer = (char *) malloc(length);
+        temp = (char *) malloc(length);
 
-        if(buffer)
-        {
-            fread(buffer, 1, length, file);
-        }
+        if(temp)
+            fread(temp, 1, length, file);
 
         fclose(file);
     }
 
-    buffer[length] = '\0';
-
-    printf("%s\n", buffer);
-
-    glShaderSource(*id, 1, &buffer, NULL);
-    glCompileShader(*id);
-
-    free(buffer);
-
-    GLint success = 0;
-    glGetShaderiv(*id, GL_COMPILE_STATUS, &success);
-
-    if(!success)
+    if(temp)
     {
-        GLint max_length = 0;
-        glGetShaderiv(*id, GL_INFO_LOG_LENGTH, &max_length);
+        temp[length] = '\0';
 
-        char log[max_length];
+        glShaderSource(*id, 1, (const char* const*) &temp, NULL);
+        glCompileShader(*id);
 
-        glGetShaderInfoLog(*id, max_length, &max_length, log);
-        glDeleteShader(*id);
+        free(temp);
 
-        printf("%s\n", log);
-        fprintf(stderr, "Shader %s failed to compile", filepath);
+        GLint success = 0;
+        glGetShaderiv(*id, GL_COMPILE_STATUS, &success);
+
+        if(!success)
+        {
+            GLint max_length = 0;
+            glGetShaderiv(*id, GL_INFO_LOG_LENGTH, &max_length);
+
+            char log[max_length];
+
+            glGetShaderInfoLog(*id, max_length, &max_length, log);
+            glDeleteShader(*id);
+
+            printf("%s\n", log);
+            fprintf(stderr, "Shader %s failed to compile", filepath);
+        }
     }
 }

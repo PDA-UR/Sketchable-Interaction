@@ -6,13 +6,19 @@
 #include "render_engine/sdl2/shader/GLSLProgram.h"
 
 
-SIRenderEngineSDL2::SIRenderEngineSDL2()
+SIRenderEngineSDL2::SIRenderEngineSDL2() :
+    d_width(800),
+    d_height(600),
+    d_time(0),
+    d_frame_time(0),
+    p_window(nullptr),
+    d_state(STATE::ON)
 {
 }
 
 SIRenderEngineSDL2::~SIRenderEngineSDL2()
 {
-
+    SDL_Quit();
 }
 
 void SIRenderEngineSDL2::start(int width, int height)
@@ -37,7 +43,7 @@ void SIRenderEngineSDL2::run()
 {
     d_is_running = true;
 
-    region_sprite_initialize(&rs, -1, -1, 1, 1);
+    region_sprite_initialize(&rs, -1, -1, 2, 2);
 
     while(!is_stop_requested() && d_state == STATE::ON)
     {
@@ -62,6 +68,8 @@ void SIRenderEngineSDL2::run()
             }
         }
 
+        d_time += 0.01;
+
         draw();
     }
 
@@ -79,6 +87,11 @@ void SIRenderEngineSDL2::draw()
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     glslprogram_use(&color_shader_program);
+
+    GLuint time_location = glslprogram_uniform_location(&color_shader_program, "time");
+
+    glUniform1f(time_location, d_time);
+
     region_sprite_draw(&rs);
     glslprogram_unuse(&color_shader_program);
 
@@ -90,5 +103,6 @@ void SIRenderEngineSDL2::initialize_shaders()
     glslprogram_initialize(&color_shader_program);
     glslprogram_compile_shaders(&color_shader_program, "src/render_engine/sdl2/res/shaders/color_shading.vert", "src/render_engine/sdl2/res/shaders/color_shading.frag");
     glslprogram_add_attribute(&color_shader_program, "vertex_position");
+    glslprogram_add_attribute(&color_shader_program, "fragment_color");
     glslprogram_link_shaders(&color_shader_program);
 }
