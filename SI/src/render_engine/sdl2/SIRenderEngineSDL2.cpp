@@ -1,10 +1,10 @@
 
 
 #include <core/debug/Print.hpp>
+#include <render_engine/sdl2/shader/ImageLoader.hpp>
 #include "SIRenderEngineSDL2.hpp"
-#include "render_engine/sdl2/region_sprite/RegionSprite.h"
-#include "render_engine/sdl2/shader/GLSLProgram.h"
-
+#include "render_engine/sdl2/region_sprite/RegionSprite.hpp"
+#include "render_engine/sdl2/shader/GLSLProgram.hpp"
 
 SIRenderEngineSDL2::SIRenderEngineSDL2() :
     d_width(800),
@@ -12,6 +12,7 @@ SIRenderEngineSDL2::SIRenderEngineSDL2() :
     d_time(0),
     d_frame_time(0),
     p_window(nullptr),
+    rs(nullptr),
     d_state(STATE::ON)
 {
 }
@@ -43,7 +44,9 @@ void SIRenderEngineSDL2::run()
 {
     d_is_running = true;
 
-    region_sprite_initialize(&rs, -1, -1, 2, 2);
+    rs = new RegionSprite(-1, -1, 2, 2, "src/render_engine/sdl2/res/textures/jimmyJump_pack/PNG/CharacterRight_Standing.png");
+
+    d_texture = ImageLoader::load_png("src/render_engine/sdl2/res/textures/jimmyJump_pack/PNG/CharacterRight_Standing.png");
 
     while(!is_stop_requested() && d_state == STATE::ON)
     {
@@ -86,23 +89,31 @@ void SIRenderEngineSDL2::draw()
     glClearDepth(1.0);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    glslprogram_use(&color_shader_program);
+    color_shader_program.use();
+    glActiveTexture(GL_TEXTURE0);
 
-    GLuint time_location = glslprogram_uniform_location(&color_shader_program, "time");
+    glBindTexture(GL_TEXTURE_2D, d_texture.id);
 
+    GLint texture_location = color_shader_program.uniform_location("mysampler");
+    glUniform1i(texture_location, 0);
+
+    GLuint time_location = color_shader_program.uniform_location("time");
     glUniform1f(time_location, d_time);
 
-    region_sprite_draw(&rs);
-    glslprogram_unuse(&color_shader_program);
+    rs->draw();
+
+    glBindTexture(GL_TEXTURE_2D, 0);
+
+    color_shader_program.unuse();
 
     SDL_GL_SwapWindow(p_window);
 }
 
 void SIRenderEngineSDL2::initialize_shaders()
 {
-    glslprogram_initialize(&color_shader_program);
-    glslprogram_compile_shaders(&color_shader_program, "src/render_engine/sdl2/res/shaders/color_shading.vert", "src/render_engine/sdl2/res/shaders/color_shading.frag");
-    glslprogram_add_attribute(&color_shader_program, "vertex_position");
-    glslprogram_add_attribute(&color_shader_program, "fragment_color");
-    glslprogram_link_shaders(&color_shader_program);
+    color_shader_program.compile_shaders("src/render_engine/sdl2/res/shaders/color_shading.vert", "src/render_engine/sdl2/res/shaders/color_shading.frag");
+    color_shader_program.add_attribute("vertex_position");
+    color_shader_program.add_attribute("vertex_color");
+    color_shader_program.add_attribute("vertex_uv");
+    color_shader_program.link_shaders();
 }

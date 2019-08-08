@@ -6,8 +6,9 @@
 #include "core/render_engine_core/IRenderEngine.hpp"
 #include <SDL2/SDL.h>
 #include <GL/glew.h>
-#include <render_engine/sdl2/shader/GLSLProgram.h>
-#include "region_sprite/RegionSprite.h"
+#include <render_engine/sdl2/shader/GLSLProgram.hpp>
+#include "render_engine/sdl2/region_sprite/RegionSprite.hpp"
+#include "render_engine/sdl2/shader/GLTexture.hpp"
 
 enum class STATE
 {
@@ -36,8 +37,10 @@ private:
     SDL_Window* p_window = nullptr;
     SDL_GLContext gl_context;
 
-    RegionSprite rs;
+    RegionSprite* rs;
     GLSLProgram color_shader_program;
+
+    GLTexture d_texture;
 };
 
 
