@@ -6,32 +6,35 @@
 #include <vector>
 #include <algorithm>
 #include "core/math/si_math.hpp"
+#include <glm/glm.hpp>
 
-class CollisionMask
+namespace SI
 {
-public:
-    CollisionMask(int width, int height, const std::vector<Vector2<float>> &contour);
-    ~CollisionMask();
+    class CollisionMask
+    {
+    public:
+        CollisionMask(int width, int height, const std::vector<glm::vec2>& contour);
 
-    void set_bit(const Vector2<float> &v);
-    void set_bit(int i);
-    void clear_bit(const Vector2<float> &v);
-    void clear_bit(int i);
-    bool test_bit(const Vector2<float> &v) const;
-    bool test_bit(int k) const;
-    bool operator [](int i) const;
+        ~CollisionMask();
 
-private:
-    int d_width, d_height;
+        void set_bit(const glm::vec2 &v);
+        void set_bit(int i);
+        void clear_bit(const glm::vec2 &v);
+        void clear_bit(int i);
+        bool test_bit(const glm::vec2 &v) const;
+        bool test_bit(int k) const;
+        bool operator[](int i) const;
 
-    void create(const std::vector<Vector2<float>> &contour);
-    void retrieve_edges(std::vector<std::vector<Vector2<float>>> &dest, const std::vector<Vector2<float>> &contour);
-    void fill_contour_scanline(int ymin, int ymax, const std::vector<std::vector<Vector2<float>>> &edges,
-                               const std::vector<Vector2<float>> &contour);
+    private:
+        int d_width, d_height;
 
-    int* d_values;
-    int d_values_size = 0;
-};
+        void create(const std::vector<glm::vec2>& contour);
+        void retrieve_edges(std::vector<std::vector<glm::vec2>> &dest, const std::vector<glm::vec2>& contour);
+        void fill_contour_scanline(float ymin, float ymax, const std::vector<std::vector<glm::vec2>> &edges, const std::vector<glm::vec2>& contour);
 
+        int *d_values;
+        int d_values_size = 0;
+    };
+}
 
 #endif //SI_COLLISIONMASK_HPP

@@ -4,20 +4,22 @@
 #include "core/context/managers/LayerManager.hpp"
 #include "core/debug/Print.hpp"
 
-LayerManager* Context::sp_lm = new LayerManager();
-PluginManager* Context::sp_pm = new PluginManager();
-RegionManager* Context::sp_rm = new RegionManager();
-
-int Context::s_width = 0;
-int Context::s_height = 0;
-
-Context::Context(int width, int height, const std::vector<bp::object>& plugins)
+namespace SI
 {
-    s_width = width;
-    s_height = height;
+    LayerManager *Context::sp_lm = new LayerManager();
+    PluginManager *Context::sp_pm = new PluginManager();
+    RegionManager *Context::sp_rm = new RegionManager();
 
-    Context::sp_lm->add_layer();
-    Context::sp_pm->add_plugins(plugins);
+    int Context::s_width = 0;
+    int Context::s_height = 0;
+
+    Context::Context(int width, int height, const std::vector<bp::object> &plugins)
+    {
+        s_width = width;
+        s_height = height;
+
+        Context::sp_lm->add_layer();
+        Context::sp_pm->add_plugins(plugins);
 //
 //    std::vector<Vector2<float>> contour =
 //    {
@@ -33,79 +35,75 @@ Context::Context(int width, int height, const std::vector<bp::object>& plugins)
 //    r.set_effect(plugins[0]);
 //    r.set_shape(contour);
 //    Context::sp_rm->add_region(r);
+    }
 
-    Print::print("Context Constructed");
-}
-
-Context::~Context()
-{
-    delete Context::sp_pm;
-    Context::sp_pm = nullptr;
-
-    delete sp_lm;
-    Context::sp_lm = nullptr;
-
-    delete sp_rm;
-    Context::sp_rm = nullptr;
-
-    delete p_renderer;
-    p_renderer = nullptr;
-
-    delete p_render_thread;
-    p_render_thread = nullptr;
-
-    Print::print("Context Destroyed");
-}
-
-void Context::begin(IRenderEngine* ire)
-{
-    p_renderer = ire;
-
-    p_render_thread = new std::thread([&]()
+    Context::~Context()
     {
-        p_renderer->start(s_width, s_height);
-        Print::print("terminate");
-    });
+        delete Context::sp_pm;
+        Context::sp_pm = nullptr;
 
-    p_render_thread->join();
-}
+        delete sp_lm;
+        Context::sp_lm = nullptr;
 
-void Context::end()
-{
-    p_renderer->stop();
-}
+        delete sp_rm;
+        Context::sp_rm = nullptr;
 
-int Context::width()
-{
-    return s_width;
-}
+        delete p_render_thread;
+        p_render_thread = nullptr;
 
-void Context::set_width(int width)
-{
-    s_width = width;
-}
+        delete p_renderer;
+        p_renderer = nullptr;
+    }
 
-int Context::height()
-{
-    return s_height;
-}
+    void Context::begin(IRenderEngine *ire)
+    {
+        p_renderer = ire;
 
-void Context::set_height(int height)
-{
-    s_height = height;
-}
+        p_render_thread = new std::thread([&]()
+        {
+            p_renderer->start(s_width, s_height);
+        });
 
-LayerManager* Context::layer_manager()
-{
-    return sp_lm;
-}
+        p_render_thread->join();
+    }
 
-PluginManager* Context::plugin_manager()
-{
-    return sp_pm;
-}
+    void Context::end()
+    {
+        p_renderer->stop();
+    }
 
-RegionManager* Context::region_manager()
-{
-    return sp_rm;
+    int Context::width()
+    {
+        return s_width;
+    }
+
+    void Context::set_width(int width)
+    {
+        s_width = width;
+    }
+
+    int Context::height()
+    {
+        return s_height;
+    }
+
+    void Context::set_height(int height)
+    {
+        s_height = height;
+    }
+
+    LayerManager *Context::layer_manager()
+    {
+        return sp_lm;
+    }
+
+    PluginManager *Context::plugin_manager()
+    {
+        return sp_pm;
+    }
+
+    RegionManager *Context::region_manager()
+    {
+        return sp_rm;
+    }
 }

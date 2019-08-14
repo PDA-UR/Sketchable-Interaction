@@ -8,29 +8,37 @@
 
 #include "core/runtime_core/region/Layer.hpp"
 #include <string>
-
-class LayerManager
+namespace SI
 {
-public:
-    void add_layer();
-    void remove_layer(const int id);
-    void set_active_layer(int id);
+    class LayerManager
+    {
+    public:
 
-    int num_layers() const;
-    int consecutive_id() const;
-    int active_layer_id() const;
-private:
-    LayerManager();
-    ~LayerManager();
+        void add_layer();
 
-    void destroy();
+        void remove_layer(const int id);
 
-    std::map<int, Layer*> d_layers;
-    int d_consecutive_id, d_active_layer_id;
+        void set_active_layer(int id);
 
-    friend class SiLayerManagerTest;
-    friend class Context;
-};
+        int num_layers() const;
 
+        int consecutive_id() const;
+
+        int active_layer_id() const;
+
+    private:
+        LayerManager();
+        ~LayerManager();
+
+        void destroy();
+
+
+        std::map<int, Layer *> d_layers;
+        int d_consecutive_id, d_active_layer_id;
+
+        friend class SiLayerManagerTest;
+        friend class Context;
+    };
+}
 
 #endif //SI_LAYERMANAGER_HPP

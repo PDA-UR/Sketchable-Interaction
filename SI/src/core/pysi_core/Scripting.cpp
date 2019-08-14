@@ -1,93 +1,100 @@
 
 #include "Scripting.hpp"
 #include <iostream>
+#include <string>
+#include <iosfwd>
+#include <boost/python.hpp>
 
-Scripting::Scripting()
+namespace SI
 {
-    PyImport_AppendInittab((char*) "libPySI", &PyInit_libPySI);
+    namespace bp = boost::python;
 
-    Py_Initialize();
-
-    d_main = bp::import("__main__");
-    d_globals = d_main.attr("__dict__");
-}
-
-Scripting::~Scripting()
-{}
-
-bp::object Scripting::si_plugin(std::string &module_name, std::string &path, std::string &class_name)
-{
-    return import(module_name, path).attr(class_name.c_str())();
-}
-
-std::string Scripting::load_plugin_source(const char *source)
-{
-    char * buffer = nullptr;
-    long length;
-
-    FILE * f = fopen(source, "rb");
-
-    if(f)
+    Scripting::Scripting()
     {
-        fseek(f, 0, SEEK_END);
+        PyImport_AppendInittab((char *) "libPySI", &PyInit_libPySI);
 
-        length = ftell(f);
+        Py_Initialize();
 
-        fseek(f, 0, SEEK_SET);
-
-        buffer = (char*) malloc(length);
-
-        if (buffer)
-        {
-            buffer[0] = '\0';
-
-            fread(buffer, 1, length, f);
-
-            buffer[length] = '\0';
-        }
-
-        fclose(f);
+        d_main = bp::import("__main__");
+        d_globals = d_main.attr("__dict__");
     }
 
-    std::string ret(strdup(buffer));
+    Scripting::~Scripting()
+    {}
 
-    free(buffer);
-
-    return ret;
-}
-
-void Scripting::load_class_names(std::vector<std::string> &classes, const std::string &path)
-{
-    int size = 0;
-
-    std::string source = load_plugin_source(path.c_str());
-
-    while(size < source.size())
+    bp::object Scripting::si_plugin(std::string &module_name, std::string &path, std::string &class_name)
     {
-        size_t found = source.find(std::string("class"), size);
+        return import(module_name, path).attr(class_name.c_str())();
+    }
 
-        if (found != std::string::npos)
+    std::string Scripting::load_plugin_source(const char *source)
+    {
+        char *buffer = nullptr;
+        long length;
+
+        FILE *f = fopen(source, "rb");
+
+        if (f)
         {
-            size_t found2 = source.find(std::string("("), found + 1);
+            fseek(f, 0, SEEK_END);
 
-            if(found2 != std::string::npos)
+            length = ftell(f);
+
+            fseek(f, 0, SEEK_SET);
+
+            buffer = (char *) malloc(length);
+
+            if (buffer)
             {
-                classes.push_back(source.substr(found + 5 + 1, found2 - (found + 5 + 1)));
+                buffer[0] = '\0';
 
-                size += found2;
+                fread(buffer, 1, length, f);
+
+                buffer[length] = '\0';
             }
+
+            fclose(f);
         }
-        else
-            break;
+
+        std::string ret(strdup(buffer));
+
+        free(buffer);
+
+        return ret;
     }
-}
 
-bp::object Scripting::import(const std::string &module, const std::string &path)
-{
-    bp::dict locals;
+    void Scripting::load_class_names(std::vector<std::string> &classes, const std::string &path)
+    {
+        int size = 0;
 
-    locals["module_name"] = module;
-    locals["path"] = path;
+        std::string source = load_plugin_source(path.c_str());
+
+        while (size < source.size())
+        {
+            size_t found = source.find(std::string("class"), size);
+
+            if (found != std::string::npos)
+            {
+                size_t found2 = source.find(std::string("("), found + 1);
+
+                if (found2 != std::string::npos)
+                {
+                    classes.push_back(source.substr(found + 5 + 1, found2 - (found + 5 + 1)));
+
+                    size += found2;
+                }
+            }
+            else
+                break;
+        }
+    }
+
+    bp::object Scripting::import(const std::string &module, const std::string &path)
+    {
+        bp::dict locals;
+
+        locals["module_name"] = module;
+        locals["path"] = path;
 
 
         bp::exec("import imp\n"
@@ -95,10 +102,12 @@ bp::object Scripting::import(const std::string &module, const std::string &path)
                  d_globals,
                  locals);
 
-    return locals["new_module"];
-}
+        return locals["new_module"];
+    }
 
-std::ostream &operator<<(std::ostream &os, const Scripting &scripting)
-{
-    return os << "Scripting Object: Globals: " << bp::extract<std::string>(bp::str(scripting.d_globals))() << " Main: " << bp::extract<std::string>(bp::str(scripting.d_main))();
+    std::ostream &operator<<(std::ostream &os, const SI::Scripting &scripting)
+    {
+        return os << "Scripting Object: Globals: " << bp::extract<std::string>(bp::str(scripting.d_globals))()
+                  << " Main: " << bp::extract<std::string>(bp::str(scripting.d_main))();
+    }
 }

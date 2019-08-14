@@ -6,37 +6,45 @@
 #include <boost/python.hpp>
 #include <ostream>
 
-namespace bp = boost::python;
-
-class Plugin
+namespace SI
 {
-public:
-    Plugin() = default;
-    ~Plugin() = default;
+    namespace bp = boost::python;
 
-    virtual int on_enter() = 0;
-    virtual int on_continuous() = 0;
-    virtual int on_leave() = 0;
+    class Plugin
+    {
+    public:
+        Plugin() = default;
 
-    void set_pyplugin(const bp::object& plugin);
+        ~Plugin() = default;
 
-    bp::object d_pyplugin;
-};
+        virtual int on_enter() = 0;
 
-class SIPlugin : public Plugin
-{
-public:
-    SIPlugin() = default;
-    explicit SIPlugin(const bp::object& pyplugin);
-    ~SIPlugin() = default;
+        virtual int on_continuous() = 0;
 
-    int on_enter() override;
-    int on_continuous() override;
-    int on_leave() override;
+        virtual int on_leave() = 0;
 
-    friend std::ostream &operator<<(std::ostream &os, const SIPlugin &plugin);
-};
+        void set_pyplugin(const bp::object &plugin);
 
+        bp::object d_pyplugin;
+    };
 
+    class SIPlugin : public Plugin
+    {
+    public:
+        SIPlugin() = default;
+
+        explicit SIPlugin(const bp::object &pyplugin);
+
+        ~SIPlugin() = default;
+
+        int on_enter() override;
+
+        int on_continuous() override;
+
+        int on_leave() override;
+
+        friend std::ostream &operator<<(std::ostream &os, const SIPlugin &plugin);
+    };
+}
 
 #endif //SI_PLUGIN_HPP

@@ -11,5 +11,5 @@ set(SITestAppSrc
 add_executable(si_test_application ${SITestAppSrc})
 #set_target_properties(si_test_application PROPERTIES AUTOMOC TRUE)
 #target_link_libraries(si_test_application SI Qt5::Widgets)
-target_link_libraries(si_test_application SIRuntime SIRenderEngine)
+target_link_libraries(si_test_application SIRenderEngine SIRuntime)
 add_dependencies(si_test_application PySI SIRuntime SIRenderEngine)

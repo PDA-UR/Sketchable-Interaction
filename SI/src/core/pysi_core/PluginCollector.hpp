@@ -14,14 +14,18 @@
 #include <functional>
 #include <cstring>
 
-class PluginCollector
+namespace SI
 {
-public:
-    static void collect(const std::string& rel_path, std::vector<std::string>& files);
-private:
-    static std::string plugin_folder(const std::string& rel_path);
-    static void grab_plugin_files(const std::string &path, std::vector<std::string>& files);
-};
+    class PluginCollector
+    {
+    public:
+        static void collect(const std::string &rel_path, std::vector<std::string> &files);
 
+    private:
+        static std::string plugin_folder(const std::string &rel_path);
+
+        static void grab_plugin_files(const std::string &path, std::vector<std::string> &files);
+    };
+}
 
 #endif //SI_PLUGINCOLLECTOR_HPP

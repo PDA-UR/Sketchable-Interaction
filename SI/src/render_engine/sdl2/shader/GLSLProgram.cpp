@@ -35,7 +35,8 @@ GLint GLSLProgram::uniform_location(const std::string &uniform_name)
 
     if(location == GL_INVALID_INDEX)
     {
-        Print::print("Error", "Uniform name " + uniform_name + "not found in shader!");
+//        Print::print("Error", "Uniform name " + uniform_name + "not found in shader!");
+//        Print::print("Error", "Uniform name " + uniform_name + "not found in shader!");
         exit(1);
     }
 
@@ -48,13 +49,13 @@ void GLSLProgram::compile_shaders(const std::string &vertex_shader_filepath,
     d_program_id = glCreateProgram();
     d_vertex_shader_id = glCreateShader(GL_VERTEX_SHADER);
 
-    if(d_vertex_shader_id == 0)
-        Print::print("Error", "Vertex shader failed to be created");
+//    if(d_vertex_shader_id == 0)
+//        Print::print("Error", "Vertex shader failed to be created");
 
     d_fragment_shader_id = glCreateShader(GL_FRAGMENT_SHADER);
 
-    if(d_fragment_shader_id == 0)
-        Print::print("Error", "Fragment shader failed to be created");
+//    if(d_fragment_shader_id == 0)
+//        Print::print("Error", "Fragment shader failed to be created");
 
     compile_shader(vertex_shader_filepath, d_vertex_shader_id);
     compile_shader(fragment_shader_filepath, d_fragment_shader_id);
@@ -77,8 +78,8 @@ void GLSLProgram::link_shaders()
         char log[max_length];
         glGetProgramInfoLog(d_program_id, max_length, &max_length, log);
 
-        Print::print("Error: Unable to link shaders");
-        Print::print("Error", log);
+//        Print::print("Error: Unable to link shaders");
+//        Print::print("Error", log);
 
         glDeleteProgram(d_program_id);
         glDeleteShader(d_vertex_shader_id);
@@ -100,7 +101,7 @@ void GLSLProgram::compile_shader(const std::string &file_path, GLuint id)
 
     if(shader_file.fail())
     {
-        Print::print("Error opening shader file", file_path);
+//        Print::print("Error opening shader file", file_path);
         exit(1);
     }
 
@@ -130,7 +131,7 @@ void GLSLProgram::compile_shader(const std::string &file_path, GLuint id)
         glGetShaderInfoLog(id, max_length, &max_length, log);
         glDeleteShader(id);
 
-        Print::print("Shader Error: ", log);
-        Print::print("Error: Shader ", file_path, "failed to compile");
+//        Print::print("Shader Error: ", log);
+//        Print::print("Error: Shader ", file_path, "failed to compile");
     }
 }

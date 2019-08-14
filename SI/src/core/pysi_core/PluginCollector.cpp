@@ -3,45 +3,48 @@
 
 #include "PluginCollector.hpp"
 
-void PluginCollector::collect(const std::string& rel_path, std::vector<std::string> &files)
+namespace SI
 {
-    PluginCollector::grab_plugin_files(PluginCollector::plugin_folder(rel_path), files);
-}
-
-std::string PluginCollector::plugin_folder(const std::string& rel_path)
-{
-    char buf[FILENAME_MAX];
-
-    getcwd(buf, FILENAME_MAX);
-
-    std::string directory(buf);
-    directory += rel_path;
-
-    return directory;
-}
-
-void PluginCollector::grab_plugin_files(const std::string &path, std::vector<std::string> &files)
-{
-    if (auto dir = opendir(path.c_str()))
+    void PluginCollector::collect(const std::string &rel_path, std::vector<std::string> &files)
     {
-        while(auto f = readdir(dir))
+        PluginCollector::grab_plugin_files(PluginCollector::plugin_folder(rel_path), files);
+    }
+
+    std::string PluginCollector::plugin_folder(const std::string &rel_path)
+    {
+        char buf[FILENAME_MAX];
+
+        getcwd(buf, FILENAME_MAX);
+
+        std::string directory(buf);
+        directory += rel_path;
+
+        return directory;
+    }
+
+    void PluginCollector::grab_plugin_files(const std::string &path, std::vector<std::string> &files)
+    {
+        if (auto dir = opendir(path.c_str()))
         {
-            if (!f->d_name || f->d_name[0] == '.')
-                continue;
-
-            if (f->d_type == DT_DIR)
-                grab_plugin_files(path + f->d_name + "/", files);
-
-            if (f->d_type == DT_REG)
+            while (auto f = readdir(dir))
             {
-                if(strstr(f->d_name, "__init__.py"))
+                if (!f->d_name || f->d_name[0] == '.')
                     continue;
 
-                if(strstr(f->d_name, ".py"))
-                    files.push_back(path + "/" + f->d_name);
-            }
-        }
+                if (f->d_type == DT_DIR)
+                    grab_plugin_files(path + f->d_name + "/", files);
 
-        closedir(dir);
+                if (f->d_type == DT_REG)
+                {
+                    if (strstr(f->d_name, "__init__.py"))
+                        continue;
+
+                    if (strstr(f->d_name, ".py"))
+                        files.push_back(path + "/" + f->d_name);
+                }
+            }
+
+            closedir(dir);
+        }
     }
 }

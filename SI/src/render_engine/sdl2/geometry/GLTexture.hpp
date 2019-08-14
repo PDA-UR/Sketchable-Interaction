@@ -4,11 +4,14 @@
 
 #include <GL/glew.h>
 
-struct GLTexture
+namespace SIRen
 {
-    GLuint id;
-    int width;
-    int height;
-};
+    struct GLTexture
+    {
+        GLuint id;
+        int width;
+        int height;
+    };
+}
 
 #endif //SITEST_GLTEXTURE_HPP

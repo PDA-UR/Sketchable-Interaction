@@ -11,7 +11,7 @@ class SIScriptingTest: public ::testing::Test
 public:
     virtual void SetUp()
     {
-        d_script = Scripting();
+        d_script = SI::Scripting();
     }
 
     virtual void TearDown()
@@ -19,7 +19,7 @@ public:
 
     }
 
-    Scripting d_script;
+    SI::Scripting d_script;
 };
 
 

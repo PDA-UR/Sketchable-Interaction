@@ -17,10 +17,10 @@ public:
     {
         const std::string rel_path = "tests/res";
 
-        Scripting script;
+        SI::Scripting script;
         std::vector<std::string> files, classes;
 
-        PluginCollector::collect("/" + rel_path, files);
+        SI::PluginCollector::collect("/" + rel_path, files);
 
         for(auto& path : files)
         {

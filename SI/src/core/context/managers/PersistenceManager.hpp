@@ -7,10 +7,12 @@
 // work together with silang compiler
 // user settings concerning runtime_core
 
-class PersistenceManager
+namespace SI
 {
+    class PersistenceManager
+    {
 
-};
-
+    };
+}
 
 #endif //SI_PERSISTENCEMANAGER_HPP

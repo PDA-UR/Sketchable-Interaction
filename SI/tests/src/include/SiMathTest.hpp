@@ -21,7 +21,7 @@ private:
 protected:
 };
 
-class SiMathVector2PositiveIntersectionTest : public ::testing::TestWithParam<std::vector<std::vector<Vector2<float>>>>
+class SiMathVector2PositiveIntersectionTest : public ::testing::TestWithParam<std::vector<std::vector<glm::vec2>>>
 {
 public:
     virtual void SetUp()
@@ -31,7 +31,7 @@ public:
     {}
 };
 
-class SiMathVector2NegativeIntersectionTest : public ::testing::TestWithParam<std::vector<std::vector<Vector2<float>>>>
+class SiMathVector2NegativeIntersectionTest : public ::testing::TestWithParam<std::vector<std::vector<glm::vec2>>>
 {
 public:
     virtual void SetUp()

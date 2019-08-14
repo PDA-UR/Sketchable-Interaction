@@ -60,14 +60,16 @@ set(SIRUNTIMESrc
         src/core/math/si_math.hpp
         src/core/render_engine_core/IRenderEngine.hpp
         src/core/concurrency/StoppableTask.cpp
-        src/core/concurrency/StoppableTask.hpp)
+        src/core/concurrency/StoppableTask.hpp
+        src/core/benchmark/BenchmarkTimer.cpp
+        src/core/benchmark/BenchmarkTimer.hpp)
 
 add_library(SIRuntime SHARED ${SIRUNTIMESrc})
 
 if (xlib)
-    target_link_libraries(SIRuntime ${PYTHON_LIBRARIES} ${Boost_LIBRARIES} -lX11)
+    target_link_libraries(SIRuntime glm ${PYTHON_LIBRARIES} ${Boost_LIBRARIES} -lX11)
 else()
-    target_link_libraries(SIRuntime ${PYTHON_LIBRARIES} ${Boost_LIBRARIES})
+    target_link_libraries(SIRuntime glm ${PYTHON_LIBRARIES} ${Boost_LIBRARIES})
 endif()
 
 add_dependencies(SIRuntime PySI)

@@ -11,41 +11,47 @@
 #include "core/context/managers/LayerManager.hpp"
 #include "core/context/managers/RegionManager.hpp"
 
-namespace bp = boost::python;
 
-class Context
+namespace SI
 {
-public:
-    static LayerManager* layer_manager();
-    static PluginManager* plugin_manager();
-    static RegionManager* region_manager();
+    namespace bp = boost::python;
 
-    static int width();
-    static int height();
+    class Context
+    {
+    public:
+        static LayerManager *layer_manager();
+        static PluginManager *plugin_manager();
+        static RegionManager *region_manager();
 
-private:
-    Context(int width, int height, const std::vector<bp::object>& plugins);
-    ~Context();
+        static int width();
+        static int height();
 
-    void begin(IRenderEngine* ire);
-    void end();
+    private:
+        Context(int width, int height, const std::vector<bp::object> &plugins);
 
-    void set_width(int width);
-    void set_height(int height);
+        ~Context();
 
-    static int s_width, s_height;
+        void begin(IRenderEngine *ire);
 
-    friend class Core;
+        void end();
 
-    static LayerManager* sp_lm;
-    static PluginManager* sp_pm;
-    static RegionManager* sp_rm;
+        void set_width(int width);
 
-    IRenderEngine* p_renderer;
-    std::thread* p_render_thread;
+        void set_height(int height);
 
-protected:
-};
+        static int s_width, s_height;
 
+        friend class Core;
+
+        static LayerManager *sp_lm;
+        static PluginManager *sp_pm;
+        static RegionManager *sp_rm;
+
+        IRenderEngine *p_renderer;
+        std::thread *p_render_thread;
+
+    protected:
+    };
+}
 
 #endif //SI_CONTEXT_HPP

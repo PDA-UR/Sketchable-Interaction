@@ -7,21 +7,25 @@
 #include <string>
 #include <iostream>
 
-class Layer
+namespace SI
 {
-public:
-    Layer(int id);
-    ~Layer();
+    class Layer
+    {
+    public:
+        Layer(int id);
 
-    int id() const;
+        ~Layer();
 
-    friend std::ostream& operator <<(std::ostream& stream, const Layer& layer);
-    friend std::ostream& operator <<(std::ostream& stream, const Layer* layer);
+        int id() const;
 
-protected:
-private:
-    int d_id;
-};
+        friend std::ostream &operator<<(std::ostream &stream, const Layer &layer);
 
+        friend std::ostream &operator<<(std::ostream &stream, const Layer *layer);
+
+    protected:
+    private:
+        int d_id;
+    };
+}
 
 #endif //SI_LAYER_HPP

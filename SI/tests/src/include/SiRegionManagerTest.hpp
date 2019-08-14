@@ -6,28 +6,29 @@
 #include <gtest/gtest.h>
 #include <core/context/managers/RegionManager.hpp>
 
-
-class SiRegionManagerTest : public ::testing::Test
+namespace SI
 {
-public:
-    virtual void SetUp()
+    class SiRegionManagerTest : public ::testing::Test
     {
+    public:
+        virtual void SetUp()
+        {
 
-    }
+        }
 
-    virtual void TearDown()
-    {
+        virtual void TearDown()
+        {
 
-    }
+        }
 
-    RegionManager d_region_manager;
+        SI::RegionManager d_region_manager;
 
-protected:
-    void destroy()
-    {
-        d_region_manager.destroy();
-    }
-};
-
+    protected:
+        void destroy()
+        {
+            d_region_manager.destroy();
+        }
+    };
+}
 
 #endif //SI_SIREGIONMANAGERTEST_HPP

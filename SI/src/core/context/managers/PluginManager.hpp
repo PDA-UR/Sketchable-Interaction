@@ -7,30 +7,35 @@
 #include <boost/python.hpp>
 #include <core/runtime_core/region/Region.hpp>
 
-namespace bp = boost::python;
+namespace SI
+{
+    namespace bp = boost::python;
 
 // watchdog for updating pysi list by listening to pysi folder changes
 // at runtime_core insertion of new plugins
 
-class PluginManager
-{
-public:
-    const std::vector<Region>& plugins() const;
-    const int num_plugins() const;
+    class PluginManager
+    {
+    public:
+        const std::vector<Region> &plugins() const;
 
-private:
-    PluginManager();
-    ~PluginManager();
+        const int num_plugins() const;
 
-    void add_plugins(const std::vector<bp::object>& plugins);
+    private:
+        PluginManager();
 
-    void destroy();
+        ~PluginManager();
 
-    std::vector<Region> d_plugins;
+        void add_plugins(const std::vector<bp::object> &plugins);
 
-    friend class Context;
-    friend class SiPluginManagerTest;
-};
+        void destroy();
 
+        std::vector<Region> d_plugins;
+
+        friend class Context;
+
+        friend class SiPluginManagerTest;
+    };
+}
 
 #endif //SI_PLUGINMANAGER_HPP

@@ -5,26 +5,32 @@
 
 #include <core/runtime_core/region/Region.hpp>
 
-class RegionManager
+namespace SI
 {
-public:
-    void add_region(const Region& r);
-    void remove_region(int id);
+    class RegionManager
+    {
+    public:
+        void add_region(const Region &r);
 
-    int num_regions();
+        void remove_region(int id);
 
-    std::vector<Region>& regions();
-private:
-    RegionManager();
-    ~RegionManager();
+        int num_regions();
 
-    void destroy();
+        std::vector<Region> &regions();
 
-    std::vector<Region> d_regions;
+    private:
+        RegionManager();
 
-    friend class Context;
-    friend class SiRegionManagerTest;
-};
+        ~RegionManager();
 
+        void destroy();
+
+        std::vector<Region> d_regions;
+
+        friend class Context;
+
+        friend class SiRegionManagerTest;
+    };
+}
 
 #endif //SI_REGIONMANAGER_HPP

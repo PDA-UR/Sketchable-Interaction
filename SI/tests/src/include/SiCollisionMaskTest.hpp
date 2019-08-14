@@ -19,14 +19,14 @@ public:
 
     }
 
-    std::vector<Vector2<float>> contour_IXI =
+    std::vector<glm::vec2> contour_IXI =
     {
-        Vector2<float>(100, 100),
-        Vector2<float>(100, 600),
-        Vector2<float>(350, 375),
-        Vector2<float>(600, 600),
-        Vector2<float>(600, 100),
-        Vector2<float>(350, 325)
+            glm::vec2(100, 100),
+            glm::vec2(100, 600),
+            glm::vec2(350, 375),
+            glm::vec2(600, 600),
+            glm::vec2(600, 100),
+            glm::vec2(350, 325)
     };
 };
 

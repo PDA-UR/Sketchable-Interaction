@@ -16,25 +16,33 @@
 #define DEFAULT_HEIGHT 600
 #endif
 
-class Core
+namespace SI
 {
-public:
-    Core();
-    ~Core();
+    class Core
+    {
+    public:
+        void start(const std::string &plugin_path, IRenderEngine *ire);
 
-    void start(const std::string& plugin_path, IRenderEngine* ire);
-    void stop();
+        void stop();
 
-    const int width() const;
-    const int height() const;
-    const std::string& plugin_path() const;
+        const int width() const;
 
-private:
-    int d_target_width, d_target_height;
-    std::string d_plugin_path;
+        const int height() const;
 
-    Context* p_ctx;
-};
+        const std::string &plugin_path() const;
 
+    private:
+        Core();
+
+        ~Core();
+
+        int d_target_width, d_target_height;
+        std::string d_plugin_path;
+
+        Context *p_ctx;
+
+        friend class SIEngine;
+    };
+}
 
 #endif //SI_CORE_HPP

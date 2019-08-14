@@ -1,14 +1,15 @@
 
 
-#include <core/pysi_core/PluginCollector.hpp>
 #include "include/SiPluginCollectorTest.hpp"
+
+#include <core/pysi_core/PluginCollector.hpp>
 
 TEST_F(SiPluginCollectorTest, collect)
 {
     std::vector<std::string> files;
 
     EXPECT_FALSE(files.size());
-    EXPECT_NO_FATAL_FAILURE(PluginCollector::collect("/" + PATH, files));
+    EXPECT_NO_FATAL_FAILURE(SI::PluginCollector::collect("/" + PATH, files));
     EXPECT_TRUE(files.size());
     EXPECT_EQ(1, files.size());
 

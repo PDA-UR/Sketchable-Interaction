@@ -8,7 +8,11 @@
 #include <GL/glew.h>
 #include <render_engine/sdl2/shader/GLSLProgram.hpp>
 #include "render_engine/sdl2/region_sprite/RegionSprite.hpp"
-#include "render_engine/sdl2/shader/GLTexture.hpp"
+#include "render_engine/sdl2/geometry/GLTexture.hpp"
+#include <vector>
+#include <render_engine/sdl2/display/Window.hpp>
+#include <render_engine/sdl2/display/Camera2D.hpp>
+#include <render_engine/sdl2/geometry/SpriteBatch.hpp>
 
 enum class STATE
 {
@@ -16,32 +20,40 @@ enum class STATE
     OFF
 };
 
-class SIRenderEngineSDL2 : public IRenderEngine
+class RegionSprite;
+
+namespace SIRen
 {
-public:
-    SIRenderEngineSDL2();
-    ~SIRenderEngineSDL2();
+class SIRenderEngineSDL2 : public SI::IRenderEngine
+    {
+    public:
+        SIRenderEngineSDL2();
 
-    void run() override;
-    void start(int width, int height) override;
-    void pause() override;
+        ~SIRenderEngineSDL2();
 
-private:
-    void draw();
-    void initialize_shaders();
+        void run() override;
 
-    STATE d_state;
-    float d_frame_time, d_time;
-    int d_width, d_height;
+        void start(int width, int height) override;
 
-    SDL_Window* p_window = nullptr;
-    SDL_GLContext gl_context;
+        void pause() override;
 
-    RegionSprite* rs;
-    GLSLProgram color_shader_program;
+    private:
+        void draw();
 
-    GLTexture d_texture;
-};
+        void initialize_shaders();
+
+        void calculate_fps();
+
+        STATE d_state;
+        float d_frame_time, d_time, d_fps, d_max_fps;
+        int d_width, d_height;
+        Window d_window;
+
+        GLSLProgram d_color_shader_program;
+        Camera2D d_camera;
+        SpriteBatch d_sprite_batch;
+    };
+}
 
 
 #endif //SI_SIRENDERENGINESDL2_HPP
