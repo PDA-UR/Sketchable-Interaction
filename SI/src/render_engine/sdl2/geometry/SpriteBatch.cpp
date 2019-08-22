@@ -2,6 +2,7 @@
 
 #include "SpriteBatch.hpp"
 #include <algorithm>
+#include <render_engine/debug/SiRenPrint.hpp>
 
 namespace SIRen
 {

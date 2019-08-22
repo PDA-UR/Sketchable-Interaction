@@ -10,7 +10,7 @@ find_package(glm REQUIRED)
 
 include_directories(${SDL2_INCLUDE_DIR})
 include_directories(${GLEW_INCLUDE_DIRS})
-include_directories(${OPENGL_INCLUDE_DIS})
+include_directories(${OPENGL_INCLUDE_DIRS})
 
 set(SIRENDERENGINESrc
         src/render_engine/sdl2/SIRenderEngineSDL2.cpp

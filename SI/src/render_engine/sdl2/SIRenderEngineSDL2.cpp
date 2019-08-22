@@ -101,6 +101,7 @@ namespace SIRen
 
             draw();
             calculate_fps();
+
             static int frame_counter = 0;
             frame_counter++;
             if (frame_counter == 10)
