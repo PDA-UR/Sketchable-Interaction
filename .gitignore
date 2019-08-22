@@ -209,3 +209,5 @@ SI/tests/res/__init__\.py
 SI/libs/
 
 SI/src/render_engine/sdl2/res/textures/jimmyJump_pack/
+
+SI/src/render_engine/sdl2/res/textures/
