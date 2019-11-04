@@ -3,10 +3,11 @@
 #include <iostream>
 
 #include "SIGRun.hpp"
+#include "debug/Print.hpp"
 
 SIGRun::SIGRun() : up_core(std::unique_ptr<Core>(new Core()))
 {
-
+    Print::print("Constructed");
 }
 
 SIGRun::~SIGRun()
