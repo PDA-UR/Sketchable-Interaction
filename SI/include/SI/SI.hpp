@@ -3,7 +3,7 @@
 #ifndef SI_SI_HPP
 #define SI_SI_HPP
 
-#include "SIEngine.hpp"
-#include "context/Context.hpp"
+#include "../../src/SIGRun.hpp"
+
 
 #endif //SI_SI_HPP

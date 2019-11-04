@@ -80,7 +80,7 @@ class GTEST_API_ String {
   //
   // The wide string is created using the ANSI codepage (CP_ACP) to
   // match the behaviour of the ANSI versions of Win32 calls and the
-  // C runtime.
+  // C runtime_core.
   static LPCWSTR AnsiToUtf16(const char* c_str);
 
   // Creates an ANSI string from the given wide string, allocating
@@ -90,7 +90,7 @@ class GTEST_API_ String {
   //
   // The returned string is created using the ANSI codepage (CP_ACP) to
   // match the behaviour of the ANSI versions of Win32 calls and the
-  // C runtime.
+  // C runtime_core.
   static const char* Utf16ToAnsi(LPCWSTR utf16_str);
 #endif
 

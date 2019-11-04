@@ -121,7 +121,7 @@ class IgnoredValue {
   template <typename T,
             typename std::enable_if<!std::is_convertible<T, Sink>::value,
                                     int>::type = 0>
-  IgnoredValue(const T& /* ignored */) {}  // NOLINT(runtime/explicit)
+  IgnoredValue(const T& /* ignored */) {}  // NOLINT(runtime_core/explicit)
 };
 
 // The only type that should be convertible to Secret* is nullptr.

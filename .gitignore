@@ -207,3 +207,5 @@ SI/build/release/
 SI/tests/res/__init__\.py
 
 SI/libs/
+
+\.idea/

@@ -1,93 +1,121 @@
 
+#ifndef SIGRUN_PRINT_HPP
+#define SIGRUN_PRINT_HPP
 
-#ifndef SI_PRINT_HPP
-#define SI_PRINT_HPP
 #include <boost/python.hpp>
+#include <mutex>
 #include <tuple>
 #include <iostream>
 #include <map>
-#include "core/runtime/region/Layer.hpp"
+#include <sstream>
 
 namespace bp = boost::python;
+//
+//std::ostream &operator<<(std::ostream &os, const std::vector<T> &v)
+//{
+//    os << "[";
+//
+//    for (int i = 0; i < v.size(); ++i)
+//    {
+//        os << v[i];
+//
+//        if (i != v.size() - 1)
+//            os << ", ";
+//    }
+//
+//    os << "]";
+//
+//    return os;
+//}
+//
+//template<typename T1, typename T2>
+//std::ostream &operator<<(std::ostream &os, const std::map<T1, T2> &map)
+//{
+//    for (auto &it : map)
+//        os << it.first << " : " << it.second << "\n";
+//
+//    return os;
+//}
+//
+//std::ostream &operator<<(std::ostream &os, const bp::object& pobj)
+//{
+//    return os << bp::extract<std::string>(bp::str(pobj))();
+//}
 
-template <typename T>
-std::ostream& operator <<(std::ostream& os, const std::vector<T>& v)
-{
-    os << "T";
-
-    for(int i = 0; i < v.size(); ++i)
-    {
-        os << v[i];
-
-        if(i != v.size() - 1)
-            os << ", ";
-    }
-
-    os << "]";
-
-    return os;
-}
-
-template <typename T1, typename T2>
-std::ostream& operator <<(std::ostream& os, const std::map<T1, T2>& map)
-{
-    for(auto& it : map)
-        os << it.first << " : " << it.second << "\n";
-
-    return os;
-}
-
-class Print
+class Print : public std::ostringstream
 {
 public:
-    template<typename TupleType, typename FunctionType>
-    static void for_each(TupleType&&, FunctionType, std::integral_constant<size_t, std::tuple_size<typename std::remove_reference<TupleType>::type >::value>)
-    {}
-
-    template<std::size_t I, typename TupleType, typename FunctionType , typename = typename std::enable_if<I != std::tuple_size<typename std::remove_reference<TupleType>::type>::value>::type >
-    static void for_each(TupleType&& t, FunctionType f, std::integral_constant<size_t, I>)
+    Print() = default;
+    ~Print()
     {
-        f(std::get<I>(t));
-        for_each(std::forward<TupleType>(t), f, std::integral_constant<size_t, I + 1>());
+        std::lock_guard<std::mutex> guard(_mutexPrint);
+        std::cout << this->str();
     }
 
-    template<typename TupleType, typename FunctionType>
-    static void for_each(TupleType&& t, FunctionType f)
+    template<typename T>
+    static void print(const std::vector<std::vector<T>> &v)
     {
-        for_each(std::forward<TupleType>(t), f, std::integral_constant<size_t, 0>());
-    }
+        std::ostringstream os;
 
-    template <class... Args>
-    static void print(Args&&... args)
-    {
-        std::cout << "SI-Engine: ";
+        os << "[";
 
-        auto arguments = std::make_tuple(std::forward<Args>(args)...);
-
-        for_each(arguments, [](const auto &x)
+        for (int i = 0; i < v.size(); ++i)
         {
-            print(x);
-        });
+            os << "[";
+            for(int k = 0; k < v[i].size(); k++)
+            {
+                os << v[i][k];
 
-        std::cout << std::endl;
+                if (k != v.size() - 1)
+                    os << ", ";
+            }
+            os << "]";
+        }
+
+        os << "]";
+
+        print(os.str());
+    }
+
+    template<typename T>
+    static void print(const std::vector<T> &v)
+    {
+        std::ostringstream os;
+
+        os << "[";
+
+        for (int i = 0; i < v.size(); ++i)
+        {
+            os << v[i];
+
+            if (i != v.size() - 1)
+                os << ", ";
+        }
+
+        os << "]";
+
+        print(os.str());
+    }
+
+    template <typename T1, typename T2>
+    static void print(const std::map<T1, T2> &map)
+    {
+        std::ostringstream os;
+
+        for (auto &it : map)
+            os << it.first << " : " << it.second << "\n";
+
+        print(os.str());
     }
 
     template <typename T>
-    static void print(const T& arg, bool new_line=false)
+    static void print(const T& arg)
     {
-        if(new_line)
-            std::cout << arg << std::endl;
-        else
-            std::cout << arg << " ";
+        Print{} << arg << std::endl;
     }
 
-    static void print(const bp::object& obj, bool new_line=false)
-    {
-        if(new_line)
-            std::cout << bp::extract<std::string>(bp::str(obj))() << std::endl;
-        else
-            std::cout << bp::extract<std::string>(bp::str(obj))() << " ";
-    }
+private:
+    static std::mutex _mutexPrint;
 };
 
-#endif //SI_PRINT_HPP
+#endif //SITEST_SIRENPRINT_HPP
