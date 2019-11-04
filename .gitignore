@@ -209,3 +209,5 @@ SI/tests/res/__init__\.py
 SI/libs/
 
 \.idea/
+
+SI/build/
