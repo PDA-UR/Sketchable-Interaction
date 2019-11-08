@@ -211,3 +211,13 @@ SI/libs/
 \.idea/
 
 SI/build/
+
+SI/docs/doxyfiles/Doxyfile
+
+SI/tests/res/scripting/__pycache__/
+
+SI/tests/res/python_invoker/__pycache__/
+
+SI/tests/res/core/__pycache__/
+
+SI/plugins/standard_environment_library/__pycache__/

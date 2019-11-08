@@ -1,0 +1,88 @@
+\begin{theindex}
+
+  \item {/home/juergen/1\_dev/projects/Sketchable-\/Interaction/SI/src/SIGRun.cpp}, 
+		\hyperpage{17}
+  \item {/home/juergen/1\_dev/projects/Sketchable-\/Interaction/SI/src/SIGRun.hpp}, 
+		\hyperpage{18}
+  \item {/home/juergen/1\_dev/projects/Sketchable-\/Interaction/SI/src/debug/Print.cpp}, 
+		\hyperpage{15}
+  \item {/home/juergen/1\_dev/projects/Sketchable-\/Interaction/SI/src/debug/Print.hpp}, 
+		\hyperpage{15}
+  \item {/home/juergen/1\_dev/projects/Sketchable-\/Interaction/SI/src/pysi/SuperEffect.cpp}, 
+		\hyperpage{16}
+  \item {/home/juergen/1\_dev/projects/Sketchable-\/Interaction/SI/src/pysi/SuperEffect.hpp}, 
+		\hyperpage{17}
+  \item {/home/juergen/1\_dev/projects/Sketchable-\/Interaction/SI/src/sigrun/Core.cpp}, 
+		\hyperpage{18}
+  \item {/home/juergen/1\_dev/projects/Sketchable-\/Interaction/SI/src/sigrun/Core.hpp}, 
+		\hyperpage{19}
+  \item {/home/juergen/1\_dev/projects/Sketchable-\/Interaction/SI/src/sigrun/log/Log.cpp}, 
+		\hyperpage{20}
+  \item {/home/juergen/1\_dev/projects/Sketchable-\/Interaction/SI/src/sigrun/log/Log.hpp}, 
+		\hyperpage{20}
+  \item {/home/juergen/1\_dev/projects/Sketchable-\/Interaction/SI/src/sigrun/plugin/PluginCollector.cpp}, 
+		\hyperpage{21}
+  \item {/home/juergen/1\_dev/projects/Sketchable-\/Interaction/SI/src/sigrun/plugin/PluginCollector.hpp}, 
+		\hyperpage{21}
+  \item {/home/juergen/1\_dev/projects/Sketchable-\/Interaction/SI/src/sigrun/plugin/Scripting.cpp}, 
+		\hyperpage{22}
+  \item {/home/juergen/1\_dev/projects/Sketchable-\/Interaction/SI/src/sigrun/plugin/Scripting.hpp}, 
+		\hyperpage{23}
+  \item {$\sim$Core}
+    \subitem {Core}, \hyperpage{7}
+  \item {$\sim$Print}
+    \subitem {Print}, \hyperpage{10}
+  \item {$\sim$SIGRun}
+    \subitem {SIGRun}, \hyperpage{12}
+
+  \indexspace
+
+  \item {collect}
+    \subitem {PluginCollector}, \hyperpage{9}
+  \item {Core}, \hyperpage{7}
+    \subitem {$\sim$Core}, \hyperpage{7}
+    \subitem {SIGRun}, \hyperpage{8}
+    \subitem {SIGRunCoreTest}, \hyperpage{8}
+    \subitem {SIGRunTest}, \hyperpage{8}
+
+  \indexspace
+
+  \item {exec}
+    \subitem {SIGRun}, \hyperpage{13}
+
+  \indexspace
+
+  \item {Log}, \hyperpage{8}
+
+  \indexspace
+
+  \item {PluginCollector}, \hyperpage{9}
+    \subitem {collect}, \hyperpage{9}
+  \item {Print}, \hyperpage{9}
+    \subitem {$\sim$Print}, \hyperpage{10}
+    \subitem {Print}, \hyperpage{10}
+    \subitem {print}, \hyperpage{11}
+  \item {print}
+    \subitem {Print}, \hyperpage{11}
+
+  \indexspace
+
+  \item {quit}
+    \subitem {SIGRun}, \hyperpage{13}
+
+  \indexspace
+
+  \item {Scripting}, \hyperpage{12}
+  \item {SIGRun}, \hyperpage{12}
+    \subitem {$\sim$SIGRun}, \hyperpage{12}
+    \subitem {Core}, \hyperpage{8}
+    \subitem {exec}, \hyperpage{13}
+    \subitem {quit}, \hyperpage{13}
+    \subitem {SIGRun}, \hyperpage{12}
+  \item {SIGRunCoreTest}
+    \subitem {Core}, \hyperpage{8}
+  \item {SIGRunTest}
+    \subitem {Core}, \hyperpage{8}
+  \item {SuperEffect}, \hyperpage{13}
+
+\end{theindex}
