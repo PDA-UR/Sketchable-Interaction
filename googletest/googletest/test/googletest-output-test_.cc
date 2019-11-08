@@ -29,7 +29,7 @@
 //
 // The purpose of this file is to generate Google Test output under
 // various conditions.  The output will then be verified by
-// googletest-output-test.py to ensure that Google Test generates the
+// googletest-output-level0.py to ensure that Google Test generates the
 // desired messages.  Therefore, most tests in this file are MEANT TO
 // FAIL.
 

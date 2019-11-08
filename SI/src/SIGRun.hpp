@@ -13,8 +13,10 @@ public:
 
     int exec(int argc, char** argv);
 
+    static int quit();
+
 private:
-    std::unique_ptr<Core> up_core;
+    static std::unique_ptr<Core> up_core;
 };
 
 #endif //SI_SIGRUN_SIGRUN_H

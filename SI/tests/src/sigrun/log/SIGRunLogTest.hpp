@@ -1,0 +1,13 @@
+
+
+#ifndef SITEST_SIGRUNLOGTEST_HPP
+#define SITEST_SIGRUNLOGTEST_HPP
+
+
+class SIGRunLogTest
+{
+
+};
+
+
+#endif //SITEST_SIGRUNLOGTEST_HPP

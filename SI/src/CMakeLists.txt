@@ -27,23 +27,34 @@ if(xlib)
     add_definitions(-Dxlib)
 endif()
 
-#set(PySISrc
-        #src/core/runtime_core/region/Region.cpp
-        #src/core/runtime_core/region/Region.hpp)
+set(PySISrc
+        SI/src/pysi/SuperEffect.cpp
+        SI/src/pysi/SuperEffect.hpp)
 
 # SI PYTHON3 MODULE
-#add_library(PySI MODULE ${PySISrc})
-#target_link_libraries(PySI ${PYTHON_LIBRARIES} ${Boost_LIBRARIES})
+add_library(PySI MODULE ${PySISrc})
+target_link_libraries(PySI ${PYTHON_LIBRARIES} ${Boost_LIBRARIES})
 
 # SI RUNTIME LIBRARY
 
 set(SIGRunSRC
         SI/src/SIGRun.cpp
         SI/src/SIGRun.hpp
+        SI/src/pysi/SuperEffect.cpp
+        SI/src/pysi/SuperEffect.hpp
         SI/src/sigrun/Core.cpp
         SI/src/sigrun/Core.hpp
         SI/src/debug/Print.cpp
-        SI/src/debug/Print.hpp)
+        SI/src/debug/Print.hpp
+        SI/src/sigrun/plugin/PluginCollector.cpp
+        SI/src/sigrun/plugin/PluginCollector.hpp
+        SI/src/sigrun/plugin/Scripting.cpp
+        SI/src/sigrun/plugin/Scripting.hpp
+        SI/src/sigrun/log/Log.cpp
+        SI/src/sigrun/log/Log.hpp
+        SI/src/sigrun/plugin/PythonInvoker.cpp
+        SI/src/sigrun/plugin/PythonInvoker.hpp
+        SI/src/sigrun/MetaType.hpp)
 
 add_library(SIGeneralRuntime SHARED ${SIGRunSRC})
 
@@ -53,4 +64,5 @@ else()
     target_link_libraries(SIGeneralRuntime ${PATH_LIB} glm ${PYTHON_LIBRARIES} ${Boost_LIBRARIES})
 endif()
 
-#add_dependencies(SIGeneralRuntime PySI)
+#add_dependencies(SIGeneralRuntime PySI SIDocsPDF)
+add_dependencies(SIGeneralRuntime PySI)

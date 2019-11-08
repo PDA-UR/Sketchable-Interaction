@@ -17,6 +17,7 @@ include_directories(${PYTHON_INCLUDE_DIRS})
 include_directories(${SDL2_INCLUDE_DIR})
 include_directories(${GLEW_INCLUDE_DIRS})
 include_directories(${OPENGL_INCLUDE_DIRS})
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/SI/src)
 
 # SI GTEST UNIT TEST RUNNER
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src
@@ -28,13 +29,21 @@ add_subdirectory(googletest googletest)
 
 set(SIUnitTestSrc
         SI/tests/src/run_unit_tests.cpp
-        SI/tests/src/SIGRunTest.cpp
-        SI/tests/src/SIGRunTest.hpp
-        SI/tests/src/SIGRunCoreTest.cpp
-        SI/tests/src/SIGRunCoreTest.hpp
-        SI/tests/src/SIGRunPrintTest.cpp
-        SI/tests/src/SIGRunPrintTest.hpp)
+        SI/tests/src/sigrun/SIGRunTest.cpp
+        SI/tests/src/sigrun/SIGRunTest.hpp
+        SI/tests/src/sigrun/SIGRunCoreTest.cpp
+        SI/tests/src/sigrun/SIGRunCoreTest.hpp
+        SI/tests/src/sigrun/debug/SIGRunPrintTest.cpp
+        SI/tests/src/sigrun/debug/SIGRunPrintTest.hpp
+        SI/tests/src/sigrun/plugin/SIGRunPluginCollectorTest.hpp
+        SI/tests/src/sigrun/plugin/SIGRunPluginCollectorTest.cpp
+        SI/tests/src/sigrun/plugin/SIGRunPythonInvokerTest.cpp
+        SI/tests/src/sigrun/plugin/SIGRunPythonInvokerTest.hpp
+        SI/tests/src/sigrun/plugin/SIGRunScriptingTest.cpp
+        SI/tests/src/sigrun/plugin/SIGRunScriptingTest.hpp
+        SI/tests/src/sigrun/log/SIGRunLogTest.cpp
+        SI/tests/src/sigrun/log/SIGRunLogTest.hpp)
 
 add_executable(run_unit_tests ${SIUnitTestSrc})
 target_link_libraries(run_unit_tests ${GLEW_LIBRARY} ${OPENGL_LIBRARIES} ${SDL2_LIBRARIES} ${PYTHON_LIBRARIES} ${Boost_LIBRARIES} gtest gtest_main gmock gmock_main pthread -ldl -lutil SIGeneralRuntime)
-add_dependencies(run_unit_tests SIGeneralRuntime)
+add_dependencies(run_unit_tests PySI SIGeneralRuntime)
