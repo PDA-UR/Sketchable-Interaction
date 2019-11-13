@@ -34,7 +34,7 @@
 #define LOG_SHOW_DEBUG Log::SHOW_TYPE::DEBUG
 #define LOG_SHOW_ALL Log::SHOW_TYPE::INFO | Log::SHOW_TYPE::WARN | Log::SHOW_TYPE::ERROR | Log::SHOW_TYPE::DEBUG
 
-#define DEBUG(what, log_mode) LOG(what, Log::LOG_LEVEL::DEBUG_LEVEL, log_mode, meta_type(),__FILENAME__, __FUNCTION__, std::to_string(__LINE__))
+#define DEBUG(what, log_mode) Log::log(what, Log::LOG_LEVEL::DEBUG_LEVEL, log_mode, meta_type(),__FILENAME__, __FUNCTION__, std::to_string(__LINE__))
 #define INFO(what, log_mode) Log::log(what, Log::LOG_LEVEL::INFO_LEVEL, log_mode, meta_type())
 #define ERROR(what, log_mode) Log::log(what, Log::LOG_LEVEL::ERROR_LEVEL, log_mode, meta_type(),__FILENAME__, __FUNCTION__, std::to_string(__LINE__))
 #define WARN(what, log_mode) Log::log(what, Log::LOG_LEVEL::WARN_LEVEL, log_mode, meta_type())
@@ -44,12 +44,11 @@ class Log
 {
 private:
     static std::ofstream log_file;
-    static std::string log_file_path;
     static const std::string PATH_DEFAULT;
-    static std::string log_level(int log_level);
-    static std::string time();
 
 public:
+    static std::string log_file_path;
+
     enum LOG_LEVEL
     {
         INFO_LEVEL = 1,
@@ -81,6 +80,10 @@ public:
 
     static void log(const std::string& what, int level, int logging_flags, const std::string& type, const std::string& file="", const std::string& func="", const std::string& line="");
     static void set_log_file_path(const std::string& path);
+
+    static std::string log_level(int log_level);
+
+    static std::string time();
 };
 
 
