@@ -13,10 +13,10 @@ int Log::SHOW = -1;
 void Log::log(const std::string &what, int level, int logging_flags, const std::string& type, const std::string& file,
               const std::string& func, const std::string& line)
 {
-    if(!Log::__DEBUG__ || Log::SHOW == Log::SHOW_TYPE::HIDDEN || logging_flags == Log::MODE::NONE)
-        return;
-
     Log::SHOW |= Log::SHOW_TYPE::UNDEFINED | Log::SHOW_TYPE::ERROR;
+
+    if(!Log::__DEBUG__ || logging_flags == Log::MODE::NONE)
+        return;
 
     if (level & Log::SHOW)
     {
