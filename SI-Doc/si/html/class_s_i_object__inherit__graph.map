@@ -1,0 +1,5 @@
+<map id="SIObject" name="SIObject">
+<area shape="rect" id="node1" title="A meta class from which other classes are derived from to register them as SIObject meta types." alt="" coords="46,5,119,32"/>
+<area shape="rect" id="node2" href="$class_core.html" title="namespace shortening for python object integration" alt="" coords="5,80,56,107"/>
+<area shape="rect" id="node3" href="$class_plugin_collector.html" title=" " alt="" coords="81,80,191,107"/>
+</map>

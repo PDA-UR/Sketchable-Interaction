@@ -1,6 +1,7 @@
 var searchData=
 [
-  ['scripting',['Scripting',['../class_scripting.html',1,'']]],
-  ['sigrun',['SIGRun',['../class_s_i_g_run.html',1,'']]],
-  ['supereffect',['SuperEffect',['../class_super_effect.html',1,'']]]
+  ['plugincollector',['PluginCollector',['../class_plugin_collector.html',1,'']]],
+  ['print',['Print',['../class_print.html',1,'']]],
+  ['pysieffect',['PySIEffect',['../class_py_s_i_effect.html',1,'']]],
+  ['pythoninvoker',['PythonInvoker',['../class_python_invoker.html',1,'']]]
 ];

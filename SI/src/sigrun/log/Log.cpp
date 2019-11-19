@@ -10,6 +10,30 @@ std::string Log::log_file_path = Log::PATH_DEFAULT;
 bool Log::__DEBUG__ = false;
 int Log::SHOW = -1;
 
+/**
+\brief central logging function outputting log messages according to its params
+\details
+    This is the central logging function of SIGRun.
+    It requires to be called from class which are registered as SIObject.
+    The parameters of this function, besides what (log message), configure the way the message is outputted.
+    This static method is easier accessible via the shortcut macros.
+
+@param what a std::string containing the log message
+@param level an integer containing the id of the desired tag
+@param logging_flags an integer containing where the log message is to be outputted
+@param type a std::string containing the description of the functions caller via an SIObject
+@param file a std::string containing the name of the file in which the log call is implemented
+@param func a std::string containing the name of the function in which the log call was issued
+@param line a std::string containing the number of the line of the file in which the log call is implemented
+
+@see DEBUG(what, log_mode)
+@see WARN(what, log_mode)
+@see ERROR(what, log_mode)
+@see INFO(what, log_mode)
+@see UNDEFINED(what, log_mode)
+
+@see SIObject
+*/
 void Log::log(const std::string &what, int level, int logging_flags, const std::string& type, const std::string& file,
               const std::string& func, const std::string& line)
 {
@@ -64,11 +88,27 @@ void Log::log(const std::string &what, int level, int logging_flags, const std::
     }
 }
 
+/**
+\brief
+\details set the path of the file for logging output
+    Set the value of the static variable log_file_path to the value of the given parameter to specifiy the file path of the log output.
+
+@param path a std::string containing the desired file path for logging to files
+*/
 void Log::set_log_file_path(const std::string &path)
 {
     Log::log_file_path = path;
 }
 
+/**
+\brief return the level of a log message as tag according to its id
+\details
+    Retrieves the level of a log message according to the value of the parameter which is compared to the Log::LOG_LEVEL enum/bitfield.
+
+@param log_level an integer containing the id of the desired tag
+
+@return a std::string which contains a human readable version of the desired tag
+*/
 std::string Log::log_level(int log_level)
 {
     switch (log_level)
@@ -86,6 +126,15 @@ std::string Log::log_level(int log_level)
     }
 }
 
+/**
+\brief return current system time with milliseconds precision
+\details
+    Compute current system time with milliseconds precision.
+    Format the date data to yyyy-MM-dd hh:mm:ss.<milliseconds>.
+    Concatenate the date data to a std::string.
+
+@return a std::string containing the formatted date data
+*/
 std::string Log::time()
 {
     tm localTime;

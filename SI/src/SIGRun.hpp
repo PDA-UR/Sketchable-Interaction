@@ -5,6 +5,15 @@
 #include <memory>
 #include "sigrun/Core.hpp"
 
+/**
+\class SIGRun
+\brief SIGRun class serving as entry point of an SI environment
+\details
+    This class serves as the entry point of an SI environment.
+    It is directly exposed in SI.hpp.
+    An instance of this class is used to launch an SI environment.
+@see up_core
+*/
 class SIGRun
 {
 public:
@@ -16,6 +25,12 @@ public:
     static int quit();
 
 private:
+    /**
+    \brief static unique ptr to a Core object
+    \details
+        The SIGRun Core instance from which all further subsystems of the environment are launched.
+        Due to its size and functionality, it is stored as a static unique_ptr.
+     */
     static std::unique_ptr<Core> up_core;
 };
 

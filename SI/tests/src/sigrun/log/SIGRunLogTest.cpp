@@ -5,36 +5,13 @@
 #include "SIGRunLogTest.hpp"
 #include <regex>
 
-std::vector<int> levels
+TEST_F(SIGRunLogTest, log_level)
 {
-    Log::LOG_LEVEL::INFO_LEVEL, Log::LOG_LEVEL::WARN_LEVEL, Log::LOG_LEVEL::DEBUG_LEVEL, Log::LOG_LEVEL::ERROR_LEVEL, Log::LOG_LEVEL::UNDEFINED_LEVEL
-};
-
-INSTANTIATE_TEST_SUITE_P(LogLevelTest, SIGRunLogLogLevelTest, testing::ValuesIn(levels));
-
-TEST_P(SIGRunLogLogLevelTest, log_level_logging)
-{
-    switch (GetParam())
-    {
-        case Log::LOG_LEVEL::INFO_LEVEL:
-            ASSERT_TRUE(Log::log_level(GetParam()) == "[INFO]");
-            break;
-
-        case Log::LOG_LEVEL::WARN_LEVEL:
-            ASSERT_TRUE(Log::log_level(GetParam()) == "[WARN]");
-            break;
-
-        case Log::LOG_LEVEL::DEBUG_LEVEL:
-            ASSERT_TRUE(Log::log_level(GetParam()) == "[DEBUG]");
-            break;
-
-        case Log::LOG_LEVEL::ERROR_LEVEL:
-            ASSERT_TRUE(Log::log_level(GetParam()) == "[ERROR]");
-            break;
-
-        default:
-            ASSERT_TRUE(Log::log_level(GetParam()) == "[UNDEFINED]");
-    }
+    ASSERT_TRUE(Log::log_level(Log::LOG_LEVEL::INFO_LEVEL) == "[INFO]");
+    ASSERT_TRUE(Log::log_level(Log::LOG_LEVEL::WARN_LEVEL) == "[WARN]");
+    ASSERT_TRUE(Log::log_level(Log::LOG_LEVEL::DEBUG_LEVEL) == "[DEBUG]");
+    ASSERT_TRUE(Log::log_level(Log::LOG_LEVEL::ERROR_LEVEL) == "[ERROR]");
+    ASSERT_TRUE(Log::log_level(Log::LOG_LEVEL::UNDEFINED_LEVEL) == "[UNDEFINED]");
 }
 
 TEST_F(SIGRunLogTest, time)

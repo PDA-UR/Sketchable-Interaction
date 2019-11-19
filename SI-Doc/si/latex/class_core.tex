@@ -2,13 +2,47 @@
 \label{class_core}\index{Core@{Core}}
 
 
+namespace shortening for python object integration  
+
+
+
+
 {\ttfamily \#include $<$Core.\+hpp$>$}
 
+
+
+Inheritance diagram for Core\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=135pt]{class_core__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for Core\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=135pt]{class_core__coll__graph}
+\end{center}
+\end{figure}
 \subsection*{Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
 \mbox{\hyperlink{class_core_a776f8c46504b14183883c6273f93eaed}{$\sim$\+Core}} ()
-\end{DoxyCompactItemize}
+\begin{DoxyCompactList}\small\item\em destructor \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_core_a0e1d6754f6c2cabd2cd2862d541fe127}{start}} ()
+\begin{DoxyCompactList}\small\item\em entry point of core \mbox{\hyperlink{class_s_i_g_run}{S\+I\+G\+Run}} initialization \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_core_a034f9e2fcfea6cad68318a938fb0c926}{stop}} ()
+\begin{DoxyCompactList}\small\item\em exit \mbox{\hyperlink{class_s_i_g_run}{S\+I\+G\+Run}} core \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Protected Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{class_core_a14e63188e0aa7c4a6f72d5501384d1f9}{Core}} ()
+\begin{DoxyCompactList}\small\item\em constructor \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_core_a3a6a2f7dac4b218a4c7e165c1999197f}{retrieve\+\_\+available\+\_\+plugins}} (std\+::unordered\+\_\+map$<$ std\+::string, std\+::shared\+\_\+ptr$<$ bp\+::object $>$$>$ \&plugins, const std\+::string \&plugin\+\_\+path)
+\begin{DoxyCompactList}\small\item\em retrieve all available plugins before launching \mbox{\hyperlink{class_s_i_g_run}{S\+I\+G\+Run}} environment \end{DoxyCompactList}\end{DoxyCompactItemize}
 \subsection*{Friends}
 \begin{DoxyCompactItemize}
 \item 
@@ -18,12 +52,17 @@ class \mbox{\hyperlink{class_core_a703c4760c08c6e9065d8bd71b05c3d63}{S\+I\+G\+Ru
 \item 
 class \mbox{\hyperlink{class_core_a0428dbcb31e2aacead72907324826035}{S\+I\+G\+Run\+Core\+Test}}
 \end{DoxyCompactItemize}
+\subsection*{Additional Inherited Members}
 
 
 \subsection{Detailed Description}
+namespace shortening for python object integration 
 
+\mbox{\hyperlink{class_s_i_object}{S\+I\+Object}} Central \mbox{\hyperlink{class_core}{Core}} class registered as \mbox{\hyperlink{class_s_i_object}{S\+I\+Object}}
 
-Definition at line 6 of file Core.\+hpp.
+This class initiates all subsystems required for the \mbox{\hyperlink{class_s_i_g_run}{S\+I\+G\+Run}} environment. This class collects all available pulgins first. Second, it launches the SI context and other subsystems. This class is registered as \mbox{\hyperlink{class_s_i_object}{S\+I\+Object}} meta type. This class conctructor is declared private to disable use by external application programmers. Therefore, the friend keyword is used to internally expose the class. 
+
+Definition at line 28 of file Core.\+hpp.
 
 
 
@@ -36,7 +75,84 @@ Definition at line 6 of file Core.\+hpp.
 
 
 
-Definition at line 12 of file Core.\+cpp.
+destructor 
+
+Shut down the \mbox{\hyperlink{class_s_i_g_run}{S\+I\+G\+Run}} environment. 
+
+Definition at line 25 of file Core.\+cpp.
+
+\mbox{\Hypertarget{class_core_a14e63188e0aa7c4a6f72d5501384d1f9}\label{class_core_a14e63188e0aa7c4a6f72d5501384d1f9}} 
+\index{Core@{Core}!Core@{Core}}
+\index{Core@{Core}!Core@{Core}}
+\subsubsection{\texorpdfstring{Core()}{Core()}}
+{\footnotesize\ttfamily Core\+::\+Core (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [protected]}}
+
+
+
+constructor 
+
+Constructor which registers instance as an \mbox{\hyperlink{class_s_i_object}{S\+I\+Object}}. Specify, which Logging capabilities are desired. 
+
+Definition at line 14 of file Core.\+cpp.
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{class_core_a3a6a2f7dac4b218a4c7e165c1999197f}\label{class_core_a3a6a2f7dac4b218a4c7e165c1999197f}} 
+\index{Core@{Core}!retrieve\_available\_plugins@{retrieve\_available\_plugins}}
+\index{retrieve\_available\_plugins@{retrieve\_available\_plugins}!Core@{Core}}
+\subsubsection{\texorpdfstring{retrieve\_available\_plugins()}{retrieve\_available\_plugins()}}
+{\footnotesize\ttfamily void Core\+::retrieve\+\_\+available\+\_\+plugins (\begin{DoxyParamCaption}\item[{std\+::unordered\+\_\+map$<$ std\+::string, std\+::shared\+\_\+ptr$<$ bp\+::object $>$$>$ \&}]{plugins,  }\item[{const std\+::string \&}]{plugin\+\_\+path }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [protected]}}
+
+
+
+retrieve all available plugins before launching \mbox{\hyperlink{class_s_i_g_run}{S\+I\+G\+Run}} environment 
+
+Load all plugins in the plugin path of the \mbox{\hyperlink{class_s_i_g_run}{S\+I\+G\+Run}} environment.
+
+
+\begin{DoxyParams}{Parameters}
+{\em plugins} & a mutable reference to a std\+::unordered map with std\+::string as key and a std\+::shared\+\_\+ptr of boost\+::python\+::objects as values which is the out parameter \\
+\hline
+{\em plugin\+\_\+path} & a std\+::string which contains the path to the root folder of all plugin files\\
+\hline
+\end{DoxyParams}
+\begin{DoxySeeAlso}{See also}
+\mbox{\hyperlink{class_scripting_ab978243f5f2fd597651d6c4c28cb83ca}{Scripting\+::\+Scripting}} 
+
+\mbox{\hyperlink{class_plugin_collector_a53aeef5e9d4d5c31903532f879b205d1}{Plugin\+Collector\+::\+Plugin\+Collector}} 
+\end{DoxySeeAlso}
+
+
+Definition at line 76 of file Core.\+cpp.
+
+\mbox{\Hypertarget{class_core_a0e1d6754f6c2cabd2cd2862d541fe127}\label{class_core_a0e1d6754f6c2cabd2cd2862d541fe127}} 
+\index{Core@{Core}!start@{start}}
+\index{start@{start}!Core@{Core}}
+\subsubsection{\texorpdfstring{start()}{start()}}
+{\footnotesize\ttfamily void Core\+::start (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+entry point of core \mbox{\hyperlink{class_s_i_g_run}{S\+I\+G\+Run}} initialization 
+
+Entry point of \mbox{\hyperlink{class_s_i_g_run}{S\+I\+G\+Run}}\textquotesingle{}s core which performs Plugin loading and initializes the SI Context. 
+
+Definition at line 36 of file Core.\+cpp.
+
+\mbox{\Hypertarget{class_core_a034f9e2fcfea6cad68318a938fb0c926}\label{class_core_a034f9e2fcfea6cad68318a938fb0c926}} 
+\index{Core@{Core}!stop@{stop}}
+\index{stop@{stop}!Core@{Core}}
+\subsubsection{\texorpdfstring{stop()}{stop()}}
+{\footnotesize\ttfamily void Core\+::stop (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+exit \mbox{\hyperlink{class_s_i_g_run}{S\+I\+G\+Run}} core 
+
+Initiate the shutdown of the \mbox{\hyperlink{class_s_i_g_run}{S\+I\+G\+Run}} core. 
+
+Definition at line 60 of file Core.\+cpp.
 
 
 
@@ -49,7 +165,7 @@ Definition at line 12 of file Core.\+cpp.
 
 
 
-Definition at line 17 of file Core.\+hpp.
+Definition at line 41 of file Core.\+hpp.
 
 \mbox{\Hypertarget{class_core_a0428dbcb31e2aacead72907324826035}\label{class_core_a0428dbcb31e2aacead72907324826035}} 
 \index{Core@{Core}!SIGRunCoreTest@{SIGRunCoreTest}}
@@ -59,7 +175,7 @@ Definition at line 17 of file Core.\+hpp.
 
 
 
-Definition at line 19 of file Core.\+hpp.
+Definition at line 43 of file Core.\+hpp.
 
 \mbox{\Hypertarget{class_core_a703c4760c08c6e9065d8bd71b05c3d63}\label{class_core_a703c4760c08c6e9065d8bd71b05c3d63}} 
 \index{Core@{Core}!SIGRunTest@{SIGRunTest}}
@@ -69,7 +185,7 @@ Definition at line 19 of file Core.\+hpp.
 
 
 
-Definition at line 18 of file Core.\+hpp.
+Definition at line 42 of file Core.\+hpp.
 
 
 

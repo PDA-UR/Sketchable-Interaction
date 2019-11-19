@@ -4,15 +4,115 @@
 
 {\ttfamily \#include $<$Scripting.\+hpp$>$}
 
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{class_scripting_ab978243f5f2fd597651d6c4c28cb83ca}{Scripting}} ()
+\item 
+\mbox{\hyperlink{class_scripting_a86954eb45e89b43ffd7b58dbec15e646}{$\sim$\+Scripting}} ()
+\item 
+bp\+::object \mbox{\hyperlink{class_scripting_a0c97745c04cb674f6ce2debfbf864579}{si\+\_\+plugin}} (std\+::string \&module\+\_\+name, std\+::string \&path, std\+::string \&class\+\_\+name)
+\item 
+std\+::string \mbox{\hyperlink{class_scripting_ae9b5ef65b37ef02fd3bc6bb93890518b}{load\+\_\+plugin\+\_\+source}} (const char $\ast$source)
+\item 
+void \mbox{\hyperlink{class_scripting_a0e2761f442fbd7de97a0a90e0ea18678}{load\+\_\+class\+\_\+names}} (std\+::vector$<$ std\+::string $>$ \&classes, const std\+::string \&path)
+\item 
+bp\+::object \mbox{\hyperlink{class_scripting_a3577d49cf19217ce37230e7f39ed644a}{import}} (const std\+::string \&module, const std\+::string \&path)
+\end{DoxyCompactItemize}
+\subsection*{Friends}
+\begin{DoxyCompactItemize}
+\item 
+std\+::ostream \& \mbox{\hyperlink{class_scripting_abcaa4273b349e6258949c5b1c7fa8277}{operator$<$$<$}} (std\+::ostream \&os, const \mbox{\hyperlink{class_scripting}{Scripting}} \&scripting)
+\end{DoxyCompactItemize}
 
 
 \subsection{Detailed Description}
 
 
-Definition at line 5 of file Scripting.\+hpp.
+Definition at line 13 of file Scripting.\+hpp.
 
 
 
-The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{class_scripting_ab978243f5f2fd597651d6c4c28cb83ca}\label{class_scripting_ab978243f5f2fd597651d6c4c28cb83ca}} 
+\index{Scripting@{Scripting}!Scripting@{Scripting}}
+\index{Scripting@{Scripting}!Scripting@{Scripting}}
+\subsubsection{\texorpdfstring{Scripting()}{Scripting()}}
+{\footnotesize\ttfamily Scripting\+::\+Scripting (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 11 of file Scripting.\+cpp.
+
+\mbox{\Hypertarget{class_scripting_a86954eb45e89b43ffd7b58dbec15e646}\label{class_scripting_a86954eb45e89b43ffd7b58dbec15e646}} 
+\index{Scripting@{Scripting}!````~Scripting@{$\sim$Scripting}}
+\index{````~Scripting@{$\sim$Scripting}!Scripting@{Scripting}}
+\subsubsection{\texorpdfstring{$\sim$Scripting()}{~Scripting()}}
+{\footnotesize\ttfamily Scripting\+::$\sim$\+Scripting (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 21 of file Scripting.\+cpp.
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{class_scripting_a3577d49cf19217ce37230e7f39ed644a}\label{class_scripting_a3577d49cf19217ce37230e7f39ed644a}} 
+\index{Scripting@{Scripting}!import@{import}}
+\index{import@{import}!Scripting@{Scripting}}
+\subsubsection{\texorpdfstring{import()}{import()}}
+{\footnotesize\ttfamily bp\+::object Scripting\+::import (\begin{DoxyParamCaption}\item[{const std\+::string \&}]{module,  }\item[{const std\+::string \&}]{path }\end{DoxyParamCaption})}
+
+
+
+Definition at line 95 of file Scripting.\+cpp.
+
+\mbox{\Hypertarget{class_scripting_a0e2761f442fbd7de97a0a90e0ea18678}\label{class_scripting_a0e2761f442fbd7de97a0a90e0ea18678}} 
+\index{Scripting@{Scripting}!load\_class\_names@{load\_class\_names}}
+\index{load\_class\_names@{load\_class\_names}!Scripting@{Scripting}}
+\subsubsection{\texorpdfstring{load\_class\_names()}{load\_class\_names()}}
+{\footnotesize\ttfamily void Scripting\+::load\+\_\+class\+\_\+names (\begin{DoxyParamCaption}\item[{std\+::vector$<$ std\+::string $>$ \&}]{classes,  }\item[{const std\+::string \&}]{path }\end{DoxyParamCaption})}
+
+
+
+Definition at line 65 of file Scripting.\+cpp.
+
+\mbox{\Hypertarget{class_scripting_ae9b5ef65b37ef02fd3bc6bb93890518b}\label{class_scripting_ae9b5ef65b37ef02fd3bc6bb93890518b}} 
+\index{Scripting@{Scripting}!load\_plugin\_source@{load\_plugin\_source}}
+\index{load\_plugin\_source@{load\_plugin\_source}!Scripting@{Scripting}}
+\subsubsection{\texorpdfstring{load\_plugin\_source()}{load\_plugin\_source()}}
+{\footnotesize\ttfamily std\+::string Scripting\+::load\+\_\+plugin\+\_\+source (\begin{DoxyParamCaption}\item[{const char $\ast$}]{source }\end{DoxyParamCaption})}
+
+
+
+Definition at line 29 of file Scripting.\+cpp.
+
+\mbox{\Hypertarget{class_scripting_a0c97745c04cb674f6ce2debfbf864579}\label{class_scripting_a0c97745c04cb674f6ce2debfbf864579}} 
+\index{Scripting@{Scripting}!si\_plugin@{si\_plugin}}
+\index{si\_plugin@{si\_plugin}!Scripting@{Scripting}}
+\subsubsection{\texorpdfstring{si\_plugin()}{si\_plugin()}}
+{\footnotesize\ttfamily bp\+::object Scripting\+::si\+\_\+plugin (\begin{DoxyParamCaption}\item[{std\+::string \&}]{module\+\_\+name,  }\item[{std\+::string \&}]{path,  }\item[{std\+::string \&}]{class\+\_\+name }\end{DoxyParamCaption})}
+
+
+
+Definition at line 24 of file Scripting.\+cpp.
+
+
+
+\subsection{Friends And Related Function Documentation}
+\mbox{\Hypertarget{class_scripting_abcaa4273b349e6258949c5b1c7fa8277}\label{class_scripting_abcaa4273b349e6258949c5b1c7fa8277}} 
+\index{Scripting@{Scripting}!operator$<$$<$@{operator$<$$<$}}
+\index{operator$<$$<$@{operator$<$$<$}!Scripting@{Scripting}}
+\subsubsection{\texorpdfstring{operator$<$$<$}{operator<<}}
+{\footnotesize\ttfamily std\+::ostream\& operator$<$$<$ (\begin{DoxyParamCaption}\item[{std\+::ostream \&}]{os,  }\item[{const \mbox{\hyperlink{class_scripting}{Scripting}} \&}]{scripting }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [friend]}}
+
+
+
+Definition at line 110 of file Scripting.\+cpp.
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
 \item 
-/home/juergen/1\+\_\+dev/projects/\+Sketchable-\/\+Interaction/\+S\+I/src/sigrun/plugin/\mbox{\hyperlink{_scripting_8hpp}{Scripting.\+hpp}}\end{DoxyCompactItemize}
+/home/juergen/1\+\_\+dev/projects/\+Sketchable-\/\+Interaction/\+S\+I/src/sigrun/plugin/\mbox{\hyperlink{_scripting_8hpp}{Scripting.\+hpp}}\item 
+/home/juergen/1\+\_\+dev/projects/\+Sketchable-\/\+Interaction/\+S\+I/src/sigrun/plugin/\mbox{\hyperlink{_scripting_8cpp}{Scripting.\+cpp}}\end{DoxyCompactItemize}

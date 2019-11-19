@@ -86,18 +86,35 @@ $(document).ready(function(){initNavTree('_log_8hpp.html','');});
 
 <div class="header">
   <div class="summary">
-<a href="#nested-classes">Classes</a>  </div>
+<a href="#nested-classes">Classes</a> &#124;
+<a href="#define-members">Macros</a>  </div>
   <div class="headertitle">
 <div class="title">Log.hpp File Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><div class="dynheader">
+<div class="textblock"><code>#include &lt;fstream&gt;</code><br />
+<code>#include &lt;string&gt;</code><br />
+<code>#include &quot;<a class="el" href="_s_i_object_8hpp_source.html">sigrun/SIObject.hpp</a>&quot;</code><br />
+</div><div class="textblock"><div class="dynheader">
+Include dependency graph for Log.hpp:</div>
+<div class="dyncontent">
+<div class="center"><img src="_log_8hpp__incl.png" border="0" usemap="#_2home_2juergen_21__dev_2projects_2_sketchable-_interaction_2_s_i_2src_2sigrun_2log_2_log_8hpp" alt=""/></div>
+<map name="_2home_2juergen_21__dev_2projects_2_sketchable-_interaction_2_s_i_2src_2sigrun_2log_2_log_8hpp" id="_2home_2juergen_21__dev_2projects_2_sketchable-_interaction_2_s_i_2src_2sigrun_2log_2_log_8hpp">
+<area shape="rect"  title=" " alt="" coords="27,5,192,76"/>
+<area shape="rect"  title=" " alt="" coords="5,124,72,151"/>
+<area shape="rect"  title=" " alt="" coords="135,199,190,225"/>
+<area shape="rect"  href="_s_i_object_8hpp.html" title=" " alt="" coords="147,124,285,151"/>
+</map>
+</div>
+</div><div class="textblock"><div class="dynheader">
 This graph shows which files directly or indirectly include this file:</div>
 <div class="dyncontent">
 <div class="center"><img src="_log_8hpp__dep__incl.png" border="0" usemap="#_2home_2juergen_21__dev_2projects_2_sketchable-_interaction_2_s_i_2src_2sigrun_2log_2_log_8hppdep" alt=""/></div>
 <map name="_2home_2juergen_21__dev_2projects_2_sketchable-_interaction_2_s_i_2src_2sigrun_2log_2_log_8hppdep" id="_2home_2juergen_21__dev_2projects_2_sketchable-_interaction_2_s_i_2src_2sigrun_2log_2_log_8hppdep">
-<area shape="rect"  title=" " alt="" coords="5,5,171,76"/>
-<area shape="rect"  href="_log_8cpp.html" title=" " alt="" coords="5,124,171,195"/>
+<area shape="rect"  title=" " alt="" coords="195,5,360,76"/>
+<area shape="rect"  href="_core_8cpp.html" title=" " alt="" coords="5,124,171,195"/>
+<area shape="rect"  href="_log_8cpp.html" title=" " alt="" coords="195,124,360,195"/>
+<area shape="rect"  href="_plugin_collector_8cpp.html" title=" " alt="" coords="385,124,562,195"/>
 </map>
 </div>
 </div>
@@ -106,8 +123,594 @@ This graph shows which files directly or indirectly include this file:</div>
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="nested-classes"></a>
 Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_log.html">Log</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="class_log.html" title="Log class serving as central logging functionality for easy logging data output.">Log</a> class serving as central logging functionality for easy logging data output.  <a href="class_log.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="define-members"></a>
+Macros</h2></td></tr>
+<tr class="memitem:aa9693ace5746a2015d60879fd046733a"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_log_8hpp.html#aa9693ace5746a2015d60879fd046733a">ERROR_COLOR</a>(x)&#160;&#160;&#160;(&quot;\033[31m&quot; + x + &quot;\033[0m&quot;)</td></tr>
+<tr class="memdesc:aa9693ace5746a2015d60879fd046733a"><td class="mdescLeft">&#160;</td><td class="mdescRight">red coloring for console output  <a href="#aa9693ace5746a2015d60879fd046733a">More...</a><br /></td></tr>
+<tr class="separator:aa9693ace5746a2015d60879fd046733a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a72e1ed06cf04d45868fbd61e1a868b67"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_log_8hpp.html#a72e1ed06cf04d45868fbd61e1a868b67">UNDEFINED_COLOR</a>(x)&#160;&#160;&#160;(&quot;\033[1;31m&quot; + x + &quot;\033[0m&quot;)</td></tr>
+<tr class="memdesc:a72e1ed06cf04d45868fbd61e1a868b67"><td class="mdescLeft">&#160;</td><td class="mdescRight">bold red coloring for console output  <a href="#a72e1ed06cf04d45868fbd61e1a868b67">More...</a><br /></td></tr>
+<tr class="separator:a72e1ed06cf04d45868fbd61e1a868b67"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a105acc550586095f9432ed47013c89d7"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_log_8hpp.html#a105acc550586095f9432ed47013c89d7">INFO_COLOR</a>(x)&#160;&#160;&#160;(&quot;\033[32m&quot; + x + &quot;\033[0m&quot;)</td></tr>
+<tr class="memdesc:a105acc550586095f9432ed47013c89d7"><td class="mdescLeft">&#160;</td><td class="mdescRight">green coloring for console output  <a href="#a105acc550586095f9432ed47013c89d7">More...</a><br /></td></tr>
+<tr class="separator:a105acc550586095f9432ed47013c89d7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab8ba27b4a7e09225927d22dfa18b5ebd"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_log_8hpp.html#ab8ba27b4a7e09225927d22dfa18b5ebd">WARN_COLOR</a>(x)&#160;&#160;&#160;(&quot;\033[33m&quot; + x + &quot;\033[0m&quot;)</td></tr>
+<tr class="memdesc:ab8ba27b4a7e09225927d22dfa18b5ebd"><td class="mdescLeft">&#160;</td><td class="mdescRight">yellow coloring for console output  <a href="#ab8ba27b4a7e09225927d22dfa18b5ebd">More...</a><br /></td></tr>
+<tr class="separator:ab8ba27b4a7e09225927d22dfa18b5ebd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac7727d6ee8cc821ab65f4d2fbbca5eca"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_log_8hpp.html#ac7727d6ee8cc821ab65f4d2fbbca5eca">DEBUG_COLOR</a>(x)&#160;&#160;&#160;(&quot;\033[37m&quot; + x + &quot;\033[0m&quot;)</td></tr>
+<tr class="memdesc:ac7727d6ee8cc821ab65f4d2fbbca5eca"><td class="mdescLeft">&#160;</td><td class="mdescRight">white/gray coloring for console output  <a href="#ac7727d6ee8cc821ab65f4d2fbbca5eca">More...</a><br /></td></tr>
+<tr class="separator:ac7727d6ee8cc821ab65f4d2fbbca5eca"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5fccb4fc71e44089a1b1a77fc76c0b68"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_log_8hpp.html#a5fccb4fc71e44089a1b1a77fc76c0b68">__FILENAME__</a>&#160;&#160;&#160;(strrchr(__FILE__, '/') ? strrchr(__FILE__, '/') + 1 : __FILE__)</td></tr>
+<tr class="memdesc:a5fccb4fc71e44089a1b1a77fc76c0b68"><td class="mdescLeft">&#160;</td><td class="mdescRight">file name and extension without full path  <a href="#a5fccb4fc71e44089a1b1a77fc76c0b68">More...</a><br /></td></tr>
+<tr class="separator:a5fccb4fc71e44089a1b1a77fc76c0b68"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1632479322efa3952798f98177b54471"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_log_8hpp.html#a1632479322efa3952798f98177b54471">LOG_NONE</a>&#160;&#160;&#160;<a class="el" href="class_log.html#a6b5eceb8cb84489c1a8fee40ac1d37dca01bfaaeef38ef033ef28468316082661">Log::MODE::NONE</a></td></tr>
+<tr class="memdesc:a1632479322efa3952798f98177b54471"><td class="mdescLeft">&#160;</td><td class="mdescRight">disable logging output  <a href="#a1632479322efa3952798f98177b54471">More...</a><br /></td></tr>
+<tr class="separator:a1632479322efa3952798f98177b54471"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0303ddb61d24fcccd944c6f0c3c35943"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_log_8hpp.html#a0303ddb61d24fcccd944c6f0c3c35943">LOG_CONSOLE</a>&#160;&#160;&#160;<a class="el" href="class_log.html#a6b5eceb8cb84489c1a8fee40ac1d37dcad6080f9ff3b3f48a9e533b2ed44b1c1f">Log::MODE::CONSOLE</a></td></tr>
+<tr class="memdesc:a0303ddb61d24fcccd944c6f0c3c35943"><td class="mdescLeft">&#160;</td><td class="mdescRight">output logging data to stdout  <a href="#a0303ddb61d24fcccd944c6f0c3c35943">More...</a><br /></td></tr>
+<tr class="separator:a0303ddb61d24fcccd944c6f0c3c35943"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a69d4676733f5e850f451942b6d901382"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_log_8hpp.html#a69d4676733f5e850f451942b6d901382">LOG_FILE</a>&#160;&#160;&#160;<a class="el" href="class_log.html#a6b5eceb8cb84489c1a8fee40ac1d37dca21dc03633cffcefe094c557641827421">Log::MODE::FILE</a></td></tr>
+<tr class="memdesc:a69d4676733f5e850f451942b6d901382"><td class="mdescLeft">&#160;</td><td class="mdescRight">output logging data to file  <a href="#a69d4676733f5e850f451942b6d901382">More...</a><br /></td></tr>
+<tr class="separator:a69d4676733f5e850f451942b6d901382"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6ad2e0fddd7cd175018c059ced0c67c4"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_log_8hpp.html#a6ad2e0fddd7cd175018c059ced0c67c4">LOG_SHOW_NONE</a>&#160;&#160;&#160;<a class="el" href="class_log.html#a137fb16cb3316a43a396d619034e4b7bab40ceb671aedfc584f90de5e18088516">Log::SHOW_TYPE::HIDDEN</a></td></tr>
+<tr class="memdesc:a6ad2e0fddd7cd175018c059ced0c67c4"><td class="mdescLeft">&#160;</td><td class="mdescRight">disable logging except for errors and undefined behaviour  <a href="#a6ad2e0fddd7cd175018c059ced0c67c4">More...</a><br /></td></tr>
+<tr class="separator:a6ad2e0fddd7cd175018c059ced0c67c4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a39c79d7fbae1e000c37acb7b1ae114eb"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_log_8hpp.html#a39c79d7fbae1e000c37acb7b1ae114eb">LOG_SHOW_INFO</a>&#160;&#160;&#160;<a class="el" href="class_log.html#a137fb16cb3316a43a396d619034e4b7ba8ddc7ebe42544ebab9b3d6cf49ab33d8">Log::SHOW_TYPE::INFO</a></td></tr>
+<tr class="memdesc:a39c79d7fbae1e000c37acb7b1ae114eb"><td class="mdescLeft">&#160;</td><td class="mdescRight">enable logging of data tagged as INFO (information) additionally to errors and undefined behaviour  <a href="#a39c79d7fbae1e000c37acb7b1ae114eb">More...</a><br /></td></tr>
+<tr class="separator:a39c79d7fbae1e000c37acb7b1ae114eb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a57cd501a15f4059414c1d83299bb66f1"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_log_8hpp.html#a57cd501a15f4059414c1d83299bb66f1">LOG_SHOW_WARN</a>&#160;&#160;&#160;<a class="el" href="class_log.html#a137fb16cb3316a43a396d619034e4b7bac377fc59ba8e467c14769baa39c70baa">Log::SHOW_TYPE::WARN</a></td></tr>
+<tr class="memdesc:a57cd501a15f4059414c1d83299bb66f1"><td class="mdescLeft">&#160;</td><td class="mdescRight">enable logging of data tagged as WARN (warning) additionally to errors and undefined behaviour  <a href="#a57cd501a15f4059414c1d83299bb66f1">More...</a><br /></td></tr>
+<tr class="separator:a57cd501a15f4059414c1d83299bb66f1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa8c3c216bf3d69353fa04cec4bc96520"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_log_8hpp.html#aa8c3c216bf3d69353fa04cec4bc96520">LOG_SHOW_ERROR</a>&#160;&#160;&#160;<a class="el" href="class_log.html#a137fb16cb3316a43a396d619034e4b7ba4cd0be82d98ca2a542adc75f2c826e5b">Log::SHOW_TYPE::ERROR</a></td></tr>
+<tr class="memdesc:aa8c3c216bf3d69353fa04cec4bc96520"><td class="mdescLeft">&#160;</td><td class="mdescRight">enable logging of data tagged as ERROR (error) however this per default enabled and cannot be disabled  <a href="#aa8c3c216bf3d69353fa04cec4bc96520">More...</a><br /></td></tr>
+<tr class="separator:aa8c3c216bf3d69353fa04cec4bc96520"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a374b0ffb1198acd2d48ba9d3f178c0dc"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_log_8hpp.html#a374b0ffb1198acd2d48ba9d3f178c0dc">LOG_SHOW_DEBUG</a>&#160;&#160;&#160;<a class="el" href="class_log.html#a137fb16cb3316a43a396d619034e4b7ba4e49113de847d4ce568b7f0d5647a715">Log::SHOW_TYPE::DEBUG</a></td></tr>
+<tr class="memdesc:a374b0ffb1198acd2d48ba9d3f178c0dc"><td class="mdescLeft">&#160;</td><td class="mdescRight">enable logging of data tagged as DEBUG (debugging information) additionally to errors and undefined behaviour  <a href="#a374b0ffb1198acd2d48ba9d3f178c0dc">More...</a><br /></td></tr>
+<tr class="separator:a374b0ffb1198acd2d48ba9d3f178c0dc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a043c44977aed661f1788ca4d35e75d7c"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_log_8hpp.html#a043c44977aed661f1788ca4d35e75d7c">LOG_SHOW_ALL</a>&#160;&#160;&#160;<a class="el" href="class_log.html#a137fb16cb3316a43a396d619034e4b7ba8ddc7ebe42544ebab9b3d6cf49ab33d8">Log::SHOW_TYPE::INFO</a> | <a class="el" href="class_log.html#a137fb16cb3316a43a396d619034e4b7bac377fc59ba8e467c14769baa39c70baa">Log::SHOW_TYPE::WARN</a> | <a class="el" href="class_log.html#a137fb16cb3316a43a396d619034e4b7ba4cd0be82d98ca2a542adc75f2c826e5b">Log::SHOW_TYPE::ERROR</a> | <a class="el" href="class_log.html#a137fb16cb3316a43a396d619034e4b7ba4e49113de847d4ce568b7f0d5647a715">Log::SHOW_TYPE::DEBUG</a></td></tr>
+<tr class="memdesc:a043c44977aed661f1788ca4d35e75d7c"><td class="mdescLeft">&#160;</td><td class="mdescRight">enable logging of any tagged data  <a href="#a043c44977aed661f1788ca4d35e75d7c">More...</a><br /></td></tr>
+<tr class="separator:a043c44977aed661f1788ca4d35e75d7c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:adc1a465f17ca2c12d593fa15a8c8fd40"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_log_8hpp.html#adc1a465f17ca2c12d593fa15a8c8fd40">DEBUG</a>(what,  log_mode)&#160;&#160;&#160;<a class="el" href="class_log.html#aa761204a7477ab8376b7ccf4e9b4e801">Log::log</a>(what, <a class="el" href="class_log.html#ad671761fe5e2e030871610bd6dfecd79a36d0ec637511004f425dbbd88d169d00">Log::LOG_LEVEL::DEBUG_LEVEL</a>, log_mode, meta_type(),<a class="el" href="_log_8hpp.html#a5fccb4fc71e44089a1b1a77fc76c0b68">__FILENAME__</a>, __FUNCTION__, std::to_string(__LINE__))</td></tr>
+<tr class="memdesc:adc1a465f17ca2c12d593fa15a8c8fd40"><td class="mdescLeft">&#160;</td><td class="mdescRight">perform logging of data with the DEBUG tag  <a href="#adc1a465f17ca2c12d593fa15a8c8fd40">More...</a><br /></td></tr>
+<tr class="separator:adc1a465f17ca2c12d593fa15a8c8fd40"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8d641516b0de7a8ce7ee11db4ce8247c"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_log_8hpp.html#a8d641516b0de7a8ce7ee11db4ce8247c">INFO</a>(what,  log_mode)&#160;&#160;&#160;<a class="el" href="class_log.html#aa761204a7477ab8376b7ccf4e9b4e801">Log::log</a>(what, <a class="el" href="class_log.html#ad671761fe5e2e030871610bd6dfecd79aefda05f8a0be294511d3c66b56edcf42">Log::LOG_LEVEL::INFO_LEVEL</a>, log_mode, meta_type())</td></tr>
+<tr class="memdesc:a8d641516b0de7a8ce7ee11db4ce8247c"><td class="mdescLeft">&#160;</td><td class="mdescRight">perform logging of data with the INFO tag  <a href="#a8d641516b0de7a8ce7ee11db4ce8247c">More...</a><br /></td></tr>
+<tr class="separator:a8d641516b0de7a8ce7ee11db4ce8247c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a18da1c6c71ceabee4db6adc7eb2b5ce9"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_log_8hpp.html#a18da1c6c71ceabee4db6adc7eb2b5ce9">ERROR</a>(what,  log_mode)&#160;&#160;&#160;<a class="el" href="class_log.html#aa761204a7477ab8376b7ccf4e9b4e801">Log::log</a>(what, <a class="el" href="class_log.html#ad671761fe5e2e030871610bd6dfecd79aa01fc657c9d1fa221f71708efa8445d2">Log::LOG_LEVEL::ERROR_LEVEL</a>, log_mode, meta_type(),<a class="el" href="_log_8hpp.html#a5fccb4fc71e44089a1b1a77fc76c0b68">__FILENAME__</a>, __FUNCTION__, std::to_string(__LINE__))</td></tr>
+<tr class="memdesc:a18da1c6c71ceabee4db6adc7eb2b5ce9"><td class="mdescLeft">&#160;</td><td class="mdescRight">perform logging of data with the ERROR tag  <a href="#a18da1c6c71ceabee4db6adc7eb2b5ce9">More...</a><br /></td></tr>
+<tr class="separator:a18da1c6c71ceabee4db6adc7eb2b5ce9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5bd302467724340230abb17ca367c761"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_log_8hpp.html#a5bd302467724340230abb17ca367c761">WARN</a>(what,  log_mode)&#160;&#160;&#160;<a class="el" href="class_log.html#aa761204a7477ab8376b7ccf4e9b4e801">Log::log</a>(what, <a class="el" href="class_log.html#ad671761fe5e2e030871610bd6dfecd79ac7b1a053f29856bf7cdf7776c0977105">Log::LOG_LEVEL::WARN_LEVEL</a>, log_mode, meta_type())</td></tr>
+<tr class="memdesc:a5bd302467724340230abb17ca367c761"><td class="mdescLeft">&#160;</td><td class="mdescRight">perform logging of data with the WARN tag  <a href="#a5bd302467724340230abb17ca367c761">More...</a><br /></td></tr>
+<tr class="separator:a5bd302467724340230abb17ca367c761"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a51aaa455e6f8fe6985ac52069b7e74c6"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_log_8hpp.html#a51aaa455e6f8fe6985ac52069b7e74c6">UNDEFINED</a>(what,  log_mode)&#160;&#160;&#160;<a class="el" href="class_log.html#aa761204a7477ab8376b7ccf4e9b4e801">Log::log</a>(what, <a class="el" href="class_log.html#ad671761fe5e2e030871610bd6dfecd79a4ca59cfc20185b6e47712f5a787fdd8b">Log::LOG_LEVEL::UNDEFINED_LEVEL</a>, log_mode, meta_type(), <a class="el" href="_log_8hpp.html#a5fccb4fc71e44089a1b1a77fc76c0b68">__FILENAME__</a>, __FUNCTION__, std::to_string(__LINE__))</td></tr>
+<tr class="memdesc:a51aaa455e6f8fe6985ac52069b7e74c6"><td class="mdescLeft">&#160;</td><td class="mdescRight">perform logging of data with the UNDEFINED tag  <a href="#a51aaa455e6f8fe6985ac52069b7e74c6">More...</a><br /></td></tr>
+<tr class="separator:a51aaa455e6f8fe6985ac52069b7e74c6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
+<h2 class="groupheader">Macro Definition Documentation</h2>
+<a id="a5fccb4fc71e44089a1b1a77fc76c0b68"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5fccb4fc71e44089a1b1a77fc76c0b68">&#9670;&nbsp;</a></span>__FILENAME__</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define __FILENAME__&#160;&#160;&#160;(strrchr(__FILE__, '/') ? strrchr(__FILE__, '/') + 1 : __FILE__)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>file name and extension without full path </p>
+<p>file name and extension without full path </p>
+
+<p class="definition">Definition at line <a class="el" href="_log_8hpp_source.html#l00061">61</a> of file <a class="el" href="_log_8hpp_source.html">Log.hpp</a>.</p>
+
+</div>
+</div>
+<a id="adc1a465f17ca2c12d593fa15a8c8fd40"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#adc1a465f17ca2c12d593fa15a8c8fd40">&#9670;&nbsp;</a></span>DEBUG</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define DEBUG</td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">what, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">log_mode&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td>&#160;&#160;&#160;<a class="el" href="class_log.html#aa761204a7477ab8376b7ccf4e9b4e801">Log::log</a>(what, <a class="el" href="class_log.html#ad671761fe5e2e030871610bd6dfecd79a36d0ec637511004f425dbbd88d169d00">Log::LOG_LEVEL::DEBUG_LEVEL</a>, log_mode, meta_type(),<a class="el" href="_log_8hpp.html#a5fccb4fc71e44089a1b1a77fc76c0b68">__FILENAME__</a>, __FUNCTION__, std::to_string(__LINE__))</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>perform logging of data with the DEBUG tag </p>
+<p>Shortcut macro for logging of data with the DEBUG tag which uses static access of log() function of <a class="el" href="class_log.html" title="Log class serving as central logging functionality for easy logging data output.">Log</a> class</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">what</td><td>the message to be logged </td></tr>
+    <tr><td class="paramname">log_mode</td><td>the description where the message is outputted (</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section see"><dt>See also</dt><dd>Log::MODE::CONSOLE or </dd>
+<dd>
+Log::MODE::FILE or both)</dd>
+<dd>
+<a class="el" href="class_log.html#aa761204a7477ab8376b7ccf4e9b4e801" title="central logging function outputting log messages according to its params">Log::log()</a> </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="_log_8hpp_source.html#l00118">118</a> of file <a class="el" href="_log_8hpp_source.html">Log.hpp</a>.</p>
+
+</div>
+</div>
+<a id="ac7727d6ee8cc821ab65f4d2fbbca5eca"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac7727d6ee8cc821ab65f4d2fbbca5eca">&#9670;&nbsp;</a></span>DEBUG_COLOR</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define DEBUG_COLOR</td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">x</td><td>)</td>
+          <td>&#160;&#160;&#160;(&quot;\033[37m&quot; + x + &quot;\033[0m&quot;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>white/gray coloring for console output </p>
+<p>Coloring for console output. Unsused for file output. See table of codes here: <a href="https://en.wikipedia.org/wiki/ANSI_escape_code#graphics">https://en.wikipedia.org/wiki/ANSI_escape_code#graphics</a> </p>
+
+<p class="definition">Definition at line <a class="el" href="_log_8hpp_source.html#l00054">54</a> of file <a class="el" href="_log_8hpp_source.html">Log.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a18da1c6c71ceabee4db6adc7eb2b5ce9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a18da1c6c71ceabee4db6adc7eb2b5ce9">&#9670;&nbsp;</a></span>ERROR</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define ERROR</td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">what, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">log_mode&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td>&#160;&#160;&#160;<a class="el" href="class_log.html#aa761204a7477ab8376b7ccf4e9b4e801">Log::log</a>(what, <a class="el" href="class_log.html#ad671761fe5e2e030871610bd6dfecd79aa01fc657c9d1fa221f71708efa8445d2">Log::LOG_LEVEL::ERROR_LEVEL</a>, log_mode, meta_type(),<a class="el" href="_log_8hpp.html#a5fccb4fc71e44089a1b1a77fc76c0b68">__FILENAME__</a>, __FUNCTION__, std::to_string(__LINE__))</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>perform logging of data with the ERROR tag </p>
+<p>Shortcut macro for logging of data with the ERROR tag which uses static access of log() function of <a class="el" href="class_log.html" title="Log class serving as central logging functionality for easy logging data output.">Log</a> class</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">what</td><td>the message to be logged </td></tr>
+    <tr><td class="paramname">log_mode</td><td>the description where the message is outputted (</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section see"><dt>See also</dt><dd>Log::MODE::CONSOLE or </dd>
+<dd>
+Log::MODE::FILE or both)</dd>
+<dd>
+<a class="el" href="class_log.html#aa761204a7477ab8376b7ccf4e9b4e801" title="central logging function outputting log messages according to its params">Log::log()</a> </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="_log_8hpp_source.html#l00142">142</a> of file <a class="el" href="_log_8hpp_source.html">Log.hpp</a>.</p>
+
+</div>
+</div>
+<a id="aa9693ace5746a2015d60879fd046733a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa9693ace5746a2015d60879fd046733a">&#9670;&nbsp;</a></span>ERROR_COLOR</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define ERROR_COLOR</td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">x</td><td>)</td>
+          <td>&#160;&#160;&#160;(&quot;\033[31m&quot; + x + &quot;\033[0m&quot;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>red coloring for console output </p>
+<p>Coloring for console output. Unsused for file output. See table of codes here: <a href="https://en.wikipedia.org/wiki/ANSI_escape_code#graphics">https://en.wikipedia.org/wiki/ANSI_escape_code#graphics</a> </p>
+
+<p class="definition">Definition at line <a class="el" href="_log_8hpp_source.html#l00018">18</a> of file <a class="el" href="_log_8hpp_source.html">Log.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a8d641516b0de7a8ce7ee11db4ce8247c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8d641516b0de7a8ce7ee11db4ce8247c">&#9670;&nbsp;</a></span>INFO</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define INFO</td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">what, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">log_mode&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td>&#160;&#160;&#160;<a class="el" href="class_log.html#aa761204a7477ab8376b7ccf4e9b4e801">Log::log</a>(what, <a class="el" href="class_log.html#ad671761fe5e2e030871610bd6dfecd79aefda05f8a0be294511d3c66b56edcf42">Log::LOG_LEVEL::INFO_LEVEL</a>, log_mode, meta_type())</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>perform logging of data with the INFO tag </p>
+<p>Shortcut macro for logging of data with the INFO tag which uses static access of log() function of <a class="el" href="class_log.html" title="Log class serving as central logging functionality for easy logging data output.">Log</a> class</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">what</td><td>the message to be logged </td></tr>
+    <tr><td class="paramname">log_mode</td><td>the description where the message is outputted (</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section see"><dt>See also</dt><dd>Log::MODE::CONSOLE or </dd>
+<dd>
+Log::MODE::FILE or both)</dd>
+<dd>
+<a class="el" href="class_log.html#aa761204a7477ab8376b7ccf4e9b4e801" title="central logging function outputting log messages according to its params">Log::log()</a> </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="_log_8hpp_source.html#l00130">130</a> of file <a class="el" href="_log_8hpp_source.html">Log.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a105acc550586095f9432ed47013c89d7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a105acc550586095f9432ed47013c89d7">&#9670;&nbsp;</a></span>INFO_COLOR</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define INFO_COLOR</td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">x</td><td>)</td>
+          <td>&#160;&#160;&#160;(&quot;\033[32m&quot; + x + &quot;\033[0m&quot;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>green coloring for console output </p>
+<p>Coloring for console output. Unsused for file output. See table of codes here: <a href="https://en.wikipedia.org/wiki/ANSI_escape_code#graphics">https://en.wikipedia.org/wiki/ANSI_escape_code#graphics</a> </p>
+
+<p class="definition">Definition at line <a class="el" href="_log_8hpp_source.html#l00036">36</a> of file <a class="el" href="_log_8hpp_source.html">Log.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a0303ddb61d24fcccd944c6f0c3c35943"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0303ddb61d24fcccd944c6f0c3c35943">&#9670;&nbsp;</a></span>LOG_CONSOLE</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define LOG_CONSOLE&#160;&#160;&#160;<a class="el" href="class_log.html#a6b5eceb8cb84489c1a8fee40ac1d37dcad6080f9ff3b3f48a9e533b2ed44b1c1f">Log::MODE::CONSOLE</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>output logging data to stdout </p>
+
+<p class="definition">Definition at line <a class="el" href="_log_8hpp_source.html#l00071">71</a> of file <a class="el" href="_log_8hpp_source.html">Log.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a69d4676733f5e850f451942b6d901382"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a69d4676733f5e850f451942b6d901382">&#9670;&nbsp;</a></span>LOG_FILE</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define LOG_FILE&#160;&#160;&#160;<a class="el" href="class_log.html#a6b5eceb8cb84489c1a8fee40ac1d37dca21dc03633cffcefe094c557641827421">Log::MODE::FILE</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>output logging data to file </p>
+
+<p class="definition">Definition at line <a class="el" href="_log_8hpp_source.html#l00076">76</a> of file <a class="el" href="_log_8hpp_source.html">Log.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a1632479322efa3952798f98177b54471"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1632479322efa3952798f98177b54471">&#9670;&nbsp;</a></span>LOG_NONE</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define LOG_NONE&#160;&#160;&#160;<a class="el" href="class_log.html#a6b5eceb8cb84489c1a8fee40ac1d37dca01bfaaeef38ef033ef28468316082661">Log::MODE::NONE</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>disable logging output </p>
+
+<p class="definition">Definition at line <a class="el" href="_log_8hpp_source.html#l00066">66</a> of file <a class="el" href="_log_8hpp_source.html">Log.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a043c44977aed661f1788ca4d35e75d7c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a043c44977aed661f1788ca4d35e75d7c">&#9670;&nbsp;</a></span>LOG_SHOW_ALL</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define LOG_SHOW_ALL&#160;&#160;&#160;<a class="el" href="class_log.html#a137fb16cb3316a43a396d619034e4b7ba8ddc7ebe42544ebab9b3d6cf49ab33d8">Log::SHOW_TYPE::INFO</a> | <a class="el" href="class_log.html#a137fb16cb3316a43a396d619034e4b7bac377fc59ba8e467c14769baa39c70baa">Log::SHOW_TYPE::WARN</a> | <a class="el" href="class_log.html#a137fb16cb3316a43a396d619034e4b7ba4cd0be82d98ca2a542adc75f2c826e5b">Log::SHOW_TYPE::ERROR</a> | <a class="el" href="class_log.html#a137fb16cb3316a43a396d619034e4b7ba4e49113de847d4ce568b7f0d5647a715">Log::SHOW_TYPE::DEBUG</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>enable logging of any tagged data </p>
+
+<p class="definition">Definition at line <a class="el" href="_log_8hpp_source.html#l00106">106</a> of file <a class="el" href="_log_8hpp_source.html">Log.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a374b0ffb1198acd2d48ba9d3f178c0dc"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a374b0ffb1198acd2d48ba9d3f178c0dc">&#9670;&nbsp;</a></span>LOG_SHOW_DEBUG</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define LOG_SHOW_DEBUG&#160;&#160;&#160;<a class="el" href="class_log.html#a137fb16cb3316a43a396d619034e4b7ba4e49113de847d4ce568b7f0d5647a715">Log::SHOW_TYPE::DEBUG</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>enable logging of data tagged as DEBUG (debugging information) additionally to errors and undefined behaviour </p>
+
+<p class="definition">Definition at line <a class="el" href="_log_8hpp_source.html#l00101">101</a> of file <a class="el" href="_log_8hpp_source.html">Log.hpp</a>.</p>
+
+</div>
+</div>
+<a id="aa8c3c216bf3d69353fa04cec4bc96520"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa8c3c216bf3d69353fa04cec4bc96520">&#9670;&nbsp;</a></span>LOG_SHOW_ERROR</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define LOG_SHOW_ERROR&#160;&#160;&#160;<a class="el" href="class_log.html#a137fb16cb3316a43a396d619034e4b7ba4cd0be82d98ca2a542adc75f2c826e5b">Log::SHOW_TYPE::ERROR</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>enable logging of data tagged as ERROR (error) however this per default enabled and cannot be disabled </p>
+
+<p class="definition">Definition at line <a class="el" href="_log_8hpp_source.html#l00096">96</a> of file <a class="el" href="_log_8hpp_source.html">Log.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a39c79d7fbae1e000c37acb7b1ae114eb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a39c79d7fbae1e000c37acb7b1ae114eb">&#9670;&nbsp;</a></span>LOG_SHOW_INFO</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define LOG_SHOW_INFO&#160;&#160;&#160;<a class="el" href="class_log.html#a137fb16cb3316a43a396d619034e4b7ba8ddc7ebe42544ebab9b3d6cf49ab33d8">Log::SHOW_TYPE::INFO</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>enable logging of data tagged as INFO (information) additionally to errors and undefined behaviour </p>
+
+<p class="definition">Definition at line <a class="el" href="_log_8hpp_source.html#l00086">86</a> of file <a class="el" href="_log_8hpp_source.html">Log.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a6ad2e0fddd7cd175018c059ced0c67c4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6ad2e0fddd7cd175018c059ced0c67c4">&#9670;&nbsp;</a></span>LOG_SHOW_NONE</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define LOG_SHOW_NONE&#160;&#160;&#160;<a class="el" href="class_log.html#a137fb16cb3316a43a396d619034e4b7bab40ceb671aedfc584f90de5e18088516">Log::SHOW_TYPE::HIDDEN</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>disable logging except for errors and undefined behaviour </p>
+
+<p class="definition">Definition at line <a class="el" href="_log_8hpp_source.html#l00081">81</a> of file <a class="el" href="_log_8hpp_source.html">Log.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a57cd501a15f4059414c1d83299bb66f1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a57cd501a15f4059414c1d83299bb66f1">&#9670;&nbsp;</a></span>LOG_SHOW_WARN</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define LOG_SHOW_WARN&#160;&#160;&#160;<a class="el" href="class_log.html#a137fb16cb3316a43a396d619034e4b7bac377fc59ba8e467c14769baa39c70baa">Log::SHOW_TYPE::WARN</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>enable logging of data tagged as WARN (warning) additionally to errors and undefined behaviour </p>
+
+<p class="definition">Definition at line <a class="el" href="_log_8hpp_source.html#l00091">91</a> of file <a class="el" href="_log_8hpp_source.html">Log.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a51aaa455e6f8fe6985ac52069b7e74c6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a51aaa455e6f8fe6985ac52069b7e74c6">&#9670;&nbsp;</a></span>UNDEFINED</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define UNDEFINED</td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">what, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">log_mode&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td>&#160;&#160;&#160;<a class="el" href="class_log.html#aa761204a7477ab8376b7ccf4e9b4e801">Log::log</a>(what, <a class="el" href="class_log.html#ad671761fe5e2e030871610bd6dfecd79a4ca59cfc20185b6e47712f5a787fdd8b">Log::LOG_LEVEL::UNDEFINED_LEVEL</a>, log_mode, meta_type(), <a class="el" href="_log_8hpp.html#a5fccb4fc71e44089a1b1a77fc76c0b68">__FILENAME__</a>, __FUNCTION__, std::to_string(__LINE__))</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>perform logging of data with the UNDEFINED tag </p>
+<p>Shortcut macro for logging of data with the UNDEFINED tag which uses static access of log() function of <a class="el" href="class_log.html" title="Log class serving as central logging functionality for easy logging data output.">Log</a> class</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">what</td><td>the message to be logged </td></tr>
+    <tr><td class="paramname">log_mode</td><td>the description where the message is outputted (</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section see"><dt>See also</dt><dd>Log::MODE::CONSOLE or </dd>
+<dd>
+Log::MODE::FILE or both)</dd>
+<dd>
+<a class="el" href="class_log.html#aa761204a7477ab8376b7ccf4e9b4e801" title="central logging function outputting log messages according to its params">Log::log()</a> </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="_log_8hpp_source.html#l00166">166</a> of file <a class="el" href="_log_8hpp_source.html">Log.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a72e1ed06cf04d45868fbd61e1a868b67"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a72e1ed06cf04d45868fbd61e1a868b67">&#9670;&nbsp;</a></span>UNDEFINED_COLOR</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define UNDEFINED_COLOR</td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">x</td><td>)</td>
+          <td>&#160;&#160;&#160;(&quot;\033[1;31m&quot; + x + &quot;\033[0m&quot;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>bold red coloring for console output </p>
+<p>Coloring for console output. Unsused for file output. See table of codes here: <a href="https://en.wikipedia.org/wiki/ANSI_escape_code#graphics">https://en.wikipedia.org/wiki/ANSI_escape_code#graphics</a> </p>
+
+<p class="definition">Definition at line <a class="el" href="_log_8hpp_source.html#l00027">27</a> of file <a class="el" href="_log_8hpp_source.html">Log.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a5bd302467724340230abb17ca367c761"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5bd302467724340230abb17ca367c761">&#9670;&nbsp;</a></span>WARN</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define WARN</td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">what, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">log_mode&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td>&#160;&#160;&#160;<a class="el" href="class_log.html#aa761204a7477ab8376b7ccf4e9b4e801">Log::log</a>(what, <a class="el" href="class_log.html#ad671761fe5e2e030871610bd6dfecd79ac7b1a053f29856bf7cdf7776c0977105">Log::LOG_LEVEL::WARN_LEVEL</a>, log_mode, meta_type())</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>perform logging of data with the WARN tag </p>
+<p>Shortcut macro for logging of data with the WARN tag which uses static access of log() function of <a class="el" href="class_log.html" title="Log class serving as central logging functionality for easy logging data output.">Log</a> class</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">what</td><td>the message to be logged </td></tr>
+    <tr><td class="paramname">log_mode</td><td>the description where the message is outputted (</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section see"><dt>See also</dt><dd>Log::MODE::CONSOLE or </dd>
+<dd>
+Log::MODE::FILE or both)</dd>
+<dd>
+<a class="el" href="class_log.html#aa761204a7477ab8376b7ccf4e9b4e801" title="central logging function outputting log messages according to its params">Log::log()</a> </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="_log_8hpp_source.html#l00154">154</a> of file <a class="el" href="_log_8hpp_source.html">Log.hpp</a>.</p>
+
+</div>
+</div>
+<a id="ab8ba27b4a7e09225927d22dfa18b5ebd"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab8ba27b4a7e09225927d22dfa18b5ebd">&#9670;&nbsp;</a></span>WARN_COLOR</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define WARN_COLOR</td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">x</td><td>)</td>
+          <td>&#160;&#160;&#160;(&quot;\033[33m&quot; + x + &quot;\033[0m&quot;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>yellow coloring for console output </p>
+<p>Coloring for console output. Unsused for file output. See table of codes here: <a href="https://en.wikipedia.org/wiki/ANSI_escape_code#graphics">https://en.wikipedia.org/wiki/ANSI_escape_code#graphics</a> </p>
+
+<p class="definition">Definition at line <a class="el" href="_log_8hpp_source.html#l00045">45</a> of file <a class="el" href="_log_8hpp_source.html">Log.hpp</a>.</p>
+
+</div>
+</div>
 </div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
