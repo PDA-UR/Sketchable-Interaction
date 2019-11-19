@@ -1,8 +1,12 @@
 <map id="/home/juergen/1_dev/projects/Sketchable&#45;Interaction/SI/src/sigrun" name="/home/juergen/1_dev/projects/Sketchable&#45;Interaction/SI/src/sigrun">
-<area shape="rect" id="node2" href="dir_c59cc14cf5840b31d60f3e3b7d4fd7a7.html" title="log" alt="" coords="133,63,205,111"/>
-<area shape="rect" id="node3" href="dir_7341bcedfa615fb721d97636b7dea170.html" title="plugin" alt="" coords="37,63,109,111"/>
-<area shape="rect" id="node4" href="dir_2051bb1ff59d9aa9d81efbc6e8c954f4.html" title="debug" alt="" coords="37,159,109,207"/>
-<area shape="rect" id="edge1-headlabel" href="dir_000006_000002.html" title="1" alt="" coords="78,133,86,148"/>
-<area shape="rect" id="clust2" href="dir_b2f9cef994dac0e0c9377e1d086845fa.html" alt="" coords="27,52,312,121"/>
-<area shape="rect" id="clust1" href="dir_40d599b07c8ca68b2235b4647510eee5.html" title="src" alt="" coords="16,16,323,132"/>
+<area shape="rect" id="node3" href="dir_7341bcedfa615fb721d97636b7dea170.html" title="plugin" alt="" coords="133,159,205,207"/>
+<area shape="rect" id="edge2-headlabel" href="dir_000004_000006.html" title="2" alt="" coords="174,133,182,148"/>
+<area shape="rect" id="node2" href="dir_c59cc14cf5840b31d60f3e3b7d4fd7a7.html" title="log" alt="" coords="97,255,169,303"/>
+<area shape="rect" id="node5" href="dir_2051bb1ff59d9aa9d81efbc6e8c954f4.html" title="debug" alt="" coords="133,351,205,399"/>
+<area shape="rect" id="edge1-headlabel" href="dir_000005_000002.html" title="1" alt="" coords="158,323,166,338"/>
+<area shape="rect" id="edge3-headlabel" href="dir_000006_000005.html" title="1" alt="" coords="153,233,161,248"/>
+<area shape="rect" id="edge4-headlabel" href="dir_000006_000002.html" title="2" alt="" coords="184,327,192,342"/>
+<area shape="rect" id="node4" href="dir_995e901f1ebcce2c809a53e0e91efe44.html" title="region" alt="" coords="37,63,109,111"/>
+<area shape="rect" id="clust2" href="dir_b2f9cef994dac0e0c9377e1d086845fa.html" alt="" coords="27,52,216,313"/>
+<area shape="rect" id="clust1" href="dir_40d599b07c8ca68b2235b4647510eee5.html" title="src" alt="" coords="16,16,227,324"/>
 </map>

@@ -1,14 +1,430 @@
 \hypertarget{_log_8hpp}{}\section{/home/juergen/1\+\_\+dev/projects/\+Sketchable-\/\+Interaction/\+S\+I/src/sigrun/log/\+Log.hpp File Reference}
 \label{_log_8hpp}\index{/home/juergen/1\_dev/projects/Sketchable-\/Interaction/SI/src/sigrun/log/Log.hpp@{/home/juergen/1\_dev/projects/Sketchable-\/Interaction/SI/src/sigrun/log/Log.hpp}}
+{\ttfamily \#include $<$fstream$>$}\newline
+{\ttfamily \#include $<$string$>$}\newline
+{\ttfamily \#include \char`\"{}sigrun/\+S\+I\+Object.\+hpp\char`\"{}}\newline
+Include dependency graph for Log.\+hpp\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=290pt]{_log_8hpp__incl}
+\end{center}
+\end{figure}
 This graph shows which files directly or indirectly include this file\+:\nopagebreak
 \begin{figure}[H]
 \begin{center}
 \leavevmode
-\includegraphics[width=204pt]{_log_8hpp__dep__incl}
+\includegraphics[width=350pt]{_log_8hpp__dep__incl}
 \end{center}
 \end{figure}
 \subsection*{Classes}
 \begin{DoxyCompactItemize}
 \item 
 class \mbox{\hyperlink{class_log}{Log}}
-\end{DoxyCompactItemize}
+\begin{DoxyCompactList}\small\item\em \mbox{\hyperlink{class_log}{Log}} class serving as central logging functionality for easy logging data output. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define \mbox{\hyperlink{_log_8hpp_aa9693ace5746a2015d60879fd046733a}{E\+R\+R\+O\+R\+\_\+\+C\+O\+L\+OR}}(x)~(\char`\"{}\textbackslash{}033\mbox{[}31m\char`\"{} + x + \char`\"{}\textbackslash{}033\mbox{[}0m\char`\"{})
+\begin{DoxyCompactList}\small\item\em red coloring for console output \end{DoxyCompactList}\item 
+\#define \mbox{\hyperlink{_log_8hpp_a72e1ed06cf04d45868fbd61e1a868b67}{U\+N\+D\+E\+F\+I\+N\+E\+D\+\_\+\+C\+O\+L\+OR}}(x)~(\char`\"{}\textbackslash{}033\mbox{[}1;31m\char`\"{} + x + \char`\"{}\textbackslash{}033\mbox{[}0m\char`\"{})
+\begin{DoxyCompactList}\small\item\em bold red coloring for console output \end{DoxyCompactList}\item 
+\#define \mbox{\hyperlink{_log_8hpp_a105acc550586095f9432ed47013c89d7}{I\+N\+F\+O\+\_\+\+C\+O\+L\+OR}}(x)~(\char`\"{}\textbackslash{}033\mbox{[}32m\char`\"{} + x + \char`\"{}\textbackslash{}033\mbox{[}0m\char`\"{})
+\begin{DoxyCompactList}\small\item\em green coloring for console output \end{DoxyCompactList}\item 
+\#define \mbox{\hyperlink{_log_8hpp_ab8ba27b4a7e09225927d22dfa18b5ebd}{W\+A\+R\+N\+\_\+\+C\+O\+L\+OR}}(x)~(\char`\"{}\textbackslash{}033\mbox{[}33m\char`\"{} + x + \char`\"{}\textbackslash{}033\mbox{[}0m\char`\"{})
+\begin{DoxyCompactList}\small\item\em yellow coloring for console output \end{DoxyCompactList}\item 
+\#define \mbox{\hyperlink{_log_8hpp_ac7727d6ee8cc821ab65f4d2fbbca5eca}{D\+E\+B\+U\+G\+\_\+\+C\+O\+L\+OR}}(x)~(\char`\"{}\textbackslash{}033\mbox{[}37m\char`\"{} + x + \char`\"{}\textbackslash{}033\mbox{[}0m\char`\"{})
+\begin{DoxyCompactList}\small\item\em white/gray coloring for console output \end{DoxyCompactList}\item 
+\#define \mbox{\hyperlink{_log_8hpp_a5fccb4fc71e44089a1b1a77fc76c0b68}{\+\_\+\+\_\+\+F\+I\+L\+E\+N\+A\+M\+E\+\_\+\+\_\+}}~(strrchr(\+\_\+\+\_\+\+F\+I\+L\+E\+\_\+\+\_\+, \textquotesingle{}/\textquotesingle{}) ? strrchr(\+\_\+\+\_\+\+F\+I\+L\+E\+\_\+\+\_\+, \textquotesingle{}/\textquotesingle{}) + 1 \+: \+\_\+\+\_\+\+F\+I\+L\+E\+\_\+\+\_\+)
+\begin{DoxyCompactList}\small\item\em file name and extension without full path \end{DoxyCompactList}\item 
+\#define \mbox{\hyperlink{_log_8hpp_a1632479322efa3952798f98177b54471}{L\+O\+G\+\_\+\+N\+O\+NE}}~\mbox{\hyperlink{class_log_a6b5eceb8cb84489c1a8fee40ac1d37dca01bfaaeef38ef033ef28468316082661}{Log\+::\+M\+O\+D\+E\+::\+N\+O\+NE}}
+\begin{DoxyCompactList}\small\item\em disable logging output \end{DoxyCompactList}\item 
+\#define \mbox{\hyperlink{_log_8hpp_a0303ddb61d24fcccd944c6f0c3c35943}{L\+O\+G\+\_\+\+C\+O\+N\+S\+O\+LE}}~\mbox{\hyperlink{class_log_a6b5eceb8cb84489c1a8fee40ac1d37dcad6080f9ff3b3f48a9e533b2ed44b1c1f}{Log\+::\+M\+O\+D\+E\+::\+C\+O\+N\+S\+O\+LE}}
+\begin{DoxyCompactList}\small\item\em output logging data to stdout \end{DoxyCompactList}\item 
+\#define \mbox{\hyperlink{_log_8hpp_a69d4676733f5e850f451942b6d901382}{L\+O\+G\+\_\+\+F\+I\+LE}}~\mbox{\hyperlink{class_log_a6b5eceb8cb84489c1a8fee40ac1d37dca21dc03633cffcefe094c557641827421}{Log\+::\+M\+O\+D\+E\+::\+F\+I\+LE}}
+\begin{DoxyCompactList}\small\item\em output logging data to file \end{DoxyCompactList}\item 
+\#define \mbox{\hyperlink{_log_8hpp_a6ad2e0fddd7cd175018c059ced0c67c4}{L\+O\+G\+\_\+\+S\+H\+O\+W\+\_\+\+N\+O\+NE}}~\mbox{\hyperlink{class_log_a137fb16cb3316a43a396d619034e4b7bab40ceb671aedfc584f90de5e18088516}{Log\+::\+S\+H\+O\+W\+\_\+\+T\+Y\+P\+E\+::\+H\+I\+D\+D\+EN}}
+\begin{DoxyCompactList}\small\item\em disable logging except for errors and undefined behaviour \end{DoxyCompactList}\item 
+\#define \mbox{\hyperlink{_log_8hpp_a39c79d7fbae1e000c37acb7b1ae114eb}{L\+O\+G\+\_\+\+S\+H\+O\+W\+\_\+\+I\+N\+FO}}~\mbox{\hyperlink{class_log_a137fb16cb3316a43a396d619034e4b7ba8ddc7ebe42544ebab9b3d6cf49ab33d8}{Log\+::\+S\+H\+O\+W\+\_\+\+T\+Y\+P\+E\+::\+I\+N\+FO}}
+\begin{DoxyCompactList}\small\item\em enable logging of data tagged as I\+N\+FO (information) additionally to errors and undefined behaviour \end{DoxyCompactList}\item 
+\#define \mbox{\hyperlink{_log_8hpp_a57cd501a15f4059414c1d83299bb66f1}{L\+O\+G\+\_\+\+S\+H\+O\+W\+\_\+\+W\+A\+RN}}~\mbox{\hyperlink{class_log_a137fb16cb3316a43a396d619034e4b7bac377fc59ba8e467c14769baa39c70baa}{Log\+::\+S\+H\+O\+W\+\_\+\+T\+Y\+P\+E\+::\+W\+A\+RN}}
+\begin{DoxyCompactList}\small\item\em enable logging of data tagged as W\+A\+RN (warning) additionally to errors and undefined behaviour \end{DoxyCompactList}\item 
+\#define \mbox{\hyperlink{_log_8hpp_aa8c3c216bf3d69353fa04cec4bc96520}{L\+O\+G\+\_\+\+S\+H\+O\+W\+\_\+\+E\+R\+R\+OR}}~\mbox{\hyperlink{class_log_a137fb16cb3316a43a396d619034e4b7ba4cd0be82d98ca2a542adc75f2c826e5b}{Log\+::\+S\+H\+O\+W\+\_\+\+T\+Y\+P\+E\+::\+E\+R\+R\+OR}}
+\begin{DoxyCompactList}\small\item\em enable logging of data tagged as E\+R\+R\+OR (error) however this per default enabled and cannot be disabled \end{DoxyCompactList}\item 
+\#define \mbox{\hyperlink{_log_8hpp_a374b0ffb1198acd2d48ba9d3f178c0dc}{L\+O\+G\+\_\+\+S\+H\+O\+W\+\_\+\+D\+E\+B\+UG}}~\mbox{\hyperlink{class_log_a137fb16cb3316a43a396d619034e4b7ba4e49113de847d4ce568b7f0d5647a715}{Log\+::\+S\+H\+O\+W\+\_\+\+T\+Y\+P\+E\+::\+D\+E\+B\+UG}}
+\begin{DoxyCompactList}\small\item\em enable logging of data tagged as D\+E\+B\+UG (debugging information) additionally to errors and undefined behaviour \end{DoxyCompactList}\item 
+\#define \mbox{\hyperlink{_log_8hpp_a043c44977aed661f1788ca4d35e75d7c}{L\+O\+G\+\_\+\+S\+H\+O\+W\+\_\+\+A\+LL}}~\mbox{\hyperlink{class_log_a137fb16cb3316a43a396d619034e4b7ba8ddc7ebe42544ebab9b3d6cf49ab33d8}{Log\+::\+S\+H\+O\+W\+\_\+\+T\+Y\+P\+E\+::\+I\+N\+FO}} $\vert$ \mbox{\hyperlink{class_log_a137fb16cb3316a43a396d619034e4b7bac377fc59ba8e467c14769baa39c70baa}{Log\+::\+S\+H\+O\+W\+\_\+\+T\+Y\+P\+E\+::\+W\+A\+RN}} $\vert$ \mbox{\hyperlink{class_log_a137fb16cb3316a43a396d619034e4b7ba4cd0be82d98ca2a542adc75f2c826e5b}{Log\+::\+S\+H\+O\+W\+\_\+\+T\+Y\+P\+E\+::\+E\+R\+R\+OR}} $\vert$ \mbox{\hyperlink{class_log_a137fb16cb3316a43a396d619034e4b7ba4e49113de847d4ce568b7f0d5647a715}{Log\+::\+S\+H\+O\+W\+\_\+\+T\+Y\+P\+E\+::\+D\+E\+B\+UG}}
+\begin{DoxyCompactList}\small\item\em enable logging of any tagged data \end{DoxyCompactList}\item 
+\#define \mbox{\hyperlink{_log_8hpp_adc1a465f17ca2c12d593fa15a8c8fd40}{D\+E\+B\+UG}}(what,  log\+\_\+mode)~\mbox{\hyperlink{class_log_aa761204a7477ab8376b7ccf4e9b4e801}{Log\+::log}}(what, \mbox{\hyperlink{class_log_ad671761fe5e2e030871610bd6dfecd79a36d0ec637511004f425dbbd88d169d00}{Log\+::\+L\+O\+G\+\_\+\+L\+E\+V\+E\+L\+::\+D\+E\+B\+U\+G\+\_\+\+L\+E\+V\+EL}}, log\+\_\+mode, meta\+\_\+type(),\mbox{\hyperlink{_log_8hpp_a5fccb4fc71e44089a1b1a77fc76c0b68}{\+\_\+\+\_\+\+F\+I\+L\+E\+N\+A\+M\+E\+\_\+\+\_\+}}, \+\_\+\+\_\+\+F\+U\+N\+C\+T\+I\+O\+N\+\_\+\+\_\+, std\+::to\+\_\+string(\+\_\+\+\_\+\+L\+I\+N\+E\+\_\+\+\_\+))
+\begin{DoxyCompactList}\small\item\em perform logging of data with the D\+E\+B\+UG tag \end{DoxyCompactList}\item 
+\#define \mbox{\hyperlink{_log_8hpp_a8d641516b0de7a8ce7ee11db4ce8247c}{I\+N\+FO}}(what,  log\+\_\+mode)~\mbox{\hyperlink{class_log_aa761204a7477ab8376b7ccf4e9b4e801}{Log\+::log}}(what, \mbox{\hyperlink{class_log_ad671761fe5e2e030871610bd6dfecd79aefda05f8a0be294511d3c66b56edcf42}{Log\+::\+L\+O\+G\+\_\+\+L\+E\+V\+E\+L\+::\+I\+N\+F\+O\+\_\+\+L\+E\+V\+EL}}, log\+\_\+mode, meta\+\_\+type())
+\begin{DoxyCompactList}\small\item\em perform logging of data with the I\+N\+FO tag \end{DoxyCompactList}\item 
+\#define \mbox{\hyperlink{_log_8hpp_a18da1c6c71ceabee4db6adc7eb2b5ce9}{E\+R\+R\+OR}}(what,  log\+\_\+mode)~\mbox{\hyperlink{class_log_aa761204a7477ab8376b7ccf4e9b4e801}{Log\+::log}}(what, \mbox{\hyperlink{class_log_ad671761fe5e2e030871610bd6dfecd79aa01fc657c9d1fa221f71708efa8445d2}{Log\+::\+L\+O\+G\+\_\+\+L\+E\+V\+E\+L\+::\+E\+R\+R\+O\+R\+\_\+\+L\+E\+V\+EL}}, log\+\_\+mode, meta\+\_\+type(),\mbox{\hyperlink{_log_8hpp_a5fccb4fc71e44089a1b1a77fc76c0b68}{\+\_\+\+\_\+\+F\+I\+L\+E\+N\+A\+M\+E\+\_\+\+\_\+}}, \+\_\+\+\_\+\+F\+U\+N\+C\+T\+I\+O\+N\+\_\+\+\_\+, std\+::to\+\_\+string(\+\_\+\+\_\+\+L\+I\+N\+E\+\_\+\+\_\+))
+\begin{DoxyCompactList}\small\item\em perform logging of data with the E\+R\+R\+OR tag \end{DoxyCompactList}\item 
+\#define \mbox{\hyperlink{_log_8hpp_a5bd302467724340230abb17ca367c761}{W\+A\+RN}}(what,  log\+\_\+mode)~\mbox{\hyperlink{class_log_aa761204a7477ab8376b7ccf4e9b4e801}{Log\+::log}}(what, \mbox{\hyperlink{class_log_ad671761fe5e2e030871610bd6dfecd79ac7b1a053f29856bf7cdf7776c0977105}{Log\+::\+L\+O\+G\+\_\+\+L\+E\+V\+E\+L\+::\+W\+A\+R\+N\+\_\+\+L\+E\+V\+EL}}, log\+\_\+mode, meta\+\_\+type())
+\begin{DoxyCompactList}\small\item\em perform logging of data with the W\+A\+RN tag \end{DoxyCompactList}\item 
+\#define \mbox{\hyperlink{_log_8hpp_a51aaa455e6f8fe6985ac52069b7e74c6}{U\+N\+D\+E\+F\+I\+N\+ED}}(what,  log\+\_\+mode)~\mbox{\hyperlink{class_log_aa761204a7477ab8376b7ccf4e9b4e801}{Log\+::log}}(what, \mbox{\hyperlink{class_log_ad671761fe5e2e030871610bd6dfecd79a4ca59cfc20185b6e47712f5a787fdd8b}{Log\+::\+L\+O\+G\+\_\+\+L\+E\+V\+E\+L\+::\+U\+N\+D\+E\+F\+I\+N\+E\+D\+\_\+\+L\+E\+V\+EL}}, log\+\_\+mode, meta\+\_\+type(), \mbox{\hyperlink{_log_8hpp_a5fccb4fc71e44089a1b1a77fc76c0b68}{\+\_\+\+\_\+\+F\+I\+L\+E\+N\+A\+M\+E\+\_\+\+\_\+}}, \+\_\+\+\_\+\+F\+U\+N\+C\+T\+I\+O\+N\+\_\+\+\_\+, std\+::to\+\_\+string(\+\_\+\+\_\+\+L\+I\+N\+E\+\_\+\+\_\+))
+\begin{DoxyCompactList}\small\item\em perform logging of data with the U\+N\+D\+E\+F\+I\+N\+ED tag \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Macro Definition Documentation}
+\mbox{\Hypertarget{_log_8hpp_a5fccb4fc71e44089a1b1a77fc76c0b68}\label{_log_8hpp_a5fccb4fc71e44089a1b1a77fc76c0b68}} 
+\index{Log.hpp@{Log.hpp}!\_\_FILENAME\_\_@{\_\_FILENAME\_\_}}
+\index{\_\_FILENAME\_\_@{\_\_FILENAME\_\_}!Log.hpp@{Log.hpp}}
+\subsubsection{\texorpdfstring{\_\_FILENAME\_\_}{\_\_FILENAME\_\_}}
+{\footnotesize\ttfamily \#define \+\_\+\+\_\+\+F\+I\+L\+E\+N\+A\+M\+E\+\_\+\+\_\+~(strrchr(\+\_\+\+\_\+\+F\+I\+L\+E\+\_\+\+\_\+, \textquotesingle{}/\textquotesingle{}) ? strrchr(\+\_\+\+\_\+\+F\+I\+L\+E\+\_\+\+\_\+, \textquotesingle{}/\textquotesingle{}) + 1 \+: \+\_\+\+\_\+\+F\+I\+L\+E\+\_\+\+\_\+)}
+
+
+
+file name and extension without full path 
+
+file name and extension without full path 
+
+Definition at line 61 of file Log.\+hpp.
+
+\mbox{\Hypertarget{_log_8hpp_adc1a465f17ca2c12d593fa15a8c8fd40}\label{_log_8hpp_adc1a465f17ca2c12d593fa15a8c8fd40}} 
+\index{Log.hpp@{Log.hpp}!DEBUG@{DEBUG}}
+\index{DEBUG@{DEBUG}!Log.hpp@{Log.hpp}}
+\subsubsection{\texorpdfstring{DEBUG}{DEBUG}}
+{\footnotesize\ttfamily \#define D\+E\+B\+UG(\begin{DoxyParamCaption}\item[{}]{what,  }\item[{}]{log\+\_\+mode }\end{DoxyParamCaption})~\mbox{\hyperlink{class_log_aa761204a7477ab8376b7ccf4e9b4e801}{Log\+::log}}(what, \mbox{\hyperlink{class_log_ad671761fe5e2e030871610bd6dfecd79a36d0ec637511004f425dbbd88d169d00}{Log\+::\+L\+O\+G\+\_\+\+L\+E\+V\+E\+L\+::\+D\+E\+B\+U\+G\+\_\+\+L\+E\+V\+EL}}, log\+\_\+mode, meta\+\_\+type(),\mbox{\hyperlink{_log_8hpp_a5fccb4fc71e44089a1b1a77fc76c0b68}{\+\_\+\+\_\+\+F\+I\+L\+E\+N\+A\+M\+E\+\_\+\+\_\+}}, \+\_\+\+\_\+\+F\+U\+N\+C\+T\+I\+O\+N\+\_\+\+\_\+, std\+::to\+\_\+string(\+\_\+\+\_\+\+L\+I\+N\+E\+\_\+\+\_\+))}
+
+
+
+perform logging of data with the D\+E\+B\+UG tag 
+
+Shortcut macro for logging of data with the D\+E\+B\+UG tag which uses static access of log() function of \mbox{\hyperlink{class_log}{Log}} class
+
+
+\begin{DoxyParams}{Parameters}
+{\em what} & the message to be logged \\
+\hline
+{\em log\+\_\+mode} & the description where the message is outputted (\\
+\hline
+\end{DoxyParams}
+\begin{DoxySeeAlso}{See also}
+Log\+::\+M\+O\+D\+E\+::\+C\+O\+N\+S\+O\+LE or 
+
+Log\+::\+M\+O\+D\+E\+::\+F\+I\+LE or both)
+
+\mbox{\hyperlink{class_log_aa761204a7477ab8376b7ccf4e9b4e801}{Log\+::log()}} 
+\end{DoxySeeAlso}
+
+
+Definition at line 118 of file Log.\+hpp.
+
+\mbox{\Hypertarget{_log_8hpp_ac7727d6ee8cc821ab65f4d2fbbca5eca}\label{_log_8hpp_ac7727d6ee8cc821ab65f4d2fbbca5eca}} 
+\index{Log.hpp@{Log.hpp}!DEBUG\_COLOR@{DEBUG\_COLOR}}
+\index{DEBUG\_COLOR@{DEBUG\_COLOR}!Log.hpp@{Log.hpp}}
+\subsubsection{\texorpdfstring{DEBUG\_COLOR}{DEBUG\_COLOR}}
+{\footnotesize\ttfamily \#define D\+E\+B\+U\+G\+\_\+\+C\+O\+L\+OR(\begin{DoxyParamCaption}\item[{}]{x }\end{DoxyParamCaption})~(\char`\"{}\textbackslash{}033\mbox{[}37m\char`\"{} + x + \char`\"{}\textbackslash{}033\mbox{[}0m\char`\"{})}
+
+
+
+white/gray coloring for console output 
+
+Coloring for console output. Unsused for file output. See table of codes here\+: \href{https://en.wikipedia.org/wiki/ANSI_escape_code\#graphics}{\texttt{ https\+://en.\+wikipedia.\+org/wiki/\+A\+N\+S\+I\+\_\+escape\+\_\+code\#graphics}} 
+
+Definition at line 54 of file Log.\+hpp.
+
+\mbox{\Hypertarget{_log_8hpp_a18da1c6c71ceabee4db6adc7eb2b5ce9}\label{_log_8hpp_a18da1c6c71ceabee4db6adc7eb2b5ce9}} 
+\index{Log.hpp@{Log.hpp}!ERROR@{ERROR}}
+\index{ERROR@{ERROR}!Log.hpp@{Log.hpp}}
+\subsubsection{\texorpdfstring{ERROR}{ERROR}}
+{\footnotesize\ttfamily \#define E\+R\+R\+OR(\begin{DoxyParamCaption}\item[{}]{what,  }\item[{}]{log\+\_\+mode }\end{DoxyParamCaption})~\mbox{\hyperlink{class_log_aa761204a7477ab8376b7ccf4e9b4e801}{Log\+::log}}(what, \mbox{\hyperlink{class_log_ad671761fe5e2e030871610bd6dfecd79aa01fc657c9d1fa221f71708efa8445d2}{Log\+::\+L\+O\+G\+\_\+\+L\+E\+V\+E\+L\+::\+E\+R\+R\+O\+R\+\_\+\+L\+E\+V\+EL}}, log\+\_\+mode, meta\+\_\+type(),\mbox{\hyperlink{_log_8hpp_a5fccb4fc71e44089a1b1a77fc76c0b68}{\+\_\+\+\_\+\+F\+I\+L\+E\+N\+A\+M\+E\+\_\+\+\_\+}}, \+\_\+\+\_\+\+F\+U\+N\+C\+T\+I\+O\+N\+\_\+\+\_\+, std\+::to\+\_\+string(\+\_\+\+\_\+\+L\+I\+N\+E\+\_\+\+\_\+))}
+
+
+
+perform logging of data with the E\+R\+R\+OR tag 
+
+Shortcut macro for logging of data with the E\+R\+R\+OR tag which uses static access of log() function of \mbox{\hyperlink{class_log}{Log}} class
+
+
+\begin{DoxyParams}{Parameters}
+{\em what} & the message to be logged \\
+\hline
+{\em log\+\_\+mode} & the description where the message is outputted (\\
+\hline
+\end{DoxyParams}
+\begin{DoxySeeAlso}{See also}
+Log\+::\+M\+O\+D\+E\+::\+C\+O\+N\+S\+O\+LE or 
+
+Log\+::\+M\+O\+D\+E\+::\+F\+I\+LE or both)
+
+\mbox{\hyperlink{class_log_aa761204a7477ab8376b7ccf4e9b4e801}{Log\+::log()}} 
+\end{DoxySeeAlso}
+
+
+Definition at line 142 of file Log.\+hpp.
+
+\mbox{\Hypertarget{_log_8hpp_aa9693ace5746a2015d60879fd046733a}\label{_log_8hpp_aa9693ace5746a2015d60879fd046733a}} 
+\index{Log.hpp@{Log.hpp}!ERROR\_COLOR@{ERROR\_COLOR}}
+\index{ERROR\_COLOR@{ERROR\_COLOR}!Log.hpp@{Log.hpp}}
+\subsubsection{\texorpdfstring{ERROR\_COLOR}{ERROR\_COLOR}}
+{\footnotesize\ttfamily \#define E\+R\+R\+O\+R\+\_\+\+C\+O\+L\+OR(\begin{DoxyParamCaption}\item[{}]{x }\end{DoxyParamCaption})~(\char`\"{}\textbackslash{}033\mbox{[}31m\char`\"{} + x + \char`\"{}\textbackslash{}033\mbox{[}0m\char`\"{})}
+
+
+
+red coloring for console output 
+
+Coloring for console output. Unsused for file output. See table of codes here\+: \href{https://en.wikipedia.org/wiki/ANSI_escape_code\#graphics}{\texttt{ https\+://en.\+wikipedia.\+org/wiki/\+A\+N\+S\+I\+\_\+escape\+\_\+code\#graphics}} 
+
+Definition at line 18 of file Log.\+hpp.
+
+\mbox{\Hypertarget{_log_8hpp_a8d641516b0de7a8ce7ee11db4ce8247c}\label{_log_8hpp_a8d641516b0de7a8ce7ee11db4ce8247c}} 
+\index{Log.hpp@{Log.hpp}!INFO@{INFO}}
+\index{INFO@{INFO}!Log.hpp@{Log.hpp}}
+\subsubsection{\texorpdfstring{INFO}{INFO}}
+{\footnotesize\ttfamily \#define I\+N\+FO(\begin{DoxyParamCaption}\item[{}]{what,  }\item[{}]{log\+\_\+mode }\end{DoxyParamCaption})~\mbox{\hyperlink{class_log_aa761204a7477ab8376b7ccf4e9b4e801}{Log\+::log}}(what, \mbox{\hyperlink{class_log_ad671761fe5e2e030871610bd6dfecd79aefda05f8a0be294511d3c66b56edcf42}{Log\+::\+L\+O\+G\+\_\+\+L\+E\+V\+E\+L\+::\+I\+N\+F\+O\+\_\+\+L\+E\+V\+EL}}, log\+\_\+mode, meta\+\_\+type())}
+
+
+
+perform logging of data with the I\+N\+FO tag 
+
+Shortcut macro for logging of data with the I\+N\+FO tag which uses static access of log() function of \mbox{\hyperlink{class_log}{Log}} class
+
+
+\begin{DoxyParams}{Parameters}
+{\em what} & the message to be logged \\
+\hline
+{\em log\+\_\+mode} & the description where the message is outputted (\\
+\hline
+\end{DoxyParams}
+\begin{DoxySeeAlso}{See also}
+Log\+::\+M\+O\+D\+E\+::\+C\+O\+N\+S\+O\+LE or 
+
+Log\+::\+M\+O\+D\+E\+::\+F\+I\+LE or both)
+
+\mbox{\hyperlink{class_log_aa761204a7477ab8376b7ccf4e9b4e801}{Log\+::log()}} 
+\end{DoxySeeAlso}
+
+
+Definition at line 130 of file Log.\+hpp.
+
+\mbox{\Hypertarget{_log_8hpp_a105acc550586095f9432ed47013c89d7}\label{_log_8hpp_a105acc550586095f9432ed47013c89d7}} 
+\index{Log.hpp@{Log.hpp}!INFO\_COLOR@{INFO\_COLOR}}
+\index{INFO\_COLOR@{INFO\_COLOR}!Log.hpp@{Log.hpp}}
+\subsubsection{\texorpdfstring{INFO\_COLOR}{INFO\_COLOR}}
+{\footnotesize\ttfamily \#define I\+N\+F\+O\+\_\+\+C\+O\+L\+OR(\begin{DoxyParamCaption}\item[{}]{x }\end{DoxyParamCaption})~(\char`\"{}\textbackslash{}033\mbox{[}32m\char`\"{} + x + \char`\"{}\textbackslash{}033\mbox{[}0m\char`\"{})}
+
+
+
+green coloring for console output 
+
+Coloring for console output. Unsused for file output. See table of codes here\+: \href{https://en.wikipedia.org/wiki/ANSI_escape_code\#graphics}{\texttt{ https\+://en.\+wikipedia.\+org/wiki/\+A\+N\+S\+I\+\_\+escape\+\_\+code\#graphics}} 
+
+Definition at line 36 of file Log.\+hpp.
+
+\mbox{\Hypertarget{_log_8hpp_a0303ddb61d24fcccd944c6f0c3c35943}\label{_log_8hpp_a0303ddb61d24fcccd944c6f0c3c35943}} 
+\index{Log.hpp@{Log.hpp}!LOG\_CONSOLE@{LOG\_CONSOLE}}
+\index{LOG\_CONSOLE@{LOG\_CONSOLE}!Log.hpp@{Log.hpp}}
+\subsubsection{\texorpdfstring{LOG\_CONSOLE}{LOG\_CONSOLE}}
+{\footnotesize\ttfamily \#define L\+O\+G\+\_\+\+C\+O\+N\+S\+O\+LE~\mbox{\hyperlink{class_log_a6b5eceb8cb84489c1a8fee40ac1d37dcad6080f9ff3b3f48a9e533b2ed44b1c1f}{Log\+::\+M\+O\+D\+E\+::\+C\+O\+N\+S\+O\+LE}}}
+
+
+
+output logging data to stdout 
+
+
+
+Definition at line 71 of file Log.\+hpp.
+
+\mbox{\Hypertarget{_log_8hpp_a69d4676733f5e850f451942b6d901382}\label{_log_8hpp_a69d4676733f5e850f451942b6d901382}} 
+\index{Log.hpp@{Log.hpp}!LOG\_FILE@{LOG\_FILE}}
+\index{LOG\_FILE@{LOG\_FILE}!Log.hpp@{Log.hpp}}
+\subsubsection{\texorpdfstring{LOG\_FILE}{LOG\_FILE}}
+{\footnotesize\ttfamily \#define L\+O\+G\+\_\+\+F\+I\+LE~\mbox{\hyperlink{class_log_a6b5eceb8cb84489c1a8fee40ac1d37dca21dc03633cffcefe094c557641827421}{Log\+::\+M\+O\+D\+E\+::\+F\+I\+LE}}}
+
+
+
+output logging data to file 
+
+
+
+Definition at line 76 of file Log.\+hpp.
+
+\mbox{\Hypertarget{_log_8hpp_a1632479322efa3952798f98177b54471}\label{_log_8hpp_a1632479322efa3952798f98177b54471}} 
+\index{Log.hpp@{Log.hpp}!LOG\_NONE@{LOG\_NONE}}
+\index{LOG\_NONE@{LOG\_NONE}!Log.hpp@{Log.hpp}}
+\subsubsection{\texorpdfstring{LOG\_NONE}{LOG\_NONE}}
+{\footnotesize\ttfamily \#define L\+O\+G\+\_\+\+N\+O\+NE~\mbox{\hyperlink{class_log_a6b5eceb8cb84489c1a8fee40ac1d37dca01bfaaeef38ef033ef28468316082661}{Log\+::\+M\+O\+D\+E\+::\+N\+O\+NE}}}
+
+
+
+disable logging output 
+
+
+
+Definition at line 66 of file Log.\+hpp.
+
+\mbox{\Hypertarget{_log_8hpp_a043c44977aed661f1788ca4d35e75d7c}\label{_log_8hpp_a043c44977aed661f1788ca4d35e75d7c}} 
+\index{Log.hpp@{Log.hpp}!LOG\_SHOW\_ALL@{LOG\_SHOW\_ALL}}
+\index{LOG\_SHOW\_ALL@{LOG\_SHOW\_ALL}!Log.hpp@{Log.hpp}}
+\subsubsection{\texorpdfstring{LOG\_SHOW\_ALL}{LOG\_SHOW\_ALL}}
+{\footnotesize\ttfamily \#define L\+O\+G\+\_\+\+S\+H\+O\+W\+\_\+\+A\+LL~\mbox{\hyperlink{class_log_a137fb16cb3316a43a396d619034e4b7ba8ddc7ebe42544ebab9b3d6cf49ab33d8}{Log\+::\+S\+H\+O\+W\+\_\+\+T\+Y\+P\+E\+::\+I\+N\+FO}} $\vert$ \mbox{\hyperlink{class_log_a137fb16cb3316a43a396d619034e4b7bac377fc59ba8e467c14769baa39c70baa}{Log\+::\+S\+H\+O\+W\+\_\+\+T\+Y\+P\+E\+::\+W\+A\+RN}} $\vert$ \mbox{\hyperlink{class_log_a137fb16cb3316a43a396d619034e4b7ba4cd0be82d98ca2a542adc75f2c826e5b}{Log\+::\+S\+H\+O\+W\+\_\+\+T\+Y\+P\+E\+::\+E\+R\+R\+OR}} $\vert$ \mbox{\hyperlink{class_log_a137fb16cb3316a43a396d619034e4b7ba4e49113de847d4ce568b7f0d5647a715}{Log\+::\+S\+H\+O\+W\+\_\+\+T\+Y\+P\+E\+::\+D\+E\+B\+UG}}}
+
+
+
+enable logging of any tagged data 
+
+
+
+Definition at line 106 of file Log.\+hpp.
+
+\mbox{\Hypertarget{_log_8hpp_a374b0ffb1198acd2d48ba9d3f178c0dc}\label{_log_8hpp_a374b0ffb1198acd2d48ba9d3f178c0dc}} 
+\index{Log.hpp@{Log.hpp}!LOG\_SHOW\_DEBUG@{LOG\_SHOW\_DEBUG}}
+\index{LOG\_SHOW\_DEBUG@{LOG\_SHOW\_DEBUG}!Log.hpp@{Log.hpp}}
+\subsubsection{\texorpdfstring{LOG\_SHOW\_DEBUG}{LOG\_SHOW\_DEBUG}}
+{\footnotesize\ttfamily \#define L\+O\+G\+\_\+\+S\+H\+O\+W\+\_\+\+D\+E\+B\+UG~\mbox{\hyperlink{class_log_a137fb16cb3316a43a396d619034e4b7ba4e49113de847d4ce568b7f0d5647a715}{Log\+::\+S\+H\+O\+W\+\_\+\+T\+Y\+P\+E\+::\+D\+E\+B\+UG}}}
+
+
+
+enable logging of data tagged as D\+E\+B\+UG (debugging information) additionally to errors and undefined behaviour 
+
+
+
+Definition at line 101 of file Log.\+hpp.
+
+\mbox{\Hypertarget{_log_8hpp_aa8c3c216bf3d69353fa04cec4bc96520}\label{_log_8hpp_aa8c3c216bf3d69353fa04cec4bc96520}} 
+\index{Log.hpp@{Log.hpp}!LOG\_SHOW\_ERROR@{LOG\_SHOW\_ERROR}}
+\index{LOG\_SHOW\_ERROR@{LOG\_SHOW\_ERROR}!Log.hpp@{Log.hpp}}
+\subsubsection{\texorpdfstring{LOG\_SHOW\_ERROR}{LOG\_SHOW\_ERROR}}
+{\footnotesize\ttfamily \#define L\+O\+G\+\_\+\+S\+H\+O\+W\+\_\+\+E\+R\+R\+OR~\mbox{\hyperlink{class_log_a137fb16cb3316a43a396d619034e4b7ba4cd0be82d98ca2a542adc75f2c826e5b}{Log\+::\+S\+H\+O\+W\+\_\+\+T\+Y\+P\+E\+::\+E\+R\+R\+OR}}}
+
+
+
+enable logging of data tagged as E\+R\+R\+OR (error) however this per default enabled and cannot be disabled 
+
+
+
+Definition at line 96 of file Log.\+hpp.
+
+\mbox{\Hypertarget{_log_8hpp_a39c79d7fbae1e000c37acb7b1ae114eb}\label{_log_8hpp_a39c79d7fbae1e000c37acb7b1ae114eb}} 
+\index{Log.hpp@{Log.hpp}!LOG\_SHOW\_INFO@{LOG\_SHOW\_INFO}}
+\index{LOG\_SHOW\_INFO@{LOG\_SHOW\_INFO}!Log.hpp@{Log.hpp}}
+\subsubsection{\texorpdfstring{LOG\_SHOW\_INFO}{LOG\_SHOW\_INFO}}
+{\footnotesize\ttfamily \#define L\+O\+G\+\_\+\+S\+H\+O\+W\+\_\+\+I\+N\+FO~\mbox{\hyperlink{class_log_a137fb16cb3316a43a396d619034e4b7ba8ddc7ebe42544ebab9b3d6cf49ab33d8}{Log\+::\+S\+H\+O\+W\+\_\+\+T\+Y\+P\+E\+::\+I\+N\+FO}}}
+
+
+
+enable logging of data tagged as I\+N\+FO (information) additionally to errors and undefined behaviour 
+
+
+
+Definition at line 86 of file Log.\+hpp.
+
+\mbox{\Hypertarget{_log_8hpp_a6ad2e0fddd7cd175018c059ced0c67c4}\label{_log_8hpp_a6ad2e0fddd7cd175018c059ced0c67c4}} 
+\index{Log.hpp@{Log.hpp}!LOG\_SHOW\_NONE@{LOG\_SHOW\_NONE}}
+\index{LOG\_SHOW\_NONE@{LOG\_SHOW\_NONE}!Log.hpp@{Log.hpp}}
+\subsubsection{\texorpdfstring{LOG\_SHOW\_NONE}{LOG\_SHOW\_NONE}}
+{\footnotesize\ttfamily \#define L\+O\+G\+\_\+\+S\+H\+O\+W\+\_\+\+N\+O\+NE~\mbox{\hyperlink{class_log_a137fb16cb3316a43a396d619034e4b7bab40ceb671aedfc584f90de5e18088516}{Log\+::\+S\+H\+O\+W\+\_\+\+T\+Y\+P\+E\+::\+H\+I\+D\+D\+EN}}}
+
+
+
+disable logging except for errors and undefined behaviour 
+
+
+
+Definition at line 81 of file Log.\+hpp.
+
+\mbox{\Hypertarget{_log_8hpp_a57cd501a15f4059414c1d83299bb66f1}\label{_log_8hpp_a57cd501a15f4059414c1d83299bb66f1}} 
+\index{Log.hpp@{Log.hpp}!LOG\_SHOW\_WARN@{LOG\_SHOW\_WARN}}
+\index{LOG\_SHOW\_WARN@{LOG\_SHOW\_WARN}!Log.hpp@{Log.hpp}}
+\subsubsection{\texorpdfstring{LOG\_SHOW\_WARN}{LOG\_SHOW\_WARN}}
+{\footnotesize\ttfamily \#define L\+O\+G\+\_\+\+S\+H\+O\+W\+\_\+\+W\+A\+RN~\mbox{\hyperlink{class_log_a137fb16cb3316a43a396d619034e4b7bac377fc59ba8e467c14769baa39c70baa}{Log\+::\+S\+H\+O\+W\+\_\+\+T\+Y\+P\+E\+::\+W\+A\+RN}}}
+
+
+
+enable logging of data tagged as W\+A\+RN (warning) additionally to errors and undefined behaviour 
+
+
+
+Definition at line 91 of file Log.\+hpp.
+
+\mbox{\Hypertarget{_log_8hpp_a51aaa455e6f8fe6985ac52069b7e74c6}\label{_log_8hpp_a51aaa455e6f8fe6985ac52069b7e74c6}} 
+\index{Log.hpp@{Log.hpp}!UNDEFINED@{UNDEFINED}}
+\index{UNDEFINED@{UNDEFINED}!Log.hpp@{Log.hpp}}
+\subsubsection{\texorpdfstring{UNDEFINED}{UNDEFINED}}
+{\footnotesize\ttfamily \#define U\+N\+D\+E\+F\+I\+N\+ED(\begin{DoxyParamCaption}\item[{}]{what,  }\item[{}]{log\+\_\+mode }\end{DoxyParamCaption})~\mbox{\hyperlink{class_log_aa761204a7477ab8376b7ccf4e9b4e801}{Log\+::log}}(what, \mbox{\hyperlink{class_log_ad671761fe5e2e030871610bd6dfecd79a4ca59cfc20185b6e47712f5a787fdd8b}{Log\+::\+L\+O\+G\+\_\+\+L\+E\+V\+E\+L\+::\+U\+N\+D\+E\+F\+I\+N\+E\+D\+\_\+\+L\+E\+V\+EL}}, log\+\_\+mode, meta\+\_\+type(), \mbox{\hyperlink{_log_8hpp_a5fccb4fc71e44089a1b1a77fc76c0b68}{\+\_\+\+\_\+\+F\+I\+L\+E\+N\+A\+M\+E\+\_\+\+\_\+}}, \+\_\+\+\_\+\+F\+U\+N\+C\+T\+I\+O\+N\+\_\+\+\_\+, std\+::to\+\_\+string(\+\_\+\+\_\+\+L\+I\+N\+E\+\_\+\+\_\+))}
+
+
+
+perform logging of data with the U\+N\+D\+E\+F\+I\+N\+ED tag 
+
+Shortcut macro for logging of data with the U\+N\+D\+E\+F\+I\+N\+ED tag which uses static access of log() function of \mbox{\hyperlink{class_log}{Log}} class
+
+
+\begin{DoxyParams}{Parameters}
+{\em what} & the message to be logged \\
+\hline
+{\em log\+\_\+mode} & the description where the message is outputted (\\
+\hline
+\end{DoxyParams}
+\begin{DoxySeeAlso}{See also}
+Log\+::\+M\+O\+D\+E\+::\+C\+O\+N\+S\+O\+LE or 
+
+Log\+::\+M\+O\+D\+E\+::\+F\+I\+LE or both)
+
+\mbox{\hyperlink{class_log_aa761204a7477ab8376b7ccf4e9b4e801}{Log\+::log()}} 
+\end{DoxySeeAlso}
+
+
+Definition at line 166 of file Log.\+hpp.
+
+\mbox{\Hypertarget{_log_8hpp_a72e1ed06cf04d45868fbd61e1a868b67}\label{_log_8hpp_a72e1ed06cf04d45868fbd61e1a868b67}} 
+\index{Log.hpp@{Log.hpp}!UNDEFINED\_COLOR@{UNDEFINED\_COLOR}}
+\index{UNDEFINED\_COLOR@{UNDEFINED\_COLOR}!Log.hpp@{Log.hpp}}
+\subsubsection{\texorpdfstring{UNDEFINED\_COLOR}{UNDEFINED\_COLOR}}
+{\footnotesize\ttfamily \#define U\+N\+D\+E\+F\+I\+N\+E\+D\+\_\+\+C\+O\+L\+OR(\begin{DoxyParamCaption}\item[{}]{x }\end{DoxyParamCaption})~(\char`\"{}\textbackslash{}033\mbox{[}1;31m\char`\"{} + x + \char`\"{}\textbackslash{}033\mbox{[}0m\char`\"{})}
+
+
+
+bold red coloring for console output 
+
+Coloring for console output. Unsused for file output. See table of codes here\+: \href{https://en.wikipedia.org/wiki/ANSI_escape_code\#graphics}{\texttt{ https\+://en.\+wikipedia.\+org/wiki/\+A\+N\+S\+I\+\_\+escape\+\_\+code\#graphics}} 
+
+Definition at line 27 of file Log.\+hpp.
+
+\mbox{\Hypertarget{_log_8hpp_a5bd302467724340230abb17ca367c761}\label{_log_8hpp_a5bd302467724340230abb17ca367c761}} 
+\index{Log.hpp@{Log.hpp}!WARN@{WARN}}
+\index{WARN@{WARN}!Log.hpp@{Log.hpp}}
+\subsubsection{\texorpdfstring{WARN}{WARN}}
+{\footnotesize\ttfamily \#define W\+A\+RN(\begin{DoxyParamCaption}\item[{}]{what,  }\item[{}]{log\+\_\+mode }\end{DoxyParamCaption})~\mbox{\hyperlink{class_log_aa761204a7477ab8376b7ccf4e9b4e801}{Log\+::log}}(what, \mbox{\hyperlink{class_log_ad671761fe5e2e030871610bd6dfecd79ac7b1a053f29856bf7cdf7776c0977105}{Log\+::\+L\+O\+G\+\_\+\+L\+E\+V\+E\+L\+::\+W\+A\+R\+N\+\_\+\+L\+E\+V\+EL}}, log\+\_\+mode, meta\+\_\+type())}
+
+
+
+perform logging of data with the W\+A\+RN tag 
+
+Shortcut macro for logging of data with the W\+A\+RN tag which uses static access of log() function of \mbox{\hyperlink{class_log}{Log}} class
+
+
+\begin{DoxyParams}{Parameters}
+{\em what} & the message to be logged \\
+\hline
+{\em log\+\_\+mode} & the description where the message is outputted (\\
+\hline
+\end{DoxyParams}
+\begin{DoxySeeAlso}{See also}
+Log\+::\+M\+O\+D\+E\+::\+C\+O\+N\+S\+O\+LE or 
+
+Log\+::\+M\+O\+D\+E\+::\+F\+I\+LE or both)
+
+\mbox{\hyperlink{class_log_aa761204a7477ab8376b7ccf4e9b4e801}{Log\+::log()}} 
+\end{DoxySeeAlso}
+
+
+Definition at line 154 of file Log.\+hpp.
+
+\mbox{\Hypertarget{_log_8hpp_ab8ba27b4a7e09225927d22dfa18b5ebd}\label{_log_8hpp_ab8ba27b4a7e09225927d22dfa18b5ebd}} 
+\index{Log.hpp@{Log.hpp}!WARN\_COLOR@{WARN\_COLOR}}
+\index{WARN\_COLOR@{WARN\_COLOR}!Log.hpp@{Log.hpp}}
+\subsubsection{\texorpdfstring{WARN\_COLOR}{WARN\_COLOR}}
+{\footnotesize\ttfamily \#define W\+A\+R\+N\+\_\+\+C\+O\+L\+OR(\begin{DoxyParamCaption}\item[{}]{x }\end{DoxyParamCaption})~(\char`\"{}\textbackslash{}033\mbox{[}33m\char`\"{} + x + \char`\"{}\textbackslash{}033\mbox{[}0m\char`\"{})}
+
+
+
+yellow coloring for console output 
+
+Coloring for console output. Unsused for file output. See table of codes here\+: \href{https://en.wikipedia.org/wiki/ANSI_escape_code\#graphics}{\texttt{ https\+://en.\+wikipedia.\+org/wiki/\+A\+N\+S\+I\+\_\+escape\+\_\+code\#graphics}} 
+
+Definition at line 45 of file Log.\+hpp.
+

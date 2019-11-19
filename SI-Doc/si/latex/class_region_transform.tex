@@ -1,0 +1,176 @@
+\hypertarget{class_region_transform}{}\section{Region\+Transform Class Reference}
+\label{class_region_transform}\index{RegionTransform@{RegionTransform}}
+
+
+\mbox{\hyperlink{class_region_transform}{Region\+Transform}} class storing the relative translation, rotation and scale of a contour.  
+
+
+
+
+{\ttfamily \#include $<$Region\+Transform.\+hpp$>$}
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{class_region_transform_aafca68cc04b354ff4a5a6e7d341af492}{Region\+Transform}} ()
+\begin{DoxyCompactList}\small\item\em default constructor initializing instance variables to default values \end{DoxyCompactList}\item 
+\mbox{\hyperlink{class_region_transform_a94c5436c4f558879d920c97eb9e20611}{$\sim$\+Region\+Transform}} ()
+\begin{DoxyCompactList}\small\item\em default destructor \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_region_transform_a8d6734d6536be0811d41bf2287d401d9}{update}} (const glm\+::vec2 \&translation=glm\+::vec2(0, 0), float angle=0, float scale=1)
+\begin{DoxyCompactList}\small\item\em central function to update transformation matrix with new, relative translation, relative rotation and absolute scale values \end{DoxyCompactList}\item 
+const glm\+::mat3x3 \& \mbox{\hyperlink{class_region_transform_aa55bac64aa3c3d7210c586be0e481b95}{transform}} ()
+\item 
+const glm\+::vec3 \& \mbox{\hyperlink{class_region_transform_a5ef023995359c8ed01ecfac62a6b1ee4}{operator\mbox{[}$\,$\mbox{]}}} (int index)
+\begin{DoxyCompactList}\small\item\em overloading of \mbox{[}\mbox{]} operator \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\mbox{\hyperlink{class_region_transform}{Region\+Transform}} class storing the relative translation, rotation and scale of a contour. 
+
+This class stores the relative translation, rotation and scale of a contour. The initial contour remains unchanged and change in one of those three aspects does mutate this transform but not the initial contour. The translation, rotation and scale are stored as a 3x3 transformation matrix. The transformation matrix is stored R\+OW M\+A\+J\+OR and requires L\+E\+FT pr P\+R\+E-\/\+Multiplication. Therefore, multiplications with points look such as \+: p $\ast$ T, where p is a point and T is the transformation matrix. Due to matrix multiplications being not commutative, T $\ast$ p will not yield desired results.
+
+\begin{DoxySeeAlso}{See also}
+d\+\_\+translation 
+
+d\+\_\+rotation 
+
+d\+\_\+scale 
+
+d\+\_\+transform 
+
+d\+\_\+angle 
+\end{DoxySeeAlso}
+
+
+Definition at line 34 of file Region\+Transform.\+hpp.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{class_region_transform_aafca68cc04b354ff4a5a6e7d341af492}\label{class_region_transform_aafca68cc04b354ff4a5a6e7d341af492}} 
+\index{RegionTransform@{RegionTransform}!RegionTransform@{RegionTransform}}
+\index{RegionTransform@{RegionTransform}!RegionTransform@{RegionTransform}}
+\subsubsection{\texorpdfstring{RegionTransform()}{RegionTransform()}}
+{\footnotesize\ttfamily Region\+Transform\+::\+Region\+Transform (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+default constructor initializing instance variables to default values 
+
+Default constructor. Initializes all matrix objects to identity matrices. Sets cumulative angle to 0
+
+\begin{DoxySeeAlso}{See also}
+d\+\_\+transform 
+
+d\+\_\+translation 
+
+d\+\_\+rotation 
+
+d\+\_\+scale \textbackslash{}scale d\+\_\+angle 
+\end{DoxySeeAlso}
+
+
+Definition at line 17 of file Region\+Transform.\+cpp.
+
+\mbox{\Hypertarget{class_region_transform_a94c5436c4f558879d920c97eb9e20611}\label{class_region_transform_a94c5436c4f558879d920c97eb9e20611}} 
+\index{RegionTransform@{RegionTransform}!````~RegionTransform@{$\sim$RegionTransform}}
+\index{````~RegionTransform@{$\sim$RegionTransform}!RegionTransform@{RegionTransform}}
+\subsubsection{\texorpdfstring{$\sim$RegionTransform()}{~RegionTransform()}}
+{\footnotesize\ttfamily Region\+Transform\+::$\sim$\+Region\+Transform (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+default destructor 
+
+Default destructor. 
+
+Definition at line 30 of file Region\+Transform.\+cpp.
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{class_region_transform_a5ef023995359c8ed01ecfac62a6b1ee4}\label{class_region_transform_a5ef023995359c8ed01ecfac62a6b1ee4}} 
+\index{RegionTransform@{RegionTransform}!operator\mbox{[}\mbox{]}@{operator[]}}
+\index{operator\mbox{[}\mbox{]}@{operator[]}!RegionTransform@{RegionTransform}}
+\subsubsection{\texorpdfstring{operator[]()}{operator[]()}}
+{\footnotesize\ttfamily const glm\+::vec3 \& Region\+Transform\+::operator\mbox{[}$\,$\mbox{]} (\begin{DoxyParamCaption}\item[{int}]{index }\end{DoxyParamCaption})}
+
+
+
+overloading of \mbox{[}\mbox{]} operator 
+
+Overloading of \mbox{[}\mbox{]} operator. Makes it easier to use the transformation matrix stored in this class. This function returns a constant glm\+::vec3 reference which itself is subscriptable with the \mbox{[}\mbox{]} operator.
+
+
+\begin{DoxyParams}{Parameters}
+{\em index} & an integer containing the index of the row of the transformation matrix to be retrieved.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+a constant reference of glm\+::vec3 object containing the queried row of the transformation matrix
+\end{DoxyReturn}
+\begin{DoxySeeAlso}{See also}
+d\+\_\+transform 
+\end{DoxySeeAlso}
+
+
+Definition at line 96 of file Region\+Transform.\+cpp.
+
+\mbox{\Hypertarget{class_region_transform_aa55bac64aa3c3d7210c586be0e481b95}\label{class_region_transform_aa55bac64aa3c3d7210c586be0e481b95}} 
+\index{RegionTransform@{RegionTransform}!transform@{transform}}
+\index{transform@{transform}!RegionTransform@{RegionTransform}}
+\subsubsection{\texorpdfstring{transform()}{transform()}}
+{\footnotesize\ttfamily const glm\+::mat3x3 \& Region\+Transform\+::transform (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+\begin{DoxyReturn}{Returns}
+a constant reference to a glm\+::mat3x3 object containing the current transformation matrix
+\end{DoxyReturn}
+\begin{DoxySeeAlso}{See also}
+d\+\_\+transform 
+\end{DoxySeeAlso}
+
+
+Definition at line 78 of file Region\+Transform.\+cpp.
+
+\mbox{\Hypertarget{class_region_transform_a8d6734d6536be0811d41bf2287d401d9}\label{class_region_transform_a8d6734d6536be0811d41bf2287d401d9}} 
+\index{RegionTransform@{RegionTransform}!update@{update}}
+\index{update@{update}!RegionTransform@{RegionTransform}}
+\subsubsection{\texorpdfstring{update()}{update()}}
+{\footnotesize\ttfamily void Region\+Transform\+::update (\begin{DoxyParamCaption}\item[{const glm\+::vec2 \&}]{translation = {\ttfamily glm\+:\+:vec2(0,~0)},  }\item[{float}]{angle = {\ttfamily 0},  }\item[{float}]{scale = {\ttfamily 1} }\end{DoxyParamCaption})}
+
+
+
+central function to update transformation matrix with new, relative translation, relative rotation and absolute scale values 
+
+Updates translation matrix T, rotation matrix R, and scale matrix S according to the given parameters. Too small angle increments are ignored to save computations of required trigonometric functions. Computes a the new transformation matrix according to T $\ast$ R $\ast$ S.
+
+
+\begin{DoxyParams}{Parameters}
+{\em translation} & a constant reference to a glm\+::vec2 datastructure containing the new, relative translation of the parent contour \\
+\hline
+{\em angle} & a float containing the new relative angle of the parent contour according to x-\/axis \\
+\hline
+{\em scale} & a float containing the new absolute scale factor of the contour\\
+\hline
+\end{DoxyParams}
+\begin{DoxySeeAlso}{See also}
+d\+\_\+translation 
+
+d\+\_\+angle 
+
+d\+\_\+rotation 
+
+d\+\_\+scale 
+
+d\+\_\+transform 
+\end{DoxySeeAlso}
+
+
+Definition at line 50 of file Region\+Transform.\+cpp.
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+/home/juergen/1\+\_\+dev/projects/\+Sketchable-\/\+Interaction/\+S\+I/src/sigrun/region/\mbox{\hyperlink{_region_transform_8hpp}{Region\+Transform.\+hpp}}\item 
+/home/juergen/1\+\_\+dev/projects/\+Sketchable-\/\+Interaction/\+S\+I/src/sigrun/region/\mbox{\hyperlink{_region_transform_8cpp}{Region\+Transform.\+cpp}}\end{DoxyCompactItemize}

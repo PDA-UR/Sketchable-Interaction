@@ -1,0 +1,4 @@
+<map id="Core" name="Core">
+<area shape="rect" id="node1" title="namespace shortening for python object integration" alt="" coords="17,80,67,107"/>
+<area shape="rect" id="node2" href="$class_s_i_object.html" title="A meta class from which other classes are derived from to register them as SIObject meta types." alt="" coords="5,5,79,32"/>
+</map>

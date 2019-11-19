@@ -4,13 +4,13 @@
 
 #include <string>
 #include <vector>
-#include <sigrun/MetaType.hpp>
+#include <sigrun/SIObject.hpp>
 
-class PluginCollector: public SIMetaType
+class PluginCollector: public SIObject
 {
 public:
     PluginCollector()
-    {META_TYPE("PLUGIN_COLLECTOR")}
+    {SIOBJECT("PLUGIN_COLLECTOR")}
 
     ~PluginCollector() = default;
     void collect(const std::string &rel_path, std::vector<std::string> &files);

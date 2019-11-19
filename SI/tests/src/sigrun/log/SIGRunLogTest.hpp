@@ -4,31 +4,21 @@
 #define SITEST_SIGRUNLOGTEST_HPP
 
 #include <gtest/gtest.h>
-#include <sigrun/MetaType.hpp>
+#include <sigrun/SIObject.hpp>
 
 
-class SIGRunLogTest: public ::testing::Test, public SIMetaType
+class SIGRunLogTest: public ::testing::Test, public SIObject
 {
 public:
     virtual void SetUp()
-    {
-        META_TYPE("SIGRunLogTest")
+    {SIOBJECT("SIGRunLogTest")
+
     }
 
     virtual void TearDown()
     {
 
     }
-};
-
-class SIGRunLogLogLevelTest : public ::testing::TestWithParam<int>
-{
-public:
-    virtual void SetUp()
-    {}
-
-    virtual void TearDown()
-    {}
 };
 
 #endif //SITEST_SIGRUNLOGTEST_HPP
