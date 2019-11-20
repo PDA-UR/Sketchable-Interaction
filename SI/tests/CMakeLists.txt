@@ -44,7 +44,9 @@ set(SIUnitTestSrc
         SI/tests/src/sigrun/log/SIGRunLogTest.cpp
         SI/tests/src/sigrun/log/SIGRunLogTest.hpp
         SI/tests/src/sigrun/region/SIGRunRegionTransformTest.cpp
-        SI/tests/src/sigrun/region/SIGRunRegionTransformTest.hpp)
+        SI/tests/src/sigrun/region/SIGRunRegionTransformTest.hpp
+        SI/tests/src/sigrun/region/SIGRunRegionMaskTest.cpp
+        SI/tests/src/sigrun/region/SIGRunRegionMaskTest.hpp)
 
 add_executable(run_unit_tests ${SIUnitTestSrc})
 target_link_libraries(run_unit_tests ${GLEW_LIBRARY} ${OPENGL_LIBRARIES} ${SDL2_LIBRARIES} ${PYTHON_LIBRARIES} ${Boost_LIBRARIES} gtest gtest_main gmock gmock_main pthread -ldl -lutil SIGeneralRuntime)
