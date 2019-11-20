@@ -56,7 +56,9 @@ set(SIGRunSRC
         SI/src/sigrun/plugin/PythonInvoker.hpp
         SI/src/sigrun/SIObject.hpp
         SI/src/sigrun/region/RegionTransform.cpp
-        SI/src/sigrun/region/RegionTransform.hpp)
+        SI/src/sigrun/region/RegionTransform.hpp
+        SI/src/sigrun/region/RegionMask.cpp
+        SI/src/sigrun/region/RegionMask.hpp)
 
 add_library(SIGeneralRuntime SHARED ${SIGRunSRC})
 
