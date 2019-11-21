@@ -53,6 +53,7 @@ TEST_F(SIGRunRegionMaskTest, test_bit_index)
 
     rm.set_bit(500 * (0 - 100) + 700 - 100);
 
+
     ASSERT_FALSE(rm[500 * (0 - 100) + 700 - 100]);
 }
 

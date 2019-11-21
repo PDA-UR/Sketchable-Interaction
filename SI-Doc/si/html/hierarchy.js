@@ -6,6 +6,7 @@ var hierarchy =
       [ "Print", "class_print.html", null ]
     ] ],
     [ "PythonInvoker", "class_python_invoker.html", null ],
+    [ "RegionMask", "class_region_mask.html", null ],
     [ "RegionTransform", "class_region_transform.html", null ],
     [ "Scripting", "class_scripting.html", null ],
     [ "SIGRun", "class_s_i_g_run.html", null ],
