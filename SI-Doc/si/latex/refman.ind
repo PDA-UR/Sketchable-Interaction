@@ -1,47 +1,51 @@
 \begin{theindex}
 
   \item {/home/juergen/1\_dev/projects/Sketchable-\/Interaction/SI/src/SIGRun.cpp}, 
-		\hyperpage{38}
+		\hyperpage{46}
   \item {/home/juergen/1\_dev/projects/Sketchable-\/Interaction/SI/src/SIGRun.hpp}, 
-		\hyperpage{39}
+		\hyperpage{47}
   \item {/home/juergen/1\_dev/projects/Sketchable-\/Interaction/SI/src/debug/Print.cpp}, 
-		\hyperpage{35}
+		\hyperpage{43}
   \item {/home/juergen/1\_dev/projects/Sketchable-\/Interaction/SI/src/debug/Print.hpp}, 
-		\hyperpage{35}
+		\hyperpage{43}
   \item {/home/juergen/1\_dev/projects/Sketchable-\/Interaction/SI/src/pysi/SuperEffect.cpp}, 
-		\hyperpage{36}
+		\hyperpage{44}
   \item {/home/juergen/1\_dev/projects/Sketchable-\/Interaction/SI/src/pysi/SuperEffect.hpp}, 
-		\hyperpage{37}
+		\hyperpage{45}
   \item {/home/juergen/1\_dev/projects/Sketchable-\/Interaction/SI/src/sigrun/Core.cpp}, 
-		\hyperpage{40}
+		\hyperpage{48}
   \item {/home/juergen/1\_dev/projects/Sketchable-\/Interaction/SI/src/sigrun/Core.hpp}, 
-		\hyperpage{40}
+		\hyperpage{48}
   \item {/home/juergen/1\_dev/projects/Sketchable-\/Interaction/SI/src/sigrun/SIObject.hpp}, 
-		\hyperpage{58}
+		\hyperpage{67}
   \item {/home/juergen/1\_dev/projects/Sketchable-\/Interaction/SI/src/sigrun/log/Log.cpp}, 
-		\hyperpage{42}
+		\hyperpage{50}
   \item {/home/juergen/1\_dev/projects/Sketchable-\/Interaction/SI/src/sigrun/log/Log.hpp}, 
-		\hyperpage{42}
+		\hyperpage{50}
   \item {/home/juergen/1\_dev/projects/Sketchable-\/Interaction/SI/src/sigrun/plugin/PluginCollector.cpp}, 
-		\hyperpage{50}
+		\hyperpage{58}
   \item {/home/juergen/1\_dev/projects/Sketchable-\/Interaction/SI/src/sigrun/plugin/PluginCollector.hpp}, 
-		\hyperpage{50}
+		\hyperpage{58}
   \item {/home/juergen/1\_dev/projects/Sketchable-\/Interaction/SI/src/sigrun/plugin/PythonInvoker.cpp}, 
-		\hyperpage{52}
+		\hyperpage{60}
   \item {/home/juergen/1\_dev/projects/Sketchable-\/Interaction/SI/src/sigrun/plugin/PythonInvoker.hpp}, 
-		\hyperpage{52}
+		\hyperpage{60}
   \item {/home/juergen/1\_dev/projects/Sketchable-\/Interaction/SI/src/sigrun/plugin/Scripting.cpp}, 
-		\hyperpage{53}
+		\hyperpage{61}
   \item {/home/juergen/1\_dev/projects/Sketchable-\/Interaction/SI/src/sigrun/plugin/Scripting.hpp}, 
-		\hyperpage{54}
+		\hyperpage{62}
+  \item {/home/juergen/1\_dev/projects/Sketchable-\/Interaction/SI/src/sigrun/region/RegionMask.cpp}, 
+		\hyperpage{63}
+  \item {/home/juergen/1\_dev/projects/Sketchable-\/Interaction/SI/src/sigrun/region/RegionMask.hpp}, 
+		\hyperpage{64}
   \item {/home/juergen/1\_dev/projects/Sketchable-\/Interaction/SI/src/sigrun/region/RegionTransform.cpp}, 
-		\hyperpage{56}
+		\hyperpage{65}
   \item {/home/juergen/1\_dev/projects/Sketchable-\/Interaction/SI/src/sigrun/region/RegionTransform.hpp}, 
-		\hyperpage{56}
+		\hyperpage{66}
   \item {\_\_DEBUG\_\_}
     \subitem {Log}, \hyperpage{16}
   \item {\_\_FILENAME\_\_}
-    \subitem {Log.hpp}, \hyperpage{44}
+    \subitem {Log.hpp}, \hyperpage{52}
   \item {$\sim$Core}
     \subitem {Core}, \hyperpage{8}
   \item {$\sim$PluginCollector}
@@ -50,22 +54,26 @@
     \subitem {Print}, \hyperpage{20}
   \item {$\sim$PythonInvoker}
     \subitem {PythonInvoker}, \hyperpage{23}
+  \item {$\sim$RegionMask}
+    \subitem {RegionMask}, \hyperpage{26}
   \item {$\sim$RegionTransform}
-    \subitem {RegionTransform}, \hyperpage{25}
+    \subitem {RegionTransform}, \hyperpage{33}
   \item {$\sim$SIGRun}
-    \subitem {SIGRun}, \hyperpage{30}
+    \subitem {SIGRun}, \hyperpage{38}
   \item {$\sim$SIObject}
-    \subitem {SIObject}, \hyperpage{32}
+    \subitem {SIObject}, \hyperpage{40}
   \item {$\sim$Scripting}
-    \subitem {Scripting}, \hyperpage{28}
+    \subitem {Scripting}, \hyperpage{35}
 
   \indexspace
 
   \item {BOOST\_PYTHON\_MODULE}
-    \subitem {SuperEffect.cpp}, \hyperpage{37}
+    \subitem {SuperEffect.cpp}, \hyperpage{45}
 
   \indexspace
 
+  \item {clear\_bit}
+    \subitem {RegionMask}, \hyperpage{27}
   \item {collect}
     \subitem {PluginCollector}, \hyperpage{18}
   \item {CONSOLE}
@@ -87,12 +95,12 @@
   \indexspace
 
   \item {d\_meta\_type}
-    \subitem {SIObject}, \hyperpage{33}
+    \subitem {SIObject}, \hyperpage{41}
   \item {DEBUG}
     \subitem {Log}, \hyperpage{14}
-    \subitem {Log.hpp}, \hyperpage{44}
+    \subitem {Log.hpp}, \hyperpage{52}
   \item {DEBUG\_COLOR}
-    \subitem {Log.hpp}, \hyperpage{45}
+    \subitem {Log.hpp}, \hyperpage{53}
   \item {DEBUG\_LEVEL}
     \subitem {Log}, \hyperpage{13}
 
@@ -100,13 +108,13 @@
 
   \item {ERROR}
     \subitem {Log}, \hyperpage{14}
-    \subitem {Log.hpp}, \hyperpage{45}
+    \subitem {Log.hpp}, \hyperpage{53}
   \item {ERROR\_COLOR}
-    \subitem {Log.hpp}, \hyperpage{45}
+    \subitem {Log.hpp}, \hyperpage{53}
   \item {ERROR\_LEVEL}
     \subitem {Log}, \hyperpage{13}
   \item {exec}
-    \subitem {SIGRun}, \hyperpage{30}
+    \subitem {SIGRun}, \hyperpage{38}
 
   \indexspace
 
@@ -117,18 +125,20 @@
 
   \indexspace
 
+  \item {height}
+    \subitem {RegionMask}, \hyperpage{28}
   \item {HIDDEN}
     \subitem {Log}, \hyperpage{14}
 
   \indexspace
 
   \item {import}
-    \subitem {Scripting}, \hyperpage{28}
+    \subitem {Scripting}, \hyperpage{36}
   \item {INFO}
     \subitem {Log}, \hyperpage{14}
-    \subitem {Log.hpp}, \hyperpage{46}
+    \subitem {Log.hpp}, \hyperpage{54}
   \item {INFO\_COLOR}
-    \subitem {Log.hpp}, \hyperpage{46}
+    \subitem {Log.hpp}, \hyperpage{54}
   \item {INFO\_LEVEL}
     \subitem {Log}, \hyperpage{13}
   \item {invoke\_extract\_attribute}
@@ -145,9 +155,9 @@
   \indexspace
 
   \item {load\_class\_names}
-    \subitem {Scripting}, \hyperpage{28}
+    \subitem {Scripting}, \hyperpage{36}
   \item {load\_plugin\_source}
-    \subitem {Scripting}, \hyperpage{28}
+    \subitem {Scripting}, \hyperpage{36}
   \item {Log}, \hyperpage{12}
     \subitem {\_\_DEBUG\_\_}, \hyperpage{16}
     \subitem {CONSOLE}, \hyperpage{14}
@@ -176,30 +186,30 @@
   \item {log}
     \subitem {Log}, \hyperpage{14}
   \item {Log.hpp}
-    \subitem {\_\_FILENAME\_\_}, \hyperpage{44}
-    \subitem {DEBUG}, \hyperpage{44}
-    \subitem {DEBUG\_COLOR}, \hyperpage{45}
-    \subitem {ERROR}, \hyperpage{45}
-    \subitem {ERROR\_COLOR}, \hyperpage{45}
-    \subitem {INFO}, \hyperpage{46}
-    \subitem {INFO\_COLOR}, \hyperpage{46}
-    \subitem {LOG\_CONSOLE}, \hyperpage{46}
-    \subitem {LOG\_FILE}, \hyperpage{47}
-    \subitem {LOG\_NONE}, \hyperpage{47}
-    \subitem {LOG\_SHOW\_ALL}, \hyperpage{47}
-    \subitem {LOG\_SHOW\_DEBUG}, \hyperpage{47}
-    \subitem {LOG\_SHOW\_ERROR}, \hyperpage{47}
-    \subitem {LOG\_SHOW\_INFO}, \hyperpage{48}
-    \subitem {LOG\_SHOW\_NONE}, \hyperpage{48}
-    \subitem {LOG\_SHOW\_WARN}, \hyperpage{48}
-    \subitem {UNDEFINED}, \hyperpage{48}
-    \subitem {UNDEFINED\_COLOR}, \hyperpage{49}
-    \subitem {WARN}, \hyperpage{49}
-    \subitem {WARN\_COLOR}, \hyperpage{50}
+    \subitem {\_\_FILENAME\_\_}, \hyperpage{52}
+    \subitem {DEBUG}, \hyperpage{52}
+    \subitem {DEBUG\_COLOR}, \hyperpage{53}
+    \subitem {ERROR}, \hyperpage{53}
+    \subitem {ERROR\_COLOR}, \hyperpage{53}
+    \subitem {INFO}, \hyperpage{54}
+    \subitem {INFO\_COLOR}, \hyperpage{54}
+    \subitem {LOG\_CONSOLE}, \hyperpage{54}
+    \subitem {LOG\_FILE}, \hyperpage{55}
+    \subitem {LOG\_NONE}, \hyperpage{55}
+    \subitem {LOG\_SHOW\_ALL}, \hyperpage{55}
+    \subitem {LOG\_SHOW\_DEBUG}, \hyperpage{55}
+    \subitem {LOG\_SHOW\_ERROR}, \hyperpage{55}
+    \subitem {LOG\_SHOW\_INFO}, \hyperpage{56}
+    \subitem {LOG\_SHOW\_NONE}, \hyperpage{56}
+    \subitem {LOG\_SHOW\_WARN}, \hyperpage{56}
+    \subitem {UNDEFINED}, \hyperpage{56}
+    \subitem {UNDEFINED\_COLOR}, \hyperpage{57}
+    \subitem {WARN}, \hyperpage{57}
+    \subitem {WARN\_COLOR}, \hyperpage{58}
   \item {LOG\_CONSOLE}
-    \subitem {Log.hpp}, \hyperpage{46}
+    \subitem {Log.hpp}, \hyperpage{54}
   \item {LOG\_FILE}
-    \subitem {Log.hpp}, \hyperpage{47}
+    \subitem {Log.hpp}, \hyperpage{55}
   \item {log\_file\_path}
     \subitem {Log}, \hyperpage{16}
   \item {LOG\_LEVEL}
@@ -207,26 +217,28 @@
   \item {log\_level}
     \subitem {Log}, \hyperpage{15}
   \item {LOG\_NONE}
-    \subitem {Log.hpp}, \hyperpage{47}
+    \subitem {Log.hpp}, \hyperpage{55}
   \item {LOG\_SHOW\_ALL}
-    \subitem {Log.hpp}, \hyperpage{47}
+    \subitem {Log.hpp}, \hyperpage{55}
   \item {LOG\_SHOW\_DEBUG}
-    \subitem {Log.hpp}, \hyperpage{47}
+    \subitem {Log.hpp}, \hyperpage{55}
   \item {LOG\_SHOW\_ERROR}
-    \subitem {Log.hpp}, \hyperpage{47}
+    \subitem {Log.hpp}, \hyperpage{55}
   \item {LOG\_SHOW\_INFO}
-    \subitem {Log.hpp}, \hyperpage{48}
+    \subitem {Log.hpp}, \hyperpage{56}
   \item {LOG\_SHOW\_NONE}
-    \subitem {Log.hpp}, \hyperpage{48}
+    \subitem {Log.hpp}, \hyperpage{56}
   \item {LOG\_SHOW\_WARN}
-    \subitem {Log.hpp}, \hyperpage{48}
+    \subitem {Log.hpp}, \hyperpage{56}
 
   \indexspace
 
   \item {meta\_type}
-    \subitem {SIObject}, \hyperpage{33}
+    \subitem {SIObject}, \hyperpage{40}
   \item {MODE}
     \subitem {Log}, \hyperpage{13}
+  \item {move}
+    \subitem {RegionMask}, \hyperpage{28}
 
   \indexspace
 
@@ -237,23 +249,24 @@
 
   \item {on\_continuous}
     \subitem {PySIEffect}, \hyperpage{22}
-    \subitem {SuperEffect}, \hyperpage{34}
+    \subitem {SuperEffect}, \hyperpage{42}
   \item {on\_enter}
     \subitem {PySIEffect}, \hyperpage{22}
-    \subitem {SuperEffect}, \hyperpage{34}
+    \subitem {SuperEffect}, \hyperpage{42}
   \item {on\_leave}
     \subitem {PySIEffect}, \hyperpage{22}
-    \subitem {SuperEffect}, \hyperpage{34}
+    \subitem {SuperEffect}, \hyperpage{42}
   \item {operator$<$$<$}
-    \subitem {Scripting}, \hyperpage{29}
-    \subitem {Scripting.cpp}, \hyperpage{54}
+    \subitem {Scripting}, \hyperpage{37}
+    \subitem {Scripting.cpp}, \hyperpage{62}
   \item {operator[]}
-    \subitem {RegionTransform}, \hyperpage{26}
+    \subitem {RegionMask}, \hyperpage{28, 29}
+    \subitem {RegionTransform}, \hyperpage{33}
 
   \indexspace
 
   \item {PI\_DIV\_180}
-    \subitem {RegionTransform.hpp}, \hyperpage{57}
+    \subitem {RegionTransform.hpp}, \hyperpage{67}
   \item {PluginCollector}, \hyperpage{17}
     \subitem {$\sim$PluginCollector}, \hyperpage{18}
     \subitem {collect}, \hyperpage{18}
@@ -265,7 +278,7 @@
   \item {print}
     \subitem {Print}, \hyperpage{20, 21}
   \item {PyInit\_libPySI}
-    \subitem {Scripting.hpp}, \hyperpage{55}
+    \subitem {Scripting.hpp}, \hyperpage{63}
   \item {PySIEffect}, \hyperpage{21}
     \subitem {on\_continuous}, \hyperpage{22}
     \subitem {on\_enter}, \hyperpage{22}
@@ -280,35 +293,48 @@
   \indexspace
 
   \item {quit}
-    \subitem {SIGRun}, \hyperpage{31}
+    \subitem {SIGRun}, \hyperpage{38}
 
   \indexspace
 
-  \item {RegionTransform}, \hyperpage{24}
-    \subitem {$\sim$RegionTransform}, \hyperpage{25}
-    \subitem {operator[]}, \hyperpage{26}
-    \subitem {RegionTransform}, \hyperpage{25}
-    \subitem {transform}, \hyperpage{26}
-    \subitem {update}, \hyperpage{26}
+  \item {RegionMask}, \hyperpage{24}
+    \subitem {$\sim$RegionMask}, \hyperpage{26}
+    \subitem {clear\_bit}, \hyperpage{27}
+    \subitem {height}, \hyperpage{28}
+    \subitem {move}, \hyperpage{28}
+    \subitem {operator[]}, \hyperpage{28, 29}
+    \subitem {RegionMask}, \hyperpage{25, 26}
+    \subitem {set\_bit}, \hyperpage{30}
+    \subitem {SIGRunRegionMaskTest}, \hyperpage{31}
+    \subitem {size}, \hyperpage{30}
+    \subitem {width}, \hyperpage{31}
+  \item {RegionTransform}, \hyperpage{32}
+    \subitem {$\sim$RegionTransform}, \hyperpage{33}
+    \subitem {operator[]}, \hyperpage{33}
+    \subitem {RegionTransform}, \hyperpage{32}
+    \subitem {transform}, \hyperpage{34}
+    \subitem {update}, \hyperpage{34}
   \item {RegionTransform.hpp}
-    \subitem {PI\_DIV\_180}, \hyperpage{57}
+    \subitem {PI\_DIV\_180}, \hyperpage{67}
   \item {retrieve\_available\_plugins}
     \subitem {Core}, \hyperpage{9}
 
   \indexspace
 
-  \item {Scripting}, \hyperpage{27}
-    \subitem {$\sim$Scripting}, \hyperpage{28}
-    \subitem {import}, \hyperpage{28}
-    \subitem {load\_class\_names}, \hyperpage{28}
-    \subitem {load\_plugin\_source}, \hyperpage{28}
-    \subitem {operator$<$$<$}, \hyperpage{29}
-    \subitem {Scripting}, \hyperpage{27}
-    \subitem {si\_plugin}, \hyperpage{28}
+  \item {Scripting}, \hyperpage{35}
+    \subitem {$\sim$Scripting}, \hyperpage{35}
+    \subitem {import}, \hyperpage{36}
+    \subitem {load\_class\_names}, \hyperpage{36}
+    \subitem {load\_plugin\_source}, \hyperpage{36}
+    \subitem {operator$<$$<$}, \hyperpage{37}
+    \subitem {Scripting}, \hyperpage{35}
+    \subitem {si\_plugin}, \hyperpage{36}
   \item {Scripting.cpp}
-    \subitem {operator$<$$<$}, \hyperpage{54}
+    \subitem {operator$<$$<$}, \hyperpage{62}
   \item {Scripting.hpp}
-    \subitem {PyInit\_libPySI}, \hyperpage{55}
+    \subitem {PyInit\_libPySI}, \hyperpage{63}
+  \item {set\_bit}
+    \subitem {RegionMask}, \hyperpage{30}
   \item {set\_log\_file\_path}
     \subitem {Log}, \hyperpage{16}
   \item {SHOW}
@@ -316,64 +342,70 @@
   \item {SHOW\_TYPE}
     \subitem {Log}, \hyperpage{14}
   \item {si\_plugin}
-    \subitem {Scripting}, \hyperpage{28}
-  \item {SIGRun}, \hyperpage{29}
-    \subitem {$\sim$SIGRun}, \hyperpage{30}
+    \subitem {Scripting}, \hyperpage{36}
+  \item {SIGRun}, \hyperpage{37}
+    \subitem {$\sim$SIGRun}, \hyperpage{38}
     \subitem {Core}, \hyperpage{10}
-    \subitem {exec}, \hyperpage{30}
-    \subitem {quit}, \hyperpage{31}
-    \subitem {SIGRun}, \hyperpage{30}
+    \subitem {exec}, \hyperpage{38}
+    \subitem {quit}, \hyperpage{38}
+    \subitem {SIGRun}, \hyperpage{38}
   \item {SIGRunCoreTest}
     \subitem {Core}, \hyperpage{10}
+  \item {SIGRunRegionMaskTest}
+    \subitem {RegionMask}, \hyperpage{31}
   \item {SIGRunTest}
     \subitem {Core}, \hyperpage{10}
   \item {SIOBJECT}
-    \subitem {SIObject.hpp}, \hyperpage{59}
-  \item {SIObject}, \hyperpage{31}
-    \subitem {$\sim$SIObject}, \hyperpage{32}
-    \subitem {d\_meta\_type}, \hyperpage{33}
-    \subitem {meta\_type}, \hyperpage{33}
-    \subitem {SIObject}, \hyperpage{32}
+    \subitem {SIObject.hpp}, \hyperpage{68}
+  \item {SIObject}, \hyperpage{39}
+    \subitem {$\sim$SIObject}, \hyperpage{40}
+    \subitem {d\_meta\_type}, \hyperpage{41}
+    \subitem {meta\_type}, \hyperpage{40}
+    \subitem {SIObject}, \hyperpage{40}
   \item {SIObject.hpp}
-    \subitem {SIOBJECT}, \hyperpage{59}
+    \subitem {SIOBJECT}, \hyperpage{68}
+  \item {size}
+    \subitem {RegionMask}, \hyperpage{30}
   \item {start}
     \subitem {Core}, \hyperpage{9}
   \item {stop}
     \subitem {Core}, \hyperpage{9}
-  \item {SuperEffect}, \hyperpage{33}
-    \subitem {on\_continuous}, \hyperpage{34}
-    \subitem {on\_enter}, \hyperpage{34}
-    \subitem {on\_leave}, \hyperpage{34}
+  \item {SuperEffect}, \hyperpage{41}
+    \subitem {on\_continuous}, \hyperpage{42}
+    \subitem {on\_enter}, \hyperpage{42}
+    \subitem {on\_leave}, \hyperpage{42}
   \item {SuperEffect.cpp}
-    \subitem {BOOST\_PYTHON\_MODULE}, \hyperpage{37}
+    \subitem {BOOST\_PYTHON\_MODULE}, \hyperpage{45}
 
   \indexspace
 
   \item {time}
     \subitem {Log}, \hyperpage{16}
   \item {transform}
-    \subitem {RegionTransform}, \hyperpage{26}
+    \subitem {RegionTransform}, \hyperpage{34}
 
   \indexspace
 
   \item {UNDEFINED}
     \subitem {Log}, \hyperpage{14}
-    \subitem {Log.hpp}, \hyperpage{48}
+    \subitem {Log.hpp}, \hyperpage{56}
   \item {UNDEFINED\_COLOR}
-    \subitem {Log.hpp}, \hyperpage{49}
+    \subitem {Log.hpp}, \hyperpage{57}
   \item {UNDEFINED\_LEVEL}
     \subitem {Log}, \hyperpage{13}
   \item {update}
-    \subitem {RegionTransform}, \hyperpage{26}
+    \subitem {RegionTransform}, \hyperpage{34}
 
   \indexspace
 
   \item {WARN}
     \subitem {Log}, \hyperpage{14}
-    \subitem {Log.hpp}, \hyperpage{49}
+    \subitem {Log.hpp}, \hyperpage{57}
   \item {WARN\_COLOR}
-    \subitem {Log.hpp}, \hyperpage{50}
+    \subitem {Log.hpp}, \hyperpage{58}
   \item {WARN\_LEVEL}
     \subitem {Log}, \hyperpage{13}
+  \item {width}
+    \subitem {RegionMask}, \hyperpage{31}
 
 \end{theindex}

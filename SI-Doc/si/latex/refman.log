@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019/Debian) (preloaded format=pdflatex 2019.11.18)  19 NOV 2019 14:59
+This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019/Debian) (preloaded format=pdflatex 2019.11.18)  21 NOV 2019 11:58
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1024,7 +1024,7 @@ LaTeX Font Info:    Trying to load font information for T1+pcr on input line 15
 
 (/usr/share/texlive/texmf-dist/tex/latex/psnfss/t1pcr.fd
 File: t1pcr.fd 2001/06/04 font definitions for T1/pcr.
-) [2] [3]
+) [2] [3] [4]
 Underfull \hbox (badness 6078) in paragraph at lines 157--157
  [][] [][]\T1/phv/m/n/10 5.11 /home/juergen/1[]_[]dev/projects/[]Sketchable-[]I
 nteraction/[]S[]I/src/sigrun/plugin/[]Plugin[]Collector.cpp File 
@@ -1048,10 +1048,6 @@ Underfull \hbox (badness 10000) in paragraph at lines 157--157
 nteraction/[]S[]I/src/sigrun/plugin/[]Python[]Invoker.hpp File 
  []
 
-
-Underfull \vbox (badness 4647) has occurred while \output is active []
-
- [4]
 [5] [6
 
 ]
@@ -1100,7 +1096,7 @@ Chapter 4.
 pdfTeX warning: pdflatex (file ./class_core__inherit__graph.pdf): PDF inclusion
 : multiple pdfs with page group included in a single page
 >
-<class_core__inherit__graph.pdf, id=1029, 135.50626pt x 156.585pt>
+<class_core__inherit__graph.pdf, id=1148, 135.50626pt x 156.585pt>
 File: class_core__inherit__graph.pdf Graphic file (type pdf)
 <use class_core__inherit__graph.pdf>
 Package pdftex.def Info: class_core__inherit__graph.pdf  used on input line 18.
@@ -1111,7 +1107,7 @@ Package pdftex.def Info: class_core__inherit__graph.pdf  used on input line 18.
 pdfTeX warning: pdflatex (file ./class_core__coll__graph.pdf): PDF inclusion: m
 ultiple pdfs with page group included in a single page
 >
-<class_core__coll__graph.pdf, id=1037, 135.50626pt x 156.585pt>
+<class_core__coll__graph.pdf, id=1156, 135.50626pt x 156.585pt>
 File: class_core__coll__graph.pdf Graphic file (type pdf)
 <use class_core__coll__graph.pdf>
 Package pdftex.def Info: class_core__coll__graph.pdf  used on input line 27.
@@ -1186,7 +1182,7 @@ df
 pdfTeX warning: pdflatex (file ./class_plugin_collector__inherit__graph.pdf): P
 DF inclusion: multiple pdfs with page group included in a single page
 >
-<class_plugin_collector__inherit__graph.pdf, id=1237, 163.61125pt x 156.585pt>
+<class_plugin_collector__inherit__graph.pdf, id=1356, 163.61125pt x 156.585pt>
 File: class_plugin_collector__inherit__graph.pdf Graphic file (type pdf)
 <use class_plugin_collector__inherit__graph.pdf>
 Package pdftex.def Info: class_plugin_collector__inherit__graph.pdf  used on in
@@ -1197,14 +1193,14 @@ put line 13.
 pdfTeX warning: pdflatex (file ./class_plugin_collector__coll__graph.pdf): PDF 
 inclusion: multiple pdfs with page group included in a single page
 >
-<class_plugin_collector__coll__graph.pdf, id=1243, 163.61125pt x 156.585pt>
+<class_plugin_collector__coll__graph.pdf, id=1362, 163.61125pt x 156.585pt>
 File: class_plugin_collector__coll__graph.pdf Graphic file (type pdf)
 <use class_plugin_collector__coll__graph.pdf>
 Package pdftex.def Info: class_plugin_collector__coll__graph.pdf  used on input
  line 22.
 (pdftex.def)             Requested size: 163.0pt x 155.99922pt.
  [17]) (./class_print.tex <./class_print__inherit__graph.pdf>
-<class_print__inherit__graph.pdf, id=1262, 175.65625pt x 156.585pt>
+<class_print__inherit__graph.pdf, id=1381, 175.65625pt x 156.585pt>
 File: class_print__inherit__graph.pdf Graphic file (type pdf)
 <use class_print__inherit__graph.pdf>
 Package pdftex.def Info: class_print__inherit__graph.pdf  used on input line 13
@@ -1215,7 +1211,7 @@ Package pdftex.def Info: class_print__inherit__graph.pdf  used on input line 13
 pdfTeX warning: pdflatex (file ./class_print__coll__graph.pdf): PDF inclusion: 
 multiple pdfs with page group included in a single page
 >
-<class_print__coll__graph.pdf, id=1276, 175.65625pt x 156.585pt>
+<class_print__coll__graph.pdf, id=1395, 175.65625pt x 156.585pt>
 File: class_print__coll__graph.pdf Graphic file (type pdf)
 <use class_print__coll__graph.pdf>
 Package pdftex.def Info: class_print__coll__graph.pdf  used on input line 22.
@@ -1233,7 +1229,7 @@ LaTeX Font Warning: Font shape `T1/pcr/bc/n' undefined
 pdfTeX warning: pdflatex (file ./class_py_s_i_effect__inherit__graph.pdf): PDF 
 inclusion: multiple pdfs with page group included in a single page
 >
-<class_py_s_i_effect__inherit__graph.pdf, id=1310, 305.14pt x 156.585pt>
+<class_py_s_i_effect__inherit__graph.pdf, id=1428, 305.14pt x 156.585pt>
 File: class_py_s_i_effect__inherit__graph.pdf Graphic file (type pdf)
 <use class_py_s_i_effect__inherit__graph.pdf>
 Package pdftex.def Info: class_py_s_i_effect__inherit__graph.pdf  used on input
@@ -1244,14 +1240,116 @@ Package pdftex.def Info: class_py_s_i_effect__inherit__graph.pdf  used on input
 pdfTeX warning: pdflatex (file ./class_py_s_i_effect__coll__graph.pdf): PDF inc
 lusion: multiple pdfs with page group included in a single page
 >
-<class_py_s_i_effect__coll__graph.pdf, id=1316, 305.14pt x 156.585pt>
+<class_py_s_i_effect__coll__graph.pdf, id=1434, 305.14pt x 156.585pt>
 File: class_py_s_i_effect__coll__graph.pdf Graphic file (type pdf)
 <use class_py_s_i_effect__coll__graph.pdf>
 Package pdftex.def Info: class_py_s_i_effect__coll__graph.pdf  used on input li
 ne 22.
 (pdftex.def)             Requested size: 304.0pt x 156.0064pt.
- [21]) (./class_python_invoker.tex [22] [23]) (./class_region_transform.tex
+ [21]) (./class_python_invoker.tex [22] [23]) (./class_region_mask.tex
 [24]
+Underfull \hbox (badness 2426) in paragraph at lines 51--55
+[] \T1/phv/m/n/10 class stor-ing a bit ar-ray as std[]::vector$\OML/cmm/m/it/10
+ <$\T1/phv/m/n/10 bool$\OML/cmm/m/it/10 >$\T1/phv/m/n/10 . std[]::vector$\OML/c
+mm/m/it/10 <$\T1/phv/m/n/10 bool$\OML/cmm/m/it/10 >$ \T1/phv/m/n/10 has a spe-c
+ial im-ple-
+ []
+
+
+Underfull \hbox (badness 2326) in paragraph at lines 51--55
+\T1/phv/m/n/10 men-ta-tion where its bool is stored in ex-actly one bit. See[]:
+ [][] \T1/pcr/m/n/10 https[]://en.[]cppreference.[]
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 51--55
+
+ []
+
+[25]
+Underfull \hbox (badness 10000) detected at line 85
+[][][]
+ []
+
+
+Underfull \hbox (badness 10000) detected at line 123
+[][][]
+ []
+
+[26]
+Underfull \hbox (badness 10000) detected at line 180
+[][][]
+ []
+
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+ [27]
+Underfull \hbox (badness 10000) detected at line 204
+[][][]
+ []
+
+
+Underfull \hbox (badness 10000) detected at line 223
+[][][]
+ []
+
+
+Underfull \hbox (badness 10000) detected at line 226
+[][][]
+ []
+
+[28]
+Underfull \hbox (badness 10000) detected at line 271
+[][][]
+ []
+
+
+Underfull \hbox (badness 10000) detected at line 274
+[][][]
+ []
+
+
+Underfull \hbox (badness 10000) detected at line 298
+[][][]
+ []
+
+
+Underfull \hbox (badness 10000) detected at line 301
+[][][]
+ []
+
+[29]
+Underfull \hbox (badness 10000) detected at line 331
+[][][]
+ []
+
+
+Underfull \hbox (badness 10000) detected at line 355
+[][][]
+ []
+
+[30]
+Underfull \hbox (badness 10000) detected at line 380
+[][][]
+ []
+
+
+Underfull \hbox (badness 10000) detected at line 383
+[][][]
+ []
+
+
+Underfull \hbox (badness 10000) detected at line 396
+[][][]
+ []
+
+
+Underfull \hbox (badness 10000) detected at line 399
+[][][]
+ []
+
+) (./class_region_transform.tex [31]
 Underfull \hbox (badness 10000) detected at line 32
 [][][]
  []
@@ -1261,7 +1359,7 @@ Underfull \hbox (badness 10000) detected at line 62
 [][][]
  []
 
-[25]
+[32] [33]
 Underfull \hbox (badness 10000) detected at line 109
 [][][]
  []
@@ -1281,56 +1379,56 @@ Underfull \hbox (badness 10000) detected at line 128
 [][][]
  []
 
-[26]
+[34]
 Underfull \hbox (badness 10000) detected at line 156
 [][][]
  []
 
-) (./class_scripting.tex [27] [28]) (./class_s_i_g_run.tex
+) (./class_scripting.tex [35] [36]) (./class_s_i_g_run.tex
 Underfull \hbox (badness 10000) detected at line 31
 [][][]
  []
 
-[29] [30]) (./class_s_i_object.tex <./class_s_i_object__inherit__graph.pdf
+[37] [38]) (./class_s_i_object.tex <./class_s_i_object__inherit__graph.pdf
 
 pdfTeX warning: pdflatex (file ./class_s_i_object__inherit__graph.pdf): PDF inc
 lusion: multiple pdfs with page group included in a single page
 >
-<class_s_i_object__inherit__graph.pdf, id=1455, 220.825pt x 156.585pt>
+<class_s_i_object__inherit__graph.pdf, id=1664, 220.825pt x 156.585pt>
 File: class_s_i_object__inherit__graph.pdf Graphic file (type pdf)
 <use class_s_i_object__inherit__graph.pdf>
 Package pdftex.def Info: class_s_i_object__inherit__graph.pdf  used on input li
 ne 18.
 (pdftex.def)             Requested size: 220.0pt x 156.0064pt.
- [31]
+ [39]
 Underfull \hbox (badness 10000) detected at line 42
 [][][]
  []
 
-[32]
+
 Underfull \hbox (badness 10000) detected at line 87
 [][][]
  []
 
-) (./class_super_effect.tex <./class_super_effect__inherit__graph.pdf
+[40]) (./class_super_effect.tex <./class_super_effect__inherit__graph.pdf
 
 pdfTeX warning: pdflatex (file ./class_super_effect__inherit__graph.pdf): PDF i
 nclusion: multiple pdfs with page group included in a single page
 >
-<class_super_effect__inherit__graph.pdf, id=1489, 148.555pt x 156.585pt>
+<class_super_effect__inherit__graph.pdf, id=1697, 148.555pt x 156.585pt>
 File: class_super_effect__inherit__graph.pdf Graphic file (type pdf)
 <use class_super_effect__inherit__graph.pdf>
 Package pdftex.def Info: class_super_effect__inherit__graph.pdf  used on input 
 line 13.
 (pdftex.def)             Requested size: 148.0pt x 156.0064pt.
- [33]) [34]
+ [41]) [42]
 Chapter 5.
 (./_print_8cpp.tex <./_print_8cpp__incl.pdf
 
 pdfTeX warning: pdflatex (file ./_print_8cpp__incl.pdf): PDF inclusion: multipl
 e pdfs with page group included in a single page
 >
-<_print_8cpp__incl.pdf, id=1513, 487.8225pt x 245.91875pt>
+<_print_8cpp__incl.pdf, id=1722, 487.8225pt x 245.91875pt>
 File: _print_8cpp__incl.pdf Graphic file (type pdf)
 <use _print_8cpp__incl.pdf>
 Package pdftex.def Info: _print_8cpp__incl.pdf  used on input line 8.
@@ -1340,15 +1438,15 @@ Package pdftex.def Info: _print_8cpp__incl.pdf  used on input line 8.
 pdfTeX warning: pdflatex (file ./_print_8hpp__incl.pdf): PDF inclusion: multipl
 e pdfs with page group included in a single page
 >
-<_print_8hpp__incl.pdf, id=1519, 487.8225pt x 189.70876pt>
+<_print_8hpp__incl.pdf, id=1728, 487.8225pt x 189.70876pt>
 File: _print_8hpp__incl.pdf Graphic file (type pdf)
 <use _print_8hpp__incl.pdf>
 Package pdftex.def Info: _print_8hpp__incl.pdf  used on input line 13.
 (pdftex.def)             Requested size: 350.0pt x 136.11256pt.
- [35
+ [43
 
 ] <./_print_8hpp__dep__incl.pdf>
-<_print_8hpp__dep__incl.pdf, id=1532, 809.0225pt x 312.16624pt>
+<_print_8hpp__dep__incl.pdf, id=1740, 809.0225pt x 312.16624pt>
 File: _print_8hpp__dep__incl.pdf Graphic file (type pdf)
 <use _print_8hpp__dep__incl.pdf>
 Package pdftex.def Info: _print_8hpp__dep__incl.pdf  used on input line 20.
@@ -1358,25 +1456,25 @@ Package pdftex.def Info: _print_8hpp__dep__incl.pdf  used on input line 20.
 pdfTeX warning: pdflatex (file ./_super_effect_8cpp__incl.pdf): PDF inclusion: 
 multiple pdfs with page group included in a single page
 >
-<_super_effect_8cpp__incl.pdf, id=1539, 512.91624pt x 268.00125pt>
+<_super_effect_8cpp__incl.pdf, id=1747, 512.91624pt x 268.00125pt>
 File: _super_effect_8cpp__incl.pdf Graphic file (type pdf)
 <use _super_effect_8cpp__incl.pdf>
 Package pdftex.def Info: _super_effect_8cpp__incl.pdf  used on input line 11.
 (pdftex.def)             Requested size: 350.0pt x 182.87636pt.
- [36]) (./_super_effect_8hpp.tex
+ [44]) (./_super_effect_8hpp.tex
 Underfull \hbox (badness 10000) in paragraph at lines 1--1
 []\T1/phv/bc/n/14.4 /home/juergen/1[]_[]dev/projects/[]Sketchable-[]Interaction
 /[]S[]I/src/pysi/[]Super[]Effect.hpp
  []
 
  <./_super_effect_8hpp__incl.pdf>
-<_super_effect_8hpp__incl.pdf, id=1554, 196.735pt x 189.70876pt>
+<_super_effect_8hpp__incl.pdf, id=1762, 196.735pt x 189.70876pt>
 File: _super_effect_8hpp__incl.pdf Graphic file (type pdf)
 <use _super_effect_8hpp__incl.pdf>
 Package pdftex.def Info: _super_effect_8hpp__incl.pdf  used on input line 8.
 (pdftex.def)             Requested size: 196.0pt x 188.99907pt.
- [37] <./_super_effect_8hpp__dep__incl.pdf>
-<_super_effect_8hpp__dep__incl.pdf, id=1569, 196.735pt x 222.8325pt>
+ [45] <./_super_effect_8hpp__dep__incl.pdf>
+<_super_effect_8hpp__dep__incl.pdf, id=1776, 196.735pt x 222.8325pt>
 File: _super_effect_8hpp__dep__incl.pdf Graphic file (type pdf)
 <use _super_effect_8hpp__dep__incl.pdf>
 Package pdftex.def Info: _super_effect_8hpp__dep__incl.pdf  used on input line 
@@ -1394,19 +1492,19 @@ Underfull \hbox (badness 3019) in paragraph at lines 1--1
 pdfTeX warning: pdflatex (file ./_s_i_g_run_8cpp__incl.pdf): PDF inclusion: mul
 tiple pdfs with page group included in a single page
 >
-<_s_i_g_run_8cpp__incl.pdf, id=1578, 612.2875pt x 347.2975pt>
+<_s_i_g_run_8cpp__incl.pdf, id=1785, 612.2875pt x 347.2975pt>
 File: _s_i_g_run_8cpp__incl.pdf Graphic file (type pdf)
 <use _s_i_g_run_8cpp__incl.pdf>
 Package pdftex.def Info: _s_i_g_run_8cpp__incl.pdf  used on input line 11.
 (pdftex.def)             Requested size: 350.0pt x 198.52335pt.
-) (./_s_i_g_run_8hpp.tex [38]
+) (./_s_i_g_run_8hpp.tex [46]
 Underfull \hbox (badness 2564) in paragraph at lines 1--1
 []\T1/phv/bc/n/14.4 /home/juergen/1[]_[]dev/projects/[]Sketchable-[]Interaction
 /[]S[]I/src/[]S[]I[]G[]Run.hpp File Ref-er-
  []
 
  <./_s_i_g_run_8hpp__incl.pdf>
-<_s_i_g_run_8hpp__incl.pdf, id=1592, 442.65375pt x 291.0875pt>
+<_s_i_g_run_8hpp__incl.pdf, id=1800, 442.65375pt x 291.0875pt>
 File: _s_i_g_run_8hpp__incl.pdf Graphic file (type pdf)
 <use _s_i_g_run_8hpp__incl.pdf>
 Package pdftex.def Info: _s_i_g_run_8hpp__incl.pdf  used on input line 9.
@@ -1416,7 +1514,7 @@ Package pdftex.def Info: _s_i_g_run_8hpp__incl.pdf  used on input line 9.
 pdfTeX warning: pdflatex (file ./_s_i_g_run_8hpp__dep__incl.pdf): PDF inclusion
 : multiple pdfs with page group included in a single page
 >
-<_s_i_g_run_8hpp__dep__incl.pdf, id=1598, 232.87pt x 200.75pt>
+<_s_i_g_run_8hpp__dep__incl.pdf, id=1806, 232.87pt x 200.75pt>
 File: _s_i_g_run_8hpp__dep__incl.pdf Graphic file (type pdf)
 <use _s_i_g_run_8hpp__dep__incl.pdf>
 Package pdftex.def Info: _s_i_g_run_8hpp__dep__incl.pdf  used on input line 16.
@@ -1425,9 +1523,9 @@ Package pdftex.def Info: _s_i_g_run_8hpp__dep__incl.pdf  used on input line 16.
 
 Underfull \vbox (badness 1412) has occurred while \output is active []
 
- [39])
+ [47])
 (./_core_8cpp.tex <./_core_8cpp__incl.pdf>
-<_core_8cpp__incl.pdf, id=1613, 781.92125pt x 302.12875pt>
+<_core_8cpp__incl.pdf, id=1822, 781.92125pt x 302.12875pt>
 File: _core_8cpp__incl.pdf Graphic file (type pdf)
 <use _core_8cpp__incl.pdf>
 Package pdftex.def Info: _core_8cpp__incl.pdf  used on input line 11.
@@ -1437,13 +1535,13 @@ Package pdftex.def Info: _core_8cpp__incl.pdf  used on input line 11.
 pdfTeX warning: pdflatex (file ./_core_8hpp__incl.pdf): PDF inclusion: multiple
  pdfs with page group included in a single page
 >
-<_core_8hpp__incl.pdf, id=1619, 437.635pt x 245.91875pt>
+<_core_8hpp__incl.pdf, id=1828, 437.635pt x 245.91875pt>
 File: _core_8hpp__incl.pdf Graphic file (type pdf)
 <use _core_8hpp__incl.pdf>
 Package pdftex.def Info: _core_8hpp__incl.pdf  used on input line 11.
 (pdftex.def)             Requested size: 350.0pt x 196.67522pt.
- [40] <./_core_8hpp__dep__incl.pdf>
-<_core_8hpp__dep__incl.pdf, id=1633, 375.4025pt x 301.125pt>
+ [48] <./_core_8hpp__dep__incl.pdf>
+<_core_8hpp__dep__incl.pdf, id=1842, 375.4025pt x 301.125pt>
 File: _core_8hpp__dep__incl.pdf Graphic file (type pdf)
 <use _core_8hpp__dep__incl.pdf>
 Package pdftex.def Info: _core_8hpp__dep__incl.pdf  used on input line 18.
@@ -1459,13 +1557,13 @@ Underfull \hbox (badness 10000) in paragraph at lines 1--1
 pdfTeX warning: pdflatex (file ./_log_8cpp__incl.pdf): PDF inclusion: multiple 
 pdfs with page group included in a single page
 >
-<_log_8cpp__incl.pdf, id=1640, 716.6775pt x 302.12875pt>
+<_log_8cpp__incl.pdf, id=1849, 716.6775pt x 302.12875pt>
 File: _log_8cpp__incl.pdf Graphic file (type pdf)
 <use _log_8cpp__incl.pdf>
 Package pdftex.def Info: _log_8cpp__incl.pdf  used on input line 11.
 (pdftex.def)             Requested size: 350.0pt x 147.55109pt.
- [41]) (./_log_8hpp.tex <./_log_8hpp__incl.pdf>
-<_log_8hpp__incl.pdf, id=1655, 291.0875pt x 245.91875pt>
+ [49]) (./_log_8hpp.tex <./_log_8hpp__incl.pdf>
+<_log_8hpp__incl.pdf, id=1863, 291.0875pt x 245.91875pt>
 File: _log_8hpp__incl.pdf Graphic file (type pdf)
 <use _log_8hpp__incl.pdf>
 Package pdftex.def Info: _log_8hpp__incl.pdf  used on input line 10.
@@ -1475,17 +1573,17 @@ Package pdftex.def Info: _log_8hpp__incl.pdf  used on input line 10.
 pdfTeX warning: pdflatex (file ./_log_8hpp__dep__incl.pdf): PDF inclusion: mult
 iple pdfs with page group included in a single page
 >
-<_log_8hpp__dep__incl.pdf, id=1661, 499.8675pt x 222.8325pt>
+<_log_8hpp__dep__incl.pdf, id=1869, 499.8675pt x 222.8325pt>
 File: _log_8hpp__dep__incl.pdf Graphic file (type pdf)
 <use _log_8hpp__dep__incl.pdf>
 Package pdftex.def Info: _log_8hpp__dep__incl.pdf  used on input line 17.
 (pdftex.def)             Requested size: 350.0pt x 156.02928pt.
- [42]
+ [50]
 Overfull \hbox (15.38531pt too wide) in paragraph at lines 56--57
 []\T1/phv/m/n/10 #define [] [] $\OMS/cmsy/m/n/10 j$ [] $j$ []
  []
 
-[43]
+[51]
 LaTeX Font Info:    Trying to load font information for TS1+pcr on input line 7
 5.
  (/usr/share/texlive/texmf-dist/tex/latex/psnfss/ts1pcr.fd
@@ -1499,7 +1597,7 @@ a[]_[]type(),[],
 
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
- [44]
+ [52]
 Underfull \hbox (badness 10000) detected at line 104
 [][][]
  []
@@ -1515,24 +1613,24 @@ Underfull \hbox (badness 10000) detected at line 148
 [][][]
  []
 
-[45]
+[53]
 Underfull \hbox (badness 10000) detected at line 192
 [][][]
  []
 
-[46]
+[54]
 Overfull \hbox (75.03966pt too wide) in paragraph at lines 263--264
 \T1/pcr/bc/n/8 #define L[]O[]G[]_[][]S[]H[]O[]W[]_[][]A[]LL [] $\OMS/cmsy/m/n/8
  j$ [] $j$ [] $j$ [] 
  []
 
-[47]
+[55]
 Underfull \hbox (badness 10000) in paragraph at lines 347--348
 |   \T1/pcr/m/sl/8 log[]_[]mode \T1/pcr/bc/n/8 ) [](what, [], log[]_[]mode, met
 a[]_[]
  []
 
-[48]
+[56]
 Underfull \hbox (badness 10000) detected at line 362
 [][][]
  []
@@ -1542,7 +1640,7 @@ Underfull \hbox (badness 10000) detected at line 406
 [][][]
  []
 
-[49]) (./_plugin_collector_8cpp.tex
+[57]) (./_plugin_collector_8cpp.tex
 Underfull \hbox (badness 10000) in paragraph at lines 1--1
 []\T1/phv/bc/n/14.4 /home/juergen/1[]_[]dev/projects/[]Sketchable-[]Interaction
 /[]S[]I/src/sigrun/plugin/[]Plugin[]
@@ -1553,7 +1651,7 @@ Underfull \hbox (badness 10000) in paragraph at lines 1--1
 pdfTeX warning: pdflatex (file ./_plugin_collector_8cpp__incl.pdf): PDF inclusi
 on: multiple pdfs with page group included in a single page
 >
-<_plugin_collector_8cpp__incl.pdf, id=1820, 568.1225pt x 302.12875pt>
+<_plugin_collector_8cpp__incl.pdf, id=2028, 568.1225pt x 302.12875pt>
 File: _plugin_collector_8cpp__incl.pdf Graphic file (type pdf)
 <use _plugin_collector_8cpp__incl.pdf>
 Package pdftex.def Info: _plugin_collector_8cpp__incl.pdf  used on input line 1
@@ -1570,14 +1668,14 @@ Underfull \hbox (badness 10000) in paragraph at lines 1--1
 pdfTeX warning: pdflatex (file ./_plugin_collector_8hpp__incl.pdf): PDF inclusi
 on: multiple pdfs with page group included in a single page
 >
-<_plugin_collector_8hpp__incl.pdf, id=1826, 291.0875pt x 245.91875pt>
+<_plugin_collector_8hpp__incl.pdf, id=2034, 291.0875pt x 245.91875pt>
 File: _plugin_collector_8hpp__incl.pdf Graphic file (type pdf)
 <use _plugin_collector_8hpp__incl.pdf>
 Package pdftex.def Info: _plugin_collector_8hpp__incl.pdf  used on input line 1
 0.
 (pdftex.def)             Requested size: 290.0pt x 245.01755pt.
- [50] <./_plugin_collector_8hpp__dep__incl.pdf>
-<_plugin_collector_8hpp__dep__incl.pdf, id=1839, 357.335pt x 222.8325pt>
+ [58] <./_plugin_collector_8hpp__dep__incl.pdf>
+<_plugin_collector_8hpp__dep__incl.pdf, id=2047, 357.335pt x 222.8325pt>
 File: _plugin_collector_8hpp__dep__incl.pdf Graphic file (type pdf)
 <use _plugin_collector_8hpp__dep__incl.pdf>
 Package pdftex.def Info: _plugin_collector_8hpp__dep__incl.pdf  used on input l
@@ -1594,7 +1692,7 @@ Underfull \hbox (badness 10000) in paragraph at lines 1--1
 pdfTeX warning: pdflatex (file ./_python_invoker_8cpp__incl.pdf): PDF inclusion
 : multiple pdfs with page group included in a single page
 >
-<_python_invoker_8cpp__incl.pdf, id=1846, 487.8225pt x 302.12875pt>
+<_python_invoker_8cpp__incl.pdf, id=2054, 487.8225pt x 302.12875pt>
 File: _python_invoker_8cpp__incl.pdf Graphic file (type pdf)
 <use _python_invoker_8cpp__incl.pdf>
 Package pdftex.def Info: _python_invoker_8cpp__incl.pdf  used on input line 8.
@@ -1606,14 +1704,14 @@ Make it at least 22.16548pt.
 We now make it that large for the rest of the document.
 This may cause the page layout to be inconsistent, however.
 
-[51]
+[59]
 Underfull \hbox (badness 10000) in paragraph at lines 1--1
 []\T1/phv/bc/n/14.4 /home/juergen/1[]_[]dev/projects/[]Sketchable-[]Interaction
 /[]S[]I/src/sigrun/plugin/[]Python[]
  []
 
  <./_python_invoker_8hpp__incl.pdf>
-<_python_invoker_8hpp__incl.pdf, id=1861, 487.8225pt x 245.91875pt>
+<_python_invoker_8hpp__incl.pdf, id=2069, 487.8225pt x 245.91875pt>
 File: _python_invoker_8hpp__incl.pdf Graphic file (type pdf)
 <use _python_invoker_8hpp__incl.pdf>
 Package pdftex.def Info: _python_invoker_8hpp__incl.pdf  used on input line 9.
@@ -1623,32 +1721,32 @@ Package pdftex.def Info: _python_invoker_8hpp__incl.pdf  used on input line 9.
 pdfTeX warning: pdflatex (file ./_python_invoker_8hpp__dep__incl.pdf): PDF incl
 usion: multiple pdfs with page group included in a single page
 >
-<_python_invoker_8hpp__dep__incl.pdf, id=1867, 210.7875pt x 222.8325pt>
+<_python_invoker_8hpp__dep__incl.pdf, id=2075, 210.7875pt x 222.8325pt>
 File: _python_invoker_8hpp__dep__incl.pdf Graphic file (type pdf)
 <use _python_invoker_8hpp__dep__incl.pdf>
 Package pdftex.def Info: _python_invoker_8hpp__dep__incl.pdf  used on input lin
 e 16.
 (pdftex.def)             Requested size: 210.0pt x 222.0057pt.
- [52]) (./_scripting_8cpp.tex
+ [60]) (./_scripting_8cpp.tex
 Overfull \hbox (17.63965pt too wide) in paragraph at lines 1--1
 []\T1/phv/bc/n/14.4 /home/juergen/1[]_[]dev/projects/[]Sketchable-[]Interaction
 /[]S[]I/src/sigrun/plugin/[]Scripting.cpp
  []
 
  <./_scripting_8cpp__incl.pdf>
-<_scripting_8cpp__incl.pdf, id=1881, 618.31pt x 245.91875pt>
+<_scripting_8cpp__incl.pdf, id=2089, 618.31pt x 245.91875pt>
 File: _scripting_8cpp__incl.pdf Graphic file (type pdf)
 <use _scripting_8cpp__incl.pdf>
 Package pdftex.def Info: _scripting_8cpp__incl.pdf  used on input line 13.
 (pdftex.def)             Requested size: 350.0pt x 139.20702pt.
- [53]) (./_scripting_8hpp.tex
+ [61]) (./_scripting_8hpp.tex
 Overfull \hbox (18.22278pt too wide) in paragraph at lines 1--1
 []\T1/phv/bc/n/14.4 /home/juergen/1[]_[]dev/projects/[]Sketchable-[]Interaction
 /[]S[]I/src/sigrun/plugin/[]Scripting.hpp
  []
 
  <./_scripting_8hpp__incl.pdf>
-<_scripting_8hpp__incl.pdf, id=1901, 303.1325pt x 189.70876pt>
+<_scripting_8hpp__incl.pdf, id=2109, 303.1325pt x 189.70876pt>
 File: _scripting_8hpp__incl.pdf Graphic file (type pdf)
 <use _scripting_8hpp__incl.pdf>
 Package pdftex.def Info: _scripting_8hpp__incl.pdf  used on input line 10.
@@ -1658,7 +1756,7 @@ Package pdftex.def Info: _scripting_8hpp__incl.pdf  used on input line 10.
 pdfTeX warning: pdflatex (file ./_scripting_8hpp__dep__incl.pdf): PDF inclusion
 : multiple pdfs with page group included in a single page
 >
-<_scripting_8hpp__dep__incl.pdf, id=1907, 347.2975pt x 222.8325pt>
+<_scripting_8hpp__dep__incl.pdf, id=2115, 347.2975pt x 222.8325pt>
 File: _scripting_8hpp__dep__incl.pdf Graphic file (type pdf)
 <use _scripting_8hpp__dep__incl.pdf>
 Package pdftex.def Info: _scripting_8hpp__dep__incl.pdf  used on input line 17.
@@ -1667,7 +1765,46 @@ Package pdftex.def Info: _scripting_8hpp__dep__incl.pdf  used on input line 17.
 
 Underfull \vbox (badness 2343) has occurred while \output is active []
 
- [54])
+ [62])
+(./_region_mask_8cpp.tex
+Underfull \hbox (badness 10000) in paragraph at lines 1--1
+[]\T1/phv/bc/n/14.4 /home/juergen/1[]_[]dev/projects/[]Sketchable-[]Interaction
+/[]S[]I/src/sigrun/region/[]Region[]
+ []
+
+ <./_region_mask_8cpp__incl.pdf>
+<_region_mask_8cpp__incl.pdf, id=2129, 272.01625pt x 245.91875pt>
+File: _region_mask_8cpp__incl.pdf Graphic file (type pdf)
+<use _region_mask_8cpp__incl.pdf>
+Package pdftex.def Info: _region_mask_8cpp__incl.pdf  used on input line 9.
+(pdftex.def)             Requested size: 271.0pt x 245.0138pt.
+) (./_region_mask_8hpp.tex [63]
+Underfull \hbox (badness 10000) in paragraph at lines 1--1
+[]\T1/phv/bc/n/14.4 /home/juergen/1[]_[]dev/projects/[]Sketchable-[]Interaction
+/[]S[]I/src/sigrun/region/[]Region[]
+ []
+
+ <./_region_mask_8hpp__incl.pdf>
+<_region_mask_8hpp__incl.pdf, id=2144, 215.80624pt x 189.70876pt>
+File: _region_mask_8hpp__incl.pdf Graphic file (type pdf)
+<use _region_mask_8hpp__incl.pdf>
+Package pdftex.def Info: _region_mask_8hpp__incl.pdf  used on input line 9.
+(pdftex.def)             Requested size: 215.0pt x 189.00485pt.
+ <./_region_mask_8hpp__dep__incl.pdf
+
+pdfTeX warning: pdflatex (file ./_region_mask_8hpp__dep__incl.pdf): PDF inclusi
+on: multiple pdfs with page group included in a single page
+>
+<_region_mask_8hpp__dep__incl.pdf, id=2150, 204.765pt x 222.8325pt>
+File: _region_mask_8hpp__dep__incl.pdf Graphic file (type pdf)
+<use _region_mask_8hpp__dep__incl.pdf>
+Package pdftex.def Info: _region_mask_8hpp__dep__incl.pdf  used on input line 1
+6.
+(pdftex.def)             Requested size: 204.0pt x 222.01251pt.
+
+Underfull \vbox (badness 3009) has occurred while \output is active []
+
+ [64])
 (./_region_transform_8cpp.tex
 Underfull \hbox (badness 10000) in paragraph at lines 1--1
 []\T1/phv/bc/n/14.4 /home/juergen/1[]_[]dev/projects/[]Sketchable-[]Interaction
@@ -1675,59 +1812,60 @@ Underfull \hbox (badness 10000) in paragraph at lines 1--1
  []
 
  <./_region_transform_8cpp__incl.pdf>
-<_region_transform_8cpp__incl.pdf, id=1921, 224.84pt x 245.91875pt>
+<_region_transform_8cpp__incl.pdf, id=2165, 224.84pt x 245.91875pt>
 File: _region_transform_8cpp__incl.pdf Graphic file (type pdf)
 <use _region_transform_8cpp__incl.pdf>
 Package pdftex.def Info: _region_transform_8cpp__incl.pdf  used on input line 8
 .
 (pdftex.def)             Requested size: 224.0pt x 245.01004pt.
-) (./_region_transform_8hpp.tex [55]
+) (./_region_transform_8hpp.tex
 Underfull \hbox (badness 10000) in paragraph at lines 1--1
 []\T1/phv/bc/n/14.4 /home/juergen/1[]_[]dev/projects/[]Sketchable-[]Interaction
 /[]S[]I/src/sigrun/region/[]Region[]
  []
 
- <./_region_transform_8hpp__incl.pdf>
-<_region_transform_8hpp__incl.pdf, id=1936, 224.84pt x 189.70876pt>
+ <./_region_transform_8hpp__incl.pdf
+
+pdfTeX warning: pdflatex (file ./_region_transform_8hpp__incl.pdf): PDF inclusi
+on: multiple pdfs with page group included in a single page
+>
+<_region_transform_8hpp__incl.pdf, id=2171, 224.84pt x 189.70876pt>
 File: _region_transform_8hpp__incl.pdf Graphic file (type pdf)
 <use _region_transform_8hpp__incl.pdf>
 Package pdftex.def Info: _region_transform_8hpp__incl.pdf  used on input line 9
 .
 (pdftex.def)             Requested size: 224.0pt x 189.00775pt.
- <./_region_transform_8hpp__dep__incl.pdf
-
-pdfTeX warning: pdflatex (file ./_region_transform_8hpp__dep__incl.pdf): PDF in
-clusion: multiple pdfs with page group included in a single page
->
-<_region_transform_8hpp__dep__incl.pdf, id=1942, 223.83624pt x 222.8325pt>
+ [65] <./_region_transform_8hpp__dep__incl.pdf>
+<_region_transform_8hpp__dep__incl.pdf, id=2186, 223.83624pt x 222.8325pt>
 File: _region_transform_8hpp__dep__incl.pdf Graphic file (type pdf)
 <use _region_transform_8hpp__dep__incl.pdf>
 Package pdftex.def Info: _region_transform_8hpp__dep__incl.pdf  used on input l
 ine 16.
 (pdftex.def)             Requested size: 223.0pt x 222.0057pt.
- [56]) (./_s_i_object_8hpp.tex
+ [66]) (./_s_i_object_8hpp.tex
 Underfull \hbox (badness 10000) in paragraph at lines 1--1
 []\T1/phv/bc/n/14.4 /home/juergen/1[]_[]dev/projects/[]Sketchable-[]Interaction
 /[]S[]I/src/sigrun/[]S[]I[]Object.hpp
  []
 
  <./_s_i_object_8hpp__incl.pdf>
-<_s_i_object_8hpp__incl.pdf, id=1958, 204.765pt x 189.70876pt>
+<_s_i_object_8hpp__incl.pdf, id=2203, 204.765pt x 189.70876pt>
 File: _s_i_object_8hpp__incl.pdf Graphic file (type pdf)
 <use _s_i_object_8hpp__incl.pdf>
 Package pdftex.def Info: _s_i_object_8hpp__incl.pdf  used on input line 8.
 (pdftex.def)             Requested size: 204.0pt x 189.01065pt.
- [57] <./_s_i_object_8hpp__dep__incl.pdf>
-<_s_i_object_8hpp__dep__incl.pdf, id=1974, 670.505pt x 390.45876pt>
+ <./_s_i_object_8hpp__dep__incl.pdf
+
+pdfTeX warning: pdflatex (file ./_s_i_object_8hpp__dep__incl.pdf): PDF inclusio
+n: multiple pdfs with page group included in a single page
+>
+<_s_i_object_8hpp__dep__incl.pdf, id=2209, 670.505pt x 390.45876pt>
 File: _s_i_object_8hpp__dep__incl.pdf Graphic file (type pdf)
 <use _s_i_object_8hpp__dep__incl.pdf>
 Package pdftex.def Info: _s_i_object_8hpp__dep__incl.pdf  used on input line 15
 .
 (pdftex.def)             Requested size: 350.0pt x 203.81424pt.
-
-[58]) [59] [60
-
-] (./refman.ind
+ [67]) [68] (./refman.ind
 Overfull \hbox (66.78508pt too wide) in paragraph at lines 3--5
 []\T1/phv/m/n/10 /home/juergen/1_dev/projects/Sketchable-Interaction/SI/src/SIG
 Run.cpp,
@@ -1830,40 +1968,53 @@ run/plugin/Scripting.hpp,
  []
 
 
-Overfull \hbox (157.63838pt too wide) in paragraph at lines 37--39
+Overfull \hbox (139.35074pt too wide) in paragraph at lines 37--39
+[]\T1/phv/m/n/10 /home/juergen/1_dev/projects/Sketchable-Interaction/SI/src/sig
+run/region/RegionMask.cpp,
+ []
+
+
+Overfull \hbox (139.85468pt too wide) in paragraph at lines 39--41
+[]\T1/phv/m/n/10 /home/juergen/1_dev/projects/Sketchable-Interaction/SI/src/sig
+run/region/RegionMask.hpp,
+ []
+
+
+Overfull \hbox (157.63838pt too wide) in paragraph at lines 41--43
 []\T1/phv/m/n/10 /home/juergen/1_dev/projects/Sketchable-Interaction/SI/src/sig
 run/region/RegionTransform.cpp,
  []
 
 
-Overfull \hbox (158.14232pt too wide) in paragraph at lines 39--41
+Overfull \hbox (158.14232pt too wide) in paragraph at lines 43--45
 []\T1/phv/m/n/10 /home/juergen/1_dev/projects/Sketchable-Interaction/SI/src/sig
 run/region/RegionTransform.hpp,
  []
 
-[61
+[69
 
 
-] [62] [63] [64
+
+] [70] [71] [72
 
 ])
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 211.
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 211.
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 214.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 214.
  (./refman.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 211.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 211.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 214.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 214.
 Package rerunfilecheck Info: File `refman.out' has not changed.
-(rerunfilecheck)             Checksum: CBEB24EDD266BADFBC42B2BACB4B9C3E;40839.
+(rerunfilecheck)             Checksum: CE69C780C111670A5386452CF7488AB7;46134.
 
 
 LaTeX Font Warning: Some font shapes were not available, defaults substituted.
 
  ) 
 Here is how much of TeX's memory you used:
- 17993 strings out of 494108
- 272190 string characters out of 6173646
- 405804 words of memory out of 5000000
- 21263 multiletter control sequences out of 15000+600000
+ 18128 strings out of 494108
+ 275726 string characters out of 6173646
+ 415377 words of memory out of 5000000
+ 21331 multiletter control sequences out of 15000+600000
  68909 words of font info for 88 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
  55i,16n,96p,938b,632s stack positions out of 5000i,500n,10000p,200000b,80000s
@@ -1879,10 +2030,10 @@ r/share/texlive/texmf-dist/fonts/type1/urw/helvetic/uhvb8a.pfb></usr/share/texl
 ive/texmf-dist/fonts/type1/urw/helvetic/uhvb8ac.pfb></usr/share/texlive/texmf-d
 ist/fonts/type1/urw/helvetic/uhvr8a.pfb></usr/share/texlive/texmf-dist/fonts/ty
 pe1/urw/helvetic/uhvro8a.pfb>
-Output written on refman.pdf (72 pages, 355508 bytes).
+Output written on refman.pdf (80 pages, 378661 bytes).
 PDF statistics:
- 2388 PDF objects out of 2487 (max. 8388607)
- 2190 compressed objects within 22 object streams
- 460 named destinations out of 1000 (max. 500000)
- 1548 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 2662 PDF objects out of 2984 (max. 8388607)
+ 2444 compressed objects within 25 object streams
+ 521 named destinations out of 1000 (max. 500000)
+ 1731 words of extra memory for PDF output out of 10000 (max. 10000000)
 
