@@ -7,6 +7,43 @@ PythonInvoker::PythonInvoker()
 PythonInvoker::~PythonInvoker()
 = default;
 
+int PythonInvoker::invoke_collision_event_function(bp::object &self, bp::object &other, const std::string &function_name)
+{
+    const bp::dict& d = bp::extract<bp::dict>(self.attr("cap_recv"));
+    const bp::dict& o = bp::extract<bp::dict>(other.attr("cap_emit"));
+
+    const bp::list& items = o.items();
+    for(int i = 0; i < bp::len(items); ++i)
+    {
+        const bp::object& key = items[i][0];
+
+        if (d.has_key(key))
+        {
+            try
+            {
+                const bp::object& t = o[key][function_name](self);
+
+                if(t.is_none())
+                    return bp::extract<int>(d[key][function_name]());
+                else
+                {
+                    if(bp::extract<bp::tuple>(t).check())
+                        return bp::extract<int>(d[key][function_name](*t));
+                    else
+                        return bp::extract<int>(d[key][function_name](t));
+                }
+            }
+            catch (const bp::error_already_set&)
+            {
+                handle_python_error();
+                return -2;
+            }
+        }
+    }
+
+    return -1;
+}
+
 void PythonInvoker::handle_python_error()
 {
     PyObject *exc,*val,*tb;

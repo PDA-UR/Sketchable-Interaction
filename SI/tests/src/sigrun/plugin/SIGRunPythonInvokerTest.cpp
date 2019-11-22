@@ -7,6 +7,7 @@
 #include <sigrun/plugin/PluginCollector.hpp>
 #include <boost/python.hpp>
 #include <pysi/SuperEffect.hpp>
+#include <sigrun/region/Region.hpp>
 
 namespace bp = boost::python;
 
@@ -242,4 +243,103 @@ TEST_F(SIGRunPythonInvokerTest, invoke_function_T)
     int i = pyi.invoke_function<int>(x, "on_enter", x);
 
     EXPECT_EQ(i, 1);
+}
+
+TEST_F(SIGRunPythonInvokerTest, invoke_collision_event_function_no_args)
+{
+    std::string path = "res/region";
+
+    std::vector<std::string> files, classes;
+
+    PluginCollector().collect("/" + path, files);
+    Scripting script;
+
+    std::string base_filename = files[0].substr(files[0].find_last_of("/\\") + 1);
+    std::string module_name = base_filename.substr(0, base_filename.find_last_of('.'));
+    std::string rpath = path + "/" + base_filename;
+
+    script.load_class_names(classes, files[0]);
+
+    bp::object o = script.si_plugin(module_name, rpath, classes[0]);
+
+    classes.clear();
+
+    base_filename = files[1].substr(files[1].find_last_of("/\\") + 1);
+    module_name = base_filename.substr(0, base_filename.find_last_of('.'));
+    rpath = path + "/" + base_filename;
+
+    script.load_class_names(classes, files[1]);
+
+    bp::object t = script.si_plugin(module_name, rpath, classes[0]);
+
+    PythonInvoker pyi;
+
+    EXPECT_NO_FATAL_FAILURE(pyi.invoke_collision_event_function(o, t, "on_leave"));
+    ASSERT_FALSE(pyi.invoke_collision_event_function(o, t, "on_leave"));
+}
+
+TEST_F(SIGRunPythonInvokerTest, invoke_collision_event_function_one_arg)
+{
+    std::string path = "res/region";
+
+    std::vector<std::string> files, classes;
+
+    PluginCollector().collect("/" + path, files);
+    Scripting script;
+
+    std::string base_filename = files[0].substr(files[0].find_last_of("/\\") + 1);
+    std::string module_name = base_filename.substr(0, base_filename.find_last_of('.'));
+    std::string rpath = path + "/" + base_filename;
+
+    script.load_class_names(classes, files[0]);
+
+    bp::object o = script.si_plugin(module_name, rpath, classes[0]);
+
+    classes.clear();
+
+    base_filename = files[1].substr(files[1].find_last_of("/\\") + 1);
+    module_name = base_filename.substr(0, base_filename.find_last_of('.'));
+    rpath = path + "/" + base_filename;
+
+    script.load_class_names(classes, files[1]);
+
+    bp::object t = script.si_plugin(module_name, rpath, classes[0]);
+
+    PythonInvoker pyi;
+
+    EXPECT_NO_FATAL_FAILURE(pyi.invoke_collision_event_function(o, t, "on_continuous"));
+    ASSERT_FALSE(pyi.invoke_collision_event_function(o, t, "on_continuous"));
+}
+
+TEST_F(SIGRunPythonInvokerTest, invoke_collision_event_function_tuple_arg)
+{
+    std::string path = "res/region";
+
+    std::vector<std::string> files, classes;
+
+    PluginCollector().collect("/" + path, files);
+    Scripting script;
+
+    std::string base_filename = files[0].substr(files[0].find_last_of("/\\") + 1);
+    std::string module_name = base_filename.substr(0, base_filename.find_last_of('.'));
+    std::string rpath = path + "/" + base_filename;
+
+    script.load_class_names(classes, files[0]);
+
+    bp::object o = script.si_plugin(module_name, rpath, classes[0]);
+
+    classes.clear();
+
+    base_filename = files[1].substr(files[1].find_last_of("/\\") + 1);
+    module_name = base_filename.substr(0, base_filename.find_last_of('.'));
+    rpath = path + "/" + base_filename;
+
+    script.load_class_names(classes, files[1]);
+
+    bp::object t = script.si_plugin(module_name, rpath, classes[0]);
+
+    PythonInvoker pyi;
+
+    EXPECT_NO_FATAL_FAILURE(pyi.invoke_collision_event_function(o, t, "on_enter"));
+    ASSERT_FALSE(pyi.invoke_collision_event_function(o, t, "on_enter"));
 }

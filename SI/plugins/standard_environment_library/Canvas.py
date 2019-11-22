@@ -7,3 +7,12 @@ class Canvas(PySIEffect):
 
         self.name = "Canvas"
         self.region_type = "canvas"
+
+        self.cap_emit = {
+        }
+
+        self.cap_recv = {
+        }
+
+    def __repr__(self):
+        return ""

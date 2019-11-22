@@ -51,7 +51,7 @@ public:
         {
             bp::object obj = self.attr(function_name.c_str())(other);
 
-            return bp::extract<int>(obj);
+            return bp::extract<T>(obj);
         }
         catch (const bp::error_already_set&)
         {
@@ -60,6 +60,8 @@ public:
 
         return T();
     }
+
+    int invoke_collision_event_function(bp::object& self, bp::object& other, const std::string& function_name);
 
 private:
     void handle_python_error();
