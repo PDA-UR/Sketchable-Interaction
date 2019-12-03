@@ -3,20 +3,56 @@
 #include "sigrun/plugin/PythonInvoker.hpp"
 #include "Region.hpp"
 
+namespace bp = boost::python;
+
 Region::Region(const std::vector<glm::vec3> &contour, const bp::object& effect):
     d_contour(contour),
     d_effect(effect),
     uprt(std::make_unique<RegionTransform>()),
-    uppi(std::make_unique<PythonInvoker>())
+    uppi(std::make_unique<PythonInvoker>()),
+    d_is_transformed(false)
 {
     set_aabb(contour);
 
     uprm = std::make_unique<RegionMask>(1920, 1080, d_contour, d_aabb);
+
+    uuid_t uuid;
+    char uuid_str[37];
+
+    uuid_generate_time_safe(uuid);
+    uuid_unparse_lower(uuid, uuid_str);
+
+    d_uuid = std::string(uuid_str);
 }
 
 Region::~Region()
 {
 
+}
+
+const bool Region::is_transformed() const
+{
+    return d_is_transformed;
+}
+
+void Region::set_is_transformed(bool b)
+{
+    d_is_transformed = b;
+}
+
+const std::string Region::uuid() const
+{
+    return d_uuid;
+}
+
+bp::object& Region::effect()
+{
+    return d_effect;
+}
+
+const std::unique_ptr<RegionMask> &Region::mask() const
+{
+    return uprm;
 }
 
 const std::vector<glm::vec3>& Region::aabb()
@@ -50,6 +86,11 @@ void Region::set_aabb(const std::vector<glm::vec3> &contour)
     {
         tlc, blc, brc, trc
     };
+}
+
+const std::string &Region::texture_path() const
+{
+    return "";
 }
 
 int Region::on_enter(bp::object& other)

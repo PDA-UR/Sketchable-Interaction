@@ -2,10 +2,9 @@
 #include <debug/Print.hpp>
 #include "SIGRunCoreTest.hpp"
 
-
 TEST_F(SIGRunCoreTest, retrieve_available_plugins)
 {
-    std::unordered_map<std::string, std::shared_ptr<bp::object>> plugins;
+    std::unordered_map<std::string, std::unique_ptr<bp::object>> plugins;
     std::string path = "res/core/";
 
     core_retrieve_available_plugins(plugins, path);

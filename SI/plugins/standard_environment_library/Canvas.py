@@ -1,4 +1,4 @@
-from libPySI import PySIEffect
+from libPySI import PySIEffect, PySICapability
 
 
 class Canvas(PySIEffect):

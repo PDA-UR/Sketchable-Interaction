@@ -20,7 +20,7 @@ public:
     SIGRun();
     ~SIGRun();
 
-    int exec(int argc, char** argv);
+    int exec(int argc, char **argv, IRenderEngine* ire);
 
     static int quit();
 

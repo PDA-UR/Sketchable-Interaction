@@ -4,6 +4,7 @@
 #define SI_SI_HPP
 
 #include "../../src/SIGRun.hpp"
+#include "../../src/siren/RenderEngineSdl2.hpp"
 
 
 #endif //SI_SI_HPP

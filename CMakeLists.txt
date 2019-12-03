@@ -11,6 +11,7 @@ set(BUILD_DOCS FALSE)
 
 #SIEngine
 include(SI/src/CMakeLists.txt)
+include(SI/src/siren/CMakeLists.txt)
 
 # SIExamples
 include(SI/examples/app/CMakeLists.txt)

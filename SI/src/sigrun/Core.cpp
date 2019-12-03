@@ -1,5 +1,6 @@
 
 #include <sigrun/log/Log.hpp>
+#include <sigrun/rendering/IRenderEngine.hpp>
 
 #include "Core.hpp"
 #include "sigrun/plugin/Scripting.hpp"
@@ -25,6 +26,7 @@ Core::Core()
 Core::~Core()
 {
     INFO("Shutting down... ", LOG_CONSOLE);
+
     INFO("Shut down", LOG_CONSOLE);
 }
 
@@ -33,12 +35,12 @@ Core::~Core()
 \details
     Entry point of SIGRun's core which performs Plugin loading and initializes the SI Context.
 */
-void Core::start()
+void Core::start(char** argv, int argc, IRenderEngine* ire)
 {
     INFO("Initializing... ", LOG_CONSOLE);
 
-    std::unordered_map<std::string, std::shared_ptr<bp::object>> plugins;
-    std::string path = "plugins/standard_environment_library/";
+    std::unordered_map<std::string, std::unique_ptr<bp::object>> plugins;
+    std::string path = std::string(argv[1]) + "/standard_environment_library/";
 
     INFO("Loading plugins... ", LOG_CONSOLE);
     retrieve_available_plugins(plugins, path);
@@ -49,7 +51,13 @@ void Core::start()
     else
         ERROR("No plugins loaded", LOG_CONSOLE);
 
+    std::unique_ptr<Context> upctx(new Context(1920, 1080, plugins));
+
     INFO("Initialization finished", LOG_CONSOLE);
+
+    upctx->begin(ire);
+    INFO("Context closed", LOG_CONSOLE);
+
 }
 
 /**
@@ -73,7 +81,7 @@ void Core::stop()
 \see Scripting::Scripting
 \see PluginCollector::PluginCollector
 */
-void Core::retrieve_available_plugins(std::unordered_map<std::string, std::shared_ptr<bp::object>> &plugins, const std::string& plugin_path)
+void Core::retrieve_available_plugins(std::unordered_map<std::string, std::unique_ptr<bp::object>> &plugins, const std::string& plugin_path)
 {
     std::vector<std::string> files;
     Scripting script;
@@ -87,9 +95,11 @@ void Core::retrieve_available_plugins(std::unordered_map<std::string, std::share
         std::string module_name = base_filename.substr(0, base_filename.find_last_of('.'));
         std::string rpath = plugin_path + base_filename;
 
+        Print::print(rpath);
+
         script.load_class_names(classes, path);
 
         for (auto &ref : classes)
-            plugins[ref] = std::make_shared<bp::object>(script.si_plugin(module_name, rpath, ref));
+            plugins[ref] = std::make_unique<bp::object>(script.si_plugin(module_name, rpath, ref));
     }
 }

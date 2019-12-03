@@ -22,7 +22,7 @@ public:
     }
 
 protected:
-    void core_retrieve_available_plugins(std::unordered_map<std::string, std::shared_ptr<bp::object>> &plugins, const std::string& plugin_path)
+    void core_retrieve_available_plugins(std::unordered_map<std::string, std::unique_ptr<bp::object>> &plugins, const std::string& plugin_path)
     {
         core.retrieve_available_plugins(plugins, plugin_path);
     }
@@ -30,13 +30,5 @@ protected:
 private:
     Core core;
 };
-
-
-class MockCore : public Core
-{
-public:
-    MOCK_METHOD(void, start ,());
-};
-
 
 #endif //SITEST_SIGRUNCORETEST_HPP
