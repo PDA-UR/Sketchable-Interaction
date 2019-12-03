@@ -16,8 +16,8 @@ include_directories(${OPENGL_INCLUDE_DIRS})
 set(SIRENDERENGINESrc
         SI/src/siren/RenderEngineSdl2.cpp
         SI/src/siren/RenderEngineSdl2.hpp
-        SI/src/siren/display/Window.c
-        SI/src/siren/display/Window.h
+        SI/src/siren/display/Window.cpp
+        SI/src/siren/display/Window.hpp
         SI/src/siren/display/Camera2D.cpp
         SI/src/siren/display/Camera2D.hpp
         SI/src/siren/shader/GLSLProgram.cpp

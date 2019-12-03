@@ -1,9 +1,20 @@
 
 
-#include "Window.h"
-#include <GL/glew.h>
+#include "Window.hpp"
 
-int window_create(Window* w, const char* name, int width, int height, unsigned int flags)
+
+
+#include "Window.hpp"
+
+Window::Window()
+{}
+
+Window::~Window()
+{
+
+}
+
+int Window::create(const std::string &window_name, int width, int height, unsigned int flags)
 {
     uint32_t window_flags = SDL_WINDOW_OPENGL;
 
@@ -16,8 +27,9 @@ int window_create(Window* w, const char* name, int width, int height, unsigned i
     if (flags & BORDERLESS)
         window_flags |= SDL_WINDOW_BORDERLESS;
 
-    w->window = SDL_CreateWindow(name, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height, SDL_WINDOW_OPENGL);
-    w->gl_context = SDL_GL_CreateContext(w->window);
+    p_window = SDL_CreateWindow(window_name.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width,
+                                height, SDL_WINDOW_OPENGL);
+    gl_context = SDL_GL_CreateContext(p_window);
 
     glewInit();
 
@@ -38,7 +50,27 @@ int window_create(Window* w, const char* name, int width, int height, unsigned i
     return 0;
 }
 
-void window_swap_buffer(Window* w)
+void Window::swap_buffer()
 {
-    SDL_GL_SetSwapInterval(w->window);
+    SDL_GL_SwapWindow(p_window);
+}
+
+int Window::width() const
+{
+    return d_width;
+}
+
+void Window::set_width(int width)
+{
+    d_width = width;
+}
+
+int Window::height() const
+{
+    return d_height;
+}
+
+void Window::set_height(int height)
+{
+    d_height = height;
 }

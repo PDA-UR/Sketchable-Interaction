@@ -17,34 +17,35 @@ class Context: public SIObject
 {
 
 public:
+    static Context* SIContext();
+
     ~Context();
 
     void begin(IRenderEngine* ire);
 
-    static Capability* capability_manager();
-    static RegionManager* region_manager();
+    Capability* capability_manager();
+    RegionManager* region_manager();
+    void update();
+    void enable(int what);
+    void disable(int what);
 
-    static void update();
-    static int width();
-    static int height();
-    static void enable(int what);
-    static void disable(int what);
-
+    int width();
+    int height();
 
 private:
+    static Context* self;
+
     Context(int width, int height, const std::unordered_map<std::string, std::unique_ptr<bp::object>>& plugins);
 
-    static std::unique_ptr<Capability> upcm;
-    static std::unique_ptr<RegionManager> uprm;
+    std::unique_ptr<Capability> upcm;
+    std::unique_ptr<RegionManager> uprm;
 
     IRenderEngine *p_renderer;
     std::thread *p_render_thread, *p_input_thread;
 
-    static int s_width, s_height;
+    int s_width, s_height;
 
     friend class Core;
-
-protected:
 };
 
 

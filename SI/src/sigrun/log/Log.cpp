@@ -9,6 +9,7 @@ const std::string Log::PATH_DEFAULT = "log/silog.txt";
 std::string Log::log_file_path = Log::PATH_DEFAULT;
 bool Log::__DEBUG__ = false;
 int Log::SHOW = -1;
+int Log::WHERE = 0;
 
 /**
 \brief central logging function outputting log messages according to its params
@@ -34,12 +35,12 @@ int Log::SHOW = -1;
 
 @see SIObject
 */
-void Log::log(const std::string &what, int level, int logging_flags, const std::string& type, const std::string& file,
+void Log::log(const std::string &what, int level, const std::string& type, const std::string& file,
               const std::string& func, const std::string& line)
 {
     Log::SHOW |= Log::SHOW_TYPE::UNDEFINED | Log::SHOW_TYPE::ERROR;
 
-    if(!Log::__DEBUG__ || logging_flags == Log::MODE::NONE)
+    if(!Log::__DEBUG__ || Log::WHERE == Log::MODE::NONE)
         return;
 
     if (level & Log::SHOW)
@@ -48,7 +49,7 @@ void Log::log(const std::string &what, int level, int logging_flags, const std::
                 "SIGRun\t" + Log::time() + "\t" + Log::log_level(level) + " [" + type + "] " + what + ".\t" + file +
                 "\t" + func + "\t" + line;
 
-        if (logging_flags & Log::MODE::FILE)
+        if (Log::WHERE & Log::MODE::FILE)
         {
             if (!log_file.is_open())
             {
@@ -58,7 +59,7 @@ void Log::log(const std::string &what, int level, int logging_flags, const std::
             }
         }
 
-        if (logging_flags & Log::MODE::CONSOLE)
+        if (Log::WHERE & Log::MODE::CONSOLE)
         {
             switch (level)
             {

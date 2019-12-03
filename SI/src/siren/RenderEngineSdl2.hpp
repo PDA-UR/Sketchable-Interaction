@@ -9,6 +9,7 @@
 #include <siren/shader/GLSLProgram.hpp>
 #include <siren/geometry/SpriteBatch.hpp>
 #include <siren/display/Timing.hpp>
+#include <siren/display/Window.hpp>
 
 class SpriteBatch;
 
@@ -48,6 +49,8 @@ private:
 
     bool d_is_running = false;
     bool d_is_displaying_wireframe = false;
+
+    Window d_window;
 
     GLSLProgram_ptr d_shader_program;
     Camera2D_ptr d_camera;

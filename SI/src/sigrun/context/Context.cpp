@@ -3,24 +3,25 @@
 #include <sigrun/log/Log.hpp>
 #include "Context.hpp"
 
-std::unique_ptr<Capability> Context::upcm = std::make_unique<Capability>();
-std::unique_ptr<RegionManager> Context::uprm = std::make_unique<RegionManager>(RegionManager());
-
-int Context::s_width = 0;
-int Context::s_height = 0;
+Context* Context::self = nullptr;
 
 Context::~Context()
 {
-    INFO("Destroying Context...", LOG_CONSOLE);
+    INFO("Destroying Context...");
     delete p_render_thread;
     p_render_thread = nullptr;
 
     p_renderer = nullptr;
-    INFO("Destroyed Context", LOG_CONSOLE);
+    INFO("Destroyed Context");
 }
 
 Context::Context(int width, int height, const std::unordered_map<std::string, std::unique_ptr<bp::object>>& plugins)
-{SIOBJECT("Context")
+{SIOBJECT
+    upcm = std::make_unique<Capability>();
+    uprm = std::make_unique<RegionManager>(RegionManager());
+
+    self = this;
+
     for(const auto& item: plugins)
         upcm->add_capabilities(*item.second);
 
@@ -37,10 +38,10 @@ void Context::begin(IRenderEngine* ire)
         p_renderer->start(s_width, s_height);
     });
 
-    INFO("Starting rendering thread.", LOG_CONSOLE);
+    INFO("Starting rendering thread.");
     p_render_thread->join();
-    INFO("Exitted threads", LOG_CONSOLE);
-    INFO("Closing context...", LOG_CONSOLE);
+    INFO("Exitted threads");
+    INFO("Closing context...");
 }
 
 Capability* Context::capability_manager()
@@ -48,14 +49,19 @@ Capability* Context::capability_manager()
     return upcm.get();
 }
 
-RegionManager *Context::region_manager()
+RegionManager* Context::region_manager()
 {
     return uprm.get();
 }
 
+Context* Context::SIContext()
+{
+    return self;
+}
+
 void Context::update()
 {
-
+    self = this;
 }
 
 int Context::width()

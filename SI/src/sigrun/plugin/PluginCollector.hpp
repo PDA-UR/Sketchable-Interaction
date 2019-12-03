@@ -10,7 +10,8 @@ class PluginCollector: public SIObject
 {
 public:
     PluginCollector()
-    {SIOBJECT("PLUGIN_COLLECTOR")}
+    {SIOBJECT
+    }
 
     ~PluginCollector() = default;
     void collect(const std::string &rel_path, std::vector<std::string> &files);
