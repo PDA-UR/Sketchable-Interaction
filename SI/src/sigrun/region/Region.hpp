@@ -11,6 +11,7 @@
 #include "RegionMask.hpp"
 #include "RegionTransform.hpp"
 #include "sigrun/plugin/PythonInvoker.hpp"
+#include <uuid/uuid.h>
 
 namespace bp = boost::python;
 
@@ -20,10 +21,20 @@ public:
     Region(const std::vector<glm::vec3>& contour, const bp::object& effect);
     ~Region();
 
+    const bool is_transformed() const;
+    void set_is_transformed(bool b);
+    const std::string uuid() const;
+
+    bp::object& effect();
+
+    const std::unique_ptr<RegionMask>& mask() const;
+
     const std::vector<glm::vec3>& aabb();
     const std::vector<glm::vec3>& contour();
 
     void set_aabb(const std::vector<glm::vec3>& contour);
+
+    const std::string& texture_path() const;
 
     int on_enter(bp::object& other);
     int on_continuous(bp::object& other);
@@ -37,6 +48,8 @@ private:
     std::unique_ptr<RegionTransform> uprt;
     std::unique_ptr<PythonInvoker> uppi;
     bp::object d_effect;
+    std::string d_uuid;
+    bool d_is_transformed;
 };
 
 

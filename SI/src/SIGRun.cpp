@@ -39,9 +39,9 @@ SIGRun::~SIGRun()
     @param argc cli argc
     @param argv cli argv
 */
-int SIGRun::exec(int argc, char **argv)
+int SIGRun::exec(int argc, char **argv, IRenderEngine* ire)
 {
-    up_core->start();
+    up_core->start(argv, argc, ire);
 
     return 0;
 }

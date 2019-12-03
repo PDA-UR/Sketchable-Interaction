@@ -6,6 +6,7 @@
 #include <boost/python.hpp>
 #include <memory>
 #include <unordered_map>
+#include <sigrun/context/Context.hpp>
 
 #include "SIObject.hpp"
 
@@ -30,13 +31,13 @@ class Core: public SIObject
 public:
     ~Core();
 
-    void start();
+    void start(char** argv, int argc, IRenderEngine* ire);
     void stop();
 
 protected:
     Core();
 
-    void retrieve_available_plugins(std::unordered_map<std::string, std::shared_ptr<bp::object>>& plugins, const std::string& plugin_path);
+    void retrieve_available_plugins(std::unordered_map<std::string, std::unique_ptr<bp::object>>& plugins, const std::string& plugin_path);
 
     friend class SIGRun;
     friend class SIGRunTest;

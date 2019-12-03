@@ -1,4 +1,4 @@
-from libPySI import PySIEffect
+from libPySI import PySIEffect, PySICapability
 
 
 class Dummy2(PySIEffect):
@@ -9,11 +9,11 @@ class Dummy2(PySIEffect):
         self.region_type = "Dummy2"
 
         self.cap_emit = {
-            "TEST2": {"on_enter": self.test_on_enter_emit, "on_continuous": self.test_on_continuous_emit, "on_leave": self.test_on_leave_emit}
+            PySICapability.__TEST2__: {"on_enter": self.test_on_enter_emit, "on_continuous": self.test_on_continuous_emit, "on_leave": self.test_on_leave_emit}
         }
 
         self.cap_recv = {
-            "TEST1": {"on_enter": self.test_on_enter_recv, "on_continuous": self.test_on_continuous_recv, "on_leave": self.test_on_leave_recv}
+            PySICapability.__TEST1__: {"on_enter": self.test_on_enter_recv, "on_continuous": self.test_on_continuous_recv, "on_leave": self.test_on_leave_recv}
         }
 
     def __repr__(self):
@@ -23,7 +23,7 @@ class Dummy2(PySIEffect):
         i = 5
         k = 3
 
-        return 2 + 5, "juhu"
+        return 2 + 5, "WTF"
 
     def test_on_continuous_emit(self, other):
         return 0

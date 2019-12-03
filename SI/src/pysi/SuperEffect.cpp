@@ -4,6 +4,7 @@
 #include <utility>
 #include <boost/python/suite/indexing/vector_indexing_suite.hpp>
 #include <boost/python/suite/indexing/map_indexing_suite.hpp>
+#include <sigrun/context/Capability.hpp>
 
 template<typename Container>
 IterableConverter& IterableConverter::from_python()
@@ -80,11 +81,10 @@ BOOST_PYTHON_MODULE(libPySI)
     bp::class_<std::map<std::string, int>>("string_int_map")
             .def(bp::map_indexing_suite<std::map<std::string, int>>());
 
-//    bp::class_<SI::Capability>("PySICapability")
-//            .def("capabilities", &SI::Capability::capabilities)
-//            .def("add_capability", &SI::Capability::add_capability)
-//            .def("remove_capability", &SI::Capability::remove_capability)
-//            ;
+    bp::class_<Capability>("PySICapability")
+            .add_static_property("__TEST1__", bp::make_getter(&Capability::__test1__))
+            .add_static_property("__TEST2__", bp::make_getter(&Capability::__test2__))
+            ;
 
     bp::class_<PySIEffect, boost::noncopyable>("PySIEffect", bp::init<>())
         .def("on_enter", &PySIEffect::on_enter)

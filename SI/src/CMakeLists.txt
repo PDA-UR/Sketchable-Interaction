@@ -63,16 +63,26 @@ set(SIGRunSRC
         SI/src/sigrun/context/Capability.hpp
         SI/src/sigrun/region/Region.cpp
         SI/src/sigrun/region/Region.hpp
-        SI/src/error/Error.hpp)
+        SI/src/error/Error.hpp
+        SI/src/sigrun/context/managers/CollisionManager.cpp
+        SI/src/sigrun/context/managers/CollisionManager.hpp
+        SI/src/sigrun/context/Context.cpp
+        SI/src/sigrun/context/Context.hpp
+        SI/src/sigrun/context/managers/RegionManager.cpp
+        SI/src/sigrun/context/managers/RegionManager.hpp
+        SI/src/sigrun/region/RegionResampler.cpp
+        SI/src/sigrun/region/RegionResampler.hpp
+        SI/src/sigrun/rendering/IRenderEngine.hpp
+        SI/src/sigrun/concurrency/StoppableTask.cpp
+        SI/src/sigrun/concurrency/StoppableTask.hpp)
 
 add_library(SIGeneralRuntime SHARED ${SIGRunSRC})
 
 if (xlib)
-    target_link_libraries(SIGeneralRuntime ${PATH_LIB} glm ${PYTHON_LIBRARIES} ${Boost_LIBRARIES} -lX11)
+    target_link_libraries(SIGeneralRuntime ${PATH_LIB} glm -luuid ${PYTHON_LIBRARIES} ${Boost_LIBRARIES} -lX11)
 else()
-    target_link_libraries(SIGeneralRuntime ${PATH_LIB} glm ${PYTHON_LIBRARIES} ${Boost_LIBRARIES})
+    target_link_libraries(SIGeneralRuntime ${PATH_LIB} glm -luuid ${PYTHON_LIBRARIES} ${Boost_LIBRARIES})
 endif()
-
 
 if (BUILD_DOCS)
     find_package(Doxygen)

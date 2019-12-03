@@ -24,12 +24,17 @@ public:
     int num_capabilities() const;
     int consecutive_capability_id() const;
 
+    static std::string __test1__;
+    static std::string __test2__;
+
 private:
     std::map<std::string, int> d_capabilities;
     unsigned int d_num_capabilities;
     unsigned int d_consecutive_capability_id;
 
-//    friend class CollisionManager;
+
+
+    friend class CollisionManager;
 };
 
 
