@@ -1,20 +1,20 @@
 
 
-#include "Tesselator.hpp"
+#include "Tessellator.hpp"
 
-#include "Tesselator.hpp"
+#include "Tessellator.hpp"
 
-std::vector<glm::vec2> Tesselator::temp;
-int Tesselator::vertex_index = 0;
-std::vector<std::vector<GLdouble>> Tesselator::d_vertices;
+std::vector<glm::vec3> Tessellator::temp;
+int Tessellator::vertex_index = 0;
+std::vector<std::vector<GLdouble>> Tessellator::d_vertices;
 
-bool Tesselator::tesselate(std::vector<glm::vec2> &out, const std::vector<glm::vec2> &vertices)
+bool Tessellator::tesselate(std::vector<glm::vec3> &out, const std::vector<glm::vec3> &vertices)
 {
     GLUtesselator *tess = gluNewTess();
 
-    gluTessCallback(tess, GLU_TESS_VERTEX, (void (TESSELATION_CALLBACK *)()) Tesselator::vertex_data);
-    gluTessCallback(tess, GLU_TESS_EDGE_FLAG, (void (TESSELATION_CALLBACK *)()) Tesselator::edge_flag);
-    gluTessCallback(tess, GLU_TESS_COMBINE, (void (TESSELATION_CALLBACK *)()) Tesselator::vertex_combine);
+    gluTessCallback(tess, GLU_TESS_VERTEX, (void (TESSELATION_CALLBACK *)()) Tessellator::vertex_data);
+    gluTessCallback(tess, GLU_TESS_EDGE_FLAG, (void (TESSELATION_CALLBACK *)()) Tessellator::edge_flag);
+    gluTessCallback(tess, GLU_TESS_COMBINE, (void (TESSELATION_CALLBACK *)()) Tessellator::vertex_combine);
 
     gluTessProperty(tess, GLU_TESS_WINDING_RULE, GLU_TESS_WINDING_NONZERO);
     gluTessBeginPolygon(tess, nullptr);
@@ -48,21 +48,21 @@ bool Tesselator::tesselate(std::vector<glm::vec2> &out, const std::vector<glm::v
     return true;
 }
 
-TESSELATION_CALLBACK void Tesselator::vertex_data(const GLvoid *data)
+TESSELATION_CALLBACK void Tessellator::vertex_data(const GLvoid *data)
 {
-    temp.emplace_back(((GLdouble *) data)[0], ((GLdouble *) data)[1]);
+    temp.emplace_back(((GLdouble *) data)[0], ((GLdouble *) data)[1], 1);
 }
 
-TESSELATION_CALLBACK void Tesselator::edge_flag(GLboolean is_set)
+TESSELATION_CALLBACK void Tessellator::edge_flag(GLboolean is_set)
 {
-    // forcing Tesselator to output GL_TRIANGLES
+    // forcing Tessellator to output GL_TRIANGLES
 }
 
 // does not work if start and end are within the polygon to be combined
 
 TESSELATION_CALLBACK void
-Tesselator::vertex_combine(const GLdouble new_vertex[3], const GLdouble *neighbour_vertex[4],
-                           const GLfloat neighbour_weight[4], GLdouble **out)
+Tessellator::vertex_combine(const GLdouble new_vertex[3], const GLdouble *neighbour_vertex[4],
+                            const GLfloat neighbour_weight[4], GLdouble **out)
 {
     d_vertices.emplace_back(6);
 

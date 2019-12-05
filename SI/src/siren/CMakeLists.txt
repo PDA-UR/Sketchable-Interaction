@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.13)
 project(SIEngine)
 
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 find_package(SDL2 REQUIRED)
@@ -38,9 +38,11 @@ set(SIRENDERENGINESrc
         SI/src/siren/io/ResourceManager.cpp
         SI/src/siren/io/ResourceManager.hpp
         SI/src/siren/display/Timing.hpp
-        SI/src/siren/display/Timing.cpp
-        SI/src/siren/geometry/Tesselator.cpp
-        SI/src/siren/geometry/Tesselator.hpp)
+        SI/src/siren/geometry/Tessellator.cpp
+        SI/src/siren/geometry/Tessellator.hpp
+        SI/src/siren/geometry/TessellationPatch.cpp
+        SI/src/siren/geometry/TessellationPatch.hpp
+        SI/src/siren/region_representation/RegionRepresentation.hpp)
 
 add_library(SIRenderEngine SHARED ${SIRENDERENGINESrc})
 target_link_libraries(SIRenderEngine glm ${OPENGL_LIBRARIES} ${GLEW_LIBRARY} ${SDL2_LIBRARIES} SIGeneralRuntime)

@@ -96,8 +96,6 @@ void Core::retrieve_available_plugins(std::unordered_map<std::string, std::uniqu
         std::string module_name = base_filename.substr(0, base_filename.find_last_of('.'));
         std::string rpath = plugin_path + base_filename;
 
-        Print::print(rpath);
-
         script.load_class_names(classes, path);
 
         for (auto &ref : classes)

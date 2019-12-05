@@ -9,8 +9,6 @@
 #include <memory>
 #include "Glyph.hpp"
 
-#include <SI/SI.hpp>
-
 class RenderBatch
 {
 public:
@@ -32,17 +30,17 @@ public:
     ~SpriteBatch();
 
     void initialize();
-    void render(const std::vector<std::shared_ptr<Region>> &sprites, const std::vector<glm::vec2>& partial_contour, const GLfloat *camera_matrix);
+    void render(const std::map<std::string, RegionRepresentation*>& regions, const std::vector<glm::vec2>& partial_contour, const GLfloat *camera_matrix);
     void set_draw_mode(GLenum mode);
 
 private:
-    void register_region_sprites(const std::vector<std::shared_ptr<Region>> &sprites, const GLfloat *camera_matrix);
+    void register_region_sprites(const std::map<std::string, RegionRepresentation*>& regions, const GLfloat *camera_matrix);
     void register_partial_region_sprite(const std::vector<glm::vec2>& partial_region, const GLfloat* camera_matrix);
     void begin_area(const GLfloat *camera_matrix, const GlyphSortType &type = GlyphSortType::FRONT_TO_BACK);
-    void draw_area(const std::vector<std::shared_ptr<Region>> &region_sprites);
+    void draw_area(const std::map<std::string, RegionRepresentation*>& regions);
     void end_area();
     void begin_texture(const GLfloat *camera_matrix, const GlyphSortType &type = GlyphSortType::FRONT_TO_BACK);
-    void draw_texture(const std::vector<std::shared_ptr<Region>> &region_sprites);
+    void draw_texture(const std::map<std::string, RegionRepresentation*>& regions);
     void end_texture();
     void create_render_batches();
     void create_vertex_arrays();

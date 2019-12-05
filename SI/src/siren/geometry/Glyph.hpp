@@ -7,6 +7,8 @@
 #include <vector>
 #include <SI/SI.hpp>
 #include <siren/io/ResourceManager.hpp>
+#include <siren/geometry/TessellationPatch.hpp>
+#include <siren/region_representation/RegionRepresentation.hpp>
 
 enum class GlyphSortType
 {
@@ -22,23 +24,31 @@ public:
     Glyph()
     {}
 
-    Glyph(const std::shared_ptr<Region>& region):
-            depth(0), texture(ResourceManager::texture(region->texture_path()).id)
+    Glyph(const RegionRepresentation* region):
+            depth(0)
+//            texture(ResourceManager::texture(region->texture_path()).id)
     {
-//        for (const auto &patch : region->patches())
-//        {
-//            vertices.emplace_back();
-//            vertices.back().set_position(patch.a().x, patch.a().y);
+        for (const auto &patch : region->patches)
+        {
+            glm::vec3 a = patch->a() * region->transform;
+            glm::vec3 b = patch->b() * region->transform;
+            glm::vec3 c = patch->c() * region->transform;
+
+            vertices.emplace_back();
+            vertices.back().set_position(a.x / a.z, a.y / a.z);
 //            vertices.back().set_color(region->color().r, region->color().g, region->color().b, region->color().a);
-//
-//            vertices.emplace_back();
-//            vertices.back().set_position(patch.b().x, patch.b().y);
+            vertices.back().set_color(255, 255, 255, 255);
+
+            vertices.emplace_back();
+            vertices.back().set_position(b.x / b.z, b.y / b.z);
 //            vertices.back().set_color(region->color().r, region->color().g, region->color().b, region->color().a);
-//
-//            vertices.emplace_back();
-//            vertices.back().set_position(patch.c().x, patch.c().y);
+            vertices.back().set_color(255, 255, 255, 255);
+
+            vertices.emplace_back();
+            vertices.back().set_position(c.x / c.z, c.y / c.z);
 //            vertices.back().set_color(region->color().r, region->color().g, region->color().b, region->color().a);
-//        }
+            vertices.back().set_color(255, 255, 255, 255);
+        }
     }
 
     Glyph(const glm::vec4 &destination_rect, const glm::vec4 &uv_rect, const std::string& tex, float d, const Color &color) :
@@ -63,6 +73,7 @@ public:
 
     GLuint texture;
     float depth;
+    glm::mat4 transform;
 
     std::vector<Vertex> vertices;
 

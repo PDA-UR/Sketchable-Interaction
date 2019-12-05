@@ -27,18 +27,17 @@ int Window::create(const std::string &window_name, int width, int height, unsign
     if (flags & BORDERLESS)
         window_flags |= SDL_WINDOW_BORDERLESS;
 
-    p_window = SDL_CreateWindow(window_name.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width,
-                                height, SDL_WINDOW_OPENGL);
+    p_window = SDL_CreateWindow(window_name.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height, SDL_WINDOW_OPENGL);
     gl_context = SDL_GL_CreateContext(p_window);
 
     glewInit();
 
 //    SIRenPrint::print("*** OPENGL VERSION: " + std::string((const char *) glGetString(GL_VERSION)) + " ***");
 
-    glClearColor(0, 0, 1, 1);
+    glClearColor(0, 0, 0, 1);
 
     // vertical synchronisation active
-    SDL_GL_SetSwapInterval(1);
+    SDL_GL_SetSwapInterval(0);
 
     //enable alpha blending
     glEnable(GL_BLEND);

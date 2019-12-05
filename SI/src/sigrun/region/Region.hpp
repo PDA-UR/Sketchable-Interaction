@@ -32,9 +32,13 @@ public:
     const std::vector<glm::vec3>& aabb();
     const std::vector<glm::vec3>& contour();
 
-    void set_aabb(const std::vector<glm::vec3>& contour);
+    void set_aabb();
 
     const std::string& texture_path() const;
+
+    void move(int x, int y);
+
+    const glm::mat3x3& transform() const;
 
     int on_enter(bp::object& other);
     int on_continuous(bp::object& other);
@@ -50,6 +54,8 @@ private:
     bp::object d_effect;
     std::string d_uuid;
     bool d_is_transformed;
+
+    std::string d_texture_path = "src/siren/res/textures/scale_texture.png";
 };
 
 

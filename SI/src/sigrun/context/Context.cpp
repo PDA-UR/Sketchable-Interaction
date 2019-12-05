@@ -27,6 +27,10 @@ Context::Context(int width, int height, const std::unordered_map<std::string, st
 
     s_width = width;
     s_height = height;
+    std::vector<glm::vec3> contour {glm::vec3(10, 10, 1), glm::vec3(10, 60, 1), glm::vec3(60, 60, 1), glm::vec3(60, 10, 1)};
+    boost::python::object effect;
+
+    uprm->add_region(contour, effect, 0);
 }
 
 void Context::begin(IRenderEngine* ire)
@@ -61,6 +65,7 @@ Context* Context::SIContext()
 
 void Context::update()
 {
+    uprm->regions()[0]->move(1, 1);
     self = this;
 }
 
