@@ -2,12 +2,14 @@
 
 #include "sigrun/plugin/PythonInvoker.hpp"
 #include "Region.hpp"
+
+#include <utility>
 #include "RegionResampler.hpp"
 
 namespace bp = boost::python;
 
-Region::Region(const std::vector<glm::vec3> &contour, const bp::object& effect):
-    d_effect(effect),
+Region::Region(const std::vector<glm::vec3> &contour, std::shared_ptr<bp::object> effect):
+    d_effect(std::move(effect)),
     uprt(std::make_unique<RegionTransform>()),
     uppi(std::make_unique<PythonInvoker>()),
     d_is_transformed(true) // should be false
@@ -25,6 +27,12 @@ Region::Region(const std::vector<glm::vec3> &contour, const bp::object& effect):
     uuid_unparse_lower(uuid, uuid_str);
 
     d_uuid = std::string(uuid_str);
+
+    d_name = PythonInvoker().invoke_extract_attribute<std::string>(*d_effect, "name");
+    d_name = d_name == "" ? "custom": d_name;
+
+    d_texture_path_default = PythonInvoker().invoke_extract_attribute<std::string>(*d_effect, "texture_path");
+    d_texture_path_default = d_texture_path_default == "" ? "src/siren/res/textures/placeholder.png": d_texture_path_default;
 }
 
 Region::~Region()
@@ -56,7 +64,7 @@ const std::string Region::uuid() const
 
 bp::object& Region::effect()
 {
-    return d_effect;
+    return *d_effect;
 }
 
 const std::unique_ptr<RegionMask> &Region::mask() const
@@ -102,7 +110,7 @@ void Region::set_aabb()
 
 const std::string &Region::texture_path() const
 {
-    return d_texture_path;
+    return d_texture_path_default;
 }
 
 const glm::mat3x3& Region::transform() const
@@ -112,7 +120,7 @@ const glm::mat3x3& Region::transform() const
 
 int Region::on_enter(bp::object& other)
 {
-    int fail = uppi->invoke_collision_event_function(d_effect, other, "on_enter");
+    int fail = uppi->invoke_collision_event_function(*d_effect, other, "on_enter");
 
     if(!fail)
     {
@@ -126,7 +134,7 @@ int Region::on_enter(bp::object& other)
 int Region::on_continuous(bp::object& other)
 {
 
-    int fail =  uppi->invoke_collision_event_function(d_effect, other, "on_continuous");
+    int fail =  uppi->invoke_collision_event_function(*d_effect, other, "on_continuous");
 
     if(!fail)
     {
@@ -138,7 +146,7 @@ int Region::on_continuous(bp::object& other)
 
 int Region::on_leave(bp::object& other)
 {
-    int fail =  uppi->invoke_collision_event_function(d_effect, other, "on_leave");
+    int fail =  uppi->invoke_collision_event_function(*d_effect, other, "on_leave");
 
     if(!fail)
     {

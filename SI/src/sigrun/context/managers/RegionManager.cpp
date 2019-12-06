@@ -6,7 +6,7 @@
 RegionManager::~RegionManager()
 = default;
 
-void RegionManager::add_region(const std::vector<glm::vec3> &contour, const bp::object &effect, int region_uuid)
+void RegionManager::add_region(const std::vector<glm::vec3> &contour, std::shared_ptr<bp::object> effect, int region_uuid)
 {
     d_regions.emplace_back(std::make_shared<Region>(contour, effect));
 }

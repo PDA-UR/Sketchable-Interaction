@@ -8,6 +8,7 @@ find_package(SDL2 REQUIRED)
 find_package(OpenGL REQUIRED)
 find_package(GLEW REQUIRED)
 find_package(glm REQUIRED)
+find_package(Qt5Widgets REQUIRED)
 
 include_directories(${SDL2_INCLUDE_DIR})
 include_directories(${GLEW_INCLUDE_DIRS})
@@ -45,5 +46,6 @@ set(SIRENDERENGINESrc
         SI/src/siren/region_representation/RegionRepresentation.hpp)
 
 add_library(SIRenderEngine SHARED ${SIRENDERENGINESrc})
-target_link_libraries(SIRenderEngine glm ${OPENGL_LIBRARIES} ${GLEW_LIBRARY} ${SDL2_LIBRARIES} SIGeneralRuntime)
+set_target_properties(SIRenderEngine PROPERTIES AUTOMOC TRUE)
+target_link_libraries(SIRenderEngine glm ${OPENGL_LIBRARIES} ${GLEW_LIBRARY} ${SDL2_LIBRARIES} SIGeneralRuntime Qt5::Widgets)
 add_dependencies(SIRenderEngine PySI SIGeneralRuntime)

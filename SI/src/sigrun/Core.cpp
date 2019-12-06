@@ -56,7 +56,7 @@ void Core::start(char** argv, int argc, IRenderEngine* ire)
 
     INFO("Initialization finished");
 
-    upctx->begin(ire);
+    upctx->begin(ire, argc, argv);
     INFO("Context closed");
 
 }

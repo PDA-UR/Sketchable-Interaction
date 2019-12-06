@@ -6,7 +6,8 @@ class Canvas(PySIEffect):
         super(Canvas, self).__init__()
 
         self.name = "Canvas"
-        self.region_type = "canvas"
+        self.region_type = "custom"
+        self.texture_path = "src/siren/res/textures/scale_texture.png"
 
         self.cap_emit = {
         }

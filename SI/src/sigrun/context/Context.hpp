@@ -21,7 +21,7 @@ public:
 
     ~Context();
 
-    void begin(IRenderEngine* ire);
+    void begin(IRenderEngine* ire, int argc, char** argv);
 
     Capability* capability_manager();
     RegionManager* region_manager();

@@ -6,6 +6,7 @@
 #include <siren/geometry/SpriteBatch.hpp>
 #include <siren/geometry/Tessellator.hpp>
 #include <siren/display/Timing.hpp>
+#include <QApplication>
 
 RenderEngineSDL2::RenderEngineSDL2():
         d_width(800),
@@ -37,8 +38,11 @@ RenderEngineSDL2::~RenderEngineSDL2()
     SDL_Quit();
 }
 
-void RenderEngineSDL2::start(int width, int height)
+void RenderEngineSDL2::start(int width, int height, int argc, char** argv)
 {
+//    QApplication qapp(argc, argv);
+//    qapp.exec();
+
     SDL_Init(SDL_INIT_EVERYTHING);
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 

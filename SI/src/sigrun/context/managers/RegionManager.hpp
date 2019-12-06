@@ -18,7 +18,7 @@ class RegionManager
 public:
     ~RegionManager();
 
-    void add_region(const std::vector<glm::vec3>& contour, const bp::object& effect, int region_uuid);
+    void add_region(const std::vector<glm::vec3>& contour, std::shared_ptr<bp::object> effect, int region_uuid);
 
     const std::vector<std::shared_ptr<Region>>& regions() const;
 
