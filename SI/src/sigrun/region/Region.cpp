@@ -118,40 +118,40 @@ const glm::mat3x3& Region::transform() const
     return uprt->transform();
 }
 
-int Region::on_enter(bp::object& other)
+int Region::on_enter(bp::object& colliding_effect)
 {
-    int fail = uppi->invoke_collision_event_function(*d_effect, other, "on_enter");
+    // call unique ptr to PythonInvoker object
+    int success = uppi->invoke_collision_event_function(*d_effect, colliding_effect, "on_enter");
 
-    if(!fail)
+    if(success)
     {
-        // update here
-        // requires data structure or defined variables exposed via module which can be set
+        // region update functionality
     }
 
-    return fail;
+    return success;
 }
 
 int Region::on_continuous(bp::object& other)
 {
 
-    int fail =  uppi->invoke_collision_event_function(*d_effect, other, "on_continuous");
+    int success =  uppi->invoke_collision_event_function(*d_effect, other, "on_continuous");
 
-    if(!fail)
+    if(success)
     {
         // update here
     }
 
-    return fail;
+    return success;
 }
 
 int Region::on_leave(bp::object& other)
 {
-    int fail =  uppi->invoke_collision_event_function(*d_effect, other, "on_leave");
+    int success =  uppi->invoke_collision_event_function(*d_effect, other, "on_leave");
 
-    if(!fail)
+    if(success)
     {
         // update here
     }
 
-    return fail;
+    return success;
 }

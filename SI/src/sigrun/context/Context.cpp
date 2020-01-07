@@ -16,7 +16,7 @@ Context::~Context()
 }
 
 Context::Context(int width, int height, const std::unordered_map<std::string, std::unique_ptr<bp::object>>& plugins)
-{SIOBJECT
+{SIOBJECT("SIGRUN")
     upcm = std::make_unique<Capability>();
     uprm = std::make_unique<RegionManager>(RegionManager());
 

@@ -115,7 +115,7 @@
 
     \see Log::log()
  */
-#define DEBUG(what) Log::log(what, Log::LOG_LEVEL::DEBUG_LEVEL, meta_type(),__FILENAME__, __FUNCTION__, std::to_string(__LINE__))
+#define DEBUG(what) Log::log(origin(), what, Log::LOG_LEVEL::DEBUG_LEVEL, meta_type(),__FILENAME__, __FUNCTION__, std::to_string(__LINE__))
 
 /**
     \brief perform logging of data with the INFO tag
@@ -127,7 +127,7 @@
 
     \see Log::log()
  */
-#define INFO(what) Log::log(what, Log::LOG_LEVEL::INFO_LEVEL, meta_type())
+#define INFO(what) Log::log(origin(), what, Log::LOG_LEVEL::INFO_LEVEL, meta_type())
 
 /**
     \brief perform logging of data with the ERROR tag
@@ -139,7 +139,7 @@
 
     \see Log::log()
  */
-#define ERROR(what) Log::log(what, Log::LOG_LEVEL::ERROR_LEVEL, meta_type(),__FILENAME__, __FUNCTION__, std::to_string(__LINE__))
+#define ERROR(what) Log::log(origin(), what, Log::LOG_LEVEL::ERROR_LEVEL, meta_type(),__FILENAME__, __FUNCTION__, std::to_string(__LINE__))
 
 /**
     \brief perform logging of data with the WARN tag
@@ -151,7 +151,7 @@
 
     \see Log::log()
  */
-#define WARN(what) Log::log(what, Log::LOG_LEVEL::WARN_LEVEL, meta_type())
+#define WARN(what) Log::log(origin(), what, Log::LOG_LEVEL::WARN_LEVEL, meta_type())
 
 /**
     \brief perform logging of data with the UNDEFINED tag
@@ -163,7 +163,7 @@
 
     \see Log::log()
  */
-#define UNDEFINED(what) Log::log(what, Log::LOG_LEVEL::UNDEFINED_LEVEL, meta_type(), __FILENAME__, __FUNCTION__, std::to_string(__LINE__))
+#define UNDEFINED(what) Log::log(origin(), what, Log::LOG_LEVEL::UNDEFINED_LEVEL, meta_type(), __FILENAME__, __FUNCTION__, std::to_string(__LINE__))
 
 /** \class Log
 	\brief Log class serving as central logging functionality for easy logging data output
@@ -265,7 +265,7 @@ public:
     */
     static bool __DEBUG__;
 
-    static void log(const std::string& what, int level, const std::string& type, const std::string& file="", const std::string& func="", const std::string& line="");
+    static void log(const std::string& origin, const std::string& what, int level, const std::string& type, const std::string& file="", const std::string& func="", const std::string& line="");
     static void set_log_file_path(const std::string& path);
 
     static std::string log_level(int log_level);

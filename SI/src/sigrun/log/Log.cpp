@@ -35,7 +35,7 @@ int Log::WHERE = 0;
 
 @see SIObject
 */
-void Log::log(const std::string &what, int level, const std::string& type, const std::string& file,
+void Log::log(const std::string& origin, const std::string &what, int level, const std::string& type, const std::string& file,
               const std::string& func, const std::string& line)
 {
     Log::SHOW |= Log::SHOW_TYPE::UNDEFINED | Log::SHOW_TYPE::ERROR;
@@ -46,7 +46,7 @@ void Log::log(const std::string &what, int level, const std::string& type, const
     if (level & Log::SHOW)
     {
         std::string message =
-                "SIGRun\t" + Log::time() + "\t" + Log::log_level(level) + " [" + type + "] " + what + ".\t" + file +
+                origin + "\t" + Log::time() + "\t" + Log::log_level(level) + " [" + type + "] " + what + ".\t" + file +
                 "\t" + func + "\t" + line;
 
         if (Log::WHERE & Log::MODE::FILE)

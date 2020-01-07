@@ -20,6 +20,7 @@
     s;\
 })
 
+
 /**
 \brief macro for registering another class as SIObject
 \details
@@ -30,7 +31,12 @@
             ...
         };
 */
-#define SIOBJECT (d_meta_type = __CLASS_NAME__);
+
+#define SIOBJECT(origin) (\
+{\
+    d_meta_type = __CLASS_NAME__;\
+    d_origin = origin;\
+});
 
 /**
 \class SIObject
@@ -68,11 +74,17 @@ public:
         return d_meta_type;
     }
 
+    const std::string& origin() const
+    {
+        return d_origin;
+    }
+
 protected:
     /**
     \brief a std::string containing the name of the class to be registered as SIObject meta type
     */
     std::string d_meta_type;
+    std::string d_origin;
 };
 
 #endif //SITEST_SIOBJECT_HPP

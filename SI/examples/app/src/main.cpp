@@ -2,7 +2,7 @@
 
 int main(int argc, char** argv)
 {
-    RenderEngineSDL2 re;
+    RenderEngineQT5 re;
     SIGRun s;
 
     s.exec(argc, argv, &re);
