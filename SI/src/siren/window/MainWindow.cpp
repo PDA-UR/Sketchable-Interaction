@@ -11,11 +11,19 @@ MainWindow::MainWindow():
     up_qp(std::make_unique<QPainter>())
 {SIOBJECT("SIREN")
     INFO("Starting Update Loop...");
+
     connect(up_update_worker.get(), &UpdateWorker::updated, this, &MainWindow::loop);
+    connect(QApplication::instance(), &QApplication::aboutToQuit, up_update_worker.get(), &UpdateWorker::stop);
+    connect(up_update_worker.get(), &UpdateWorker::finished, up_update_worker.get(), &UpdateWorker::deleteLater);
+
     up_update_worker->start();
     INFO("Update Loop started...");
     setGeometry(0, 0, 800, 600);
 //    showFullScreen();
+
+//    dynamicConnection(this, "test_signal()", this, "test_slot()");
+
+//    Q_EMIT test_signal();
 }
 
 MainWindow::~MainWindow()
@@ -69,6 +77,11 @@ void MainWindow::loop(double delta, int fps)
     }
 
     update();
+}
+
+void MainWindow::set_is_running(bool running)
+{
+
 }
 
 void MainWindow::draw_background(QPaintEvent* event)

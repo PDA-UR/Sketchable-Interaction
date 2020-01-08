@@ -1,0 +1,13 @@
+
+
+#ifndef SITEST_LINKINGMANAGER_HPP
+#define SITEST_LINKINGMANAGER_HPP
+
+
+class LinkingManager
+{
+
+};
+
+
+#endif //SITEST_LINKINGMANAGER_HPP

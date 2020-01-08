@@ -1,5 +1,4 @@
 
-
 #include "UpdateWorker.hpp"
 
 UpdateWorker::UpdateWorker(): d_is_running(false), d_fps(60), d_remainder(0.0), d_simulated_time(0.0)
@@ -9,7 +8,7 @@ UpdateWorker::UpdateWorker(): d_is_running(false), d_fps(60), d_remainder(0.0), 
 
 void UpdateWorker::start()
 {
-    QObject::connect(&d_timer, SIGNAL(timeout()), this, SLOT(do_update()));
+    connect(&d_timer, SIGNAL(timeout()), this, SLOT(do_update()));
     set_running(true);
     d_timer.start(5);
     d_elapsed_timer.restart();
@@ -21,6 +20,8 @@ void UpdateWorker::stop()
     d_remainder = 0;
     set_running(false);
     d_timer.disconnect(this);
+
+    Q_EMIT finished();
 }
 
 void UpdateWorker::pause()

@@ -5,6 +5,7 @@
 #include <memory>
 #include "sigrun/Core.hpp"
 
+
 /**
 \class SIGRun
 \brief SIGRun class serving as entry point of an SI environment

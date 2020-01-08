@@ -7,18 +7,22 @@
 #include <QApplication>
 #include <QMainWindow>
 #include <debug/Print.hpp>
+#include <siren/window/MainWindow.hpp>
 
-class RenderEngineQT5: public IRenderEngine, SIObject
-{
+class RenderEngineQT5: public IRenderEngine, public SIObject
+{Q_OBJECT
 public:
     RenderEngineQT5();
     ~RenderEngineQT5();
 
-    void start(int width, int height, int argc, char **argv) override;
+    Q_SLOT void start() override;
+    Q_SLOT void stop();
     void run() override;
     void pause() override;
 
+
 private:
+    MainWindow* d_window;
 
 protected:
 };

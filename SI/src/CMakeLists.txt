@@ -19,6 +19,8 @@ set(PATH_INCLUDE_OSC_HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/SI/lib/tuio_headers/osc
 set(THREADS_PREFER_PTHREAD_FLAG ON) # linux only
 find_package(Threads REQUIRED) # linux only
 
+find_package(Qt5Widgets REQUIRED)
+
 include_directories(${PATH_INCLUDE_TUIO2_HEADERS} ${PATH_INCLUDE_OSC_HEADERS})
 
 #set(xlib TRUE)
@@ -74,14 +76,21 @@ set(SIGRunSRC
         SI/src/sigrun/region/RegionResampler.hpp
         SI/src/sigrun/rendering/IRenderEngine.hpp
         SI/src/sigrun/concurrency/StoppableTask.cpp
-        SI/src/sigrun/concurrency/StoppableTask.hpp)
+        SI/src/sigrun/concurrency/StoppableTask.hpp
+        SI/src/sigrun/context/managers/LinkingManager.cpp
+        SI/src/sigrun/context/managers/LinkingManager.hpp
+        SI/src/sigrun/concurrency/RenderWorker.cpp
+        SI/src/sigrun/concurrency/RenderWorker.hpp)
+
+ADD_DEFINITIONS(-DQT_NO_KEYWORDS)
 
 add_library(SIGeneralRuntime SHARED ${SIGRunSRC})
+set_target_properties(SIGeneralRuntime PROPERTIES AUTOMOC TRUE)
 
 if (xlib)
-    target_link_libraries(SIGeneralRuntime ${PATH_LIB} glm -luuid ${PYTHON_LIBRARIES} ${Boost_LIBRARIES} -lX11)
+    target_link_libraries(SIGeneralRuntime ${PATH_LIB} glm -luuid ${PYTHON_LIBRARIES} ${Boost_LIBRARIES} -lX11 Qt5::Widgets)
 else()
-    target_link_libraries(SIGeneralRuntime ${PATH_LIB} glm -luuid ${PYTHON_LIBRARIES} ${Boost_LIBRARIES})
+    target_link_libraries(SIGeneralRuntime ${PATH_LIB} glm -luuid ${PYTHON_LIBRARIES} ${Boost_LIBRARIES} Qt5::Widgets)
 endif()
 
 if (BUILD_DOCS)

@@ -22,13 +22,12 @@ public:
     const std::vector<std::shared_ptr<Region>>& regions() const;
 
     void update(const std::vector<int>& update_vertices);
+    RegionManager();
 
 private:
-    RegionManager();
 
     std::vector<std::shared_ptr<Region>> d_regions;
 
-    friend class Context;
     friend class SIGRunRegionManagerTest;
 };
 

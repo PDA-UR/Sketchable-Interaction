@@ -13,7 +13,7 @@ public:
     explicit UpdateWorker();
 
     void start();
-    void stop();
+    Q_SLOT void stop();
     void pause();
     void resume();
 
@@ -22,6 +22,7 @@ public:
 
     Q_SIGNAL void running_changed();
     Q_SIGNAL void updated(double delta, int fps);
+    Q_SIGNAL void finished();
 
 protected:
 private:

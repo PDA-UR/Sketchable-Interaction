@@ -2,23 +2,22 @@
 
 #include <sigrun/log/Log.hpp>
 #include "Context.hpp"
+#include <QApplication>
+#include <sigrun/rendering/IRenderEngine.hpp>
 
 Context* Context::self = nullptr;
 
 Context::~Context()
 {
     INFO("Destroying Context...");
-    delete p_render_thread;
-    p_render_thread = nullptr;
 
-    p_renderer = nullptr;
     INFO("Destroyed Context");
 }
 
 Context::Context(int width, int height, const std::unordered_map<std::string, std::unique_ptr<bp::object>>& plugins)
 {SIOBJECT("SIGRUN")
     upcm = std::make_unique<Capability>();
-    uprm = std::make_unique<RegionManager>(RegionManager());
+    uprm = std::make_unique<RegionManager>();
 
     self = this;
 
@@ -34,17 +33,34 @@ Context::Context(int width, int height, const std::unordered_map<std::string, st
 
 void Context::begin(IRenderEngine* ire, int argc, char** argv)
 {
-    p_renderer = ire;
+    INFO("Creating Qt5 Application...");
+    QApplication qapp(argc, argv);
+    INFO("Qt5 Application created!");
 
-    p_render_thread = new std::thread([&]()
-    {
-        p_renderer->start(s_width, s_height, argc, argv);
-    });
+    d_render_worker = new RenderWorker(s_width, s_height, ire);
 
-    INFO("Starting rendering thread.");
-    p_render_thread->join();
-    INFO("Exitted threads");
-    INFO("Closing context...");
+    INFO("Setting Up Rendering Background Worker...");
+    initialize_rendering_worker();
+    INFO("Finished Setting Up Rendering Background Worker!");
+
+    INFO("Starting Rendering Thread");
+    d_render_thread.start();
+    INFO("Rendering Thread Started!");
+
+    INFO("Launching QT5 Application...");
+    qapp.exec();
+}
+
+void Context::initialize_rendering_worker()
+{
+    d_render_worker->moveToThread(&d_render_thread);
+
+    connect(&d_render_thread, &QThread::started, d_render_worker, &RenderWorker::render);
+    connect(d_render_worker, &RenderWorker::finished, &d_render_thread, &QThread::quit);
+    connect(d_render_worker, &RenderWorker::finished, d_render_worker, &RenderWorker::deleteLater);
+    connect(&d_render_thread, &QThread::finished, QApplication::instance(), &QApplication::closeAllWindows);
+    connect(&d_render_thread, &QThread::finished, &d_render_thread, &QThread::deleteLater);
+    connect(QApplication::instance(), &QApplication::aboutToQuit, &d_render_thread, &QThread::quit);
 }
 
 Capability* Context::capability_manager()
@@ -66,7 +82,6 @@ void Context::update()
 {
     self = this;
 
-    uprm->update(std::vector<int>());
 }
 
 int Context::width()
