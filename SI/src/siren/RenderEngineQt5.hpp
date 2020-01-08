@@ -4,13 +4,9 @@
 #define SITEST_RENDERENGINEQT5_HPP
 
 #include <SI/SI.hpp>
-#include <QtWidgets/QApplication>
-#include <QtWidgets/QMainWindow>
+#include <QApplication>
+#include <QMainWindow>
 #include <debug/Print.hpp>
-#include <QTimer>
-#include <QElapsedTimer>
-#include <QtGui/QtGui>
-
 
 class RenderEngineQT5: public IRenderEngine, SIObject
 {
@@ -23,7 +19,6 @@ public:
     void pause() override;
 
 private:
-
 
 protected:
 };

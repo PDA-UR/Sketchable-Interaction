@@ -5,7 +5,7 @@
 
 RenderEngineQT5::RenderEngineQT5()
 { SIOBJECT("SIREN")
-
+    Log::SHOW = LOG_SHOW_ALL;
 }
 
 RenderEngineQT5::~RenderEngineQT5()
@@ -25,7 +25,7 @@ void RenderEngineQT5::start(int width, int height, int argc, char **argv)
 
 void RenderEngineQT5::run()
 {
-    Print::print("Here");
+
 }
 
 void RenderEngineQT5::pause()

@@ -8,12 +8,11 @@
 #include <memory>
 #include <sigrun/region/Region.hpp>
 #include <sigrun/context/managers/RegionManager.hpp>
-
-class RegionManager;
+#include "../../SIObject.hpp"
 
 namespace bp = boost::python;
 
-class RegionManager
+class RegionManager: public SIObject
 {
 public:
     ~RegionManager();

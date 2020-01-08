@@ -3,11 +3,14 @@
 #ifndef SITEST_MAINWINDOW_HPP
 #define SITEST_MAINWINDOW_HPP
 
-#include <iostream>
-#include <siren/background/UpdateWorker.hpp>
+#include <memory>
+
+#include <sigrun/SIObject.hpp>
 
 #include <QMainWindow>
-#include <sigrun/SIObject.hpp>
+
+#include "../background/UpdateWorker.hpp"
+#include "../region/RegionRepresentation.hpp"
 
 class MainWindow: public QMainWindow, SIObject
 {
@@ -16,9 +19,20 @@ public:
     ~MainWindow();
 
 private:
-    void update_all(double delta, int fps);
+    void loop(double delta, int fps);
 
-    UpdateWorker d_worker;
+    void draw_background(QPaintEvent* event);
+    void draw_region_representations(QPaintEvent* event);
+
+protected:
+    void paintEvent(QPaintEvent *event) override;
+    void keyPressEvent(QKeyEvent *event) override;
+
+private:
+    std::map<std::string, std::unique_ptr<RegionRepresentation>> d_region_representations;
+
+    std::unique_ptr<UpdateWorker> up_update_worker;
+    std::unique_ptr<QPainter> up_qp;
 };
 
 

@@ -20,7 +20,7 @@ TEST_F(SIGRunCollisionManagerTest, collide)
 
     script.load_class_names(classes, files[0]);
 
-    bp::object o = script.si_plugin(module_name, rpath, classes[0]);
+    std::shared_ptr<bp::object> o = std::make_shared<bp::object>(script.si_plugin(module_name, rpath, classes[0]));
 
     classes.clear();
 
@@ -30,7 +30,7 @@ TEST_F(SIGRunCollisionManagerTest, collide)
 
     script.load_class_names(classes, files[1]);
 
-    bp::object t = script.si_plugin(module_name, rpath, classes[0]);
+    std::shared_ptr<bp::object> t = std::make_shared<bp::object>(script.si_plugin(module_name, rpath, classes[0]));
 
     std::vector<glm::vec3> contour {glm::vec3(100, 100, 1), glm::vec3(100, 600, 1), glm::vec3(600, 600, 1), glm::vec3(600, 100, 1)};
 
@@ -57,7 +57,7 @@ TEST_F(SIGRunCollisionManagerTest, has_capabilities_in_common)
 
     script.load_class_names(classes, files[0]);
 
-    bp::object o = script.si_plugin(module_name, rpath, classes[0]);
+    std::shared_ptr<bp::object> o = std::make_shared<bp::object>(script.si_plugin(module_name, rpath, classes[0]));
 
     classes.clear();
 
@@ -67,7 +67,7 @@ TEST_F(SIGRunCollisionManagerTest, has_capabilities_in_common)
 
     script.load_class_names(classes, files[1]);
 
-    bp::object t = script.si_plugin(module_name, rpath, classes[0]);
+    std::shared_ptr<bp::object> t = std::make_shared<bp::object>(script.si_plugin(module_name, rpath, classes[0]));
 
     std::vector<glm::vec3> contour {glm::vec3(100, 100, 1), glm::vec3(100, 600, 1), glm::vec3(600, 600, 1), glm::vec3(600, 100, 1)};
 
@@ -92,7 +92,7 @@ TEST_F(SIGRunCollisionManagerTest, collides_with_aabb)
 
     script.load_class_names(classes, files[0]);
 
-    bp::object o = script.si_plugin(module_name, rpath, classes[0]);
+    std::shared_ptr<bp::object> o = std::make_shared<bp::object>(script.si_plugin(module_name, rpath, classes[0]));
 
     classes.clear();
 
@@ -102,7 +102,7 @@ TEST_F(SIGRunCollisionManagerTest, collides_with_aabb)
 
     script.load_class_names(classes, files[1]);
 
-    bp::object t = script.si_plugin(module_name, rpath, classes[0]);
+    std::shared_ptr<bp::object> t = std::make_shared<bp::object>(script.si_plugin(module_name, rpath, classes[0]));
 
     std::vector<glm::vec3> contour {glm::vec3(100, 100, 1), glm::vec3(100, 600, 1), glm::vec3(600, 600, 1), glm::vec3(600, 100, 1)};
 
@@ -127,7 +127,7 @@ TEST_F(SIGRunCollisionManagerTest, is_aabb_enveloped_negative)
 
     script.load_class_names(classes, files[0]);
 
-    bp::object o = script.si_plugin(module_name, rpath, classes[0]);
+    std::shared_ptr<bp::object> o = std::make_shared<bp::object>(script.si_plugin(module_name, rpath, classes[0]));
 
     classes.clear();
 
@@ -137,7 +137,7 @@ TEST_F(SIGRunCollisionManagerTest, is_aabb_enveloped_negative)
 
     script.load_class_names(classes, files[1]);
 
-    bp::object t = script.si_plugin(module_name, rpath, classes[0]);
+    std::shared_ptr<bp::object> t = std::make_shared<bp::object>(script.si_plugin(module_name, rpath, classes[0]));
 
     std::vector<glm::vec3> contour {glm::vec3(100, 100, 1), glm::vec3(100, 600, 1), glm::vec3(600, 600, 1), glm::vec3(600, 100, 1)};
 
@@ -163,7 +163,7 @@ TEST_F(SIGRunCollisionManagerTest, is_aabb_enveloped_positive)
 
     script.load_class_names(classes, files[0]);
 
-    bp::object o = script.si_plugin(module_name, rpath, classes[0]);
+    std::shared_ptr<bp::object> o = std::make_shared<bp::object>(script.si_plugin(module_name, rpath, classes[0]));
 
     classes.clear();
 
@@ -173,7 +173,7 @@ TEST_F(SIGRunCollisionManagerTest, is_aabb_enveloped_positive)
 
     script.load_class_names(classes, files[1]);
 
-    bp::object t = script.si_plugin(module_name, rpath, classes[0]);
+    std::shared_ptr<bp::object> t = std::make_shared<bp::object>(script.si_plugin(module_name, rpath, classes[0]));
 
     std::vector<glm::vec3> contour1 {glm::vec3(100, 100, 1), glm::vec3(100, 600, 1), glm::vec3(600, 600, 1), glm::vec3(600, 100, 1)};
     std::vector<glm::vec3> contour2 {glm::vec3(150, 150, 1), glm::vec3(150, 550, 1), glm::vec3(550, 550, 1), glm::vec3(550, 150, 1)};
@@ -200,7 +200,7 @@ TEST_F(SIGRunCollisionManagerTest, cm_collides_with_mask)
 
     script.load_class_names(classes, files[0]);
 
-    bp::object o = script.si_plugin(module_name, rpath, classes[0]);
+    std::shared_ptr<bp::object> o = std::make_shared<bp::object>(script.si_plugin(module_name, rpath, classes[0]));
 
     classes.clear();
 
@@ -210,7 +210,7 @@ TEST_F(SIGRunCollisionManagerTest, cm_collides_with_mask)
 
     script.load_class_names(classes, files[1]);
 
-    bp::object t = script.si_plugin(module_name, rpath, classes[0]);
+    std::shared_ptr<bp::object> t = std::make_shared<bp::object>(script.si_plugin(module_name, rpath, classes[0]));
 
     std::vector<glm::vec3> contour1 {glm::vec3(100, 100, 1), glm::vec3(100, 600, 1), glm::vec3(600, 600, 1), glm::vec3(600, 100, 1)};
     std::vector<glm::vec3> contour2 {glm::vec3(150, 150, 1), glm::vec3(150, 550, 1), glm::vec3(550, 550, 1), glm::vec3(550, 150, 1)};
@@ -240,7 +240,7 @@ TEST_F(SIGRunCollisionManagerTest, are_aabbs_equal)
 
     script.load_class_names(classes, files[0]);
 
-    bp::object o = script.si_plugin(module_name, rpath, classes[0]);
+    std::shared_ptr<bp::object> o = std::make_shared<bp::object>(script.si_plugin(module_name, rpath, classes[0]));
 
     classes.clear();
 
@@ -250,7 +250,7 @@ TEST_F(SIGRunCollisionManagerTest, are_aabbs_equal)
 
     script.load_class_names(classes, files[1]);
 
-    bp::object t = script.si_plugin(module_name, rpath, classes[0]);
+    std::shared_ptr<bp::object> t = std::make_shared<bp::object>(script.si_plugin(module_name, rpath, classes[0]));
 
     std::vector<glm::vec3> contour1 {glm::vec3(100, 100, 1), glm::vec3(100, 600, 1), glm::vec3(600, 600, 1), glm::vec3(600, 100, 1)};
     std::vector<glm::vec3> contour2 {glm::vec3(150, 150, 1), glm::vec3(150, 550, 1), glm::vec3(550, 550, 1), glm::vec3(550, 150, 1)};
@@ -287,7 +287,7 @@ TEST_F(SIGRunCollisionManagerTest, handle_event_continuous)
 
     script.load_class_names(classes, files[0]);
 
-    bp::object o = script.si_plugin(module_name, rpath, classes[0]);
+    std::shared_ptr<bp::object> o = std::make_shared<bp::object>(script.si_plugin(module_name, rpath, classes[0]));
 
     classes.clear();
 
@@ -297,7 +297,7 @@ TEST_F(SIGRunCollisionManagerTest, handle_event_continuous)
 
     script.load_class_names(classes, files[1]);
 
-    bp::object t = script.si_plugin(module_name, rpath, classes[0]);
+    std::shared_ptr<bp::object> t = std::make_shared<bp::object>(script.si_plugin(module_name, rpath, classes[0]));
 
     std::vector<glm::vec3> contour1 {glm::vec3(100, 100, 1), glm::vec3(100, 600, 1), glm::vec3(600, 600, 1), glm::vec3(600, 100, 1)};
     std::vector<glm::vec3> contour2 {glm::vec3(150, 150, 1), glm::vec3(150, 550, 1), glm::vec3(550, 550, 1), glm::vec3(550, 150, 1)};
@@ -323,7 +323,7 @@ TEST_F(SIGRunCollisionManagerTest, handle_event_enter)
 
     script.load_class_names(classes, files[0]);
 
-    bp::object o = script.si_plugin(module_name, rpath, classes[0]);
+    std::shared_ptr<bp::object> o = std::make_shared<bp::object>(script.si_plugin(module_name, rpath, classes[0]));
 
     classes.clear();
 
@@ -333,7 +333,7 @@ TEST_F(SIGRunCollisionManagerTest, handle_event_enter)
 
     script.load_class_names(classes, files[1]);
 
-    bp::object t = script.si_plugin(module_name, rpath, classes[0]);
+    std::shared_ptr<bp::object> t = std::make_shared<bp::object>(script.si_plugin(module_name, rpath, classes[0]));
 
     std::vector<glm::vec3> contour1 {glm::vec3(100, 100, 1), glm::vec3(100, 600, 1), glm::vec3(600, 600, 1), glm::vec3(600, 100, 1)};
     std::vector<glm::vec3> contour2 {glm::vec3(150, 150, 1), glm::vec3(150, 550, 1), glm::vec3(550, 550, 1), glm::vec3(550, 150, 1)};
@@ -363,7 +363,7 @@ TEST_F(SIGRunCollisionManagerTest, handle_event_leave)
 
     script.load_class_names(classes, files[0]);
 
-    bp::object o = script.si_plugin(module_name, rpath, classes[0]);
+    std::shared_ptr<bp::object> o = std::make_shared<bp::object>(script.si_plugin(module_name, rpath, classes[0]));
 
     classes.clear();
 
@@ -373,7 +373,7 @@ TEST_F(SIGRunCollisionManagerTest, handle_event_leave)
 
     script.load_class_names(classes, files[1]);
 
-    bp::object t = script.si_plugin(module_name, rpath, classes[0]);
+    std::shared_ptr<bp::object> t = std::make_shared<bp::object>(script.si_plugin(module_name, rpath, classes[0]));
 
     std::vector<glm::vec3> contour1 {glm::vec3(100, 100, 1), glm::vec3(100, 600, 1), glm::vec3(600, 600, 1), glm::vec3(600, 100, 1)};
     std::vector<glm::vec3> contour2 {glm::vec3(150, 150, 1), glm::vec3(150, 550, 1), glm::vec3(550, 550, 1), glm::vec3(550, 150, 1)};

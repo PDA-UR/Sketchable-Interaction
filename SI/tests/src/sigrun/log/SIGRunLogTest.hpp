@@ -11,7 +11,7 @@ class SIGRunLogTest: public ::testing::Test, public SIObject
 {
 public:
     virtual void SetUp()
-    {SIOBJECT
+    {SIOBJECT("SITEST")
 
     }
 

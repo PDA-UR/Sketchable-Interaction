@@ -17,7 +17,7 @@ TEST_F(SIGRunRegionTest, construction)
 
     bp::object o;
 
-    EXPECT_NO_FATAL_FAILURE(Region r(contour, o));
+    EXPECT_NO_FATAL_FAILURE(Region r(contour, std::make_shared<bp::object>(o)));
 }
 
 TEST_F(SIGRunRegionTest, aabb)
@@ -26,7 +26,7 @@ TEST_F(SIGRunRegionTest, aabb)
 
     bp::object o;
 
-    Region r(contour, o);
+    Region r(contour, std::make_shared<bp::object>(o));
 
     ASSERT_EQ(contour.size(), r.aabb().size());
 
@@ -39,12 +39,10 @@ TEST_F(SIGRunRegionTest, contour)
     std::vector<glm::vec3> contour {glm::vec3(100, 100, 1), glm::vec3(100, 600, 1), glm::vec3(600, 600, 1), glm::vec3(600, 100, 1)};
 
     bp::object o;
-    Region r(contour, o);
+    Region r(contour, std::make_shared<bp::object>(o));
 
-    ASSERT_EQ(contour.size(), r.contour().size());
-
-    for(int i = 0; i < contour.size(); ++i)
-        ASSERT_EQ(contour[i], r.contour()[i]);
+    ASSERT_EQ(contour.size(), 4);
+    ASSERT_EQ(r.contour().size(), 64);
 }
 
 TEST_F(SIGRunRegionTest, on_enter)
@@ -62,7 +60,7 @@ TEST_F(SIGRunRegionTest, on_enter)
 
     script.load_class_names(classes, files[0]);
 
-    bp::object o = script.si_plugin(module_name, rpath, classes[0]);
+    std::shared_ptr<bp::object> o = std::make_shared<bp::object>(script.si_plugin(module_name, rpath, classes[0]));
 
     classes.clear();
 
@@ -72,13 +70,13 @@ TEST_F(SIGRunRegionTest, on_enter)
 
     script.load_class_names(classes, files[1]);
 
-    bp::object t = script.si_plugin(module_name, rpath, classes[0]);
+    std::shared_ptr<bp::object> t = std::make_shared<bp::object>(script.si_plugin(module_name, rpath, classes[0]));
 
     std::vector<glm::vec3> contour {glm::vec3(100, 100, 1), glm::vec3(100, 600, 1), glm::vec3(600, 600, 1), glm::vec3(600, 100, 1)};
 
     Region r(contour, o);
 
-    ASSERT_FALSE(r.on_enter(t));
+    ASSERT_FALSE(r.on_enter(*t));
 }
 
 TEST_F(SIGRunRegionTest, on_continuous)
@@ -96,7 +94,7 @@ TEST_F(SIGRunRegionTest, on_continuous)
 
     script.load_class_names(classes, files[0]);
 
-    bp::object o = script.si_plugin(module_name, rpath, classes[0]);
+    std::shared_ptr<bp::object> o = std::make_shared<bp::object>(script.si_plugin(module_name, rpath, classes[0]));
 
     classes.clear();
 
@@ -106,13 +104,13 @@ TEST_F(SIGRunRegionTest, on_continuous)
 
     script.load_class_names(classes, files[1]);
 
-    bp::object t = script.si_plugin(module_name, rpath, classes[0]);
+    std::shared_ptr<bp::object> t = std::make_shared<bp::object>(script.si_plugin(module_name, rpath, classes[0]));
 
     std::vector<glm::vec3> contour {glm::vec3(100, 100, 1), glm::vec3(100, 600, 1), glm::vec3(600, 600, 1), glm::vec3(600, 100, 1)};
 
     Region r(contour, o);
 
-    ASSERT_FALSE(r.on_continuous(t));
+    ASSERT_FALSE(r.on_continuous(*t));
 }
 
 TEST_F(SIGRunRegionTest, on_leave)
@@ -130,7 +128,7 @@ TEST_F(SIGRunRegionTest, on_leave)
 
     script.load_class_names(classes, files[0]);
 
-    bp::object o = script.si_plugin(module_name, rpath, classes[0]);
+    std::shared_ptr<bp::object> o = std::make_shared<bp::object>(script.si_plugin(module_name, rpath, classes[0]));
 
     classes.clear();
 
@@ -140,11 +138,11 @@ TEST_F(SIGRunRegionTest, on_leave)
 
     script.load_class_names(classes, files[1]);
 
-    bp::object t = script.si_plugin(module_name, rpath, classes[0]);
+    std::shared_ptr<bp::object> t = std::make_shared<bp::object>(script.si_plugin(module_name, rpath, classes[0]));
 
     std::vector<glm::vec3> contour {glm::vec3(100, 100, 1), glm::vec3(100, 600, 1), glm::vec3(600, 600, 1), glm::vec3(600, 100, 1)};
 
     Region r(contour, o);
 
-    ASSERT_FALSE(r.on_leave(t));
+    ASSERT_FALSE(r.on_leave(*t));
 }

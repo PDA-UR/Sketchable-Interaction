@@ -65,6 +65,8 @@ Context* Context::SIContext()
 void Context::update()
 {
     self = this;
+
+    uprm->update(std::vector<int>());
 }
 
 int Context::width()
