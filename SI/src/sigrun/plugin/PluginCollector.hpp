@@ -10,7 +10,7 @@ class PluginCollector: public SIObject
 {
 public:
     PluginCollector()
-    {SIOBJECT("SIGRUN")
+    {SIOBJECT(SIGRUN)
     }
 
     ~PluginCollector() = default;

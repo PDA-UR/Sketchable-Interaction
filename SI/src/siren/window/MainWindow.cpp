@@ -5,25 +5,22 @@
 #include <QPaintEvent>
 #include <QPainter>
 
-MainWindow::MainWindow():
+MainWindow::MainWindow(int width, int height):
     QMainWindow(),
     up_update_worker(std::make_unique<UpdateWorker>()),
-    up_qp(std::make_unique<QPainter>())
-{SIOBJECT("SIREN")
+    up_qp(std::make_unique<QPainter>()),
+    d_width(width),
+    d_height(height)
+{SIOBJECT(SIREN)
     INFO("Starting Update Loop...");
 
     connect(up_update_worker.get(), &UpdateWorker::updated, this, &MainWindow::loop);
-    connect(QApplication::instance(), &QApplication::aboutToQuit, up_update_worker.get(), &UpdateWorker::stop);
+
     connect(up_update_worker.get(), &UpdateWorker::finished, up_update_worker.get(), &UpdateWorker::deleteLater);
 
     up_update_worker->start();
     INFO("Update Loop started...");
-    setGeometry(0, 0, 800, 600);
-//    showFullScreen();
-
-//    dynamicConnection(this, "test_signal()", this, "test_slot()");
-
-//    Q_EMIT test_signal();
+    setGeometry(0, 0, width, height);
 }
 
 MainWindow::~MainWindow()

@@ -24,6 +24,6 @@ void RegionManager::update(const std::vector<int> &update_vertices)
 }
 
 RegionManager::RegionManager()
-{SIOBJECT("SIGRUN")
+{SIOBJECT(SIGRUN)
 
 }

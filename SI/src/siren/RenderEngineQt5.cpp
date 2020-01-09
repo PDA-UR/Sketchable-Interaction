@@ -3,33 +3,21 @@
 #include <sigrun/log/Log.hpp>
 
 RenderEngineQT5::RenderEngineQT5()
-{ SIOBJECT("SIREN")
+{ SIOBJECT(SIREN)
     Log::SHOW = LOG_SHOW_ALL;
 }
 
 RenderEngineQT5::~RenderEngineQT5()
 {
     INFO("Terminating Rendering Engine...");
-    if(d_window)
-    {
-        INFO("Destroying Window...");
-
-        delete d_window;
-        d_window = nullptr;
-    }
 
     INFO("Rendering Engine terminated!");
 }
 
-void RenderEngineQT5::start()
+void RenderEngineQT5::start(int width, int height)
 {
-    d_window = new MainWindow();
+    d_window = std::make_unique<MainWindow>(width, height);
     run();
-}
-
-void RenderEngineQT5::stop()
-{
-
 }
 
 void RenderEngineQT5::run()

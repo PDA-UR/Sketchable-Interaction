@@ -18,7 +18,7 @@ public:
 private:
     int d_width;
     int d_height;
-    IRenderEngine* d_ire;
+    std::unique_ptr<IRenderEngine*> d_ire;
 
 protected:
 

@@ -11,6 +11,7 @@ class UpdateWorker: public QObject
 { Q_OBJECT
 public:
     explicit UpdateWorker();
+    ~UpdateWorker();
 
     void start();
     Q_SLOT void stop();
@@ -31,8 +32,8 @@ private:
 
     bool d_is_running;
     int d_fps;
-    QTimer d_timer;
-    QElapsedTimer d_elapsed_timer;
+    QTimer* d_timer;
+    QElapsedTimer* d_elapsed_timer;
     double d_remainder;
     double d_simulated_time;
 };

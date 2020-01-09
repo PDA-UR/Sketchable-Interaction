@@ -17,15 +17,13 @@
 class MainWindow: public SIObject, public QMainWindow
 {
 public:
-    MainWindow();
+    MainWindow(int width, int height);
     ~MainWindow();
 
     void set_is_running(bool running);
 private:
     void draw_background(QPaintEvent* event);
     void draw_region_representations(QPaintEvent* event);
-
-    Q_SIGNAL void test_signal();
 
     Q_SLOT void loop(double delta, int fps);
 
@@ -52,6 +50,8 @@ private:
 
     std::unique_ptr<UpdateWorker> up_update_worker;
     std::unique_ptr<QPainter> up_qp;
+
+    int d_width, d_height;
 
 protected:
     void paintEvent(QPaintEvent *event) override;

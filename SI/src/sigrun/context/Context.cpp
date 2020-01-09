@@ -11,11 +11,14 @@ Context::~Context()
 {
     INFO("Destroying Context...");
 
+    delete d_render_worker;
+    d_render_worker = nullptr;
+
     INFO("Destroyed Context");
 }
 
 Context::Context(int width, int height, const std::unordered_map<std::string, std::unique_ptr<bp::object>>& plugins)
-{SIOBJECT("SIGRUN")
+{SIOBJECT(SIGRUN)
     upcm = std::make_unique<Capability>();
     uprm = std::make_unique<RegionManager>();
 
@@ -58,9 +61,10 @@ void Context::initialize_rendering_worker()
     connect(&d_render_thread, &QThread::started, d_render_worker, &RenderWorker::render);
     connect(d_render_worker, &RenderWorker::finished, &d_render_thread, &QThread::quit);
     connect(d_render_worker, &RenderWorker::finished, d_render_worker, &RenderWorker::deleteLater);
-    connect(&d_render_thread, &QThread::finished, QApplication::instance(), &QApplication::closeAllWindows);
     connect(&d_render_thread, &QThread::finished, &d_render_thread, &QThread::deleteLater);
     connect(QApplication::instance(), &QApplication::aboutToQuit, &d_render_thread, &QThread::quit);
+    connect(&d_render_thread, &QThread::finished, QApplication::instance(), &QApplication::closeAllWindows);
+
 }
 
 Capability* Context::capability_manager()

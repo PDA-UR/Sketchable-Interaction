@@ -13,7 +13,7 @@
     Specify, which Logging capabilities are desired.
 */
 Core::Core()
-{SIOBJECT("SIGRUN")
+{SIOBJECT(SIGRUN)
     Log::__DEBUG__ = true;
     Log::SHOW = LOG_SHOW_ALL;
     Log::WHERE = LOG_CONSOLE;

@@ -15,14 +15,12 @@ public:
     RenderEngineQT5();
     ~RenderEngineQT5();
 
-    Q_SLOT void start() override;
-    Q_SLOT void stop();
+    void start(int width, int height) override;
     void run() override;
     void pause() override;
 
-
 private:
-    MainWindow* d_window;
+    std::unique_ptr<MainWindow> d_window;
 
 protected:
 };

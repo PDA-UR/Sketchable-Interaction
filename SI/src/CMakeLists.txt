@@ -80,7 +80,9 @@ set(SIGRunSRC
         SI/src/sigrun/context/managers/LinkingManager.cpp
         SI/src/sigrun/context/managers/LinkingManager.hpp
         SI/src/sigrun/concurrency/RenderWorker.cpp
-        SI/src/sigrun/concurrency/RenderWorker.hpp)
+        SI/src/sigrun/concurrency/RenderWorker.hpp
+        SI/src/sigrun/context/Link.cpp
+        SI/src/sigrun/context/Link.hpp)
 
 ADD_DEFINITIONS(-DQT_NO_KEYWORDS)
 

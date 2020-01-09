@@ -35,8 +35,11 @@
 #define SIOBJECT(origin) (\
 {\
     d_meta_type = __CLASS_NAME__;\
-    d_origin = origin;\
+    d_origin = #origin;\
 });
+
+#define SIGRUN SIOBJECT(SIGRUN);
+#define SIREN SIOBJECT(SIREN);
 
 /**
 \class SIObject

@@ -11,8 +11,7 @@
 class IRenderEngine: public QObject
 {Q_OBJECT
 public:
-    Q_SLOT virtual void start() = 0;
-//    Q_SLOT virtual void start(int width, int height) = 0;
+    virtual void start(int width, int height) = 0;
     virtual void run() = 0;
     virtual  void pause() = 0;
 };
