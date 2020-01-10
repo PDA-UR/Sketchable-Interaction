@@ -5,6 +5,9 @@
 
 #include <utility>
 #include "RegionResampler.hpp"
+#include <sigrun/log/Log.hpp>
+#include <sigrun/context/Link.hpp>
+#include <sigrun/util/UUID.hpp>
 
 namespace bp = boost::python;
 
@@ -13,20 +16,14 @@ Region::Region(const std::vector<glm::vec3> &contour, std::shared_ptr<bp::object
     uprt(std::make_unique<RegionTransform>()),
     uppi(std::make_unique<PythonInvoker>()),
     d_is_transformed(true) // should be false
-{
+{SIGRUN
     RegionResampler::resample(d_contour, contour);
 
     set_aabb();
 
     uprm = std::make_unique<RegionMask>(1920, 1080, d_contour, d_aabb);
 
-    uuid_t uuid;
-    char uuid_str[37];
-
-    uuid_generate_time_safe(uuid);
-    uuid_unparse_lower(uuid, uuid_str);
-
-    d_uuid = std::string(uuid_str);
+    d_uuid = std::string(UUID::uuid());
 
     d_name = PythonInvoker().invoke_extract_attribute<std::string>(*d_effect, "name");
     d_name = d_name == "" ? "custom": d_name;
@@ -154,4 +151,23 @@ int Region::on_leave(bp::object& other)
     }
 
     return success;
+}
+
+void Region::__set_position__(int x, int y, const std::string& event_uuid)
+{
+    // safeguards for runtime
+
+    if (std::find(d_link_events.begin(), d_link_events.end(), event_uuid) == d_link_events.end())
+    {
+        // needs to call function from plugin in the end
+
+        __x__ = x;
+        __y__ = y;
+
+        d_link_events.push_back(event_uuid);
+
+        Q_EMIT __position__(x, y, event_uuid);
+    }
+    else
+        d_link_events.erase(std::find(d_link_events.begin(), d_link_events.end(), event_uuid));
 }

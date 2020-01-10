@@ -35,7 +35,7 @@ set(PySISrc
 
 # SI PYTHON3 MODULE
 add_library(PySI MODULE ${PySISrc})
-target_link_libraries(PySI ${PYTHON_LIBRARIES} ${Boost_LIBRARIES})
+target_link_libraries(PySI ${PYTHON_LIBRARIES} ${Boost_LIBRARIES} Qt5::Widgets)
 
 # SI RUNTIME LIBRARY
 
@@ -82,7 +82,9 @@ set(SIGRunSRC
         SI/src/sigrun/concurrency/RenderWorker.cpp
         SI/src/sigrun/concurrency/RenderWorker.hpp
         SI/src/sigrun/context/Link.cpp
-        SI/src/sigrun/context/Link.hpp)
+        SI/src/sigrun/context/Link.hpp
+        SI/src/sigrun/util/UUID.cpp
+        SI/src/sigrun/util/UUID.hpp)
 
 ADD_DEFINITIONS(-DQT_NO_KEYWORDS)
 

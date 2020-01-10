@@ -32,7 +32,6 @@ private:
         const QMetaObject* meta_object = obj->metaObject();
         QByteArray normalized_name = QMetaObject::normalizedSignature(name);
         int index = meta_object->indexOfMethod(normalized_name.constData());
-        Q_ASSERT(index != -1);
         return meta_object->method(index);
     }
 

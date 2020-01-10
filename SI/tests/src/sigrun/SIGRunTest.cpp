@@ -10,7 +10,7 @@ TEST(SIGRunTEST, construction)
 TEST(SIGRunTest, exec)
 {
     int test_int = 0;
-    char* test_string = "hello";
+    char* test_string = (char *)std::string("hello").c_str();
     MockSIGRun s;
 
     ASSERT_EQ(0, s.exec(test_int, &test_string));

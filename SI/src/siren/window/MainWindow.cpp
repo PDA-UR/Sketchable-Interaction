@@ -11,7 +11,7 @@ MainWindow::MainWindow(int width, int height):
     up_qp(std::make_unique<QPainter>()),
     d_width(width),
     d_height(height)
-{SIOBJECT(SIREN)
+{SIREN
     INFO("Starting Update Loop...");
 
     connect(up_update_worker.get(), &UpdateWorker::updated, this, &MainWindow::loop);

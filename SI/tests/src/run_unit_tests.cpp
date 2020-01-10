@@ -1,7 +1,7 @@
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
-#define NUM_TEST_ITERATIONS 1
+#define NUM_TEST_ITERATIONS 1000
 
 int main(int argc, char** argv)
 {

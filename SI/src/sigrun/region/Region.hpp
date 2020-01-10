@@ -11,12 +11,13 @@
 #include "RegionMask.hpp"
 #include "RegionTransform.hpp"
 #include "sigrun/plugin/PythonInvoker.hpp"
-#include <uuid/uuid.h>
+#include <sigrun/SIObject.hpp>
+#include <QObject>
 
 namespace bp = boost::python;
 
-class Region
-{
+class Region: public QObject, public SIObject
+{Q_OBJECT
 public:
     Region(const std::vector<glm::vec3>& contour, std::shared_ptr<bp::object> effect);
     ~Region();
@@ -44,9 +45,17 @@ public:
     int on_continuous(bp::object& other);
     int on_leave(bp::object& other);
 
+    Q_SIGNAL void __position__(int x, int y, const std::string& event_uuid);
+
+    int __x__ = 0;
+    int __y__ = 0;
 private:
+    Q_SLOT void __set_position__(int x, int y, const std::string& event_uuid);
+
     std::vector<glm::vec3> d_contour;
     std::vector<glm::vec3> d_aabb;
+
+    std::vector<std::string> d_link_events;
 
     std::unique_ptr<RegionMask> uprm;
     std::unique_ptr<RegionTransform> uprt;
