@@ -7,6 +7,7 @@
 LinkingManager::LinkingManager()
 {SIGRUN
     qRegisterMetaType<std::string>("std::string");
+//    qRegisterMetaType<boost::python::object>("boost::python::object");
 }
 
 LinkingManager::~LinkingManager()
@@ -16,34 +17,54 @@ LinkingManager::~LinkingManager()
     INFO("Destroying LinkingManager...");
 }
 
-void LinkingManager::add_link(const std::shared_ptr<Region>& ra, const std::shared_ptr<Region>& rb, const std::string& aa, const std::string& ab, const ILink::LINK_TYPE& type)
+bool LinkingManager::add_link(const std::shared_ptr<Region> &ra, const std::string& aa, const std::shared_ptr<Region> &rb, const std::string &ab, const ILink::LINK_TYPE &type)
 {
-    if(is_capability_supported(aa) && is_capability_supported(ab))
+    if(type == ILink::LINK_TYPE::UD)
     {
-        if(type == ILink::LINK_TYPE::UD)
-        {
-            INFO("Establishing Unidirectional Link...");
-            std::shared_ptr<UnidirectionalLink> l = std::make_shared<UnidirectionalLink>(ra->uuid(), rb->uuid(), aa, ab);
-            d_links.insert({l, true});
-            dynamicConnection(ra.get(), capability_signal_function(aa).c_str(), rb.get(), capability_slot_function(ab).c_str());
+        INFO("Checking if requested linking relationship is defined...");
+        const bp::dict& dra = bp::extract<bp::dict>(ra->effect().attr("cap_link_emit"));
+        const bp::dict& drb = bp::extract<bp::dict>(rb->effect().attr("cap_link_recv"));
 
-            INFO("Unidirectional Link established!");
-        }
-        else if(type == ILink::LINK_TYPE::BD)
+        if(dra.has_key(aa) && drb.has_key(aa))
         {
-            std::shared_ptr<BidirectionalLink> l = std::make_shared<BidirectionalLink>(ra->uuid(), rb->uuid(), aa, ab);
-            d_links.insert({l, true});
-            dynamicConnection(ra.get(), capability_signal_function(aa).c_str(), rb.get(), capability_slot_function(ab).c_str());
-            dynamicConnection(rb.get(), capability_signal_function(ab).c_str(), ra.get(), capability_slot_function(aa).c_str());
+            const bp::dict& inner_drb = bp::extract<bp::dict>(drb[aa]);
+
+            if(inner_drb.has_key(ab))
+            {
+                INFO("Requested linking relationship is defined!");
+                INFO("Establishing Unidirectional Link...");
+                std::shared_ptr<UnidirectionalLink> l = std::make_shared<UnidirectionalLink>(ra->uuid(), rb->uuid(), aa,
+                                                                                             ab);
+                d_links.insert({l, true});
+
+                bool success = connect(ra.get(), &Region::LINK_SIGNAL, rb.get(), &Region::LINK_SLOT);
+
+                if(success)
+                {
+                    INFO("Establishing Unidirectional Link Successfull!");
+                }
+                else
+                {
+                    d_links.erase(l);
+                    INFO("Establishing Unidirectional Link Failed!");
+                }
+
+                return success;
+            }
         }
 
+        return false;
     }
+    else if(type == ILink::LINK_TYPE::BD)
+    {
+    }
+
+    return false;
 }
 
-void LinkingManager::remove_link(const std::shared_ptr<Region> &ra, const std::shared_ptr<Region> &rb, const std::string &aa,
-                            const std::string &ab, const ILink::LINK_TYPE type)
+void LinkingManager::remove_link(const std::shared_ptr<Region> &ra, const std::string& aa, const std::shared_ptr<Region> &rb, const std::string &ab, const ILink::LINK_TYPE& type)
 {
-    if(is_linked(ra->uuid(), rb->uuid(), aa, ab, type))
+    if(is_linked(ra->uuid(), aa, rb->uuid(), ab, type))
     {
         if (type == ILink::LINK_TYPE::UD)
         {
@@ -60,6 +81,8 @@ void LinkingManager::remove_link(const std::shared_ptr<Region> &ra, const std::s
                     key->sender_b() == udl.sender_b() &&
                     key->receiver_a() == udl.receiver_a())
                 {
+                    disconnect(ra.get(), &Region::LINK_SIGNAL, rb.get(), &Region::LINK_SLOT);
+
                     it = d_links.erase(it);
 
                     break;
@@ -67,8 +90,6 @@ void LinkingManager::remove_link(const std::shared_ptr<Region> &ra, const std::s
                 else
                     ++it;
             }
-            dynamicDisconnection(ra.get(), capability_signal_function(aa).c_str(), rb.get(), capability_slot_function(ab).c_str());
-
         }
         else if(type == ILink::LINK_TYPE::BD)
         {
@@ -93,15 +114,14 @@ void LinkingManager::remove_link(const std::shared_ptr<Region> &ra, const std::s
                     ++it;
             }
 
-            dynamicDisconnection(ra.get(), capability_signal_function(aa).c_str(), rb.get(), capability_slot_function(ab).c_str());
-            dynamicDisconnection(rb.get(), capability_signal_function(ab).c_str(), ra.get(), capability_slot_function(aa).c_str());
+//            dynamicDisconnection(ra.get(), capability_signal_function(aa).c_str(), rb.get(), capability_slot_function(ab).c_str());
+//            dynamicDisconnection(rb.get(), capability_signal_function(ab).c_str(), ra.get(), capability_slot_function(aa).c_str());
 
         }
     }
 }
 
-const std::shared_ptr<ILink> LinkingManager::link(const std::string &ra, const std::string &rb, const std::string &aa, const std::string &ab,
-                     const ILink::LINK_TYPE &type)
+const std::shared_ptr<ILink> LinkingManager::link(const std::string &ra, const std::string& aa, const std::string &rb, const std::string &ab, const ILink::LINK_TYPE &type)
 {
     if(type == ILink::LINK_TYPE::UD)
     {
@@ -121,7 +141,7 @@ const std::shared_ptr<ILink> LinkingManager::link(const std::string &ra, const s
     return nullptr;
 }
 
-bool LinkingManager::is_linked(const std::string &ra, const std::string &rb, const std::string &aa, const std::string &ab,
+bool LinkingManager::is_linked(const std::string &ra, const std::string &aa, const std::string &rb, const std::string &ab,
                           const ILink::LINK_TYPE &type)
 {
     if(type == ILink::LINK_TYPE::UD)
@@ -159,29 +179,4 @@ bool LinkingManager::is_linked(const ILink* l)
 std::unordered_map<std::shared_ptr<ILink>, bool> LinkingManager::links() const
 {
     return d_links;
-}
-
-void LinkingManager::add_capability_functions(const std::string& name, const std::string &signal, const std::string &slot)
-{
-    d_capability_functions.insert({name, std::vector<std::string> {signal, slot}});
-}
-
-bool LinkingManager::is_capability_supported(const std::string &capability)
-{
-    return d_capability_functions.find(capability) != d_capability_functions.end();
-}
-
-const std::string &LinkingManager::capability_signal_function(const std::string &capability)
-{
-    return d_capability_functions[capability][0];
-}
-
-const std::string &LinkingManager::capability_slot_function(const std::string &capability)
-{
-    return d_capability_functions[capability][1];
-}
-
-void LinkingManager::emit_link_event(QObject *source, const std::string &signal, const std::string& event_uuid, QGenericArgument arg1, QGenericArgument arg2)
-{
-    QMetaObject::invokeMethod(source, signal.c_str(), Qt::DirectConnection, arg1, arg2, Q_ARG(const std::string&, event_uuid));
 }

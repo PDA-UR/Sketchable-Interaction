@@ -33,15 +33,36 @@ int PythonInvoker::invoke_collision_event_function(bp::object &self, bp::object 
                         return bp::extract<int>(d[key][function_name](t));
                 }
             }
-            catch (const bp::error_already_set&)
-            {
-                handle_python_error();
-                return -2;
-            }
+            HANDLE_PYTHON_ERROR
         }
     }
 
     return -1;
+}
+
+int PythonInvoker::invoke_linking_event_function(bp::object &self, const std::string &capability,  const bp::list &args)
+{
+    try
+    {
+        return bp::extract<int>(self.attr("cap_link")[capability][1](args));
+    }
+    HANDLE_PYTHON_ERROR
+
+    return -1;
+}
+
+const bp::list PythonInvoker::retrieve_linking_event_args(const bp::object& self, const std::string& capability)
+{
+    try
+    {
+        return bp::extract<bp::list>(self.attr("cap_link")[capability][0]());
+    }
+    catch (const bp::error_already_set&)
+    {
+        handle_python_error();
+    }
+
+    return bp::list();
 }
 
 void PythonInvoker::handle_python_error()

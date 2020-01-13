@@ -113,7 +113,13 @@ void MainWindow::keyPressEvent(QKeyEvent* event)
     switch (event->key())
     {
         case Qt::Key::Key_Escape:
-            close();
+        {
+            if(!d_is_exit_requested)
+            {
+                d_is_exit_requested = true;
+                close();
+            }
+        }
         break;
 
         default:

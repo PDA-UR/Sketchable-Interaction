@@ -10,6 +10,7 @@
 #include <memory>
 #include <boost/python.hpp>
 #include <sigrun/context/managers/RegionManager.hpp>
+#include <sigrun/context/managers/LinkingManager.hpp>
 #include <sigrun/concurrency/RenderWorker.hpp>
 #include <QThread>
 #include <QObject>
@@ -42,6 +43,7 @@ private:
 
     std::unique_ptr<Capability> upcm;
     std::unique_ptr<RegionManager> uprm;
+    std::unique_ptr<LinkingManager> uplm;
 
     int s_width, s_height;
 

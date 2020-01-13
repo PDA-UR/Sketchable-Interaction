@@ -17,6 +17,9 @@ Region::Region(const std::vector<glm::vec3> &contour, std::shared_ptr<bp::object
     uppi(std::make_unique<PythonInvoker>()),
     d_is_transformed(true) // should be false
 {SIGRUN
+    qRegisterMetaType<bp::object>("bp::object");
+    qRegisterMetaType<bp::list>("bp::list");
+
     RegionResampler::resample(d_contour, contour);
 
     set_aabb();
@@ -153,21 +156,18 @@ int Region::on_leave(bp::object& other)
     return success;
 }
 
-void Region::__set_position__(int x, int y, const std::string& event_uuid)
+void Region::LINK_SLOT(const std::string& uuid, const std::string& source_cap, const std::string& dest_cap, const bp::list& py_list)
 {
-    // safeguards for runtime
-
-    if (std::find(d_link_events.begin(), d_link_events.end(), event_uuid) == d_link_events.end())
+    if (std::find(d_link_events.begin(), d_link_events.end(), uuid) == d_link_events.end())
     {
-        // needs to call function from plugin in the end
+        d_link_events.push_back(uuid);
 
-        __x__ = x;
-        __y__ = y;
+//        uppi->invoke_linking_event_function(*d_effect, cap, py_list);
 
-        d_link_events.push_back(event_uuid);
+        d_effect->attr("cap_link_recv")[source_cap][dest_cap](py_list);
 
-        Q_EMIT __position__(x, y, event_uuid);
+        Q_EMIT LINK_SIGNAL(uuid, source_cap, dest_cap, py_list);
     }
     else
-        d_link_events.erase(std::find(d_link_events.begin(), d_link_events.end(), event_uuid));
+        d_link_events.erase(std::find(d_link_events.begin(), d_link_events.end(), uuid));
 }

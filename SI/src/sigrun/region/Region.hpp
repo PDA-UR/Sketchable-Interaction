@@ -16,6 +16,10 @@
 
 namespace bp = boost::python;
 
+Q_DECLARE_METATYPE (bp::object)
+Q_DECLARE_METATYPE (bp::list)
+
+
 class Region: public QObject, public SIObject
 {Q_OBJECT
 public:
@@ -45,13 +49,10 @@ public:
     int on_continuous(bp::object& other);
     int on_leave(bp::object& other);
 
-    Q_SIGNAL void __position__(int x, int y, const std::string& event_uuid);
+    Q_SIGNAL void LINK_SIGNAL(const std::string& uuid, const std::string& source_cap, const std::string& dest_cap, const bp::list& py_list);
+    Q_SLOT void LINK_SLOT(const std::string& uuid, const std::string& source_cap, const std::string& dest_cap, const bp::list& py_list);
 
-    int __x__ = 0;
-    int __y__ = 0;
 private:
-    Q_SLOT void __set_position__(int x, int y, const std::string& event_uuid);
-
     std::vector<glm::vec3> d_contour;
     std::vector<glm::vec3> d_aabb;
 

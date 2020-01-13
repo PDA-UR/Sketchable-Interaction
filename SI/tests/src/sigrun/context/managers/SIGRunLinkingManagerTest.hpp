@@ -4,12 +4,13 @@
 #define SITEST_SIGRUNLINKINGMANAGERTEST_HPP
 
 #include <gtest/gtest.h>
+#include <sigrun/SIObject.hpp>
 
-class SIGRunLinkingManagerTest: public ::testing::Test
+class SIGRunLinkingManagerTest: public ::testing::Test, public SIObject
 {
 public:
     virtual void SetUp()
-    {
+    {SIOBJECT(SITEST)
 
     }
 

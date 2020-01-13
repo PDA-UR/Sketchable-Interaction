@@ -22,6 +22,8 @@ public:
 
     void set_is_running(bool running);
 private:
+    bool d_is_exit_requested = false;
+
     void draw_background(QPaintEvent* event);
     void draw_region_representations(QPaintEvent* event);
 

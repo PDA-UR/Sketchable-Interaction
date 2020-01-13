@@ -7,6 +7,13 @@
 
 namespace bp = boost::python;
 
+#define HANDLE_PYTHON_ERROR \
+catch (const bp::error_already_set&)\
+{\
+    handle_python_error();\
+    return -2;\
+}
+
 class PythonInvoker
 {
 public:
@@ -19,6 +26,21 @@ public:
         try
         {
             return bp::extract<T>(self.attr(attribute_name.c_str()));
+        }
+        catch (const bp::error_already_set &)
+        {
+            handle_python_error();
+        }
+
+        return T();
+    }
+
+    template<typename T>
+    T invoke_extract_attribute(const bp::list &self, int index)
+    {
+        try
+        {
+            return bp::extract<T>(self[index]);
         }
         catch (const bp::error_already_set &)
         {
@@ -62,8 +84,8 @@ public:
     }
 
     int invoke_collision_event_function(bp::object& self, bp::object& other, const std::string& function_name);
-
-private:
+    int invoke_linking_event_function(bp::object& self, const std::string& capability, const bp::list& args);
+    const bp::list retrieve_linking_event_args(const bp::object& self, const std::string& capability);
     void handle_python_error();
 
 protected:
