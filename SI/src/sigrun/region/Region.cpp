@@ -33,6 +33,50 @@ Region::Region(const std::vector<glm::vec3> &contour, std::shared_ptr<bp::object
 
     d_texture_path_default = PythonInvoker().invoke_extract_attribute<std::string>(*d_effect, "texture_path");
     d_texture_path_default = d_texture_path_default == "" ? "src/siren/res/textures/placeholder.png": d_texture_path_default;
+
+
+    if(!d_effect->is_none())
+    {
+        const bp::dict& de = bp::extract<bp::dict>(d_effect->attr("cap_link_emit"));
+        const bp::list& items_de = de.keys();
+
+        for(int i = 0; i < bp::len(items_de); ++i)
+            d_attributes_emit.push_back(bp::extract<std::string>(items_de[i])());
+
+
+
+        const bp::dict& dr = bp::extract<bp::dict>(d_effect->attr("cap_link_recv"));
+        const bp::list& items_dr = dr.keys();
+
+        for(int i = 0; i < bp::len(items_dr); i++)
+        {
+            const bp::object& key = items_dr[i];
+            const bp::dict& inner_dr = bp::extract<bp::dict>(dr[key]);
+            const bp::list& items_inner_dr = inner_dr.keys();
+
+            const std::string key_str = bp::extract<std::string>(key)();
+
+            d_attributes_recv.insert({key_str, std::vector<std::string>()});
+
+            for(int k = 0; k < bp::len(items_inner_dr); k++)
+                d_attributes_recv[key_str].push_back(bp::extract<std::string>(items_inner_dr[k])());
+        }
+
+        Print::print("emits:");
+        for(auto& se: d_attributes_emit)
+        {
+            Print::print(se);
+        }
+
+        Print::print("\t");
+
+        Print::print("receives:");
+        for(auto& [key, val]: d_attributes_recv)
+        {
+            Print::print(key);
+            Print::print(val);
+        }
+    }
 }
 
 Region::~Region()
@@ -158,16 +202,42 @@ int Region::on_leave(bp::object& other)
 
 void Region::LINK_SLOT(const std::string& uuid, const std::string& source_cap, const std::string& dest_cap, const bp::list& py_list)
 {
-    if (std::find(d_link_events.begin(), d_link_events.end(), uuid) == d_link_events.end())
-    {
-        d_link_events.push_back(uuid);
+    // check if region is eligible to receive link data
 
+    auto tuple = std::make_tuple(uuid, dest_cap);
+
+    if (std::find(d_link_events.begin(), d_link_events.end(), tuple) == d_link_events.end())
+    {
+        register_link_event(tuple);
 //        uppi->invoke_linking_event_function(*d_effect, cap, py_list);
 
         d_effect->attr("cap_link_recv")[source_cap][dest_cap](py_list);
 
+        // retrieve updated args for py_list and overwrite py_list
+        // fire new signal according to changed values
+
         Q_EMIT LINK_SIGNAL(uuid, source_cap, dest_cap, py_list);
     }
     else
-        d_link_events.erase(std::find(d_link_events.begin(), d_link_events.end(), uuid));
+    {
+        d_link_events.erase(std::find(d_link_events.begin(), d_link_events.end(), tuple));
+    }
+}
+
+const std::vector<std::tuple<std::string, std::string>>& Region::link_events() const
+{
+    return d_link_events;
+}
+
+void Region::register_link_event(const std::string &uuid, const std::string &dest_attribute)
+{
+    register_link_event(std::make_tuple(uuid, dest_attribute));
+}
+
+void Region::register_link_event(const std::tuple<std::string, std::string>& link_event)
+{
+    if (std::find(d_link_events.begin(), d_link_events.end(), link_event) == d_link_events.end())
+    {
+        d_link_events.push_back(link_event);
+    }
 }

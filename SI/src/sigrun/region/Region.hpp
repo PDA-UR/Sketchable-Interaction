@@ -52,11 +52,16 @@ public:
     Q_SIGNAL void LINK_SIGNAL(const std::string& uuid, const std::string& source_cap, const std::string& dest_cap, const bp::list& py_list);
     Q_SLOT void LINK_SLOT(const std::string& uuid, const std::string& source_cap, const std::string& dest_cap, const bp::list& py_list);
 
+    void register_link_event(const std::string& uuid, const std::string& dest_attribute);
+    void register_link_event(const std::tuple<std::string, std::string>& link_event);
+    const std::vector<std::tuple<std::string, std::string>>& link_events() const;
+
 private:
     std::vector<glm::vec3> d_contour;
     std::vector<glm::vec3> d_aabb;
 
-    std::vector<std::string> d_link_events;
+    std::vector<std::tuple<std::string, std::string>> d_link_events;
+
 
     std::unique_ptr<RegionMask> uprm;
     std::unique_ptr<RegionTransform> uprt;
@@ -67,6 +72,9 @@ private:
 
     std::string d_texture_path_default;
     std::string d_name;
+
+    std::vector<std::string> d_attributes_emit;
+    std::unordered_map<std::string, std::vector<std::string>> d_attributes_recv;
 };
 
 

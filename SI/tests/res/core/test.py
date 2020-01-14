@@ -9,3 +9,11 @@ class Test(PySIEffect):
         self.cap_receive = {
 
         }
+
+        self.cap_link_emit = {
+
+        }
+
+        self.cap_link_recv = {
+
+        }

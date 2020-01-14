@@ -2,11 +2,11 @@
 
 #include "Link.hpp"
 
-UnidirectionalLink::UnidirectionalLink(const std::string &ra, const std::string &rb, const std::string &aa,
+UnidirectionalLink::UnidirectionalLink(const std::shared_ptr<Region> &ra, const std::shared_ptr<Region> &rb, const std::string &aa,
                                        const std::string &ab):
     d_sender_a(ra),
-    d_sender_b(""),
-    d_receiver_a(""),
+    d_sender_b(rb),
+    d_receiver_a(ra),
     d_receiver_b(rb),
     d_attribute_a(aa),
     d_attribute_b(ab),
@@ -25,22 +25,22 @@ const ILink::LINK_TYPE& UnidirectionalLink::type() const
     return d_link_type;
 }
 
-const std::string& UnidirectionalLink::sender_a() const
+const std::shared_ptr<Region>& UnidirectionalLink::sender_a() const
 {
     return d_sender_a;
 }
 
-const std::string& UnidirectionalLink::sender_b() const
+const std::shared_ptr<Region>& UnidirectionalLink::sender_b() const
 {
     return d_sender_b;
 }
 
-const std::string& UnidirectionalLink::receiver_a() const
+const std::shared_ptr<Region>& UnidirectionalLink::receiver_a() const
 {
     return d_receiver_a;
 }
 
-const std::string& UnidirectionalLink::receiver_b() const
+const std::shared_ptr<Region>& UnidirectionalLink::receiver_b() const
 {
     return d_receiver_b;
 }
@@ -60,7 +60,7 @@ const BidirectionalLink UnidirectionalLink::to_bidirectional()
 
 }
 
-BidirectionalLink::BidirectionalLink(const std::string &ra, const std::string &rb, const std::string &aa,
+BidirectionalLink::BidirectionalLink(const std::shared_ptr<Region> &ra, const std::shared_ptr<Region> &rb, const std::string &aa,
                                      const std::string &ab):
     d_sender_a(ra),
     d_sender_b(rb),
@@ -83,22 +83,22 @@ const ILink::LINK_TYPE &BidirectionalLink::type() const
     return d_link_type;
 }
 
-const std::string &BidirectionalLink::sender_a() const
+const std::shared_ptr<Region> &BidirectionalLink::sender_a() const
 {
     return d_sender_a;
 }
 
-const std::string &BidirectionalLink::sender_b() const
+const std::shared_ptr<Region> &BidirectionalLink::sender_b() const
 {
     return d_sender_b;
 }
 
-const std::string &BidirectionalLink::receiver_a() const
+const std::shared_ptr<Region> &BidirectionalLink::receiver_a() const
 {
     return d_receiver_a;
 }
 
-const std::string &BidirectionalLink::receiver_b() const
+const std::shared_ptr<Region> &BidirectionalLink::receiver_b() const
 {
     return d_receiver_b;
 }

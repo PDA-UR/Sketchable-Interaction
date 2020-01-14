@@ -21,16 +21,16 @@ public:
     ~LinkingManager();
 
     bool add_link(const std::shared_ptr<Region>& ra,  const std::string& aa, const std::shared_ptr<Region>& rb, const std::string& ab, const ILink::LINK_TYPE& type);
-
     void remove_link(const std::shared_ptr<Region>& ra, const std::string& aa, const std::shared_ptr<Region>& rb, const std::string& ab, const ILink::LINK_TYPE& type);
+    bool is_linked(const std::shared_ptr<Region>& ra, const std::string& aa, const std::shared_ptr<Region>& rb, const std::string& ab, const ILink::LINK_TYPE& type);
 
-    bool is_linked(const std::string& ra, const std::string& aa, const std::string& rb, const std::string& ab, const ILink::LINK_TYPE& type);
+    void emit_link_event(const std::shared_ptr<Region>& sender, const std::string& sender_attribute, const std::string& receiver_attribute, const std::string& uuid);
 
-    const std::shared_ptr<ILink> link(const std::string& ra, const std::string& aa, const std::string& rb, const std::string& ab, const ILink::LINK_TYPE& type);
+    const std::shared_ptr<ILink> link(const std::shared_ptr<Region>& ra, const std::string& aa, const std::shared_ptr<Region>& rb, const std::string& ab, const ILink::LINK_TYPE& type);
     std::unordered_map<std::shared_ptr<ILink>, bool> links() const;
 
 private:
-    bool is_linked(const ILink* udl);
+    bool is_linked(const ILink* link);
     std::unordered_map<std::shared_ptr<ILink>, bool> d_links;
 
 //    QMetaMethod fetchIndexOfMethod(QObject* obj, const char* name)
