@@ -1,6 +1,17 @@
 from libPySI import PySIEffect, PySICapability
 
 
+"""
+def foo(r, g, b):
+  print(r, g, b)
+
+def bar():
+  t = 1, 2, 3
+  return foo(*t)
+
+bar()
+"""
+
 class Dummy1(PySIEffect):
     def __init__(self):
         super(Dummy1, self).__init__()

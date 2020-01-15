@@ -31,6 +31,9 @@ public:
     [[nodiscard]] virtual const std::shared_ptr<Region>& receiver_b() const = 0;
     [[nodiscard]] virtual const std::string& attribute_a() const = 0;
     [[nodiscard]] virtual const std::string& attribute_b() const = 0;
+
+    virtual void add_child(std::shared_ptr<ILink>& link) = 0;
+    [[nodiscard]] virtual std::vector<std::shared_ptr<ILink>>& children() = 0;
 };
 
 class BidirectionalLink;
@@ -48,6 +51,9 @@ public:
     [[nodiscard]] const std::string& attribute_a() const override;
     [[nodiscard]] const std::string& attribute_b() const override;
 
+    virtual void add_child(std::shared_ptr<ILink>& link) override;
+    [[nodiscard]] std::vector<std::shared_ptr<ILink>>& children() override;
+
     // might be useful
     const BidirectionalLink to_bidirectional();
 
@@ -60,6 +66,8 @@ private:
     std::shared_ptr<Region> d_receiver_b;
     std::string d_attribute_a;
     std::string d_attribute_b;
+
+    std::vector<std::shared_ptr<ILink>> d_children;
 };
 
 class BidirectionalLink: public ILink
@@ -76,6 +84,8 @@ public:
     [[nodiscard]] const std::shared_ptr<Region>& receiver_b() const override;
     [[nodiscard]] const std::string& attribute_a() const override;
     [[nodiscard]] const std::string& attribute_b() const override;
+    virtual void add_child(std::shared_ptr<ILink>& link) override;
+    [[nodiscard]] std::vector<std::shared_ptr<ILink>>& children() override;
 
     // might be useful
     const UnidirectionalLink to_unidirectional();
@@ -89,6 +99,8 @@ private:
     std::shared_ptr<Region> d_receiver_b;
     std::string d_attribute_a;
     std::string d_attribute_b;
+
+    std::vector<std::shared_ptr<ILink>> d_children;
 };
 
 #endif //SITEST_LINK_HPP

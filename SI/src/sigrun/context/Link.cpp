@@ -117,3 +117,23 @@ const UnidirectionalLink BidirectionalLink::to_unidirectional()
 {
 
 }
+
+std::vector<std::shared_ptr<ILink>>& UnidirectionalLink::children()
+{
+    return d_children;
+}
+
+std::vector<std::shared_ptr<ILink>>& BidirectionalLink::children()
+{
+    return d_children;
+}
+
+void UnidirectionalLink::add_child(std::shared_ptr<ILink> &link)
+{
+    d_children.push_back(link);
+}
+
+void BidirectionalLink::add_child(std::shared_ptr<ILink> &link)
+{
+    d_children.push_back(link);
+}

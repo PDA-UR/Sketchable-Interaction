@@ -60,7 +60,8 @@ void Context::begin(IRenderEngine* ire, int argc, char** argv)
 
     const bp::list& py_list = bp::extract<bp::list>(uprm->regions()[0]->effect().attr("cap_link_emit")["__position__"]());
 
-    Q_EMIT uprm->regions()[0]->LINK_SIGNAL(UUID::uuid(), "__position__", "__position__", py_list);
+    uplm->linking_graph()->emit_link_event(uprm->regions()[0], "__position__");
+
 
     qapp.exec();
     INFO("QT5 Application terminated!");

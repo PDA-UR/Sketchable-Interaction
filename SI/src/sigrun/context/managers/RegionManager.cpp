@@ -13,7 +13,7 @@ void RegionManager::add_region(const std::vector<glm::vec3> &contour, std::share
     d_regions.emplace_back(std::make_shared<Region>(contour, effect));
 }
 
-const std::vector<std::shared_ptr<Region>> &RegionManager::regions() const
+std::vector<std::shared_ptr<Region>> &RegionManager::regions()
 {
     return d_regions;
 }

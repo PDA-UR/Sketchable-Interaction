@@ -61,21 +61,6 @@ Region::Region(const std::vector<glm::vec3> &contour, std::shared_ptr<bp::object
             for(int k = 0; k < bp::len(items_inner_dr); k++)
                 d_attributes_recv[key_str].push_back(bp::extract<std::string>(items_inner_dr[k])());
         }
-
-        Print::print("emits:");
-        for(auto& se: d_attributes_emit)
-        {
-            Print::print(se);
-        }
-
-        Print::print("\t");
-
-        Print::print("receives:");
-        for(auto& [key, val]: d_attributes_recv)
-        {
-            Print::print(key);
-            Print::print(val);
-        }
     }
 }
 
@@ -202,26 +187,10 @@ int Region::on_leave(bp::object& other)
 
 void Region::LINK_SLOT(const std::string& uuid, const std::string& source_cap, const std::string& dest_cap, const bp::list& py_list)
 {
-    // check if region is eligible to receive link data
 
-    auto tuple = std::make_tuple(uuid, dest_cap);
+//    uppi->invoke_linking_event_function(*d_effect, cap, py_list);
 
-    if (std::find(d_link_events.begin(), d_link_events.end(), tuple) == d_link_events.end())
-    {
-        register_link_event(tuple);
-//        uppi->invoke_linking_event_function(*d_effect, cap, py_list);
-
-        d_effect->attr("cap_link_recv")[source_cap][dest_cap](py_list);
-
-        // retrieve updated args for py_list and overwrite py_list
-        // fire new signal according to changed values
-
-        Q_EMIT LINK_SIGNAL(uuid, source_cap, dest_cap, py_list);
-    }
-    else
-    {
-        d_link_events.erase(std::find(d_link_events.begin(), d_link_events.end(), tuple));
-    }
+    d_effect->attr("cap_link_recv")[source_cap][dest_cap](py_list);
 }
 
 const std::vector<std::tuple<std::string, std::string>>& Region::link_events() const
