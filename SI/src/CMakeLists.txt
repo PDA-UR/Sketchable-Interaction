@@ -81,10 +81,13 @@ set(SIGRunSRC
         SI/src/sigrun/context/managers/LinkingManager.hpp
         SI/src/sigrun/concurrency/RenderWorker.cpp
         SI/src/sigrun/concurrency/RenderWorker.hpp
-        SI/src/sigrun/context/Link.cpp
-        SI/src/sigrun/context/Link.hpp
-        SI/src/sigrun/util/UUID.cpp
-        SI/src/sigrun/util/UUID.hpp)
+        SI/src/sigrun/util/UUID.hpp
+        SI/src/sigrun/context/managers/helpers/linking/Link.cpp
+        SI/src/sigrun/context/managers/helpers/linking/Link.hpp
+        SI/src/sigrun/context/managers/helpers/linking/LinkingGraph.cpp
+        SI/src/sigrun/context/managers/helpers/linking/LinkingGraph.hpp
+        SI/src/sigrun/util/RingBuffer.hpp
+        SI/src/sigrun/util/Benchmark.hpp)
 
 ADD_DEFINITIONS(-DQT_NO_KEYWORDS)
 

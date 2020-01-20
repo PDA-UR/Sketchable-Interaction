@@ -12,6 +12,7 @@
 #include "RegionTransform.hpp"
 #include "sigrun/plugin/PythonInvoker.hpp"
 #include <sigrun/SIObject.hpp>
+#include <sigrun/util/RingBuffer.hpp>
 #include <QObject>
 
 namespace bp = boost::python;
@@ -49,19 +50,25 @@ public:
     int on_continuous(bp::object& other);
     int on_leave(bp::object& other);
 
-    Q_SIGNAL void LINK_SIGNAL(const std::string& uuid, const std::string& source_cap, const std::string& dest_cap, const bp::list& py_list);
-    Q_SLOT void LINK_SLOT(const std::string& uuid, const std::string& source_cap, const std::string& dest_cap, const bp::list& py_list);
+    Q_SIGNAL void LINK_SIGNAL(const std::string& uuid, const std::string& source_cap, const bp::list& py_list);
+    Q_SLOT void LINK_SLOT(const std::string& uuid, const std::string& source_cap, const bp::list& py_list);
 
-    void register_link_event(const std::string& uuid, const std::string& dest_attribute);
+    void register_link_event(const std::string& uuid, const std::string& attribute);
     void register_link_event(const std::tuple<std::string, std::string>& link_event);
-    const std::vector<std::tuple<std::string, std::string>>& link_events() const;
+
+    bool is_link_event_registered(const std::string& uuid, const std::string& attribute);
+    bool is_link_event_registered(const std::tuple<std::string, std::string>& link_event);
+
+    void set_name(const std::string& name);
+    const std::string& name() const;
 
 private:
     std::vector<glm::vec3> d_contour;
     std::vector<glm::vec3> d_aabb;
 
-    std::vector<std::tuple<std::string, std::string>> d_link_events;
+//    std::vector<std::tuple<std::string, std::string>> d_link_events;
 
+    RingBuffer<std::tuple<std::string, std::string>> d_link_events;
 
     std::unique_ptr<RegionMask> uprm;
     std::unique_ptr<RegionTransform> uprt;

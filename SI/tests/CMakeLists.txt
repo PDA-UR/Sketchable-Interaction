@@ -65,7 +65,9 @@ set(SIUnitTestSrc
         SI/tests/src/sigrun/context/managers/SIGRunRegionManagerTest.cpp
         SI/tests/src/sigrun/context/managers/SIGRunRegionManagerTest.hpp
         SI/tests/src/sigrun/context/managers/SIGRunLinkingManagerTest.cpp
-        SI/tests/src/sigrun/context/managers/SIGRunLinkingManagerTest.hpp)
+        SI/tests/src/sigrun/context/managers/SIGRunLinkingManagerTest.hpp
+        SI/tests/src/sigrun/util/SIGRunRingBufferTest.cpp
+        SI/tests/src/sigrun/util/SIGRunRingBufferTest.hpp)
 
 ADD_DEFINITIONS(-DQT_NO_KEYWORDS)
 

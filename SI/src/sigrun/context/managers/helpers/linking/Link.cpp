@@ -55,11 +55,6 @@ const std::string& UnidirectionalLink::attribute_b() const
     return d_attribute_b;
 }
 
-const BidirectionalLink UnidirectionalLink::to_bidirectional()
-{
-
-}
-
 BidirectionalLink::BidirectionalLink(const std::shared_ptr<Region> &ra, const std::shared_ptr<Region> &rb, const std::string &aa,
                                      const std::string &ab):
     d_sender_a(ra),
@@ -111,11 +106,6 @@ const std::string &BidirectionalLink::attribute_a() const
 const std::string &BidirectionalLink::attribute_b() const
 {
     return d_attribute_b;
-}
-
-const UnidirectionalLink BidirectionalLink::to_unidirectional()
-{
-
 }
 
 std::vector<std::shared_ptr<ILink>>& UnidirectionalLink::children()

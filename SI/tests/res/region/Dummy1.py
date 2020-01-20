@@ -16,7 +16,7 @@ class Dummy1(PySIEffect):
     def __init__(self):
         super(Dummy1, self).__init__()
 
-        self.name = "Dumm1"
+        self.name = "Dummy1"
         self.region_type = "Custom"
 
         self.cap_emit = {
@@ -70,22 +70,21 @@ class Dummy1(PySIEffect):
         return [0, 0, 0]
 
     def set_position_from_position(self, args):
-        print("From Position 2", args)
+        print("Dummy1", args)
         return 0
 
     def set_position_from_color(self, args):
-        print("From Color 2", args)
+        print("Dummy1", args)
         return 0
 
     def set_position_from_scale(self, args):
-        print("From Scale 2", args)
-
+        print("Dummy1", args)
         return 0
 
     def set_rotation_from_rotation(self, args):
-        print("From Rotation 2", args)
+        print("Dummy1", args)
         return 0
 
     def set_position_from_rotation(self, args):
-        print("From Rotation 2", args)
+        print("Dummy1", args)
         return 0

@@ -23,9 +23,7 @@ class Dummy2(PySIEffect):
         }
 
         self.cap_link_recv = {
-            "__position__": {"__position__": self.set_position_from_position,
-                             "__rotation__": self.set_rotation_from_position
-                             },
+            "__position__": {"__position__": self.set_position_from_position},
             "__color__": {"__position__": self.set_position_from_color},
             "__rotation__": {"__rotation__": self.set_rotation_from_rotation}
         }
@@ -55,7 +53,7 @@ class Dummy2(PySIEffect):
         return 0
 
     def position(self):
-        return [1, 1]
+        return [2, 2]
 
     def scale(self):
         return [1]
@@ -64,17 +62,17 @@ class Dummy2(PySIEffect):
         return [0, 0, 0]
 
     def set_position_from_position(self, args):
-        print("From Position 1", args)
+        print("Dummy2", args)
         return 0
 
     def set_position_from_color(self, args):
-        print("From Color 1", args)
+        print("Dummy2", args)
         return 0
 
     def set_rotation_from_rotation(self, args):
-        print("From Rotation 1", args)
+        print("Dummy2", args)
         return 0
 
     def set_rotation_from_position(self, args):
-        print("From Position to Rotation 1", args)
+        print("Dummy2", args)
         return 0

@@ -54,9 +54,6 @@ public:
     virtual void add_child(std::shared_ptr<ILink>& link) override;
     [[nodiscard]] std::vector<std::shared_ptr<ILink>>& children() override;
 
-    // might be useful
-    const BidirectionalLink to_bidirectional();
-
 private:
     LINK_TYPE d_link_type;
 
@@ -86,9 +83,6 @@ public:
     [[nodiscard]] const std::string& attribute_b() const override;
     virtual void add_child(std::shared_ptr<ILink>& link) override;
     [[nodiscard]] std::vector<std::shared_ptr<ILink>>& children() override;
-
-    // might be useful
-    const UnidirectionalLink to_unidirectional();
 
 private:
     LINK_TYPE d_link_type;

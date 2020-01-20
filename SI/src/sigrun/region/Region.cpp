@@ -6,7 +6,7 @@
 #include <utility>
 #include "RegionResampler.hpp"
 #include <sigrun/log/Log.hpp>
-#include <sigrun/context/Link.hpp>
+#include <sigrun/context/managers/helpers/linking/Link.hpp>
 #include <sigrun/util/UUID.hpp>
 
 namespace bp = boost::python;
@@ -15,7 +15,8 @@ Region::Region(const std::vector<glm::vec3> &contour, std::shared_ptr<bp::object
     d_effect(std::move(effect)),
     uprt(std::make_unique<RegionTransform>()),
     uppi(std::make_unique<PythonInvoker>()),
-    d_is_transformed(true) // should be false
+    d_is_transformed(true), // should be false
+    d_link_events(20)
 {SIGRUN
     qRegisterMetaType<bp::object>("bp::object");
     qRegisterMetaType<bp::list>("bp::list");
@@ -42,8 +43,6 @@ Region::Region(const std::vector<glm::vec3> &contour, std::shared_ptr<bp::object
 
         for(int i = 0; i < bp::len(items_de); ++i)
             d_attributes_emit.push_back(bp::extract<std::string>(items_de[i])());
-
-
 
         const bp::dict& dr = bp::extract<bp::dict>(d_effect->attr("cap_link_recv"));
         const bp::list& items_dr = dr.keys();
@@ -185,28 +184,69 @@ int Region::on_leave(bp::object& other)
     return success;
 }
 
-void Region::LINK_SLOT(const std::string& uuid, const std::string& source_cap, const std::string& dest_cap, const bp::list& py_list)
+void Region::LINK_SLOT(const std::string& uuid, const std::string& source_cap, const bp::list& py_list)
 {
+    auto event = std::make_tuple(uuid, source_cap);
 
-//    uppi->invoke_linking_event_function(*d_effect, cap, py_list);
+    if(!is_link_event_registered(event))
+    {
+        register_link_event(event);
 
-    d_effect->attr("cap_link_recv")[source_cap][dest_cap](py_list);
+//        bp::list args;
+//
+//        for (int i = 0; i < bp::len(py_list); ++i)
+//            args.append(py_list[i]);
+//
+//        args.append("Event: " + uuid);
+//        args.append("Sender: " + ((Region *) this->sender())->name());
+//        args.append("Receiver: " + name());
+
+        for(auto& recv: d_attributes_recv[source_cap])
+        {
+            d_effect->attr("cap_link_recv")[source_cap][recv](py_list);
+
+            if(std::find(d_attributes_emit.begin(), d_attributes_emit.end(), recv) != d_attributes_emit.end())
+            {
+                const bp::list &py_list2 = bp::extract<bp::list>(d_effect->attr("cap_link_emit")[recv]());
+
+//                Print::print("Sender: " + ((Region *) this->sender())->name() + ", Recv: " + name() + ": Called");
+
+                Q_EMIT LINK_SIGNAL(uuid, recv, py_list2);
+            }
+        }
+    }
+//    else
+//    {
+//        Print::print("Sender: " + ((Region *) this->sender())->name() + ", Recv: " + name() + ": Nothing Happened");
+//    }
 }
 
-const std::vector<std::tuple<std::string, std::string>>& Region::link_events() const
+void Region::register_link_event(const std::string &uuid, const std::string &attribute)
 {
-    return d_link_events;
-}
-
-void Region::register_link_event(const std::string &uuid, const std::string &dest_attribute)
-{
-    register_link_event(std::make_tuple(uuid, dest_attribute));
+    register_link_event(std::make_tuple(uuid, attribute));
 }
 
 void Region::register_link_event(const std::tuple<std::string, std::string>& link_event)
 {
-    if (std::find(d_link_events.begin(), d_link_events.end(), link_event) == d_link_events.end())
-    {
-        d_link_events.push_back(link_event);
-    }
+    d_link_events << link_event;
+}
+
+bool Region::is_link_event_registered(const std::string &uuid, const std::string &attribute)
+{
+    return is_link_event_registered(std::make_tuple(uuid, attribute));
+}
+
+bool Region::is_link_event_registered(const std::tuple<std::string, std::string> &link_event)
+{
+    return d_link_events & link_event;
+}
+
+void Region::set_name(const std::string &name)
+{
+    d_name = name;
+}
+
+const std::string &Region::name() const
+{
+    return d_name;
 }
