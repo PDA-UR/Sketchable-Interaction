@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.13)
+cmake_minimum_required(VERSION 3.16)
 project(SIEngine)
 
 set(CMAKE_CXX_STANDARD 17)
@@ -55,7 +55,25 @@ set(SIRENDERENGINESrc
 ADD_DEFINITIONS(-DQT_NO_KEYWORDS)
 
 add_library(SIRenderEngine SHARED ${SIRENDERENGINESrc})
+
+target_precompile_headers(SIRenderEngine
+        PUBLIC
+        #        "$<$<COMPILE_LANGUAGE:CXX>:cxx_only.h>"
+        PRIVATE
+        <unordered_map>
+        <vector>
+        <boost/python/suite/indexing/vector_indexing_suite.hpp>
+        <boost/python/suite/indexing/map_indexing_suite.hpp>
+        <boost/python.hpp>
+        <QApplication>
+        <QMainWindow>
+        <QObject>
+        <QMetaMethod>
+        <QPaintEvent>
+        <QPainter>
+        )
+
 set_target_properties(SIRenderEngine PROPERTIES AUTOMOC TRUE)
-#target_link_libraries(SIRenderEngine glm ${OPENGL_LIBRARIES} ${GLEW_LIBRARY} ${SDL2_LIBRARIES} SIGeneralRuntime Qt5::Widgets)
-target_link_libraries(SIRenderEngine glm SIGeneralRuntime Qt5::Widgets)
+#target_link_libraries(SIRenderEngine ${OPENGL_LIBRARIES} ${GLEW_LIBRARY} ${SDL2_LIBRARIES} SIGeneralRuntime Qt5::Widgets)
+target_link_libraries(SIRenderEngine SIGeneralRuntime Qt5::Widgets)
 add_dependencies(SIRenderEngine PySI SIGeneralRuntime)

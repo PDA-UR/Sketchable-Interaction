@@ -55,7 +55,7 @@ std::string Scripting::load_plugin_source(const char *source)
         fclose(f);
     }
 
-    std::string ret(strdup(buffer));
+    std::string ret(buffer);
 
     free(buffer);
 

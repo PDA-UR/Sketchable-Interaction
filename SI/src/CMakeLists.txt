@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.13)
+cmake_minimum_required(VERSION 3.16)
 project(SIEngine)
 
 set(CMAKE_CXX_STANDARD 17)
@@ -36,6 +36,16 @@ set(PySISrc
 # SI PYTHON3 MODULE
 add_library(PySI MODULE ${PySISrc})
 target_link_libraries(PySI ${PYTHON_LIBRARIES} ${Boost_LIBRARIES} Qt5::Widgets)
+
+target_precompile_headers(PySI
+        PUBLIC
+        PRIVATE
+        <unordered_map>
+        <vector>
+        <boost/python/suite/indexing/vector_indexing_suite.hpp>
+        <boost/python/suite/indexing/map_indexing_suite.hpp>
+        <boost/python.hpp>
+        )
 
 # SI RUNTIME LIBRARY
 
@@ -92,12 +102,30 @@ set(SIGRunSRC
 ADD_DEFINITIONS(-DQT_NO_KEYWORDS)
 
 add_library(SIGeneralRuntime SHARED ${SIGRunSRC})
+
+target_precompile_headers(SIGeneralRuntime
+        PUBLIC
+        PRIVATE
+        <unordered_map>
+        <vector>
+        <boost/python/suite/indexing/vector_indexing_suite.hpp>
+        <boost/python/suite/indexing/map_indexing_suite.hpp>
+        <boost/python.hpp>
+        <QApplication>
+        <QMetaMethod>
+        <QObject>
+        "SI/src/sigrun/util/Benchmark.hpp"
+        "SI/src/sigrun/util/UUID.hpp"
+        "SI/src/sigrun/util/RingBuffer.hpp"
+        <glm/glm.hpp>
+        )
+
 set_target_properties(SIGeneralRuntime PROPERTIES AUTOMOC TRUE)
 
 if (xlib)
-    target_link_libraries(SIGeneralRuntime ${PATH_LIB} glm -luuid ${PYTHON_LIBRARIES} ${Boost_LIBRARIES} -lX11 Qt5::Widgets)
+    target_link_libraries(SIGeneralRuntime ${PATH_LIB} -luuid ${PYTHON_LIBRARIES} ${Boost_LIBRARIES} -lX11 Qt5::Widgets)
 else()
-    target_link_libraries(SIGeneralRuntime ${PATH_LIB} glm -luuid ${PYTHON_LIBRARIES} ${Boost_LIBRARIES} Qt5::Widgets)
+    target_link_libraries(SIGeneralRuntime ${PATH_LIB} -luuid ${PYTHON_LIBRARIES} ${Boost_LIBRARIES} Qt5::Widgets)
 endif()
 
 if (BUILD_DOCS)

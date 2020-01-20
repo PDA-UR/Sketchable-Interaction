@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.13)
+cmake_minimum_required(VERSION 3.16)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -72,6 +72,21 @@ set(SIUnitTestSrc
 ADD_DEFINITIONS(-DQT_NO_KEYWORDS)
 
 add_executable(run_unit_tests ${SIUnitTestSrc})
+
+target_precompile_headers(run_unit_tests
+        PUBLIC
+        PRIVATE
+        <unordered_map>
+        <vector>
+        <boost/python/suite/indexing/vector_indexing_suite.hpp>
+        <boost/python/suite/indexing/map_indexing_suite.hpp>
+        <boost/python.hpp>
+        <QApplication>
+        <QObject>
+        <gtest/gtest.h>
+        <gmock/gmock.h>
+        )
+
 set_target_properties(run_unit_tests PROPERTIES AUTOMOC TRUE)
 
 #target_link_libraries(run_unit_tests ${GLEW_LIBRARY} ${OPENGL_LIBRARIES} ${SDL2_LIBRARIES} ${PYTHON_LIBRARIES} ${Boost_LIBRARIES} gtest gtest_main gmock gmock_main pthread -ldl -lutil SIGeneralRuntime)
