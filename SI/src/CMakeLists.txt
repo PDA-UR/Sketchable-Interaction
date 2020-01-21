@@ -57,7 +57,6 @@ set(SIGRunSRC
         SI/src/sigrun/Core.cpp
         SI/src/sigrun/Core.hpp
         SI/src/debug/Print.cpp
-        SI/src/debug/Print.hpp
         SI/src/sigrun/plugin/PluginCollector.cpp
         SI/src/sigrun/plugin/PluginCollector.hpp
         SI/src/sigrun/plugin/Scripting.cpp
@@ -66,7 +65,6 @@ set(SIGRunSRC
         SI/src/sigrun/log/Log.hpp
         SI/src/sigrun/plugin/PythonInvoker.cpp
         SI/src/sigrun/plugin/PythonInvoker.hpp
-        SI/src/sigrun/SIObject.hpp
         SI/src/sigrun/region/RegionTransform.cpp
         SI/src/sigrun/region/RegionTransform.hpp
         SI/src/sigrun/region/RegionMask.cpp
@@ -91,13 +89,12 @@ set(SIGRunSRC
         SI/src/sigrun/context/managers/LinkingManager.hpp
         SI/src/sigrun/concurrency/RenderWorker.cpp
         SI/src/sigrun/concurrency/RenderWorker.hpp
-        SI/src/sigrun/util/UUID.hpp
         SI/src/sigrun/context/managers/helpers/linking/Link.cpp
         SI/src/sigrun/context/managers/helpers/linking/Link.hpp
         SI/src/sigrun/context/managers/helpers/linking/LinkingGraph.cpp
         SI/src/sigrun/context/managers/helpers/linking/LinkingGraph.hpp
-        SI/src/sigrun/util/RingBuffer.hpp
-        SI/src/sigrun/util/Benchmark.hpp)
+        SI/src/sigrun/context/managers/InputManager.cpp
+        SI/src/sigrun/context/managers/InputManager.hpp)
 
 ADD_DEFINITIONS(-DQT_NO_KEYWORDS)
 
@@ -112,11 +109,17 @@ target_precompile_headers(SIGeneralRuntime
         <boost/python/suite/indexing/map_indexing_suite.hpp>
         <boost/python.hpp>
         <QApplication>
+        <QInputEvent>
         <QMetaMethod>
         <QObject>
-        "SI/src/sigrun/util/Benchmark.hpp"
-        "SI/src/sigrun/util/UUID.hpp"
-        "SI/src/sigrun/util/RingBuffer.hpp"
+        <QEvent>
+        <QKeyEvent>
+        <QMouseEvent>
+        SI/src/sigrun/util/Benchmark.hpp
+        SI/src/sigrun/util/UUID.hpp
+        SI/src/sigrun/util/RingBuffer.hpp
+        SI/src/debug/Print.hpp
+        SI/src/sigrun/SIObject.hpp
         <glm/glm.hpp>
         )
 

@@ -2,8 +2,10 @@
 
 int main(int argc, char** argv)
 {
-    RenderEngineQT5 re;
+    Log::SHOW = LOG_SHOW_ALL;
+
     SIGRun s;
+    RenderEngineQT5 re;
 
     s.exec(argc, argv, &re);
 

@@ -10,7 +10,7 @@
 class UpdateWorker: public QObject
 { Q_OBJECT
 public:
-    explicit UpdateWorker();
+    explicit UpdateWorker(int target_fps=60);
     ~UpdateWorker();
 
     void start();

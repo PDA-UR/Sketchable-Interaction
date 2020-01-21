@@ -13,7 +13,8 @@ class IRenderEngine: public QObject
 public:
     virtual void start(int width, int height) = 0;
     virtual void run() = 0;
-    virtual  void pause() = 0;
+    virtual void pause() = 0;
+    virtual void stop() = 0;
 };
 
 

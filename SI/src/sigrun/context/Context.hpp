@@ -11,12 +11,11 @@
 #include <boost/python.hpp>
 #include <sigrun/context/managers/RegionManager.hpp>
 #include <sigrun/context/managers/LinkingManager.hpp>
-#include <sigrun/concurrency/RenderWorker.hpp>
-#include <QThread>
-#include <QObject>
+#include <sigrun/context/managers/InputManager.hpp>
+#include <sigrun/rendering/IRenderEngine.hpp>
 
-class Context: public QObject, public SIObject
-{Q_OBJECT
+class Context: public SIObject
+{
 
 public:
     static Context* SIContext();
@@ -24,9 +23,11 @@ public:
     ~Context();
 
     void begin(IRenderEngine* ire, int argc, char** argv);
+    void end();
 
     Capability* capability_manager();
     RegionManager* region_manager();
+    InputManager* input_manager();
     void update();
     void enable(int what);
     void disable(int what);
@@ -39,16 +40,13 @@ private:
 
     Context(int width, int height, const std::unordered_map<std::string, std::unique_ptr<bp::object>>& plugins);
 
-    void initialize_rendering_worker();
-
     std::unique_ptr<Capability> upcm;
     std::unique_ptr<RegionManager> uprm;
     std::unique_ptr<LinkingManager> uplm;
+    std::unique_ptr<InputManager> upim;
 
     int s_width, s_height;
-
-    QThread d_render_thread;
-    RenderWorker* d_render_worker;
+    IRenderEngine* d_ire;
 
     friend class Core;
 };

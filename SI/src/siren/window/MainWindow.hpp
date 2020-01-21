@@ -10,6 +10,7 @@
 #include <QMainWindow>
 #include <QObject>
 #include <QMetaMethod>
+#include <QPainter>
 
 #include "../background/UpdateWorker.hpp"
 #include "../region/RegionRepresentation.hpp"
@@ -18,7 +19,7 @@ class MainWindow: public SIObject, public QMainWindow
 {
 public:
     MainWindow(int width, int height);
-    ~MainWindow();
+    MainWindow() = default;
 
     void set_is_running(bool running);
 private:
@@ -49,14 +50,13 @@ private:
 
     std::map<std::string, std::unique_ptr<RegionRepresentation>> d_region_representations;
 
-    std::unique_ptr<UpdateWorker> up_update_worker;
-    std::unique_ptr<QPainter> up_qp;
+    UpdateWorker up_update_worker;
+    QPainter up_qp;
 
     int d_width, d_height;
 
 protected:
     void paintEvent(QPaintEvent *event) override;
-    void keyPressEvent(QKeyEvent *event) override;
 };
 
 

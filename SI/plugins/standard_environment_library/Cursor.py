@@ -1,11 +1,10 @@
 from libPySI import PySIEffect, PySICapability
 
-
-class Canvas(PySIEffect):
+class Cursor(PySIEffect):
     def __init__(self):
-        super(Canvas, self).__init__()
+        super(Cursor, self).__init__()
 
-        self.name = "Canvas"
+        self.name = "Cursor"
         self.region_type = "libstdSI"
         self.texture_path = ""
 

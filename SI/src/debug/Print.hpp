@@ -106,8 +106,6 @@ public:
     template<class... Args>
     static void print(Args &&... args)
     {
-        Print{} << "SI-Engine: ";
-
         auto arguments = std::make_tuple(std::forward<Args>(args)...);
 
         for_each(arguments, [](const auto &x)

@@ -1,10 +1,8 @@
 
 #include "RenderEngineQt5.hpp"
-#include <sigrun/log/Log.hpp>
 
 RenderEngineQT5::RenderEngineQT5()
-{ SIOBJECT(SIREN)
-    Log::SHOW = LOG_SHOW_ALL;
+{ SIREN
 }
 
 RenderEngineQT5::~RenderEngineQT5()
@@ -16,7 +14,8 @@ RenderEngineQT5::~RenderEngineQT5()
 
 void RenderEngineQT5::start(int width, int height)
 {
-    d_window = std::make_unique<MainWindow>(width, height);
+    d_window = new MainWindow(width, height);
+
     run();
 }
 
@@ -28,4 +27,12 @@ void RenderEngineQT5::run()
 void RenderEngineQT5::pause()
 {
     // stop update thread
+}
+
+void RenderEngineQT5::stop()
+{
+    INFO("Stopping Rendering Engine...");
+    d_window->close();
+    d_window->deleteLater();
+    INFO("Rendering Engine stopped!");
 }

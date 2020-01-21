@@ -13,26 +13,21 @@ Context* Context::self = nullptr;
 Context::~Context()
 {
     INFO("Destroying Context...");
-
-    delete d_render_worker;
-    d_render_worker = nullptr;
-
     INFO("Destroyed Context");
 }
 
 Context::Context(int width, int height, const std::unordered_map<std::string, std::unique_ptr<bp::object>>& plugins)
-{SIOBJECT(SIGRUN)
-    upcm = std::make_unique<Capability>();
-    uprm = std::make_unique<RegionManager>();
-    uplm = std::make_unique<LinkingManager>();
-
+{SIGRUN
     self = this;
+    s_width = width;
+    s_height = height;
+
+    uprm = std::make_unique<RegionManager>();
+
 
     for(const auto& item: plugins)
         upcm->add_capabilities(*item.second);
 
-    s_width = width;
-    s_height = height;
     std::vector<glm::vec3> contour1 {glm::vec3(10, 10, 1), glm::vec3(10, 60, 1), glm::vec3(60, 60, 1), glm::vec3(60, 10, 1)};
     std::vector<glm::vec3> contour2 {glm::vec3(80, 10, 1), glm::vec3(80, 60, 1), glm::vec3(70 + 60, 60, 1), glm::vec3(70 + 60, 10, 1)};
 
@@ -43,41 +38,26 @@ Context::Context(int width, int height, const std::unordered_map<std::string, st
 void Context::begin(IRenderEngine* ire, int argc, char** argv)
 {
     INFO("Creating Qt5 Application...");
-    QApplication qapp(argc, argv);
+    QApplication d_app(argc, argv);
     INFO("Qt5 Application created!");
 
-    d_render_worker = new RenderWorker(s_width, s_height, ire);
+    d_ire = ire;
 
-    INFO("Setting Up Rendering Background Worker...");
-    initialize_rendering_worker();
-    INFO("Finished Setting Up Rendering Background Worker!");
+    uplm = std::make_unique<LinkingManager>();
+    upim = std::make_unique<InputManager>();
+    upcm = std::make_unique<Capability>();
 
-    INFO("Starting Rendering Thread");
-    d_render_thread.start();
-    INFO("Rendering Thread Started!");
+    d_app.installEventFilter(upim.get());
 
-    uplm->add_link(uprm->regions()[0], "__position__", uprm->regions()[1],"__position__", ILink::LINK_TYPE::UD);
+    d_ire->start(s_width, s_height);
 
-    const bp::list& py_list = bp::extract<bp::list>(uprm->regions()[0]->effect().attr("cap_link_emit")["__position__"]());
-
-    uplm->linking_graph()->emit_link_event(uprm->regions()[0], "__position__");
-
-
-    qapp.exec();
+    d_app.exec();
     INFO("QT5 Application terminated!");
 }
 
-void Context::initialize_rendering_worker()
+void Context::end()
 {
-    d_render_worker->moveToThread(&d_render_thread);
-
-    connect(&d_render_thread, &QThread::started, d_render_worker, &RenderWorker::render);
-    connect(d_render_worker, &RenderWorker::finished, &d_render_thread, &QThread::quit);
-    connect(d_render_worker, &RenderWorker::finished, d_render_worker, &RenderWorker::deleteLater);
-    connect(&d_render_thread, &QThread::finished, &d_render_thread, &QThread::deleteLater);
-    connect(QApplication::instance(), &QApplication::aboutToQuit, &d_render_thread, &QThread::quit);
-    connect(&d_render_thread, &QThread::finished, QApplication::instance(), &QApplication::closeAllWindows);
-
+    d_ire->stop();
 }
 
 Capability* Context::capability_manager()
@@ -90,6 +70,11 @@ RegionManager* Context::region_manager()
     return uprm.get();
 }
 
+InputManager* Context::input_manager()
+{
+    return upim.get();
+}
+
 Context* Context::SIContext()
 {
     return self;
@@ -99,6 +84,7 @@ void Context::update()
 {
     self = this;
 
+    upim->update();
 }
 
 int Context::width()

@@ -75,6 +75,7 @@ add_executable(run_unit_tests ${SIUnitTestSrc})
 
 target_precompile_headers(run_unit_tests
         PUBLIC
+
         PRIVATE
         <unordered_map>
         <vector>
@@ -83,6 +84,7 @@ target_precompile_headers(run_unit_tests
         <boost/python.hpp>
         <QApplication>
         <QObject>
+        <QSignalSpy>
         <gtest/gtest.h>
         <gmock/gmock.h>
         )

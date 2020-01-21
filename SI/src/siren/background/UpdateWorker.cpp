@@ -2,7 +2,7 @@
 #include "UpdateWorker.hpp"
 #include <QApplication>
 
-UpdateWorker::UpdateWorker(): d_is_running(false), d_fps(60), d_remainder(0.0), d_simulated_time(0.0)
+UpdateWorker::UpdateWorker(int target_fps): d_is_running(false), d_fps(target_fps), d_remainder(0.0), d_simulated_time(0.0)
 {
     d_timer = new QTimer(this);
     d_elapsed_timer = new QElapsedTimer();
@@ -33,10 +33,7 @@ void UpdateWorker::stop()
     d_remainder = 0;
     set_running(false);
 
-    d_timer->stop();
     d_timer->disconnect(this);
-
-
 
     Q_EMIT finished();
 }

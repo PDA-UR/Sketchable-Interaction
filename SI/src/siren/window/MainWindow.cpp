@@ -3,36 +3,26 @@
 #include "MainWindow.hpp"
 #include <SI/SI.hpp>
 #include <QPaintEvent>
-#include <QPainter>
 
 MainWindow::MainWindow(int width, int height):
     QMainWindow(),
-    up_update_worker(std::make_unique<UpdateWorker>()),
-    up_qp(std::make_unique<QPainter>()),
+    up_update_worker(UpdateWorker()),
+    up_qp(QPainter()),
     d_width(width),
     d_height(height)
 {SIREN
     INFO("Starting Update Loop...");
 
-    connect(up_update_worker.get(), &UpdateWorker::updated, this, &MainWindow::loop);
+    connect(&up_update_worker, &UpdateWorker::updated, this, &MainWindow::loop);
+    connect(&up_update_worker, &UpdateWorker::finished, &up_update_worker, &UpdateWorker::deleteLater);
 
-    connect(up_update_worker.get(), &UpdateWorker::finished, up_update_worker.get(), &UpdateWorker::deleteLater);
-
-    up_update_worker->start();
+    up_update_worker.start();
     INFO("Update Loop started...");
     setGeometry(0, 0, width, height);
 }
 
-MainWindow::~MainWindow()
-{
-    INFO("Closing MainWindow...");
-    INFO("MainWindow closed!");
-}
-
 void MainWindow::loop(double delta, int fps)
 {
-    Context::SIContext()->update();
-
 //    DEBUG("Updated with " + std::to_string(fps) + " fps (real delta time: " + std::to_string(delta) + ")");
 
     const auto& regions = Context::SIContext()->region_manager()->regions();
@@ -74,6 +64,7 @@ void MainWindow::loop(double delta, int fps)
     }
 
     update();
+    Context::SIContext()->update();
 }
 
 void MainWindow::set_is_running(bool running)
@@ -83,47 +74,27 @@ void MainWindow::set_is_running(bool running)
 
 void MainWindow::draw_background(QPaintEvent* event)
 {
-    up_qp->setBrush(QColor(0, 0, 0));
-    up_qp->drawRect(event->rect());
+    up_qp.setBrush(QColor(0, 0, 0));
+    up_qp.drawRect(event->rect());
 }
 
 void MainWindow::draw_region_representations(QPaintEvent* event)
 {
     for(const auto& [key, val]: d_region_representations)
     {
-        up_qp->setBrush(val->color);
+        up_qp.setBrush(val->color);
 
-        up_qp->drawPolyline(val->poly);
-        up_qp->fillPath(val->fill, val->color);
+        up_qp.drawPolyline(val->poly);
+        up_qp.fillPath(val->fill, val->color);
     }
 }
 
 void MainWindow::paintEvent(QPaintEvent* event)
 {
-    up_qp->begin(this);
+    up_qp.begin(this);
 
     draw_background(event);
     draw_region_representations(event);
 
-    up_qp->end();
+    up_qp.end();
 }
-
-void MainWindow::keyPressEvent(QKeyEvent* event)
-{
-    switch (event->key())
-    {
-        case Qt::Key::Key_Escape:
-        {
-            if(!d_is_exit_requested)
-            {
-                d_is_exit_requested = true;
-                close();
-            }
-        }
-        break;
-
-        default:
-            return;
-    }
-}
-

@@ -6,7 +6,6 @@
 #include <SI/SI.hpp>
 #include <QApplication>
 #include <QMainWindow>
-#include <debug/Print.hpp>
 #include <siren/window/MainWindow.hpp>
 
 class RenderEngineQT5: public IRenderEngine, public SIObject
@@ -18,9 +17,10 @@ public:
     void start(int width, int height) override;
     void run() override;
     void pause() override;
+    void stop() override;
 
 private:
-    std::unique_ptr<MainWindow> d_window;
+    MainWindow* d_window;
 
 protected:
 };
