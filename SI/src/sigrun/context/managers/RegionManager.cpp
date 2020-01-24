@@ -18,7 +18,7 @@ std::vector<std::shared_ptr<Region>> &RegionManager::regions()
     return d_regions;
 }
 
-void RegionManager::update(const std::vector<int> &update_vertices)
+void RegionManager::update()
 {
 
 }

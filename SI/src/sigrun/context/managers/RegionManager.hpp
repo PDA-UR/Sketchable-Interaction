@@ -21,7 +21,7 @@ public:
 
     std::vector<std::shared_ptr<Region>>& regions();
 
-    void update(const std::vector<int>& update_vertices);
+    void update();
     RegionManager();
 
 private:

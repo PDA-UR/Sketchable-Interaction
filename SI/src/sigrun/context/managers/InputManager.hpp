@@ -8,6 +8,7 @@
 #include <QObject>
 #include <QEvent>
 #include <glm/glm.hpp>
+#include "helpers/input/ExternalObject.hpp"
 
 class InputManager: public QObject, public SIObject
 {Q_OBJECT
@@ -77,6 +78,8 @@ public:
 
     const glm::vec2& mouse_coords() const;
 
+    ExternalObject* mouse_object();
+
 private:
     bool was_key_down(unsigned int key_id);
     bool was_mouse_down(unsigned int button_id);
@@ -88,6 +91,9 @@ private:
     std::unordered_map<unsigned int, bool> d_previous_button_map;
 
     glm::vec2 d_mouse_coords;
+    glm::vec2 d_previous_mouse_coords;
+
+    std::vector<std::shared_ptr<ExternalObject>> d_external_objects;
 
 protected:
 public:

@@ -14,6 +14,7 @@ struct RegionRepresentation
         b(col.blue()),
         a(col.alpha()),
         color(col),
+        source_contour(c),
         texture_path(tex_path)
     {
         fill.moveTo(c[0].x, c[0].y);
@@ -33,6 +34,7 @@ struct RegionRepresentation
         b(b_),
         a(a_),
         color(QColor(r, g, b, a)),
+        source_contour(c),
         texture_path(tex_path)
     {
         fill.moveTo(c[0].x, c[0].y);
@@ -49,12 +51,15 @@ struct RegionRepresentation
     void update(const glm::mat3x3& transform)
     {
         fill = QPainterPath();
+        poly = QPolygonF();
 
-        for(QPointF& p: poly)
+        for(glm::vec3& p: source_contour)
         {
-            glm::vec3 p_ = glm::vec3(p.x(), p.y(), 1) * transform;
-            p.setX(p_.x);
-            p.setY(p_.y);
+            glm::vec3 p_ = glm::vec3(p.x, p.y, 1) * transform;
+            p_.x /= p_.z;
+            p_.y /= p_.z;
+
+            poly << QPoint(p_.x, p_.y);
         }
 
         fill.moveTo(poly[0].x(), poly[0].y());
@@ -71,6 +76,7 @@ struct RegionRepresentation
     std::string texture_path;
     QPolygonF poly;
     QPainterPath fill;
+    std::vector<glm::vec3> source_contour;
 };
 
 #endif //SITEST_REGIONREPRESENTATION_HPP

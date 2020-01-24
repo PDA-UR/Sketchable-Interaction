@@ -8,18 +8,21 @@
 #include <sigrun/log/Log.hpp>
 #include <sigrun/context/managers/helpers/linking/Link.hpp>
 #include <sigrun/util/UUID.hpp>
+#include <sigrun/context/Context.hpp>
+#include <sigrun/util/Benchmark.hpp>
 
 namespace bp = boost::python;
 
 Region::Region(const std::vector<glm::vec3> &contour, std::shared_ptr<bp::object> effect):
     d_effect(std::move(effect)),
     uprt(std::make_unique<RegionTransform>()),
-    uppi(std::make_unique<PythonInvoker>()),
-    d_is_transformed(true), // should be false
+    d_is_transformed(true),
     d_link_events(20)
 {SIGRUN
     qRegisterMetaType<bp::object>("bp::object");
-    qRegisterMetaType<bp::list>("bp::list");
+    qRegisterMetaType<bp::tuple>("bp::tuple");
+
+    d_py_effect = std::make_shared<PySIEffect>(bp::extract<PySIEffect>(*d_effect));
 
     RegionResampler::resample(d_contour, contour);
 
@@ -29,53 +32,57 @@ Region::Region(const std::vector<glm::vec3> &contour, std::shared_ptr<bp::object
 
     d_uuid = std::string(UUID::uuid());
 
-    d_name = PythonInvoker().invoke_extract_attribute<std::string>(*d_effect, "name");
-    d_name = d_name == "" ? "custom": d_name;
+    d_name = d_py_effect->name();
+    d_name = d_name.empty() ? "custom": d_name;
 
-    d_texture_path_default = PythonInvoker().invoke_extract_attribute<std::string>(*d_effect, "texture_path");
-    d_texture_path_default = d_texture_path_default == "" ? "src/siren/res/textures/placeholder.png": d_texture_path_default;
+    d_texture_path_default = d_py_effect->texture_path();
+    d_texture_path_default = d_texture_path_default.empty() ? "src/siren/res/textures/placeholder.png": d_texture_path_default;
 
 
     if(!d_effect->is_none())
     {
-        const bp::dict& de = bp::extract<bp::dict>(d_effect->attr("cap_link_emit"));
-        const bp::list& items_de = de.keys();
+        HANDLE_PYTHON_CALL (
+                for(auto& [key, value]: d_py_effect->attr_link_emit())
+                    d_attributes_emit.push_back(key);
 
-        for(int i = 0; i < bp::len(items_de); ++i)
-            d_attributes_emit.push_back(bp::extract<std::string>(items_de[i])());
+                for(auto& [key, value]: d_py_effect->attr_link_recv())
+                {
+                    d_attributes_recv.insert({key, std::vector<std::string>()});
 
-        const bp::dict& dr = bp::extract<bp::dict>(d_effect->attr("cap_link_recv"));
-        const bp::list& items_dr = dr.keys();
+                    for(auto& [key2, value2]: value)
+                        d_attributes_recv[key].push_back(key2);
+                }
 
-        for(int i = 0; i < bp::len(items_dr); i++)
-        {
-            const bp::object& key = items_dr[i];
-            const bp::dict& inner_dr = bp::extract<bp::dict>(dr[key]);
-            const bp::list& items_inner_dr = inner_dr.keys();
+                for(auto& [key, value]: d_py_effect->cap_collision_emit())
+                    d_collision_caps_emit.push_back(key);
 
-            const std::string key_str = bp::extract<std::string>(key)();
-
-            d_attributes_recv.insert({key_str, std::vector<std::string>()});
-
-            for(int k = 0; k < bp::len(items_inner_dr); k++)
-                d_attributes_recv[key_str].push_back(bp::extract<std::string>(items_inner_dr[k])());
-        }
+                for(auto& [key, value]: d_py_effect->cap_collision_recv())
+                    d_collision_caps_recv.push_back(key);
+        )
     }
 }
 
-Region::~Region()
-{
-
-}
+Region::~Region()= default;
 
 void Region::move(int x, int y)
 {
-    uprm->move(glm::vec2(x, y));
+    int prev_x = d_aabb[0].x;
+    int prev_y = d_aabb[0].y;
+
     uprt->update(glm::vec2(x, y));
+
     set_aabb();
+
+    int new_x = d_aabb[0].x;
+    int new_y = d_aabb[0].y;
+
+    int delta_x = new_x - prev_x;
+    int delta_y = new_y - prev_y;
+
+    uprm->move(glm::vec2(delta_x, delta_y));
 }
 
-const bool Region::is_transformed() const
+bool Region::is_transformed() const
 {
     return d_is_transformed;
 }
@@ -85,14 +92,19 @@ void Region::set_is_transformed(bool b)
     d_is_transformed = b;
 }
 
-const std::string Region::uuid() const
+std::string Region::uuid() const
 {
     return d_uuid;
 }
 
-bp::object& Region::effect()
+//bp::object& Region::effect()
+//{
+//    return *d_effect;
+//}
+
+PySIEffect &Region::effect()
 {
-    return *d_effect;
+    return *d_py_effect;
 }
 
 const std::unique_ptr<RegionMask> &Region::mask() const
@@ -146,45 +158,22 @@ const glm::mat3x3& Region::transform() const
     return uprt->transform();
 }
 
-int Region::on_enter(bp::object& colliding_effect)
+int Region::on_enter(PySIEffect& colliding_effect)
 {
-    // call unique ptr to PythonInvoker object
-    int success = uppi->invoke_collision_event_function(*d_effect, colliding_effect, "on_enter");
-
-    if(success)
-    {
-        // region update functionality
-    }
-
-    return success;
+    return handle_collision_event("on_enter", colliding_effect);
 }
 
-int Region::on_continuous(bp::object& other)
+int Region::on_continuous(PySIEffect& colliding_effect)
 {
-
-    int success =  uppi->invoke_collision_event_function(*d_effect, other, "on_continuous");
-
-    if(success)
-    {
-        // update here
-    }
-
-    return success;
+    return handle_collision_event("on_continuous", colliding_effect);
 }
 
-int Region::on_leave(bp::object& other)
+int Region::on_leave(PySIEffect& colliding_effect)
 {
-    int success =  uppi->invoke_collision_event_function(*d_effect, other, "on_leave");
-
-    if(success)
-    {
-        // update here
-    }
-
-    return success;
+    return handle_collision_event("on_leave", colliding_effect);
 }
 
-void Region::LINK_SLOT(const std::string& uuid, const std::string& source_cap, const bp::list& py_list)
+void Region::LINK_SLOT(const std::string& uuid, const std::string& source_cap, const bp::tuple& args)
 {
     auto event = std::make_tuple(uuid, source_cap);
 
@@ -192,33 +181,26 @@ void Region::LINK_SLOT(const std::string& uuid, const std::string& source_cap, c
     {
         register_link_event(event);
 
-//        bp::list args;
-//
-//        for (int i = 0; i < bp::len(py_list); ++i)
-//            args.append(py_list[i]);
-//
-//        args.append("Event: " + uuid);
-//        args.append("Sender: " + ((Region *) this->sender())->name());
-//        args.append("Receiver: " + name());
-
         for(auto& recv: d_attributes_recv[source_cap])
         {
-            d_effect->attr("cap_link_recv")[source_cap][recv](py_list);
+            HANDLE_PYTHON_CALL((*d_py_effect->attr_link_recv()[source_cap][recv])(*args););
+            update();
+
+            int x = d_py_effect->x();
+            int y = d_py_effect->y();
+
+            move(x, y);
 
             if(std::find(d_attributes_emit.begin(), d_attributes_emit.end(), recv) != d_attributes_emit.end())
             {
-                const bp::list &py_list2 = bp::extract<bp::list>(d_effect->attr("cap_link_emit")[recv]());
+                HANDLE_PYTHON_CALL(
+                    const bp::tuple &args2 = bp::extract<bp::tuple>((*d_py_effect->attr_link_emit()[recv])());
 
-//                Print::print("Sender: " + ((Region *) this->sender())->name() + ", Recv: " + name() + ": Called");
-
-                Q_EMIT LINK_SIGNAL(uuid, recv, py_list2);
+                    Q_EMIT LINK_SIGNAL(uuid, recv, args2);
+                )
             }
         }
     }
-//    else
-//    {
-//        Print::print("Sender: " + ((Region *) this->sender())->name() + ", Recv: " + name() + ": Nothing Happened");
-//    }
 }
 
 void Region::register_link_event(const std::string &uuid, const std::string &attribute)
@@ -249,4 +231,47 @@ void Region::set_name(const std::string &name)
 const std::string &Region::name() const
 {
     return d_name;
+}
+
+void Region::update()
+{
+    HANDLE_PYTHON_CALL(d_py_effect = std::make_shared<PySIEffect>(bp::extract<PySIEffect>(*d_effect));)
+}
+
+const std::vector<std::string> &Region::collision_caps_emit() const
+{
+    return d_collision_caps_emit;
+}
+
+const std::vector<std::string> &Region::collision_caps_recv() const
+{
+    return d_collision_caps_recv;
+}
+
+int Region::handle_collision_event(const std::string &function_name, PySIEffect &colliding_effect)
+{
+    HANDLE_PYTHON_CALL(
+        for (auto&[key, value]: colliding_effect.cap_collision_emit())
+        {
+            if (std::find(d_collision_caps_recv.begin(), d_collision_caps_recv.end(), key) !=
+                d_collision_caps_recv.end())
+            {
+                const bp::object &t = (*colliding_effect.cap_collision_emit()[key][function_name])(*d_effect);
+
+                if (t.is_none())
+                    return bp::extract<int>((*d_py_effect->cap_collision_recv()[key][function_name])());
+                else
+                {
+                    if (bp::extract<bp::tuple>(t).check())
+                        return bp::extract<int>((*d_py_effect->cap_collision_recv()[key][function_name])(*t));
+                    else
+                        return bp::extract<int>((*d_py_effect->cap_collision_recv()[key][function_name])(t));
+                }
+            }
+        }
+
+        update();
+    )
+
+    return false;
 }

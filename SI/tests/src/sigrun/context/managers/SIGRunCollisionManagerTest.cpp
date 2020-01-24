@@ -4,6 +4,12 @@
 #include <sigrun/region/Region.hpp>
 #include <sigrun/plugin/Scripting.hpp>
 #include <sigrun/plugin/PluginCollector.hpp>
+#include <sigrun/context/Context.hpp>
+#include <unordered_map>
+#include <boost/python.hpp>
+#include <memory>
+
+namespace bp = boost::python;
 
 TEST_F(SIGRunCollisionManagerTest, collide)
 {

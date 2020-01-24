@@ -49,8 +49,8 @@ RegionTransform::~RegionTransform()
  */
 void RegionTransform::update(const glm::vec2& translation, float angle, float scale)
 {
-    d_translation[0][2] += translation.x;
-    d_translation[1][2] += translation.y;
+    d_translation[0][2] = translation.x;
+    d_translation[1][2] = translation.y;
 
     d_angle += angle;
 

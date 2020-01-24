@@ -30,6 +30,11 @@ void LinkingGraph::add_link(std::shared_ptr<Region> &a, const std::string &attr_
     }
 }
 
+void LinkingGraph::add_link_to_external_object(const UnidirectionalLink &udl)
+{
+//    d_links.push_back(std::make_shared<UnidirectionalLink>(udl));
+}
+
 void LinkingGraph::remove_link(std::shared_ptr<Region> &a, const std::string &attr_a, std::shared_ptr<Region> &b,
                                const std::string &attr_b, const ILink::LINK_TYPE &link_type)
 {
@@ -83,14 +88,13 @@ void LinkingGraph::remove_link(std::shared_ptr<Region> &a, const std::string &at
 
 void LinkingGraph::emit_link_event(std::shared_ptr<Region> &a, const std::string &attr_a)
 {
-    const std::string uuid = UUID::uuid();
+    const std::string uuid = _UUID_;
 
-    const bp::list &py_list = bp::extract<bp::list>(a->effect().attr("cap_link_emit")[attr_a]());
+    const bp::tuple &args = bp::extract<bp::tuple>((*a->effect().attr_link_emit()[attr_a])());
 
-//    Print::print("Source: " + a->name() + " with attribute: " + attr_a);
     a->register_link_event({uuid, attr_a});
 
-    Q_EMIT a->LINK_SIGNAL(uuid, attr_a, py_list);
+    Q_EMIT a->LINK_SIGNAL(uuid, attr_a, args);
 }
 
 bool LinkingGraph::is_linked(const std::shared_ptr<Region> &a, const std::string &attr_a, const std::shared_ptr<Region> &b,

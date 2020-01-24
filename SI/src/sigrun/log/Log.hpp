@@ -265,6 +265,17 @@ public:
     */
     static bool __DEBUG__;
 
+    template <typename T>
+    static void log(const std::string& origin, const T& what, int level, const std::string& type, const std::string& file="", const std::string& func="", const std::string& line="")
+    {
+        log(origin, std::to_string(what), level, type, file, func, line);
+    }
+
+    static void log(const std::string& origin, const char* what, int level, const std::string& type, const std::string& file="", const std::string& func="", const std::string& line="")
+    {
+        log(origin, std::string(what), level, type, file, func, line);
+    }
+
     static void log(const std::string& origin, const std::string& what, int level, const std::string& type, const std::string& file="", const std::string& func="", const std::string& line="");
     static void set_log_file_path(const std::string& path);
 

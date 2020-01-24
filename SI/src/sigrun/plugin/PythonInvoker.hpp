@@ -3,93 +3,35 @@
 #define SITEST_PYTHONINVOKER_HPP
 
 #include <boost/python.hpp>
-#include "debug/Print.hpp"
+#include <sigrun/log/Log.hpp>
 
 namespace bp = boost::python;
 
-#define HANDLE_PYTHON_ERROR \
-catch (const bp::error_already_set&)\
-{\
-    handle_python_error();\
-    return -2;\
+#define HANDLE_PYTHON_CALL(...) { \
+    try\
+    {\
+        __VA_ARGS__\
+    }\
+    catch (const bp::error_already_set&)\
+    {\
+        PyObject *exc,*val,*tb;\
+        PyErr_Fetch(&exc, &val, &tb);\
+        PyErr_NormalizeException(&exc, &val, &tb);\
+        bp::handle<> hexc(exc), hval(bp::allow_null(val)), htb(bp::allow_null(tb));\
+        bp::object formatted_list, formatted;\
+        bp::object traceback(bp::import("traceback"));\
+        if (!tb) {\
+        bp::object format_exception_only(traceback.attr("format_exception_only"));\
+        formatted_list = format_exception_only(hexc, hval);\
+        } else {\
+        bp::object format_exception(traceback.attr("format_exception"));\
+        formatted_list = format_exception(hexc, hval, htb);\
+        }\
+        std::string error = bp::extract<std::string>(bp::str("\n").join(formatted_list));\
+        ERROR(error);\
+        bp::handle_exception();\
+        PyErr_Clear();\
+    }\
 }
-
-class PythonInvoker
-{
-public:
-    PythonInvoker();
-    ~PythonInvoker();
-
-    template<typename T>
-    T invoke_extract_attribute(const bp::object &self, const std::string& attribute_name)
-    {
-        try
-        {
-            return bp::extract<T>(self.attr(attribute_name.c_str()));
-        }
-        catch (const bp::error_already_set &)
-        {
-            handle_python_error();
-        }
-
-        return T();
-    }
-
-    template<typename T>
-    T invoke_extract_attribute(const bp::list &self, int index)
-    {
-        try
-        {
-            return bp::extract<T>(self[index]);
-        }
-        catch (const bp::error_already_set &)
-        {
-            handle_python_error();
-        }
-
-        return T();
-    }
-
-    template<typename T>
-    void invoke_set_attribute(bp::object &self, std::string &attribute_name, T& value, bool is_pointer=false)
-    {
-//        try
-//        {
-//            if(is_pointer)
-//                self.attr(attribute_name.c_str()) = bp::object(bp::ptr(&value));
-//            else
-//                self.attr(attribute_name.c_str()) = bp::object(1);
-//        }
-//        catch (const bp::error_already_set&)
-//        {
-//            handle_python_error();
-//        }
-    }
-
-    template<typename T>
-    T invoke_function(bp::object &self, const std::string &function_name, bp::object &other)
-    {
-        try
-        {
-            bp::object obj = self.attr(function_name.c_str())(other);
-
-            return bp::extract<T>(obj);
-        }
-        catch (const bp::error_already_set&)
-        {
-            handle_python_error();
-        }
-
-        return T();
-    }
-
-    int invoke_collision_event_function(bp::object& self, bp::object& other, const std::string& function_name);
-    int invoke_linking_event_function(bp::object& self, const std::string& capability, const bp::list& args);
-    const bp::list retrieve_linking_event_args(const bp::object& self, const std::string& capability);
-    void handle_python_error();
-
-protected:
-};
-
 
 #endif //SITEST_PYTHONINVOKER_HPP

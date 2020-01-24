@@ -40,8 +40,6 @@ set(SIUnitTestSrc
         SI/tests/src/sigrun/debug/SIGRunPrintTest.hpp
         SI/tests/src/sigrun/plugin/SIGRunPluginCollectorTest.hpp
         SI/tests/src/sigrun/plugin/SIGRunPluginCollectorTest.cpp
-        SI/tests/src/sigrun/plugin/SIGRunPythonInvokerTest.cpp
-        SI/tests/src/sigrun/plugin/SIGRunPythonInvokerTest.hpp
         SI/tests/src/sigrun/plugin/SIGRunScriptingTest.cpp
         SI/tests/src/sigrun/plugin/SIGRunScriptingTest.hpp
         SI/tests/src/sigrun/log/SIGRunLogTest.cpp

@@ -6,7 +6,7 @@
 #include <chrono>
 #include "../log/Log.hpp"
 
-#define SI_BENCHMARK(...) { SI::BenchmarkTimer timer; __VA_ARGS__ }
+#define SI_BENCHMARK(...) { BenchmarkTimer timer; __VA_ARGS__ }
 
 class BenchmarkTimer: public SIObject
 {

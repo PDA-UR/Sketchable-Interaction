@@ -10,6 +10,22 @@ UnidirectionalLink::UnidirectionalLink(const std::shared_ptr<Region> &ra, const 
     d_receiver_b(rb),
     d_attribute_a(aa),
     d_attribute_b(ab),
+    is_external(false),
+    d_link_type(LINK_TYPE::UD)
+{
+
+}
+
+UnidirectionalLink::UnidirectionalLink(const ExternalObject::ExternalObjectType &type, const std::shared_ptr<Region> &ra,
+                                       const std::string &aa, const std::string &ab):
+    d_sender_a(ra),
+    d_sender_b(nullptr),
+    d_receiver_a(ra),
+    d_receiver_b(nullptr),
+    d_attribute_a(aa),
+    d_attribute_b(ab),
+    is_external(true),
+    external_sender_a(type),
     d_link_type(LINK_TYPE::UD)
 {
 

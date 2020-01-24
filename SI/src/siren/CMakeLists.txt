@@ -56,7 +56,6 @@ add_library(SIRenderEngine SHARED ${SIRENDERENGINESrc})
 
 target_precompile_headers(SIRenderEngine
         PUBLIC
-        #        "$<$<COMPILE_LANGUAGE:CXX>:cxx_only.h>"
         PRIVATE
         <unordered_map>
         <vector>
@@ -71,6 +70,7 @@ target_precompile_headers(SIRenderEngine
         <QPainter>
         SI/src/siren/background/UpdateWorker.hpp
         SI/src/siren/region/RegionRepresentation.hpp
+        SI/include/SI/SI.hpp
         )
 
 set_target_properties(SIRenderEngine PROPERTIES AUTOMOC TRUE)

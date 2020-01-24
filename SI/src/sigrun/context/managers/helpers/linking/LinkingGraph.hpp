@@ -16,6 +16,7 @@ public:
     ~LinkingGraph();
 
     void add_link(std::shared_ptr<Region>& a, const std::string& attr_a, std::shared_ptr<Region>& b, const std::string& attr_b, const ILink::LINK_TYPE& link_type);
+    void add_link_to_external_object(const UnidirectionalLink& udl);
     void remove_link(std::shared_ptr<Region>& a, const std::string& attr_a, std::shared_ptr<Region>& b, const std::string& attr_b, const ILink::LINK_TYPE& link_type);
     void emit_link_event(std::shared_ptr<Region>& a, const std::string& attr_a);
     [[nodiscard]] bool is_linked(const std::shared_ptr<Region>& a, const std::string& attr_a, const std::shared_ptr<Region>& b, const std::string& attr_b, const ILink::LINK_TYPE& link_type) const;

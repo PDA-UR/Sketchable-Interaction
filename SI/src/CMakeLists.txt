@@ -30,8 +30,7 @@ if(xlib)
 endif()
 
 set(PySISrc
-        SI/src/pysi/SuperEffect.cpp
-        SI/src/pysi/SuperEffect.hpp)
+        SI/src/pysi/SuperEffect.cpp)
 
 # SI PYTHON3 MODULE
 add_library(PySI MODULE ${PySISrc})
@@ -42,9 +41,14 @@ target_precompile_headers(PySI
         PRIVATE
         <unordered_map>
         <vector>
+        <map>
         <boost/python/suite/indexing/vector_indexing_suite.hpp>
         <boost/python/suite/indexing/map_indexing_suite.hpp>
         <boost/python.hpp>
+        SI/src/sigrun/util/Util.hpp
+        <glm/glm.hpp>
+        SI/src/pysi/SuperEffect.hpp
+        SI/src/sigrun/plugin/PythonInvoker.hpp
         )
 
 # SI RUNTIME LIBRARY
@@ -53,7 +57,6 @@ set(SIGRunSRC
         SI/src/SIGRun.cpp
         SI/src/SIGRun.hpp
         SI/src/pysi/SuperEffect.cpp
-        SI/src/pysi/SuperEffect.hpp
         SI/src/sigrun/Core.cpp
         SI/src/sigrun/Core.hpp
         SI/src/debug/Print.cpp
@@ -63,8 +66,6 @@ set(SIGRunSRC
         SI/src/sigrun/plugin/Scripting.hpp
         SI/src/sigrun/log/Log.cpp
         SI/src/sigrun/log/Log.hpp
-        SI/src/sigrun/plugin/PythonInvoker.cpp
-        SI/src/sigrun/plugin/PythonInvoker.hpp
         SI/src/sigrun/region/RegionTransform.cpp
         SI/src/sigrun/region/RegionTransform.hpp
         SI/src/sigrun/region/RegionMask.cpp
@@ -94,7 +95,9 @@ set(SIGRunSRC
         SI/src/sigrun/context/managers/helpers/linking/LinkingGraph.cpp
         SI/src/sigrun/context/managers/helpers/linking/LinkingGraph.hpp
         SI/src/sigrun/context/managers/InputManager.cpp
-        SI/src/sigrun/context/managers/InputManager.hpp)
+        SI/src/sigrun/context/managers/InputManager.hpp
+        SI/src/sigrun/context/managers/helpers/input/ExternalObject.cpp
+        SI/src/sigrun/context/managers/helpers/input/ExternalObject.hpp)
 
 ADD_DEFINITIONS(-DQT_NO_KEYWORDS)
 
@@ -105,6 +108,7 @@ target_precompile_headers(SIGeneralRuntime
         PRIVATE
         <unordered_map>
         <vector>
+        <string>
         <boost/python/suite/indexing/vector_indexing_suite.hpp>
         <boost/python/suite/indexing/map_indexing_suite.hpp>
         <boost/python.hpp>
@@ -121,6 +125,9 @@ target_precompile_headers(SIGeneralRuntime
         SI/src/debug/Print.hpp
         SI/src/sigrun/SIObject.hpp
         <glm/glm.hpp>
+        SI/src/sigrun/util/Util.hpp
+        SI/src/pysi/SuperEffect.hpp
+        SI/src/sigrun/plugin/PythonInvoker.hpp
         )
 
 set_target_properties(SIGeneralRuntime PROPERTIES AUTOMOC TRUE)

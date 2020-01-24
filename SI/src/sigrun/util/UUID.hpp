@@ -6,6 +6,8 @@
 #include <string>
 #include <uuid/uuid.h>
 
+#define _UUID_ UUID::uuid()
+
 class UUID
 {
 public:

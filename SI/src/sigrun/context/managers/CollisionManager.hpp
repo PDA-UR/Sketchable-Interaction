@@ -8,16 +8,17 @@
 #include <vector>
 #include <sigrun/region/Region.hpp>
 #include <unordered_map>
+#include <sigrun/SIObject.hpp>
 
-class CollisionManager
+class CollisionManager: public SIObject
 {
 public:
     ~CollisionManager();
+    CollisionManager();
 
     void collide(std::vector<std::shared_ptr<Region>>& regions);
 
 private:
-    CollisionManager();
 
     std::function<bool(const std::shared_ptr<Region>&, const std::shared_ptr<Region>&)> collides_with;
     bool collides_with_aabb(const std::shared_ptr<Region>& a, const std::shared_ptr<Region>& b);

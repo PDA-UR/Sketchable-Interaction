@@ -11,17 +11,36 @@ InputManager::~InputManager()
 = default;
 
 InputManager::InputManager():
-    d_mouse_coords(0)
+    d_mouse_coords(0),
+    d_previous_mouse_coords(0)
 {SIGRUN
+
+    d_external_objects.push_back(std::make_shared<ExternalObject>(ExternalObject::ExternalObjectType::MOUSE));
 }
 
 void InputManager::update()
 {
+//    INFO("Updating InputManager...");
     for(auto& [key, value]: d_key_map)
         d_previous_key_map[key] = value;
 
     for(auto& [key, value]: d_button_map)
         d_previous_button_map[key] = value;
+
+    for(auto& obj: d_external_objects)
+    {
+        switch(obj->type())
+        {
+            case ExternalObject::ExternalObjectType::MOUSE:
+            {
+                bp::tuple args = bp::make_tuple(d_mouse_coords.x, d_mouse_coords.y);
+
+                Q_EMIT obj->LINK_SIGNAL(UUID::uuid(), "__position__", args);
+                break;
+            }
+        }
+    }
+//    INFO("InputManager updated");
 }
 
 void InputManager::press_key(unsigned int key_id)
@@ -77,6 +96,17 @@ bool InputManager::was_mouse_down(unsigned int button_id)
 const glm::vec2 &InputManager::mouse_coords() const
 {
     return d_mouse_coords;
+}
+
+ExternalObject* InputManager::mouse_object()
+{
+    for(auto& obj: d_external_objects)
+    {
+        if(obj->type() == ExternalObject::ExternalObjectType::MOUSE)
+            return obj.get();
+    }
+
+    return nullptr;
 }
 
 bool InputManager::eventFilter(QObject *watched, QEvent *event)

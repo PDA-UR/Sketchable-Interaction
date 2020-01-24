@@ -5,6 +5,7 @@
 #include <QApplication>
 #include <sigrun/rendering/IRenderEngine.hpp>
 #include <boost/python.hpp>
+#include <pysi/SuperEffect.hpp>
 
 namespace bp = boost::python;
 
@@ -22,17 +23,39 @@ Context::Context(int width, int height, const std::unordered_map<std::string, st
     s_width = width;
     s_height = height;
 
-    uprm = std::make_unique<RegionManager>();
+    frame_num = 0;
 
+    uprm = std::make_unique<RegionManager>();
+    uplm = std::make_unique<LinkingManager>();
+    upim = std::make_unique<InputManager>();
+    upcm = std::make_unique<Capability>();
+    uprcm = std::make_unique<CollisionManager>();
 
     for(const auto& item: plugins)
         upcm->add_capabilities(*item.second);
 
-    std::vector<glm::vec3> contour1 {glm::vec3(10, 10, 1), glm::vec3(10, 60, 1), glm::vec3(60, 60, 1), glm::vec3(60, 10, 1)};
-    std::vector<glm::vec3> contour2 {glm::vec3(80, 10, 1), glm::vec3(80, 60, 1), glm::vec3(70 + 60, 60, 1), glm::vec3(70 + 60, 10, 1)};
+    // add a canvas region
+    for(auto& [key, value]: plugins)
+    {
+        if(bp::extract<int>(value->attr("region_type")) == PySIEffect::EffectType::SI_CANVAS)
+        {
+            std::vector<glm::vec3> canvas_contour {glm::vec3(0, 0, 1), glm::vec3(0, height, 1), glm::vec3(width, height, 1), glm::vec3(width, 0, 1) };
+            uprm->add_region(canvas_contour, std::make_shared<bp::object>(*value.get()), 0);
+        }
+    }
 
-    uprm->add_region(contour1, std::make_shared<bp::object>(*plugins.begin()->second), 0);
-    uprm->add_region(contour2, std::make_shared<bp::object>(*plugins.begin()->second), 1);
+    // add a mouse region
+
+    for(auto& [key, value]: plugins)
+    {
+        if(bp::extract<int>(value->attr("region_type")) == PySIEffect::EffectType::SI_MOUSE_CURSOR)
+        {
+            std::vector<glm::vec3> mouse_contour {glm::vec3(0, 0, 1), glm::vec3(0, 16, 1), glm::vec3(12, 16, 1), glm::vec3(12, 0, 1) };
+            uprm->add_region(mouse_contour, std::make_shared<bp::object>(*value.get()), 0);
+            uplm->add_link_to_object(uprm->regions().back(), ExternalObject::ExternalObjectType::MOUSE);
+        }
+    }
+    // ------------------------------
 }
 
 void Context::begin(IRenderEngine* ire, int argc, char** argv)
@@ -41,11 +64,9 @@ void Context::begin(IRenderEngine* ire, int argc, char** argv)
     QApplication d_app(argc, argv);
     INFO("Qt5 Application created!");
 
-    d_ire = ire;
+//    d_app.setOverrideCursor(Qt::BlankCursor);
 
-    uplm = std::make_unique<LinkingManager>();
-    upim = std::make_unique<InputManager>();
-    upcm = std::make_unique<Capability>();
+    d_ire = ire;
 
     d_app.installEventFilter(upim.get());
 
@@ -75,6 +96,11 @@ InputManager* Context::input_manager()
     return upim.get();
 }
 
+CollisionManager *Context::collision_manager()
+{
+    return uprcm.get();
+}
+
 Context* Context::SIContext()
 {
     return self;
@@ -84,6 +110,7 @@ void Context::update()
 {
     self = this;
 
+    uprcm->collide(uprm->regions());
     upim->update();
 }
 

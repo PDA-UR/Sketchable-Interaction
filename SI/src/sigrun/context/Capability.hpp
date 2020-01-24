@@ -8,8 +8,9 @@
 #include <map>
 #include <memory>
 #include <sigrun/region/Region.hpp>
+#include <sigrun/SIObject.hpp>
 
-class Capability
+class Capability: SIObject
 {
 public:
     Capability();

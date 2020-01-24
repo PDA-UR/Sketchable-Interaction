@@ -76,7 +76,9 @@ TEST_F(SIGRunRegionTest, on_enter)
 
     Region r(contour, o);
 
-    ASSERT_FALSE(r.on_enter(*t));
+    PySIEffect te = bp::extract<PySIEffect>(*t);
+
+    ASSERT_FALSE(r.on_enter(te));
 }
 
 TEST_F(SIGRunRegionTest, on_continuous)
@@ -110,7 +112,9 @@ TEST_F(SIGRunRegionTest, on_continuous)
 
     Region r(contour, o);
 
-    ASSERT_FALSE(r.on_continuous(*t));
+    PySIEffect te = bp::extract<PySIEffect>(*t);
+
+    ASSERT_FALSE(r.on_continuous(te));
 }
 
 TEST_F(SIGRunRegionTest, on_leave)
@@ -144,5 +148,7 @@ TEST_F(SIGRunRegionTest, on_leave)
 
     Region r(contour, o);
 
-    ASSERT_FALSE(r.on_leave(*t));
+    PySIEffect te = bp::extract<PySIEffect>(*t);
+
+    ASSERT_FALSE(r.on_leave(te));
 }

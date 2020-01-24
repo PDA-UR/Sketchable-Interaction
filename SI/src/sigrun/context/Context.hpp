@@ -10,6 +10,7 @@
 #include <memory>
 #include <boost/python.hpp>
 #include <sigrun/context/managers/RegionManager.hpp>
+#include <sigrun/context/managers/CollisionManager.hpp>
 #include <sigrun/context/managers/LinkingManager.hpp>
 #include <sigrun/context/managers/InputManager.hpp>
 #include <sigrun/rendering/IRenderEngine.hpp>
@@ -28,6 +29,8 @@ public:
     Capability* capability_manager();
     RegionManager* region_manager();
     InputManager* input_manager();
+    CollisionManager* collision_manager();
+
     void update();
     void enable(int what);
     void disable(int what);
@@ -35,20 +38,23 @@ public:
     int width();
     int height();
 
+
 private:
     static Context* self;
-
     Context(int width, int height, const std::unordered_map<std::string, std::unique_ptr<bp::object>>& plugins);
 
     std::unique_ptr<Capability> upcm;
     std::unique_ptr<RegionManager> uprm;
     std::unique_ptr<LinkingManager> uplm;
     std::unique_ptr<InputManager> upim;
+    std::unique_ptr<CollisionManager> uprcm;
 
+    unsigned int frame_num;
     int s_width, s_height;
     IRenderEngine* d_ire;
 
     friend class Core;
+    friend class SIGRunCollisionManagerTest;
 };
 
 

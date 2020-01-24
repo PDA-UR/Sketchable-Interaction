@@ -1,23 +1,13 @@
 from libPySI import PySIEffect, PySICapability
 
 
-"""
-def foo(r, g, b):
-  print(r, g, b)
-
-def bar():
-  t = 1, 2, 3
-  return foo(*t)
-
-bar()
-"""
-
 class Dummy1(PySIEffect):
     def __init__(self):
         super(Dummy1, self).__init__()
 
         self.name = "Dummy1"
         self.region_type = "Custom"
+
 
         self.cap_emit = {
             PySICapability.__TEST1__: {"on_enter": self.test_on_enter_emit, "on_continuous": self.test_on_continuous_emit, "on_leave": self.test_on_leave_emit}

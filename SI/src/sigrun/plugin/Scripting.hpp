@@ -5,12 +5,13 @@
 #include <string>
 #include <boost/python.hpp>
 #include <ostream>
+#include <sigrun/SIObject.hpp>
 
 namespace bp = boost::python;
 
 extern "C" PyObject* PyInit_libPySI(void);
 
-class Scripting
+class Scripting: public SIObject
 {
 public:
     Scripting();

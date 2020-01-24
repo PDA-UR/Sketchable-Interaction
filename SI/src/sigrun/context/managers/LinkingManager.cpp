@@ -34,18 +34,15 @@ bool LinkingManager::add_link(std::shared_ptr<Region> &ra, const std::string& aa
 
         INFO("Requested linking relationship is not already present!");
         INFO("Checking if requested linking relationship (" + aa + "|" + ab + "as " + "unidirectional link) is defined...");
-        const bp::dict& dra = bp::extract<bp::dict>(ra->effect().attr("cap_link_emit"));
-        const bp::dict& drb = bp::extract<bp::dict>(rb->effect().attr("cap_link_recv"));
+        auto& dra = ra->effect().attr_link_emit();
+        auto& drb = rb->effect().attr_link_recv();
 
-        if(dra.has_key(aa) && drb.has_key(aa))
+        if(dra.count(aa) && drb.count(aa))
         {
-            const bp::dict& inner_drb = bp::extract<bp::dict>(drb[aa]);
-
-            if(inner_drb.has_key(ab))
+            if(drb[aa].count(ab))
             {
                 INFO("Requested linking relationship is defined!");
                 INFO("Establishing Unidirectional Link...");
-
 
                 // hack: preemptive disconnect to quench multiple connects per Region pair
                 // multiple connects occur, when a pair of regions is connected via multiple attributs
@@ -95,6 +92,19 @@ bool LinkingManager::add_link(std::shared_ptr<Region> &ra, const std::string& aa
     }
 
     return false;
+}
+
+void LinkingManager::add_link_to_object(std::shared_ptr<Region> &a, const ExternalObject::ExternalObjectType &type)
+{
+    switch(type)
+    {
+        case ExternalObject::ExternalObjectType::MOUSE:
+        {
+            // needs is_linked, remove_link, etc. upgrades
+            d_linking_graph->add_link_to_external_object(UnidirectionalLink(type, a, "__position__", "__position__"));
+            bool success = connect(Context::SIContext()->input_manager()->mouse_object(), &ExternalObject::LINK_SIGNAL, a.get(), &Region::LINK_SLOT, Qt::UniqueConnection);
+        }
+    }
 }
 
 void LinkingManager::remove_link(std::shared_ptr<Region> &ra, const std::string& aa, std::shared_ptr<Region> &rb, const std::string &ab, const ILink::LINK_TYPE& type)

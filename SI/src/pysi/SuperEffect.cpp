@@ -1,7 +1,6 @@
 
 #include "SuperEffect.hpp"
 
-#include <utility>
 #include <boost/python/suite/indexing/vector_indexing_suite.hpp>
 #include <boost/python/suite/indexing/map_indexing_suite.hpp>
 #include <sigrun/context/Capability.hpp>
@@ -43,21 +42,6 @@ void IterableConverter::construct(PyObject *object, bp::converter::rvalue_from_p
     data->convertible = storage;
 }
 
-int PySIEffect::on_enter(bp::object &other)
-{
-    return 0;
-}
-
-int PySIEffect::on_continuous(bp::object &other)
-{
-    return 0;
-}
-
-int PySIEffect::on_leave(bp::object &other)
-{
-    return 0;
-}
-
 namespace bp = boost::python;
 
 BOOST_PYTHON_MODULE(libPySI)
@@ -67,6 +51,8 @@ BOOST_PYTHON_MODULE(libPySI)
         .from_python<std::vector<std::vector<int>>>()
         .from_python<std::vector<std::vector<std::vector<int>>>>()
         .from_python<std::map<std::string, int>>()
+        .from_python<std::map<std::string, bp::object>>()
+//        .from_python<std::map<std::string, std::map<std::string, bp::object>>>()
         ;
 
     bp::class_<std::vector<std::vector<std::vector<int>>>>("int_vec_vec_vec")
@@ -82,13 +68,35 @@ BOOST_PYTHON_MODULE(libPySI)
             .def(bp::map_indexing_suite<std::map<std::string, int>>());
 
     bp::class_<Capability>("PySICapability")
-            .add_static_property("__TEST1__", bp::make_getter(&Capability::__test1__))
-            .add_static_property("__TEST2__", bp::make_getter(&Capability::__test2__))
-            ;
+        .add_static_property("__TEST1__", bp::make_getter(&Capability::__test1__))
+        .add_static_property("__TEST2__", bp::make_getter(&Capability::__test2__))
+        ;
 
-    bp::class_<PySIEffect, boost::noncopyable>("PySIEffect", bp::init<>())
-        .def("on_enter", &PySIEffect::on_enter)
-        .def("on_continuous", &PySIEffect::on_continuous)
-        .def("on_leave", &PySIEffect::on_leave)
+    bp::scope the_scope = bp::class_<PySIEffect>("PySIEffect")
+    ;
+
+    bp::class_<PySIEffect>("PySIEffect", bp::init<>())
+        .add_property("cap_emit", &PySIEffect::__collision_emit__, &PySIEffect::__set_collision_emit__)
+        .add_property("cap_recv", &PySIEffect::__collision_recv__, &PySIEffect::__set_collision_recv__)
+        .add_property("cap_link_emit", &PySIEffect::__link_emit__, &PySIEffect::__set_link_emit__)
+        .add_property("cap_link_recv", &PySIEffect::__link_recv__, &PySIEffect::__set_link_recv__)
+        .add_property("x", &PySIEffect::__x__, &PySIEffect::__set_x__)
+        .add_property("y", &PySIEffect::__y__, &PySIEffect::__set_y__)
+        .add_property("angle_degres", &PySIEffect::__angle_degrees__, &PySIEffect::__set_angle_degrees__)
+        .add_property("angle_radians", &PySIEffect::__angle_radians__, &PySIEffect::__set_angle_radians__)
+        .add_property("color", &PySIEffect::__color__, &PySIEffect::__set_color__)
+        .add_property("scale", &PySIEffect::__scale__, &PySIEffect::__set_scale__)
+        .add_property("name", &PySIEffect::__name__, &PySIEffect::__set__name__)
+        .add_property("region_type", &PySIEffect::__effect_type__, &PySIEffect::__set_effect_type__)
+        .add_property("source", &PySIEffect::__source__, &PySIEffect::__set__source__)
+        .add_property("texture_path", &PySIEffect::__texture_path__, &PySIEffect::__set__texture_path__)
+        ;
+
+    bp::enum_<PySIEffect::EffectType>("EffectType")
+        .value("SI_CANVAS", PySIEffect::SI_CANVAS)
+        .value("SI_CURSOR", PySIEffect::SI_CURSOR)
+        .value("SI_MOUSE_CURSOR", PySIEffect::SI_MOUSE_CURSOR)
+        .value("SI_CUSTOM", PySIEffect::SI_CUSTOM)
+        .export_values()
         ;
 }

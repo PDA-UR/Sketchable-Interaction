@@ -5,11 +5,12 @@
 #include <iosfwd>
 #include <boost/python.hpp>
 #include <debug/Print.hpp>
+#include "PythonInvoker.hpp"
 
 namespace bp = boost::python;
 
 Scripting::Scripting()
-{
+{SIGRUN
     PyImport_AppendInittab((char *) "libPySI", &PyInit_libPySI);
 
     Py_Initialize();
@@ -23,7 +24,11 @@ Scripting::~Scripting()
 
 bp::object Scripting::si_plugin(std::string &module_name, std::string &path, std::string &class_name)
 {
-    return import(module_name, path).attr(class_name.c_str())();
+    HANDLE_PYTHON_CALL(
+            return import(module_name, path).attr(class_name.c_str())();
+    )
+
+    return bp::object();
 }
 
 std::string Scripting::load_plugin_source(const char *source)

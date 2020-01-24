@@ -19,6 +19,7 @@ MainWindow::MainWindow(int width, int height):
     up_update_worker.start();
     INFO("Update Loop started...");
     setGeometry(0, 0, width, height);
+    showFullScreen();
 }
 
 void MainWindow::loop(double delta, int fps)

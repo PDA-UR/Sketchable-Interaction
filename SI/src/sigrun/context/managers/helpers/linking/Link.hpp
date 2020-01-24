@@ -11,6 +11,7 @@
 #include <QObject>
 
 #include <sigrun/region/Region.hpp>
+#include "../input/ExternalObject.hpp"
 
 class ILink: public SIObject
 {
@@ -41,6 +42,7 @@ class UnidirectionalLink: public ILink
 {
 public:
     UnidirectionalLink(const std::shared_ptr<Region>& ra, const std::shared_ptr<Region>& rb, const std::string& aa, const std::string& ab);
+    UnidirectionalLink(const ExternalObject::ExternalObjectType& type, const std::shared_ptr<Region>& ra, const std::string& aa, const std::string& ab);
     ~UnidirectionalLink();
 
     [[nodiscard]] const LINK_TYPE& type() const override;
@@ -54,6 +56,8 @@ public:
     virtual void add_child(std::shared_ptr<ILink>& link) override;
     [[nodiscard]] std::vector<std::shared_ptr<ILink>>& children() override;
 
+
+
 private:
     LINK_TYPE d_link_type;
 
@@ -63,6 +67,10 @@ private:
     std::shared_ptr<Region> d_receiver_b;
     std::string d_attribute_a;
     std::string d_attribute_b;
+
+    bool is_external;
+    ExternalObject::ExternalObjectType external_sender_a;
+
 
     std::vector<std::shared_ptr<ILink>> d_children;
 };
