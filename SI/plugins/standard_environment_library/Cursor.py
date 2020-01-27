@@ -28,7 +28,6 @@ class MouseCursor(PySIEffect.PySIEffect):
 
         self.cap_link_recv = {
             # "source_attr": {"recv_attr": self.set_function},
-
             "__position__": {"__position__": self.set_position}
         }
 
@@ -47,7 +46,8 @@ class MouseCursor(PySIEffect.PySIEffect):
         return self.x, self.y
 
     def on_sketch_leave_recv(self, other):
-        return 0
+        return 0, 0
+
 
     def __handle_left_mouse_click(self):
         if self.left_mouse_clicked:

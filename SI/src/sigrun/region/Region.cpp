@@ -32,7 +32,7 @@ Region::Region(const std::vector<glm::vec3> &contour, std::shared_ptr<bp::object
 
     uprm = std::make_unique<RegionMask>(1920, 1080, d_contour, d_aabb);
 
-    d_uuid = std::string(UUID::uuid());
+    d_uuid = std::string(_UUID_);
 
     d_name = d_py_effect->name();
     d_name = d_name.empty() ? "custom": d_name;
@@ -287,8 +287,7 @@ int Region::handle_collision_event(const std::string &function_name, PySIEffect 
     HANDLE_PYTHON_CALL(
         for (auto&[key, value]: colliding_effect.cap_collision_emit())
         {
-            if (std::find(d_collision_caps_recv.begin(), d_collision_caps_recv.end(), key) !=
-                d_collision_caps_recv.end())
+            if (std::find(d_collision_caps_recv.begin(), d_collision_caps_recv.end(), key) != d_collision_caps_recv.end())
             {
                 const bp::object &t = colliding_effect.cap_collision_emit()[key][function_name](*d_effect);
 
@@ -297,7 +296,17 @@ int Region::handle_collision_event(const std::string &function_name, PySIEffect 
                 else
                 {
                     if (bp::extract<bp::tuple>(t).check())
+                    {
+                        if(d_py_effect->effect_type() == PySIEffect::SI_CANVAS)
+                        {
+                            bp::list l = bp::list(t);
+                            l.append(d_uuid);
+
+                            return bp::extract<int>(d_py_effect->cap_collision_recv()[key][function_name](*(bp::tuple(l))));
+                        }
+
                         return bp::extract<int>(d_py_effect->cap_collision_recv()[key][function_name](*t));
+                    }
                     else
                         return bp::extract<int>(d_py_effect->cap_collision_recv()[key][function_name](t));
                 }
