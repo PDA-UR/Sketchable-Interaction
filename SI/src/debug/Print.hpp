@@ -106,11 +106,19 @@ public:
     template<class... Args>
     static void print(Args &&... args)
     {
+        int i = 0;
         auto arguments = std::make_tuple(std::forward<Args>(args)...);
 
-        for_each(arguments, [](const auto &x)
+        for_each(arguments, [&](const auto &x)
         {
+            if(i > 0)
+            {
+                Print{} << ", ";
+
+            }
             Print{} << _print(x);
+
+            ++i;
         });
 
         Print{} << std::endl;

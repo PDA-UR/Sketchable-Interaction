@@ -7,6 +7,7 @@
 #include <sigrun/util/Util.hpp>
 #include <map>
 #include <glm/glm.hpp>
+#include <debug/Print.hpp>
 
 namespace bp = boost::python;
 
@@ -122,7 +123,7 @@ public:
         const bp::list& keys = dict.keys();
 
         for(int i = 0; i < bp::len(keys); ++i)
-            d_cap_link_emit.insert({bp::extract<std::string>(keys[i]), std::make_shared<bp::object>(dict[keys[i]])});
+            d_cap_link_emit.insert({bp::extract<std::string>(keys[i]), dict[keys[i]]});
     }
 
     const bp::dict __link_emit__() const
@@ -143,13 +144,13 @@ public:
 
         for(int i = 0; i < bp::len(keys); ++i)
         {
-            std::map<std::string, std::shared_ptr<bp::object>> map;
+            std::map<std::string, bp::object> map;
 
             const bp::dict &inner_dict = bp::extract<bp::dict>(dict[keys[i]]);
             const bp::list &inner_keys = inner_dict.keys();
 
             for (int k = 0; k < bp::len(inner_keys); ++k)
-                map.insert({bp::extract<std::string>(inner_keys[k]), std::make_shared<bp::object>(inner_dict[inner_keys[k]])});
+                map.insert({bp::extract<std::string>(inner_keys[k]), inner_dict[inner_keys[k]]});
 
             d_cap_link_recv.insert({bp::extract<std::string>(keys[i]), map});
         }
@@ -172,22 +173,22 @@ public:
         return ret;
     }
 
-    std::map<std::string, std::shared_ptr<bp::object>>& attr_link_emit()
+    std::map<std::string, bp::object>& attr_link_emit()
     {
         return d_cap_link_emit;
     }
 
-    std::map<std::string, std::map<std::string, std::shared_ptr<bp::object>>>& attr_link_recv()
+    std::map<std::string, std::map<std::string, bp::object>>& attr_link_recv()
     {
         return d_cap_link_recv;
     }
 
-    std::map<std::string, std::map<std::string, std::shared_ptr<bp::object>>>& cap_collision_emit()
+    std::map<std::string, std::map<std::string, bp::object>>& cap_collision_emit()
     {
         return d_cap_collision_emit;
     }
 
-    std::map<std::string, std::map<std::string, std::shared_ptr<bp::object>>>& cap_collision_recv()
+    std::map<std::string, std::map<std::string, bp::object>>& cap_collision_recv()
     {
         return d_cap_collision_recv;
     }
@@ -200,13 +201,13 @@ public:
 
         for(int i = 0; i < bp::len(keys); ++i)
         {
-            std::map<std::string, std::shared_ptr<bp::object>> map;
+            std::map<std::string, bp::object> map;
 
             const bp::dict &inner_dict = bp::extract<bp::dict>(dict[keys[i]]);
             const bp::list &inner_keys = inner_dict.keys();
 
             for (int k = 0; k < bp::len(inner_keys); ++k)
-                map.insert({bp::extract<std::string>(inner_keys[k]), std::make_shared<bp::object>(inner_dict[inner_keys[k]])});
+                map.insert({bp::extract<std::string>(inner_keys[k]), inner_dict[inner_keys[k]]});
 
             d_cap_collision_emit.insert({bp::extract<std::string>(keys[i]), map});
         }
@@ -237,13 +238,13 @@ public:
 
         for(int i = 0; i < bp::len(keys); ++i)
         {
-            std::map<std::string, std::shared_ptr<bp::object>> map;
+            std::map<std::string, bp::object> map;
 
             const bp::dict &inner_dict = bp::extract<bp::dict>(dict[keys[i]]);
             const bp::list &inner_keys = inner_dict.keys();
 
             for (int k = 0; k < bp::len(inner_keys); ++k)
-                map.insert({bp::extract<std::string>(inner_keys[k]), std::make_shared<bp::object>(inner_dict[inner_keys[k]])});
+                map.insert({bp::extract<std::string>(inner_keys[k]), inner_dict[inner_keys[k]]});
 
             d_cap_collision_recv.insert({bp::extract<std::string>(keys[i]), map});
         }
@@ -326,6 +327,102 @@ public:
         return d_effect_type;
     }
 
+    bool __is_left_mouse_clicked()
+    {
+        return d_is_left_mouse_clicked;
+    }
+
+    void __set_left_mouse_clicked__(bool active)
+    {
+        d_is_left_mouse_clicked = active;
+    }
+
+    bool __is_right_mouse_clicked()
+    {
+        return d_is_right_mouse_clicked;
+    }
+
+    void __set_right_mouse_clicked__(bool active)
+    {
+        d_is_right_mouse_clicked = active;
+    }
+
+    bool __is_middle_mouse_clicked()
+    {
+        return d_is_middle_mouse_clicked;
+    }
+
+    void __set_middle_mouse_clicked__(bool active)
+    {
+        d_is_middle_mouse_clicked = active;
+    }
+
+    bool has_mouse_pressed_capability(int btn)
+    {
+        switch (btn)
+        {
+            case 0: // left mouse button
+                return d_is_left_mouse_clicked;
+            case 1: // right mouse button
+                return d_is_right_mouse_clicked;
+            case 2: // middle mouse button
+                return d_is_middle_mouse_clicked;
+            default:
+                return false;
+        }
+    }
+
+    void set_mouse_pressed_capability(int btn, bool active)
+    {
+        switch (btn)
+        {
+            case 0: // left mouse button
+                __set_left_mouse_clicked__(active);
+            break;
+            case 1: // right mouse button
+                __set_right_mouse_clicked__(active);
+                break;
+            case 2: // middle mouse button
+                __set_middle_mouse_clicked__(active);
+                break;
+            default:
+                break;
+        }
+    }
+
+    void __set_partial_contours__(const std::vector<std::vector<std::vector<float>>>& partials)
+    {
+        d_partial_contours.clear();
+
+        for(auto& contour: partials)
+        {
+            d_partial_contours.emplace_back();
+
+            for(auto& p: contour)
+                d_partial_contours.back().emplace_back(p[0], p[1], 1);
+        }
+    }
+
+    std::vector<std::vector<std::vector<float>>> __partial_contours__()
+    {
+        std::vector<std::vector<std::vector<float>>> temp;
+
+        for(auto& contour: d_partial_contours)
+        {
+            temp.emplace_back();
+
+            for(auto& p: contour)
+                temp.back().emplace_back(std::vector<float> {p.x, p.y});
+        }
+
+        return temp;
+    }
+
+    const std::vector<std::vector<glm::vec3>>& partial_contours()
+    {
+        return d_partial_contours;
+    }
+
 private:
     int d_x = 0;
     int d_y = 0;
@@ -337,16 +434,22 @@ private:
 
     glm::vec4 d_color = glm::vec4(255, 255, 255, 255);
 
-    std::map<std::string, std::map<std::string, std::shared_ptr<bp::object>>> d_cap_collision_emit;
-    std::map<std::string, std::map<std::string, std::shared_ptr<bp::object>>> d_cap_collision_recv;
+    std::vector<std::vector<glm::vec3>> d_partial_contours;
 
-    std::map<std::string, std::shared_ptr<bp::object>> d_cap_link_emit;
-    std::map<std::string, std::map<std::string, std::shared_ptr<bp::object>>> d_cap_link_recv;
+    std::map<std::string, std::map<std::string, bp::object>> d_cap_collision_emit;
+    std::map<std::string, std::map<std::string, bp::object>> d_cap_collision_recv;
+
+    std::map<std::string, bp::object> d_cap_link_emit;
+    std::map<std::string, std::map<std::string, bp::object>> d_cap_link_recv;
 
     std::string d_name;
     std::string d_texture_path;
     std::string d_source;
     PySIEffect::EffectType d_effect_type;
+
+    bool d_is_left_mouse_clicked = false;
+    bool d_is_right_mouse_clicked = false;
+    bool d_is_middle_mouse_clicked = false;
 };
 
 

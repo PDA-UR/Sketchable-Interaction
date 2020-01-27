@@ -90,7 +90,8 @@ void LinkingGraph::emit_link_event(std::shared_ptr<Region> &a, const std::string
 {
     const std::string uuid = _UUID_;
 
-    const bp::tuple &args = bp::extract<bp::tuple>((*a->effect().attr_link_emit()[attr_a])());
+
+    const bp::tuple &args = bp::extract<bp::tuple>(a->effect().attr_link_emit()[attr_a]());
 
     a->register_link_event({uuid, attr_a});
 

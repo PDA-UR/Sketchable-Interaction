@@ -60,7 +60,7 @@ std::string Scripting::load_plugin_source(const char *source)
         fclose(f);
     }
 
-    std::string ret(buffer);
+    std::string ret(strdup(buffer));
 
     free(buffer);
 

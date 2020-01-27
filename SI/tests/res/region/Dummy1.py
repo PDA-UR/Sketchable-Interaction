@@ -1,13 +1,16 @@
 from libPySI import PySIEffect, PySICapability
 
 
-class Dummy1(PySIEffect):
+class Dummy1(PySIEffect.PySIEffect):
     def __init__(self):
         super(Dummy1, self).__init__()
 
         self.name = "Dummy1"
-        self.region_type = "Custom"
-
+        self.region_type = PySIEffect.EffectType.SI_CUSTOM
+        self.source = "testSI"
+        self.texture_path = ""
+        self.x = 0
+        self.y = 0
 
         self.cap_emit = {
             PySICapability.__TEST1__: {"on_enter": self.test_on_enter_emit, "on_continuous": self.test_on_continuous_emit, "on_leave": self.test_on_leave_emit}
@@ -54,25 +57,26 @@ class Dummy1(PySIEffect):
         return 0
 
     def position(self):
-        return [1, 1]
+        return 1, 1
 
     def rotation(self):
-        return [0, 0, 0]
+        return 0, 0, 0
 
-    def set_position_from_position(self, args):
-        print("Dummy1", args)
+
+    def set_position_from_position(self, x, y):
+        print("Dummy1", x, y)
         return 0
 
-    def set_position_from_color(self, args):
-        print("Dummy1", args)
+    def set_position_from_color(self, r, g, b, a):
+        print("Dummy1", r, g, b, a)
         return 0
 
-    def set_position_from_scale(self, args):
-        print("Dummy1", args)
+    def set_position_from_scale(self, f):
+        print("Dummy1", f)
         return 0
 
-    def set_rotation_from_rotation(self, args):
-        print("Dummy1", args)
+    def set_rotation_from_rotation(self, x, y, z):
+        print("Dummy1", x, y, z)
         return 0
 
     def set_position_from_rotation(self, args):

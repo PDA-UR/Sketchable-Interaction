@@ -141,6 +141,8 @@ TEST_F(SIGRunLinkingManagerTest, link_event_execution_uni)
 
     std::shared_ptr<bp::object> o = std::make_shared<bp::object>(script.si_plugin(module_name, rpath, classes[0]));
 
+    Print::print("Here");
+
     classes.clear();
 
     base_filename = files[1].substr(files[1].find_last_of("/\\") + 1);
@@ -150,6 +152,8 @@ TEST_F(SIGRunLinkingManagerTest, link_event_execution_uni)
     script.load_class_names(classes, files[1]);
 
     std::shared_ptr<bp::object> t = std::make_shared<bp::object>(script.si_plugin(module_name, rpath, classes[0]));
+
+    Print::print("Here2");
 
     std::vector<glm::vec3> contour1{glm::vec3(100, 100, 1), glm::vec3(100, 600, 1), glm::vec3(600, 600, 1),
                                     glm::vec3(600, 100, 1)};
@@ -161,6 +165,8 @@ TEST_F(SIGRunLinkingManagerTest, link_event_execution_uni)
     std::shared_ptr<Region> c = std::make_shared<Region>(contour2, o);
     std::shared_ptr<Region> d = std::make_shared<Region>(contour2, t);
 
+    Print::print("Here3");
+
     LinkingManager lm;
 
     QSignalSpy spy1(a.get(), &Region::LINK_SIGNAL);
@@ -168,15 +174,22 @@ TEST_F(SIGRunLinkingManagerTest, link_event_execution_uni)
     QSignalSpy spy3(c.get(), &Region::LINK_SIGNAL);
     QSignalSpy spy4(d.get(), &Region::LINK_SIGNAL);
 
+    Print::print("Here4");
+
+
     a->set_name("A");
     b->set_name("B");
     c->set_name("C");
     d->set_name("D");
 
+    Print::print("Here5");
+
     ASSERT_TRUE(lm.add_link(a, "__position__", b, "__position__", ILink::LINK_TYPE::UD));
     ASSERT_TRUE(lm.add_link(b, "__position__", c, "__position__", ILink::LINK_TYPE::UD));
     ASSERT_TRUE(lm.add_link(c, "__position__", a, "__position__", ILink::LINK_TYPE::UD));
     ASSERT_TRUE(lm.add_link(c, "__position__", d, "__position__", ILink::LINK_TYPE::UD));
+
+    Print::print("Here6");
 
     ASSERT_FALSE(lm.links().empty());
 
@@ -186,7 +199,11 @@ TEST_F(SIGRunLinkingManagerTest, link_event_execution_uni)
     ASSERT_TRUE(lm.links()[2]->sender_a()->uuid() == c->uuid());
     ASSERT_TRUE(lm.links()[3]->sender_a()->uuid() == c->uuid());
 
+    Print::print("Here7");
+
     lm.emit_link_event(a, "__position__");
+
+    Print::print("Here8");
 
     ASSERT_EQ(spy1.count(), 1);
     ASSERT_EQ(spy2.count(), 1);

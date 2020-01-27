@@ -22,7 +22,9 @@ Region::Region(const std::vector<glm::vec3> &contour, std::shared_ptr<bp::object
     qRegisterMetaType<bp::object>("bp::object");
     qRegisterMetaType<bp::tuple>("bp::tuple");
 
-    d_py_effect = std::make_shared<PySIEffect>(bp::extract<PySIEffect>(*d_effect));
+    HANDLE_PYTHON_CALL(
+        d_py_effect = std::make_shared<PySIEffect>(bp::extract<PySIEffect>(*d_effect));
+    )
 
     RegionResampler::resample(d_contour, contour);
 
@@ -97,14 +99,14 @@ std::string Region::uuid() const
     return d_uuid;
 }
 
-//bp::object& Region::effect()
-//{
-//    return *d_effect;
-//}
-
 PySIEffect &Region::effect()
 {
     return *d_py_effect;
+}
+
+bp::object &Region::raw_effect()
+{
+    return *d_effect;
 }
 
 const std::unique_ptr<RegionMask> &Region::mask() const
@@ -183,18 +185,13 @@ void Region::LINK_SLOT(const std::string& uuid, const std::string& source_cap, c
 
         for(auto& recv: d_attributes_recv[source_cap])
         {
-            HANDLE_PYTHON_CALL((*d_py_effect->attr_link_recv()[source_cap][recv])(*args););
+            HANDLE_PYTHON_CALL(d_py_effect->attr_link_recv()[source_cap][recv](*args);)
             update();
-
-            int x = d_py_effect->x();
-            int y = d_py_effect->y();
-
-            move(x, y);
 
             if(std::find(d_attributes_emit.begin(), d_attributes_emit.end(), recv) != d_attributes_emit.end())
             {
                 HANDLE_PYTHON_CALL(
-                    const bp::tuple &args2 = bp::extract<bp::tuple>((*d_py_effect->attr_link_emit()[recv])());
+                    const bp::tuple &args2 = bp::extract<bp::tuple>(d_py_effect->attr_link_emit()[recv]());
 
                     Q_EMIT LINK_SIGNAL(uuid, recv, args2);
                 )
@@ -236,6 +233,43 @@ const std::string &Region::name() const
 void Region::update()
 {
     HANDLE_PYTHON_CALL(d_py_effect = std::make_shared<PySIEffect>(bp::extract<PySIEffect>(*d_effect));)
+
+    // apply new data
+
+    int x = d_py_effect->x();
+    int y = d_py_effect->y();
+
+    move(x, y);
+
+    d_attributes_emit.clear();
+    d_attributes_recv.clear();
+
+    HANDLE_PYTHON_CALL (
+            for(auto& [key, value]: d_py_effect->attr_link_emit())
+                d_attributes_emit.push_back(key);
+
+            for(auto& [key, value]: d_py_effect->attr_link_recv())
+            {
+                d_attributes_recv.insert({key, std::vector<std::string>()});
+
+                for(auto& [key2, value2]: value)
+                    d_attributes_recv[key].push_back(key2);
+            }
+
+            for(auto& [key, value]: d_py_effect->cap_collision_emit())
+                d_collision_caps_emit.push_back(key);
+
+            for(auto& [key, value]: d_py_effect->cap_collision_recv())
+                d_collision_caps_recv.push_back(key);
+    )
+
+    auto& partial_contours = d_py_effect->partial_contours();
+    if(!partial_contours.empty())
+    {
+        auto& partial = partial_contours[0];
+
+        Context::SIContext()->region_manager()->set_partial_region(partial);
+    }
 }
 
 const std::vector<std::string> &Region::collision_caps_emit() const
@@ -256,16 +290,16 @@ int Region::handle_collision_event(const std::string &function_name, PySIEffect 
             if (std::find(d_collision_caps_recv.begin(), d_collision_caps_recv.end(), key) !=
                 d_collision_caps_recv.end())
             {
-                const bp::object &t = (*colliding_effect.cap_collision_emit()[key][function_name])(*d_effect);
+                const bp::object &t = colliding_effect.cap_collision_emit()[key][function_name](*d_effect);
 
                 if (t.is_none())
-                    return bp::extract<int>((*d_py_effect->cap_collision_recv()[key][function_name])());
+                    return bp::extract<int>(d_py_effect->cap_collision_recv()[key][function_name]());
                 else
                 {
                     if (bp::extract<bp::tuple>(t).check())
-                        return bp::extract<int>((*d_py_effect->cap_collision_recv()[key][function_name])(*t));
+                        return bp::extract<int>(d_py_effect->cap_collision_recv()[key][function_name](*t));
                     else
-                        return bp::extract<int>((*d_py_effect->cap_collision_recv()[key][function_name])(t));
+                        return bp::extract<int>(d_py_effect->cap_collision_recv()[key][function_name](t));
                 }
             }
         }

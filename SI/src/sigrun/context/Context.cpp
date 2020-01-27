@@ -40,7 +40,7 @@ Context::Context(int width, int height, const std::unordered_map<std::string, st
         if(bp::extract<int>(value->attr("region_type")) == PySIEffect::EffectType::SI_CANVAS)
         {
             std::vector<glm::vec3> canvas_contour {glm::vec3(0, 0, 1), glm::vec3(0, height, 1), glm::vec3(width, height, 1), glm::vec3(width, 0, 1) };
-            uprm->add_region(canvas_contour, std::make_shared<bp::object>(*value.get()), 0);
+            uprm->add_region(canvas_contour, std::make_shared<bp::object>(*value), 0);
         }
     }
 
@@ -51,7 +51,7 @@ Context::Context(int width, int height, const std::unordered_map<std::string, st
         if(bp::extract<int>(value->attr("region_type")) == PySIEffect::EffectType::SI_MOUSE_CURSOR)
         {
             std::vector<glm::vec3> mouse_contour {glm::vec3(0, 0, 1), glm::vec3(0, 16, 1), glm::vec3(12, 16, 1), glm::vec3(12, 0, 1) };
-            uprm->add_region(mouse_contour, std::make_shared<bp::object>(*value.get()), 0);
+            uprm->add_region(mouse_contour, std::make_shared<bp::object>(*value), 0);
             uplm->add_link_to_object(uprm->regions().back(), ExternalObject::ExternalObjectType::MOUSE);
         }
     }
@@ -108,10 +108,31 @@ Context* Context::SIContext()
 
 void Context::update()
 {
-    self = this;
+    upim->update();
+
+    // update mouse stuff  //
+
+    if(upim->is_mouse_down(SI_LEFT_MOUSE_BUTTON))
+        uprm->activate_mouse_region_button_down(SI_LEFT_MOUSE_BUTTON);
+    else
+        uprm->deactivate_mouse_region_button_down(SI_LEFT_MOUSE_BUTTON);
+
+    if(upim->is_mouse_down(SI_RIGHT_MOUSE_BUTTON))
+        uprm->activate_mouse_region_button_down(SI_RIGHT_MOUSE_BUTTON);
+    else
+        uprm->deactivate_mouse_region_button_down(SI_RIGHT_MOUSE_BUTTON);
+
+    if(upim->is_mouse_down(SI_MIDDLE_MOUSE_BUTTON))
+        uprm->activate_mouse_region_button_down(SI_MIDDLE_MOUSE_BUTTON);
+    else
+        uprm->deactivate_mouse_region_button_down(SI_MIDDLE_MOUSE_BUTTON);
+
+    ////////////////////////
 
     uprcm->collide(uprm->regions());
-    upim->update();
+
+    self = this;
+
 }
 
 int Context::width()

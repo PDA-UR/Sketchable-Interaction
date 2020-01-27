@@ -48,11 +48,15 @@ BOOST_PYTHON_MODULE(libPySI)
 {
     IterableConverter()
         .from_python<std::vector<int>>()
+        .from_python<std::vector<float>>()
+        .from_python<std::vector<std::vector<float>>>()
         .from_python<std::vector<std::vector<int>>>()
         .from_python<std::vector<std::vector<std::vector<int>>>>()
+        .from_python<std::vector<std::vector<std::vector<float>>>>()
         .from_python<std::map<std::string, int>>()
         .from_python<std::map<std::string, bp::object>>()
-//        .from_python<std::map<std::string, std::map<std::string, bp::object>>>()
+        .from_python<std::map<std::string, bp::object>>()
+        .from_python<std::map<std::string, std::map<std::string, bp::object>>>()
         ;
 
     bp::class_<std::vector<std::vector<std::vector<int>>>>("int_vec_vec_vec")
@@ -61,11 +65,26 @@ BOOST_PYTHON_MODULE(libPySI)
     bp::class_<std::vector<std::vector<int>>>("int_vec_vec")
             .def(bp::vector_indexing_suite<std::vector<std::vector<int>>>());
 
+    bp::class_<std::vector<std::vector<float>>>("float_vec_vec")
+            .def(bp::vector_indexing_suite<std::vector<std::vector<float>>>());
+
+    bp::class_<std::vector<std::vector<std::vector<float>>>>("float_vec_vec")
+            .def(bp::vector_indexing_suite<std::vector<std::vector<std::vector<float>>>>());
+
     bp::class_<std::vector<int>>("int_vec")
             .def(bp::vector_indexing_suite<std::vector<int>>() );
 
+    bp::class_<std::vector<float>>("float_vec")
+            .def(bp::vector_indexing_suite<std::vector<float>>() );
+
     bp::class_<std::map<std::string, int>>("string_int_map")
             .def(bp::map_indexing_suite<std::map<std::string, int>>());
+
+    bp::class_<std::map<std::string, int>>("string_bpo_map")
+            .def(bp::map_indexing_suite<std::map<std::string, bp::object>>());
+
+    bp::class_<std::map<std::string, int>>("string_map_string_bpo_map")
+            .def(bp::map_indexing_suite<std::map<std::string, std::map<std::string, bp::object>>>());
 
     bp::class_<Capability>("PySICapability")
         .add_static_property("__TEST1__", bp::make_getter(&Capability::__test1__))
@@ -76,6 +95,10 @@ BOOST_PYTHON_MODULE(libPySI)
     ;
 
     bp::class_<PySIEffect>("PySIEffect", bp::init<>())
+        .add_property("partial_regions", &PySIEffect::__partial_contours__, &PySIEffect::__set_partial_contours__)
+        .add_property("left_mouse_clicked", &PySIEffect::__is_left_mouse_clicked, &PySIEffect::__set_left_mouse_clicked__)
+        .add_property("right_mouse_clicked", &PySIEffect::__is_right_mouse_clicked, &PySIEffect::__set_right_mouse_clicked__)
+        .add_property("middle_mouse_clicked", &PySIEffect::__is_middle_mouse_clicked, &PySIEffect::__set_middle_mouse_clicked__)
         .add_property("cap_emit", &PySIEffect::__collision_emit__, &PySIEffect::__set_collision_emit__)
         .add_property("cap_recv", &PySIEffect::__collision_recv__, &PySIEffect::__set_collision_recv__)
         .add_property("cap_link_emit", &PySIEffect::__link_emit__, &PySIEffect::__set_link_emit__)

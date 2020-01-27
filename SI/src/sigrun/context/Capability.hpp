@@ -7,7 +7,6 @@
 #include <string>
 #include <map>
 #include <memory>
-#include <sigrun/region/Region.hpp>
 #include <sigrun/SIObject.hpp>
 
 class Capability: SIObject
@@ -32,10 +31,6 @@ private:
     std::map<std::string, int> d_capabilities;
     unsigned int d_num_capabilities;
     unsigned int d_consecutive_capability_id;
-
-
-
-    friend class CollisionManager;
 };
 
 

@@ -24,8 +24,6 @@ MainWindow::MainWindow(int width, int height):
 
 void MainWindow::loop(double delta, int fps)
 {
-//    DEBUG("Updated with " + std::to_string(fps) + " fps (real delta time: " + std::to_string(delta) + ")");
-
     const auto& regions = Context::SIContext()->region_manager()->regions();
 
     bool is_present = false;
@@ -58,11 +56,11 @@ void MainWindow::loop(double delta, int fps)
         }
     }
 
-    if(!d_region_representations.empty())
-    {
-        std::vector<glm::vec2> partial_contour;
-        // partial stuff
-    }
+//    if(!d_region_representations.empty())
+//    {
+//        std::vector<glm::vec2> partial_contour;
+//        // partial stuff
+//    }
 
     update();
     Context::SIContext()->update();
@@ -96,6 +94,17 @@ void MainWindow::paintEvent(QPaintEvent* event)
 
     draw_background(event);
     draw_region_representations(event);
+
+    const auto& partial_region = Context::SIContext()->region_manager()->partial_region();
+
+    QPolygonF partial_poly;
+
+    up_qp.setBrush(QColor(255, 255, 255));
+
+    for(auto& p: partial_region)
+        partial_poly << QPointF(p.x, p.y);
+
+    up_qp.drawPolyline(partial_poly);
 
     up_qp.end();
 }

@@ -14,13 +14,11 @@ InputManager::InputManager():
     d_mouse_coords(0),
     d_previous_mouse_coords(0)
 {SIGRUN
-
     d_external_objects.push_back(std::make_shared<ExternalObject>(ExternalObject::ExternalObjectType::MOUSE));
 }
 
 void InputManager::update()
 {
-//    INFO("Updating InputManager...");
     for(auto& [key, value]: d_key_map)
         d_previous_key_map[key] = value;
 
@@ -40,7 +38,6 @@ void InputManager::update()
             }
         }
     }
-//    INFO("InputManager updated");
 }
 
 void InputManager::press_key(unsigned int key_id)

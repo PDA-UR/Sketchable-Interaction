@@ -85,13 +85,13 @@ void CollisionManager::collide(std::vector<std::shared_ptr<Region>> &regions)
                         handle_event_leave(a, b, tuple);
                 }
             }
+
+            a->update();
+            b->update();
         }
     }
 
     std::sort(update_indices.begin(), update_indices.end());
-    update_indices.erase(std::unique(update_indices.begin(), update_indices.end()), update_indices.end());
-
-    // commence region based retrieval of updates from python (RegionManager)
 }
 
 CollisionManager::CollisionManager()

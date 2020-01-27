@@ -5,6 +5,8 @@ class Canvas(PySIEffect.PySIEffect):
     def __init__(self):
         super(Canvas, self).__init__()
 
+        self.partial_region = []
+
         self.name = "stdCanvas"
         self.region_type = PySIEffect.EffectType.SI_CANVAS
         self.source = "libstdSI"
@@ -27,14 +29,16 @@ class Canvas(PySIEffect.PySIEffect):
             # "source_attr": {"recv_attr": self.set_function},
         }
 
-    def on_sketch_enter_recv(self, other):
-        print("enter")
+    def on_sketch_enter_recv(self, x, y):
+        self.partial_region = []
+
         return 0
 
-    def on_sketch_continuous_recv(self, other):
-        print("conti")
+    def on_sketch_continuous_recv(self, x, y):
+        self.partial_region.append([x, y])
+        self.partial_regions = [self.partial_region]
+
         return 0
 
     def on_sketch_leave_recv(self, other):
-        print("leave")
         return 0

@@ -13,7 +13,6 @@ TEST_F(SIGRunCapabilityTest, construction)
 
 TEST_F(SIGRunCapabilityTest, add_capabilities)
 {
-    Capability c;
 
     std::string path = "res/region";
 
@@ -40,14 +39,16 @@ TEST_F(SIGRunCapabilityTest, add_capabilities)
 
     bp::object t = script.si_plugin(module_name, rpath, classes[0]);
 
-    EXPECT_NO_FATAL_FAILURE(c.add_capabilities(o));
-    EXPECT_NO_FATAL_FAILURE(c.add_capabilities(t));
+    auto c = std::make_unique<Capability>();
 
-    ASSERT_EQ(c.num_capabilities(), 2);
-    ASSERT_EQ(c.consecutive_capability_id(), 2);
+    c->add_capabilities(o);
+    c->add_capabilities(t);
 
-    ASSERT_TRUE(c.capabilities().begin()->first == "TEST1");
-    ASSERT_TRUE(c.capabilities().rbegin()->first == "TEST2");
+    ASSERT_EQ(c->num_capabilities(), 2);
+    ASSERT_EQ(c->consecutive_capability_id(), 2);
+
+    ASSERT_TRUE(c->capabilities().begin()->first == "TEST1");
+    ASSERT_TRUE(c->capabilities().rbegin()->first == "TEST2");
 }
 
 TEST_F(SIGRunCapabilityTest, add_capabilitiy)

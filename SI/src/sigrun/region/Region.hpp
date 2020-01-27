@@ -33,6 +33,7 @@ public:
     std::string uuid() const;
 
     PySIEffect& effect();
+    bp::object& raw_effect();
 
     const std::unique_ptr<RegionMask>& mask() const;
 
@@ -68,8 +69,9 @@ public:
 
     int handle_collision_event(const std::string& function_name, PySIEffect& colliding_effect);
 
-private:
     void update();
+
+private:
 
     std::shared_ptr<PySIEffect> d_py_effect;
     std::shared_ptr<bp::object> d_effect;
