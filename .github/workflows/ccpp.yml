@@ -32,7 +32,8 @@ jobs:
       run: |
         mkdir temp
         cd temp
-        wget https://dl.bintray.com/boostorg/release/1.69.0/source/boost_1_69_0.tar.g
+        wget https://dl.bintray.com/boostorg/release/1.69.0/source/boost_1_69_0.tar.gz
+        
     - name: Extract Boost-Python
       run: |       
         tar xzf boost_1_69_0.tar.gz
