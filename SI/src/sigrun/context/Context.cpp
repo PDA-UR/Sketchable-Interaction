@@ -106,28 +106,20 @@ Context* Context::SIContext()
     return self;
 }
 
+/*
+ * API DESIGN:
+ * if an effect manipulates the object itself use properties
+ * if an effect does something else use functions
+ *
+ * Example:
+ *
+ * Use properties for position, scale, rotation, etc.
+ * Use functions for setting points of sketching, data content, etc.
+ */
 void Context::update()
 {
     upim->update();
-
-    // update mouse stuff  //
-
-    if(upim->is_mouse_down(SI_LEFT_MOUSE_BUTTON))
-        uprm->activate_mouse_region_button_down(SI_LEFT_MOUSE_BUTTON);
-    else
-        uprm->deactivate_mouse_region_button_down(SI_LEFT_MOUSE_BUTTON);
-
-    if(upim->is_mouse_down(SI_RIGHT_MOUSE_BUTTON))
-        uprm->activate_mouse_region_button_down(SI_RIGHT_MOUSE_BUTTON);
-    else
-        uprm->deactivate_mouse_region_button_down(SI_RIGHT_MOUSE_BUTTON);
-
-    if(upim->is_mouse_down(SI_MIDDLE_MOUSE_BUTTON))
-        uprm->activate_mouse_region_button_down(SI_MIDDLE_MOUSE_BUTTON);
-    else
-        uprm->deactivate_mouse_region_button_down(SI_MIDDLE_MOUSE_BUTTON);
-
-    ////////////////////////
+    uprm->update();
 
     uprcm->collide(uprm->regions());
 

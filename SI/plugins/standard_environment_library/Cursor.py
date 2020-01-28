@@ -5,14 +5,12 @@ class MouseCursor(PySIEffect.PySIEffect):
     def __init__(self):
         super(MouseCursor, self).__init__()
 
-        self.i = 0
+        print(self._uuid)
 
         self.name = "MouseCursor"
         self.region_type = PySIEffect.EffectType.SI_MOUSE_CURSOR
         self.source = "libstdSI"
         self.texture_path = ""
-
-        self.left_mouse_was_clicked = False
 
         self.cap_emit = {
             # capability: {"on_enter": self.function, "on_continuous": self.function, "on_leave": self.function}
@@ -40,22 +38,21 @@ class MouseCursor(PySIEffect.PySIEffect):
         return 0
 
     def self_on_sketch_enter_emit(self, other):
-        return self.x, self.y
+        return 0, 0, self._uuid
 
-    def on_sketch_continuous_recv(self, other):
-        return self.x, self.y
+    def on_sketch_continuous_emit(self, other):
+        return self.x, self.y, self._uuid
 
-    def on_sketch_leave_recv(self, other):
-        return 0, 0
-
+    def on_sketch_leave_emit(self, other):
+        return 0, 0, self._uuid
 
     def __handle_left_mouse_click(self):
         if self.left_mouse_clicked:
             if "SKETCH" not in self.cap_emit.keys():
                 temp = self.cap_emit
-                temp["SKETCH"] = {"on_enter": self.self_on_sketch_enter_emit, "on_continuous": self.on_sketch_continuous_recv, "on_leave": self.on_sketch_leave_recv}
+                temp["SKETCH"] = {"on_enter": self.self_on_sketch_enter_emit, "on_continuous": self.on_sketch_continuous_emit, "on_leave": self.on_sketch_leave_emit}
                 self.cap_emit = temp
         elif "SKETCH" in self.cap_emit.keys():
             temp = self.cap_emit
-            temp.pop("SKETCH", None)
+            del temp["SKETCH"]
             self.cap_emit = temp

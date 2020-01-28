@@ -12,8 +12,6 @@ CollisionManager::~CollisionManager()
 
 void CollisionManager::collide(std::vector<std::shared_ptr<Region>> &regions)
 {
-    std::vector<int> update_indices;
-
     for(int i = 0; i < regions.size(); ++i)
     {
         auto& a = regions[i];
@@ -31,9 +29,6 @@ void CollisionManager::collide(std::vector<std::shared_ptr<Region>> &regions)
                     {
                         if(are_aabbs_equal(a, b) || collides_with_mask(a, b))
                         {
-                            update_indices.push_back(i);
-                            update_indices.push_back(k);
-
                             if(d_collision_map.find(tuple) != d_collision_map.end())
                                 handle_event_continuous(a, b);
                             else
@@ -42,43 +37,25 @@ void CollisionManager::collide(std::vector<std::shared_ptr<Region>> &regions)
                         else
                         {
                             if(d_collision_map.find(tuple) != d_collision_map.end())
-                            {
-                                update_indices.push_back(i);
-                                update_indices.push_back(k);
-
                                 handle_event_leave(a, b, tuple);
-                            }
                         }
                     }
                     else
                     {
                         if(d_collision_map.find(tuple) != d_collision_map.end())
-                        {
-                            update_indices.push_back(i);
-                            update_indices.push_back(k);
-
                             handle_event_leave(a, b, tuple);
-                        }
                     }
                 }
                 else
                 {
                     if(d_collision_map.find(tuple) != d_collision_map.end())
-                    {
-                        update_indices.push_back(i);
-                        update_indices.push_back(k);
-
                         handle_event_leave(a, b, tuple);
-                    }
                 }
             }
             else
             {
                 if(d_collision_map.find(tuple) != d_collision_map.end())
                 {
-                    update_indices.push_back(i);
-                    update_indices.push_back(k);
-
                     if(has_capabilities_in_common(a, b))
                         handle_event_continuous(a, b);
                     else
@@ -90,8 +67,6 @@ void CollisionManager::collide(std::vector<std::shared_ptr<Region>> &regions)
             b->update();
         }
     }
-
-    std::sort(update_indices.begin(), update_indices.end());
 }
 
 CollisionManager::CollisionManager()

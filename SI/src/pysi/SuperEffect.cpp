@@ -48,6 +48,7 @@ BOOST_PYTHON_MODULE(libPySI)
 {
     IterableConverter()
         .from_python<std::vector<int>>()
+        .from_python<std::vector<std::string>>()
         .from_python<std::vector<float>>()
         .from_python<std::vector<std::vector<float>>>()
         .from_python<std::vector<std::vector<int>>>()
@@ -56,6 +57,7 @@ BOOST_PYTHON_MODULE(libPySI)
         .from_python<std::map<std::string, int>>()
         .from_python<std::map<std::string, bp::object>>()
         .from_python<std::map<std::string, bp::object>>()
+        .from_python<std::map<std::string, std::vector<std::vector<float>>>>()
         .from_python<std::map<std::string, std::map<std::string, bp::object>>>()
         ;
 
@@ -74,6 +76,9 @@ BOOST_PYTHON_MODULE(libPySI)
     bp::class_<std::vector<int>>("int_vec")
             .def(bp::vector_indexing_suite<std::vector<int>>() );
 
+    bp::class_<std::vector<std::string>>("int_vec")
+            .def(bp::vector_indexing_suite<std::vector<std::string>>() );
+
     bp::class_<std::vector<float>>("float_vec")
             .def(bp::vector_indexing_suite<std::vector<float>>() );
 
@@ -86,6 +91,9 @@ BOOST_PYTHON_MODULE(libPySI)
     bp::class_<std::map<std::string, int>>("string_map_string_bpo_map")
             .def(bp::map_indexing_suite<std::map<std::string, std::map<std::string, bp::object>>>());
 
+    bp::class_<std::map<std::string, std::vector<std::vector<float>>>>("map_str, float_vec_vec")
+            .def(bp::map_indexing_suite<std::map<std::string, std::vector<std::vector<float>>>>());
+
     bp::class_<Capability>("PySICapability")
         .add_static_property("__TEST1__", bp::make_getter(&Capability::__test1__))
         .add_static_property("__TEST2__", bp::make_getter(&Capability::__test2__))
@@ -95,7 +103,11 @@ BOOST_PYTHON_MODULE(libPySI)
     ;
 
     bp::class_<PySIEffect>("PySIEffect", bp::init<>())
-        .add_property("partial_regions", &PySIEffect::__partial_contours__, &PySIEffect::__set_partial_contours__)
+        .def("add_point_to_partial_region", &PySIEffect::__add_point_to_partial_region__)
+        .def("register_region", &PySIEffect::__register_region__)
+
+        .add_property("__partial_regions__", &PySIEffect::__partial_regions__, &PySIEffect::__set_partial_regions__)
+        .add_property("__regions_for_registration__", &PySIEffect::__regions_for_registration__, &PySIEffect::__set_regions_for_registration__)
         .add_property("left_mouse_clicked", &PySIEffect::__is_left_mouse_clicked, &PySIEffect::__set_left_mouse_clicked__)
         .add_property("right_mouse_clicked", &PySIEffect::__is_right_mouse_clicked, &PySIEffect::__set_right_mouse_clicked__)
         .add_property("middle_mouse_clicked", &PySIEffect::__is_middle_mouse_clicked, &PySIEffect::__set_middle_mouse_clicked__)
@@ -110,6 +122,7 @@ BOOST_PYTHON_MODULE(libPySI)
         .add_property("color", &PySIEffect::__color__, &PySIEffect::__set_color__)
         .add_property("scale", &PySIEffect::__scale__, &PySIEffect::__set_scale__)
         .add_property("name", &PySIEffect::__name__, &PySIEffect::__set__name__)
+        .add_property("_uuid", &PySIEffect::__uuid__, &PySIEffect::__set_uuid__)
         .add_property("region_type", &PySIEffect::__effect_type__, &PySIEffect::__set_effect_type__)
         .add_property("source", &PySIEffect::__source__, &PySIEffect::__set__source__)
         .add_property("texture_path", &PySIEffect::__texture_path__, &PySIEffect::__set__texture_path__)

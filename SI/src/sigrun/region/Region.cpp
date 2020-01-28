@@ -22,6 +22,10 @@ Region::Region(const std::vector<glm::vec3> &contour, std::shared_ptr<bp::object
     qRegisterMetaType<bp::object>("bp::object");
     qRegisterMetaType<bp::tuple>("bp::tuple");
 
+    d_uuid = std::string(_UUID_);
+
+    d_effect->attr("_uuid") = d_uuid;
+
     HANDLE_PYTHON_CALL(
         d_py_effect = std::make_shared<PySIEffect>(bp::extract<PySIEffect>(*d_effect));
     )
@@ -31,8 +35,6 @@ Region::Region(const std::vector<glm::vec3> &contour, std::shared_ptr<bp::object
     set_aabb();
 
     uprm = std::make_unique<RegionMask>(1920, 1080, d_contour, d_aabb);
-
-    d_uuid = std::string(_UUID_);
 
     d_name = d_py_effect->name();
     d_name = d_name.empty() ? "custom": d_name;
@@ -243,6 +245,8 @@ void Region::update()
 
     d_attributes_emit.clear();
     d_attributes_recv.clear();
+    d_collision_caps_emit.clear();
+    d_collision_caps_recv.clear();
 
     HANDLE_PYTHON_CALL (
             for(auto& [key, value]: d_py_effect->attr_link_emit())
@@ -263,12 +267,37 @@ void Region::update()
                 d_collision_caps_recv.push_back(key);
     )
 
-    auto& partial_contours = d_py_effect->partial_contours();
-    if(!partial_contours.empty())
+    if(d_py_effect->effect_type() == PySIEffect::EffectType::SI_CANVAS)
     {
-        auto& partial = partial_contours[0];
+        if(!d_py_effect->regions_for_registration().empty())
+        {
+            for(auto& candidate: d_py_effect->regions_for_registration())
+            {
+                DEBUG(candidate);
 
-        Context::SIContext()->region_manager()->set_partial_region(partial);
+                std::string out = "[";
+
+                // here is the contour to work into a functioning region
+                for(auto& p: d_py_effect->partial_region_contours()[candidate])
+                {
+                    out += "(" + std::to_string(p.x) + ", " + std::to_string(p.y)  + "), ";
+                }
+
+                out += "]";
+
+                DEBUG(out);
+
+                HANDLE_PYTHON_CALL(
+                        bp::object temp = d_effect->attr("__partial_regions__");
+                        bp::delitem(temp, bp::object(candidate));
+                        d_effect->attr("__partial_regions__") = temp;
+                )
+            }
+
+            HANDLE_PYTHON_CALL (d_effect->attr("__regions_for_registration__") = bp::list();)
+        }
+
+        Context::SIContext()->region_manager()->set_partial_regions(d_py_effect->partial_region_contours());
     }
 }
 
@@ -284,6 +313,7 @@ const std::vector<std::string> &Region::collision_caps_recv() const
 
 int Region::handle_collision_event(const std::string &function_name, PySIEffect &colliding_effect)
 {
+
     HANDLE_PYTHON_CALL(
         for (auto&[key, value]: colliding_effect.cap_collision_emit())
         {
@@ -292,21 +322,14 @@ int Region::handle_collision_event(const std::string &function_name, PySIEffect 
                 const bp::object &t = colliding_effect.cap_collision_emit()[key][function_name](*d_effect);
 
                 if (t.is_none())
+                {
+
                     return bp::extract<int>(d_py_effect->cap_collision_recv()[key][function_name]());
+                }
                 else
                 {
                     if (bp::extract<bp::tuple>(t).check())
-                    {
-                        if(d_py_effect->effect_type() == PySIEffect::SI_CANVAS)
-                        {
-                            bp::list l = bp::list(t);
-                            l.append(d_uuid);
-
-                            return bp::extract<int>(d_py_effect->cap_collision_recv()[key][function_name](*(bp::tuple(l))));
-                        }
-
                         return bp::extract<int>(d_py_effect->cap_collision_recv()[key][function_name](*t));
-                    }
                     else
                         return bp::extract<int>(d_py_effect->cap_collision_recv()[key][function_name](t));
                 }

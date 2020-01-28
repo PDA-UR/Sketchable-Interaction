@@ -15,24 +15,26 @@ namespace bp = boost::python;
 class RegionManager: public SIObject
 {
 public:
+    RegionManager();
     ~RegionManager();
 
     void add_region(const std::vector<glm::vec3>& contour, std::shared_ptr<bp::object> effect, int region_uuid);
 
     std::vector<std::shared_ptr<Region>>& regions();
-    std::vector<glm::vec3>& partial_region();
+    std::map<std::string, std::vector<glm::vec3>>& partial_regions();
+
+    void set_partial_regions(std::map<std::string, std::vector<glm::vec3>>& partials);
+    void update();
+
+private:
+    std::vector<std::shared_ptr<Region>> d_regions;
+    std::map<std::string, std::vector<glm::vec3>> d_partial_regions;
+
+    void update_via_mouse_input();
 
     void activate_mouse_region_button_down(int mouse_btn);
     void deactivate_mouse_region_button_down(int mouse_btn);
 
-    void set_partial_region(const std::vector<glm::vec3>& partial);
-
-    void update();
-    RegionManager();
-
-private:
-    std::vector<std::shared_ptr<Region>> d_regions;
-    std::vector<glm::vec3> d_partial_region;
 
     friend class SIGRunRegionManagerTest;
 };

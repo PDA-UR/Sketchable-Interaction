@@ -30,17 +30,12 @@ class Canvas(PySIEffect.PySIEffect):
         }
 
     def on_sketch_enter_recv(self, x, y, sender_id):
-        print("Enter:", sender_id)
-        self.partial_region = []
-
         return 0
 
-    def on_sketch_continuous_recv(self, x, y, sender_id):
-        print("Conti", sender_id)
-        self.partial_region.append([x, y])
-        self.partial_regions = [self.partial_region]
-
+    def on_sketch_continuous_recv(self, x, y, cursor_id):
+        self.add_point_to_partial_region(cursor_id, [x, y])
         return 0
 
     def on_sketch_leave_recv(self, x, y, sender_id):
+        self.register_region(sender_id)
         return 0

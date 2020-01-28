@@ -95,16 +95,19 @@ void MainWindow::paintEvent(QPaintEvent* event)
     draw_background(event);
     draw_region_representations(event);
 
-    const auto& partial_region = Context::SIContext()->region_manager()->partial_region();
+    const auto& partial_regions = Context::SIContext()->region_manager()->partial_regions();
 
-    QPolygonF partial_poly;
+    for(auto& [key, partial_region]: partial_regions)
+    {
+        QPolygonF partial_poly;
 
-    up_qp.setBrush(QColor(255, 255, 255));
+        up_qp.setBrush(QColor(255, 255, 255));
 
-    for(auto& p: partial_region)
-        partial_poly << QPointF(p.x, p.y);
+        for(auto& p: partial_region)
+            partial_poly << QPointF(p.x, p.y);
 
-    up_qp.drawPolyline(partial_poly);
+        up_qp.drawPolyline(partial_poly);
+    }
 
     up_qp.end();
 }

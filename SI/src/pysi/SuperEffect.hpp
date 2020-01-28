@@ -390,37 +390,69 @@ public:
         }
     }
 
-    void __set_partial_contours__(const std::vector<std::vector<std::vector<float>>>& partials)
+    void __register_region__(const std::string& sender_id)
     {
-        d_partial_contours.clear();
-
-        for(auto& contour: partials)
-        {
-            d_partial_contours.emplace_back();
-
-            for(auto& p: contour)
-                d_partial_contours.back().emplace_back(p[0], p[1], 1);
-        }
+        d_regions_marked_for_registration.push_back(sender_id);
     }
 
-    std::vector<std::vector<std::vector<float>>> __partial_contours__()
+    std::vector<std::string>& regions_for_registration()
     {
-        std::vector<std::vector<std::vector<float>>> temp;
-
-        for(auto& contour: d_partial_contours)
-        {
-            temp.emplace_back();
-
-            for(auto& p: contour)
-                temp.back().emplace_back(std::vector<float> {p.x, p.y});
-        }
-
-        return temp;
+        return d_regions_marked_for_registration;
     }
 
-    const std::vector<std::vector<glm::vec3>>& partial_contours()
+    void __set_uuid__(const std::string& uuid)
     {
-        return d_partial_contours;
+        d_uuid = uuid;
+    }
+
+    const std::string __uuid__() const
+    {
+        return d_uuid;
+    }
+
+    void __set_regions_for_registration__(const std::vector<std::string>& candidates)
+    {
+        d_regions_marked_for_registration = candidates;
+    }
+
+    std::vector<std::string> __regions_for_registration__()
+    {
+        return d_regions_marked_for_registration;
+    }
+
+    void __add_point_to_partial_region__(const std::string& sender_id, const std::vector<float>& point)
+    {
+        if(d_partial_regions_py.find(sender_id) == d_partial_regions_py.end())
+            d_partial_regions_py.insert({sender_id, std::vector<std::vector<float>>()});
+
+        d_partial_regions_py[sender_id].emplace_back(point);
+    }
+
+    std::map<std::string, std::vector<glm::vec3>>& partial_region_contours()
+    {
+        d_partial_regions.clear();
+
+        for(auto& [key, value]: d_partial_regions_py)
+        {
+            d_partial_regions[key] = std::vector<glm::vec3>();
+
+            for(auto p: value)
+            {
+                d_partial_regions[key].emplace_back(p[0], p[1], 1);
+            }
+        }
+
+        return d_partial_regions;
+    }
+
+    void __set_partial_regions__(const std::map<std::string, std::vector<std::vector<float>>>& partials)
+    {
+        d_partial_regions_py = partials;
+    }
+
+    std::map<std::string, std::vector<std::vector<float>>> __partial_regions__()
+    {
+        return d_partial_regions_py;
     }
 
 private:
@@ -434,15 +466,19 @@ private:
 
     glm::vec4 d_color = glm::vec4(255, 255, 255, 255);
 
-    std::vector<std::vector<glm::vec3>> d_partial_contours;
-
     std::map<std::string, std::map<std::string, bp::object>> d_cap_collision_emit;
     std::map<std::string, std::map<std::string, bp::object>> d_cap_collision_recv;
 
     std::map<std::string, bp::object> d_cap_link_emit;
     std::map<std::string, std::map<std::string, bp::object>> d_cap_link_recv;
 
+    std::map<std::string, std::vector<glm::vec3>> d_partial_regions;
+    std::map<std::string, std::vector<std::vector<float>>> d_partial_regions_py;
+
+    std::vector<std::string> d_regions_marked_for_registration;
+
     std::string d_name;
+    std::string d_uuid;
     std::string d_texture_path;
     std::string d_source;
     PySIEffect::EffectType d_effect_type;

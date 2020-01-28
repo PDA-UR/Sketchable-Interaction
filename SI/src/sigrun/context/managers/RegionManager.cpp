@@ -2,6 +2,8 @@
 
 #include "RegionManager.hpp"
 #include "../../log/Log.hpp"
+#include <sigrun/context/Context.hpp>
+#include <pysi/SuperEffect.hpp>
 
 RegionManager::RegionManager()
 {SIGRUN
@@ -62,17 +64,35 @@ void RegionManager::deactivate_mouse_region_button_down(int mouse_btn)
     }
 }
 
-void RegionManager::set_partial_region(const std::vector<glm::vec3> &partial)
+void RegionManager::set_partial_regions(std::map<std::string, std::vector<glm::vec3>>& partials)
 {
-    d_partial_region = partial;
+    d_partial_regions = partials;
 }
 
-std::vector<glm::vec3> &RegionManager::partial_region()
+std::map<std::string, std::vector<glm::vec3>> &RegionManager::partial_regions()
 {
-    return d_partial_region;
+    return d_partial_regions;
+}
+
+void RegionManager::update_via_mouse_input()
+{
+    if(Context::SIContext()->input_manager()->is_mouse_down(SI_LEFT_MOUSE_BUTTON))
+        activate_mouse_region_button_down(SI_LEFT_MOUSE_BUTTON);
+    else
+        deactivate_mouse_region_button_down(SI_LEFT_MOUSE_BUTTON);
+
+    if(Context::SIContext()->input_manager()->is_mouse_down(SI_RIGHT_MOUSE_BUTTON))
+        activate_mouse_region_button_down(SI_RIGHT_MOUSE_BUTTON);
+    else
+        deactivate_mouse_region_button_down(SI_RIGHT_MOUSE_BUTTON);
+
+    if(Context::SIContext()->input_manager()->is_mouse_down(SI_MIDDLE_MOUSE_BUTTON))
+        activate_mouse_region_button_down(SI_MIDDLE_MOUSE_BUTTON);
+    else
+        deactivate_mouse_region_button_down(SI_MIDDLE_MOUSE_BUTTON);
 }
 
 void RegionManager::update()
 {
-
+    update_via_mouse_input();
 }
