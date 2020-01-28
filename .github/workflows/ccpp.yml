@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: [3.7, 3.8]
+        python-version: [3.7]
 
     steps:
     - uses: actions/checkout@v1
@@ -20,5 +20,14 @@ jobs:
       run: |
         sudo apt-get install qtbase5-dev &&
         sudo apt-get install libglm-dev
+        # install boost shit
+        mkdir temp
+        cd temp
+        wget https://dl.bintray.com/boostorg/release/1.69.0/source/boost_1_69_0.tar.gz
+        tar xzf boost_1_69_0.tar.gz
+        cd boost_1_69_0
+        ln -s /usr/local/include/python3.7m /usr/local/include/python3.7
+        ./bootstrap.sh --with-python=$(which python3)
+        ./b2 install
     - name: configure
       run: cmake .
