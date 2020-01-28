@@ -16,18 +16,23 @@ jobs:
       uses: actions/setup-python@v1
       with:
         python-version: ${{ matrix.python-version }}
-    - name: Install Dependencies
+    - name: Install Qt5
       run: |
-        sudo apt-get install qtbase5-dev &&
+        sudo apt-get install qtbase5-dev
+        
+    - name: Install GLM
+      run: |
         sudo apt-get install libglm-dev
-        # install boost shit
-        mkdir temp
-        cd temp
-        wget --no-verbose https://dl.bintray.com/boostorg/release/1.69.0/source/boost_1_69_0.tar.gz
-        tar xzf boost_1_69_0.tar.gz
-        cd boost_1_69_0
-        sudo ln -s /usr/local/include/python3.7m /usr/local/include/python3.7
-        ./bootstrap.sh --with-python=$(which python3)
+        
+    - name: Unstall Boost-Python
+      run: |
+        sudo mkdir temp &&
+        cd temp &&
+        wget https://dl.bintray.com/boostorg/release/1.69.0/source/boost_1_69_0.tar.gz &&
+        tar xzf boost_1_69_0.tar.gz &&
+        cd boost_1_69_0 &&
+        ln -s /usr/local/include/python3.7m /usr/local/include/python3.7 &&
+        ./bootstrap.sh --with-python=$(which python3) &&
         ./b2 install
     - name: configure
       run: cmake .
