@@ -24,15 +24,23 @@ jobs:
       run: |
         sudo apt-get install libglm-dev
         
-    - name: Unstall Boost-Python
+    - name: Download Boost-Python
       run: |
         mkdir temp
         cd temp
-        wget https://dl.bintray.com/boostorg/release/1.69.0/source/boost_1_69_0.tar.gz
+        wget https://dl.bintray.com/boostorg/release/1.69.0/source/boost_1_69_0.tar.g
+    - name: Extract Boost-Python
+      run: |       
         tar xzf boost_1_69_0.tar.gz
         cd boost_1_69_0
+        
+    - name: Bootstrap Boost-Python
+      run: |
         sudo ln -s /usr/local/include/python3.7m /usr/local/include/python3.7
         sudo ./bootstrap.sh --with-python=$(which python3) &&
+        
+    - name: Install Boost-Python
+      run: |
         sudo ./b2 install
     - name: configure
       run: cmake .
