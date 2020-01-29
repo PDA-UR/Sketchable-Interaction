@@ -16,7 +16,7 @@ RegionManager::~RegionManager()
 
 void RegionManager::add_region(const std::vector<glm::vec3> &contour, std::shared_ptr<bp::object> effect, int region_uuid)
 {
-    d_regions.emplace_back(std::make_shared<Region>(contour, effect));
+    d_regions.push_back(std::shared_ptr<Region>(new Region(contour, std::shared_ptr<bp::object>(new bp::object(*effect)))));
 }
 
 std::vector<std::shared_ptr<Region>> &RegionManager::regions()
@@ -37,8 +37,6 @@ void RegionManager::activate_mouse_region_button_down(int mouse_btn)
                 case 0: region->raw_effect().attr("left_mouse_clicked") = true; break;
                 case 1: region->raw_effect().attr("right_mouse_clicked") = true; break;
                 case 2: region->raw_effect().attr("middle_mouse_clicked") = true; break;
-
-                region->update();
             }
         }
     }
@@ -57,8 +55,6 @@ void RegionManager::deactivate_mouse_region_button_down(int mouse_btn)
                 case 0: region->raw_effect().attr("left_mouse_clicked") = false; break;
                 case 1: region->raw_effect().attr("right_mouse_clicked") = false; break;
                 case 2: region->raw_effect().attr("middle_mouse_clicked") = false; break;
-
-                region->update();
             }
         }
     }
@@ -95,4 +91,12 @@ void RegionManager::update_via_mouse_input()
 void RegionManager::update()
 {
     update_via_mouse_input();
+
+    // required to avoid invalidation of vector iterator when adding a new object
+    // therefore newly created regions are effective from the next frame on
+    int size = d_regions.size();
+
+    for(int i = 0; i < size; i++)
+        d_regions[i]->update();
+    //---------------------------------------------------------------------------
 }

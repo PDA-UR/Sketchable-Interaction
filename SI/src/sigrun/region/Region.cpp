@@ -16,7 +16,7 @@ namespace bp = boost::python;
 Region::Region(const std::vector<glm::vec3> &contour, std::shared_ptr<bp::object> effect):
     d_effect(std::move(effect)),
     uprt(std::make_unique<RegionTransform>()),
-    d_is_transformed(true),
+    d_is_transformed(false),
     d_link_events(20)
 {SIGRUN
     qRegisterMetaType<bp::object>("bp::object");
@@ -27,7 +27,7 @@ Region::Region(const std::vector<glm::vec3> &contour, std::shared_ptr<bp::object
     d_effect->attr("_uuid") = d_uuid;
 
     HANDLE_PYTHON_CALL(
-        d_py_effect = std::make_shared<PySIEffect>(bp::extract<PySIEffect>(*d_effect));
+        d_py_effect = std::shared_ptr<PySIEffect>(new PySIEffect(bp::extract<PySIEffect>(*d_effect)));
     )
 
     RegionResampler::resample(d_contour, contour);
@@ -42,48 +42,51 @@ Region::Region(const std::vector<glm::vec3> &contour, std::shared_ptr<bp::object
     d_texture_path_default = d_py_effect->texture_path();
     d_texture_path_default = d_texture_path_default.empty() ? "src/siren/res/textures/placeholder.png": d_texture_path_default;
 
+    HANDLE_PYTHON_CALL (
+            for(auto& [key, value]: d_py_effect->attr_link_emit())
+                d_attributes_emit.push_back(key);
 
-    if(!d_effect->is_none())
-    {
-        HANDLE_PYTHON_CALL (
-                for(auto& [key, value]: d_py_effect->attr_link_emit())
-                    d_attributes_emit.push_back(key);
+            for(auto& [key, value]: d_py_effect->attr_link_recv())
+            {
+                d_attributes_recv.insert({key, std::vector<std::string>()});
 
-                for(auto& [key, value]: d_py_effect->attr_link_recv())
-                {
-                    d_attributes_recv.insert({key, std::vector<std::string>()});
+                for(auto& [key2, value2]: value)
+                    d_attributes_recv[key].push_back(key2);
+            }
 
-                    for(auto& [key2, value2]: value)
-                        d_attributes_recv[key].push_back(key2);
-                }
+            for(auto& [key, value]: d_py_effect->cap_collision_emit())
+                d_collision_caps_emit.push_back(key);
 
-                for(auto& [key, value]: d_py_effect->cap_collision_emit())
-                    d_collision_caps_emit.push_back(key);
-
-                for(auto& [key, value]: d_py_effect->cap_collision_recv())
-                    d_collision_caps_recv.push_back(key);
-        )
-    }
+            for(auto& [key, value]: d_py_effect->cap_collision_recv())
+                d_collision_caps_recv.push_back(key);
+    )
 }
 
 Region::~Region()= default;
 
 void Region::move(int x, int y)
 {
-    int prev_x = d_aabb[0].x;
-    int prev_y = d_aabb[0].y;
+    if(x != 0 || y != 0)
+    {
+        int prev_x = d_aabb[0].x;
+        int prev_y = d_aabb[0].y;
 
-    uprt->update(glm::vec2(x, y));
+        uprt->update(glm::vec2(x, y));
 
-    set_aabb();
+        set_aabb();
 
-    int new_x = d_aabb[0].x;
-    int new_y = d_aabb[0].y;
+        int new_x = d_aabb[0].x;
+        int new_y = d_aabb[0].y;
 
-    int delta_x = new_x - prev_x;
-    int delta_y = new_y - prev_y;
+        int delta_x = new_x - prev_x;
+        int delta_y = new_y - prev_y;
 
-    uprm->move(glm::vec2(delta_x, delta_y));
+        uprm->move(glm::vec2(delta_x, delta_y));
+
+        set_is_transformed(true);
+    }
+    else
+        set_is_transformed(false);
 }
 
 bool Region::is_transformed() const
@@ -188,7 +191,6 @@ void Region::LINK_SLOT(const std::string& uuid, const std::string& source_cap, c
         for(auto& recv: d_attributes_recv[source_cap])
         {
             HANDLE_PYTHON_CALL(d_py_effect->attr_link_recv()[source_cap][recv](*args);)
-            update();
 
             if(std::find(d_attributes_emit.begin(), d_attributes_emit.end(), recv) != d_attributes_emit.end())
             {
@@ -234,7 +236,7 @@ const std::string &Region::name() const
 
 void Region::update()
 {
-    HANDLE_PYTHON_CALL(d_py_effect = std::make_shared<PySIEffect>(bp::extract<PySIEffect>(*d_effect));)
+    HANDLE_PYTHON_CALL(d_py_effect = std::shared_ptr<PySIEffect>(new PySIEffect(bp::extract<PySIEffect>(*d_effect)));)
 
     // apply new data
 
@@ -269,23 +271,13 @@ void Region::update()
 
     if(d_py_effect->effect_type() == PySIEffect::EffectType::SI_CANVAS)
     {
+        Context::SIContext()->region_manager()->set_partial_regions(d_py_effect->partial_region_contours());
+
         if(!d_py_effect->regions_for_registration().empty())
         {
             for(auto& candidate: d_py_effect->regions_for_registration())
             {
-                DEBUG(candidate);
-
-                std::string out = "[";
-
-                // here is the contour to work into a functioning region
-                for(auto& p: d_py_effect->partial_region_contours()[candidate])
-                {
-                    out += "(" + std::to_string(p.x) + ", " + std::to_string(p.y)  + "), ";
-                }
-
-                out += "]";
-
-                DEBUG(out);
+                Context::SIContext()->register_new_region(d_py_effect->partial_region_contours()[candidate], candidate);
 
                 HANDLE_PYTHON_CALL(
                         bp::object temp = d_effect->attr("__partial_regions__");
@@ -296,9 +288,19 @@ void Region::update()
 
             HANDLE_PYTHON_CALL (d_effect->attr("__regions_for_registration__") = bp::list();)
         }
-
-        Context::SIContext()->region_manager()->set_partial_regions(d_py_effect->partial_region_contours());
     }
+}
+
+void Region::set_color(const glm::vec4 &color)
+{
+    d_py_effect->__set_color__(std::vector<int>{(int) color.r, (int) color.g, (int) color.b, (int) color.a});
+}
+
+const glm::vec4 Region::color() const
+{
+    auto& color = d_py_effect->__color__();
+
+    return glm::vec4(color[0], color[1], color[2], color[3]);
 }
 
 const std::vector<std::string> &Region::collision_caps_emit() const
@@ -313,8 +315,33 @@ const std::vector<std::string> &Region::collision_caps_recv() const
 
 int Region::handle_collision_event(const std::string &function_name, PySIEffect &colliding_effect)
 {
-
     HANDLE_PYTHON_CALL(
+//        const bp::dict& colliding_emit = bp::extract<bp::dict>(colliding_effect.attr("cap_emit"));
+//        const bp::list& colliding_emit_keys = bp::extract<bp::list>(colliding_emit.keys());
+//
+//        for(int i = 0; i < bp::len(colliding_emit_keys); i++)
+//        {
+//            const bp::object& key = colliding_emit_keys[i];
+//            const bp::dict& self_recv = bp::extract<bp::dict>(d_effect->attr("cap_recv"));
+//
+//            if(self_recv.has_key(key))
+//            {
+//                const bp::object& t = colliding_emit[key][function_name](*d_effect);
+//
+//                if(t.is_none())
+//                {
+//                    return bp::extract<int>(self_recv[key][function_name]());
+//                }
+//                else
+//                {
+//                    if (bp::extract<bp::tuple>(t).check())
+//                        return bp::extract<int>(self_recv[key][function_name](*t));
+//                    else
+//                        return bp::extract<int>(self_recv[key][function_name](t));
+//                }
+//            }
+//        }
+
         for (auto&[key, value]: colliding_effect.cap_collision_emit())
         {
             if (std::find(d_collision_caps_recv.begin(), d_collision_caps_recv.end(), key) != d_collision_caps_recv.end())
@@ -335,9 +362,7 @@ int Region::handle_collision_event(const std::string &function_name, PySIEffect 
                 }
             }
         }
-
-        update();
     )
 
-    return false;
+    return 2;
 }

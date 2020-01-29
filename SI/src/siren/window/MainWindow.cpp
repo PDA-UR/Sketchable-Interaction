@@ -3,6 +3,7 @@
 #include "MainWindow.hpp"
 #include <SI/SI.hpp>
 #include <QPaintEvent>
+#include <QDebug>
 
 MainWindow::MainWindow(int width, int height):
     QMainWindow(),
@@ -48,19 +49,13 @@ void MainWindow::loop(double delta, int fps)
     for(const auto& region: regions)
     {
         if(d_region_representations.find(region->uuid()) == d_region_representations.end())
-            d_region_representations.insert({region->uuid(), std::make_unique<RegionRepresentation>(region->contour(), region->transform(), 255, 0, 0, 255, region->texture_path())});
+            d_region_representations.insert({region->uuid(), std::make_unique<RegionRepresentation>(region->contour(), region->transform(), region->color(), region->name(), region->texture_path())});
         else
         {
             if (region->is_transformed())
                 d_region_representations[region->uuid()]->update(region->transform());
         }
     }
-
-//    if(!d_region_representations.empty())
-//    {
-//        std::vector<glm::vec2> partial_contour;
-//        // partial stuff
-//    }
 
     update();
     Context::SIContext()->update();
@@ -79,8 +74,34 @@ void MainWindow::draw_background(QPaintEvent* event)
 
 void MainWindow::draw_region_representations(QPaintEvent* event)
 {
+    // draw canvas first
     for(const auto& [key, val]: d_region_representations)
     {
+        if(val->name == "stdCanvas")
+        {
+            up_qp.setBrush(val->color);
+
+            up_qp.drawPolyline(val->poly);
+            up_qp.fillPath(val->fill, val->color);
+        }
+    }
+
+    for(const auto& [key, val]: d_region_representations)
+    {
+        if(val->name == "MouseCursor")
+        {
+            up_qp.setBrush(val->color);
+
+            up_qp.drawPolyline(val->poly);
+            up_qp.fillPath(val->fill, val->color);
+        }
+    }
+
+    for(const auto& [key, val]: d_region_representations)
+    {
+        if(val->name == "MouseCursor" || val->name == "stdCanvas")
+            continue;
+
         up_qp.setBrush(val->color);
 
         up_qp.drawPolyline(val->poly);

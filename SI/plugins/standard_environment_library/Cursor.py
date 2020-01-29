@@ -5,12 +5,14 @@ class MouseCursor(PySIEffect.PySIEffect):
     def __init__(self):
         super(MouseCursor, self).__init__()
 
-        print(self._uuid)
-
         self.name = "MouseCursor"
         self.region_type = PySIEffect.EffectType.SI_MOUSE_CURSOR
         self.source = "libstdSI"
         self.texture_path = ""
+        self.color = [0, 255, 255, 255]
+
+        self.parent_canvas = None
+        self.move_target = None
 
         self.cap_emit = {
             # capability: {"on_enter": self.function, "on_continuous": self.function, "on_leave": self.function}
@@ -34,10 +36,12 @@ class MouseCursor(PySIEffect.PySIEffect):
         self.y = y
 
         self.__handle_left_mouse_click()
+        self.__handle_right_mouse_click()
 
         return 0
 
     def self_on_sketch_enter_emit(self, other):
+        self.parent_canvas = other
         return 0, 0, self._uuid
 
     def on_sketch_continuous_emit(self, other):
@@ -45,6 +49,16 @@ class MouseCursor(PySIEffect.PySIEffect):
 
     def on_sketch_leave_emit(self, other):
         return 0, 0, self._uuid
+
+    def on_move_enter_emit(self, other):
+        self.move_target = other
+        pass
+
+    def on_move_continuous_emit(self, other):
+        pass
+
+    def on_move_leave_emit(self, other):
+        pass
 
     def __handle_left_mouse_click(self):
         if self.left_mouse_clicked:
@@ -56,3 +70,21 @@ class MouseCursor(PySIEffect.PySIEffect):
             temp = self.cap_emit
             del temp["SKETCH"]
             self.cap_emit = temp
+            if self.parent_canvas is not None:
+                self.parent_canvas.on_sketch_leave_recv(*self.on_sketch_leave_emit(self.parent_canvas))
+                self.parent_canvas = None
+
+    def __handle_right_mouse_click(self):
+        if self.right_mouse_clicked:
+            if "MOVE" not in self.cap_emit.keys():
+                temp = self.cap_emit
+                temp["MOVE"] = {"on_enter": self.on_move_enter_emit, "on_continuous": self.on_move_continuous_emit, "on_leave": self.on_move_leave_emit}
+                self.cap_emit = temp
+        elif "MOVE" in self.cap_emit.keys():
+            temp = self.cap_emit
+            del temp["MOVE"]
+            self.cap_emit = temp
+            if self.move_target is not None:
+                self.move_target.on_move_leave_recv()
+                self.move_target = None
+

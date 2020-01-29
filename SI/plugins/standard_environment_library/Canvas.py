@@ -5,12 +5,12 @@ class Canvas(PySIEffect.PySIEffect):
     def __init__(self):
         super(Canvas, self).__init__()
 
-        self.partial_region = []
-
         self.name = "stdCanvas"
         self.region_type = PySIEffect.EffectType.SI_CANVAS
         self.source = "libstdSI"
         self.texture_path = ""
+        self.color = [0, 0, 255, 255]
+
 
         self.cap_emit = {
             # capability: {"on_enter": self.function, "on_continuous": self.function, "on_leave": self.function}
@@ -38,4 +38,5 @@ class Canvas(PySIEffect.PySIEffect):
 
     def on_sketch_leave_recv(self, x, y, sender_id):
         self.register_region(sender_id)
+
         return 0

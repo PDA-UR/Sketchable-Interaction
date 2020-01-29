@@ -49,7 +49,9 @@ void CollisionManager::collide(std::vector<std::shared_ptr<Region>> &regions)
                 else
                 {
                     if(d_collision_map.find(tuple) != d_collision_map.end())
+                    {
                         handle_event_leave(a, b, tuple);
+                    }
                 }
             }
             else
@@ -62,9 +64,6 @@ void CollisionManager::collide(std::vector<std::shared_ptr<Region>> &regions)
                         handle_event_leave(a, b, tuple);
                 }
             }
-
-            a->update();
-            b->update();
         }
     }
 }

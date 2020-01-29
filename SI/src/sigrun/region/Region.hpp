@@ -64,6 +64,9 @@ public:
     void set_name(const std::string& name);
     const std::string& name() const;
 
+    void set_color(const glm::vec4& color);
+    const glm::vec4 color() const;
+
     const std::vector<std::string>& collision_caps_emit() const;
     const std::vector<std::string>& collision_caps_recv() const;
 
@@ -88,6 +91,8 @@ private:
 
     std::string d_texture_path_default;
     std::string d_name;
+
+    glm::vec4 d_color;
 
     std::vector<std::string> d_attributes_emit;
     std::unordered_map<std::string, std::vector<std::string>> d_attributes_recv;

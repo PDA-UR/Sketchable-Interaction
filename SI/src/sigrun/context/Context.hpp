@@ -3,7 +3,6 @@
 #ifndef SITEST_CONTEXT_HPP
 #define SITEST_CONTEXT_HPP
 
-
 #include <sigrun/SIObject.hpp>
 #include "Capability.hpp"
 #include <unordered_map>
@@ -38,10 +37,17 @@ public:
     int width();
     int height();
 
+    void register_new_region(const std::vector<glm::vec3>& contour, const std::string& uuid);
 
 private:
     static Context* self;
     Context(int width, int height, const std::unordered_map<std::string, std::unique_ptr<bp::object>>& plugins);
+
+    std::vector<bp::object> d_available_plugins;
+    std::unordered_map<std::string, bp::object> d_selected_effects_by_id;
+
+    std::string d_mouse_uuid;
+    std::string d_canvas_uuid;
 
     std::unique_ptr<Capability> upcm;
     std::unique_ptr<RegionManager> uprm;
@@ -49,7 +55,7 @@ private:
     std::unique_ptr<InputManager> upim;
     std::unique_ptr<CollisionManager> uprcm;
 
-    unsigned int frame_num;
+
     int s_width, s_height;
     IRenderEngine* d_ire;
 

@@ -23,13 +23,11 @@ Context::Context(int width, int height, const std::unordered_map<std::string, st
     s_width = width;
     s_height = height;
 
-    frame_num = 0;
-
-    uprm = std::make_unique<RegionManager>();
-    uplm = std::make_unique<LinkingManager>();
-    upim = std::make_unique<InputManager>();
-    upcm = std::make_unique<Capability>();
-    uprcm = std::make_unique<CollisionManager>();
+    uprm = std::unique_ptr<RegionManager>(new RegionManager);
+    uplm = std::unique_ptr<LinkingManager>(new LinkingManager);
+    upim = std::unique_ptr<InputManager>(new InputManager);
+    upcm = std::unique_ptr<Capability>(new Capability);
+    uprcm = std::unique_ptr<CollisionManager>(new CollisionManager);
 
     for(const auto& item: plugins)
         upcm->add_capabilities(*item.second);
@@ -37,25 +35,40 @@ Context::Context(int width, int height, const std::unordered_map<std::string, st
     // add a canvas region
     for(auto& [key, value]: plugins)
     {
-        if(bp::extract<int>(value->attr("region_type")) == PySIEffect::EffectType::SI_CANVAS)
+        if (bp::extract<int>(value->attr("region_type")) == PySIEffect::EffectType::SI_CANVAS)
         {
-            std::vector<glm::vec3> canvas_contour {glm::vec3(0, 0, 1), glm::vec3(0, height, 1), glm::vec3(width, height, 1), glm::vec3(width, 0, 1) };
-            uprm->add_region(canvas_contour, std::make_shared<bp::object>(*value), 0);
+            std::vector<glm::vec3> canvas_contour{glm::vec3(0, 0, 1), glm::vec3(0, height, 1), glm::vec3(width, height, 1), glm::vec3(width, 0, 1)};
+            uprm->add_region(canvas_contour, std::shared_ptr<bp::object>(new bp::object(*value)), 0);
+            d_canvas_uuid = uprm->regions().back()->uuid();
         }
     }
-
-    // add a mouse region
 
     for(auto& [key, value]: plugins)
     {
-        if(bp::extract<int>(value->attr("region_type")) == PySIEffect::EffectType::SI_MOUSE_CURSOR)
+        switch (bp::extract<int>(value->attr("region_type")))
         {
-            std::vector<glm::vec3> mouse_contour {glm::vec3(0, 0, 1), glm::vec3(0, 16, 1), glm::vec3(12, 16, 1), glm::vec3(12, 0, 1) };
-            uprm->add_region(mouse_contour, std::make_shared<bp::object>(*value), 0);
-            uplm->add_link_to_object(uprm->regions().back(), ExternalObject::ExternalObjectType::MOUSE);
+            case PySIEffect::EffectType::SI_CANVAS: break;
+            case PySIEffect::EffectType::SI_MOUSE_CURSOR:
+            {
+                std::vector<glm::vec3> mouse_contour {glm::vec3(0, 0, 1), glm::vec3(0, 16, 1), glm::vec3(12, 16, 1), glm::vec3(12, 0, 1) };
+                uprm->add_region(mouse_contour, std::shared_ptr<bp::object>(new bp::object(*value)), 0);
+                uplm->add_link_to_object(uprm->regions().back(), ExternalObject::ExternalObjectType::MOUSE);
+                d_mouse_uuid = uprm->regions().back()->uuid();
+            }
+            break;
+
+            default:
+                d_available_plugins.push_back(*value);
+            break;
         }
     }
-    // ------------------------------
+
+    INFO("Plugins available for drawing: " + std::to_string(d_available_plugins.size()));
+
+    d_selected_effects_by_id[d_mouse_uuid] = d_available_plugins.back();
+    const std::string& selected = bp::extract<std::string>(d_selected_effects_by_id[d_mouse_uuid].attr("name"));
+
+    INFO("Mouse Cursor: " + d_mouse_uuid + " set to " + selected);
 }
 
 void Context::begin(IRenderEngine* ire, int argc, char** argv)
@@ -64,7 +77,7 @@ void Context::begin(IRenderEngine* ire, int argc, char** argv)
     QApplication d_app(argc, argv);
     INFO("Qt5 Application created!");
 
-//    d_app.setOverrideCursor(Qt::BlankCursor);
+    d_app.setOverrideCursor(Qt::BlankCursor);
 
     d_ire = ire;
 
@@ -119,12 +132,10 @@ Context* Context::SIContext()
 void Context::update()
 {
     upim->update();
+    uprcm->collide(uprm->regions());
     uprm->update();
 
-    uprcm->collide(uprm->regions());
-
     self = this;
-
 }
 
 int Context::width()
@@ -145,4 +156,9 @@ void Context::enable(int what)
 void Context::disable(int what)
 {
 
+}
+
+void Context::register_new_region(const std::vector<glm::vec3>& contour, const std::string& uuid)
+{
+    uprm->add_region(contour, std::make_shared<bp::object>(d_selected_effects_by_id[uuid]), 0);
 }

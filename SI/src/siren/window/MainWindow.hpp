@@ -30,24 +30,6 @@ private:
 
     Q_SLOT void loop(double delta, int fps);
 
-    QMetaMethod fetchIndexOfMethod(QObject* obj, const char* name)
-    {
-        const QMetaObject* meta_object = obj->metaObject();
-        QByteArray normalized_name = QMetaObject::normalizedSignature(name);
-        int index = meta_object->indexOfMethod(normalized_name.constData());
-        return meta_object->method(index);
-    }
-
-// A QObject::connect wrapper
-    QMetaObject::Connection dynamicConnection(QObject* source,
-                                              const char* signal_name,
-                                              QObject* dest,
-                                              const char* slot_name)
-    {
-        return QObject::connect(source, fetchIndexOfMethod(source, signal_name),
-                                dest, fetchIndexOfMethod(dest, slot_name));
-    }
-
     std::map<std::string, std::unique_ptr<RegionRepresentation>> d_region_representations;
 
     UpdateWorker up_update_worker;

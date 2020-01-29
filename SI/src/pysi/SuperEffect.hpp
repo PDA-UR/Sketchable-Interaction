@@ -477,11 +477,11 @@ private:
 
     std::vector<std::string> d_regions_marked_for_registration;
 
-    std::string d_name;
-    std::string d_uuid;
-    std::string d_texture_path;
-    std::string d_source;
-    PySIEffect::EffectType d_effect_type;
+    std::string d_name = "";
+    std::string d_uuid = "";
+    std::string d_texture_path = "";
+    std::string d_source = "";
+    PySIEffect::EffectType d_effect_type = PySIEffect::EffectType::SI_CUSTOM;
 
     bool d_is_left_mouse_clicked = false;
     bool d_is_right_mouse_clicked = false;
