@@ -105,6 +105,8 @@ BOOST_PYTHON_MODULE(libPySI)
     bp::class_<PySIEffect>("PySIEffect", bp::init<>())
         .def("add_point_to_partial_region", &PySIEffect::__add_point_to_partial_region__)
         .def("register_region", &PySIEffect::__register_region__)
+        .def("register_link", &PySIEffect::__register_link__)
+        .def("remove_link", &PySIEffect::__remove_link__)
 
         .add_property("__partial_regions__", &PySIEffect::__partial_regions__, &PySIEffect::__set_partial_regions__)
         .add_property("__regions_for_registration__", &PySIEffect::__regions_for_registration__, &PySIEffect::__set_regions_for_registration__)
@@ -126,6 +128,7 @@ BOOST_PYTHON_MODULE(libPySI)
         .add_property("region_type", &PySIEffect::__effect_type__, &PySIEffect::__set_effect_type__)
         .add_property("source", &PySIEffect::__source__, &PySIEffect::__set__source__)
         .add_property("texture_path", &PySIEffect::__texture_path__, &PySIEffect::__set__texture_path__)
+        .add_property("transformer_id", &PySIEffect::__transformer_id__, &PySIEffect::__set_transformer_id__)
         ;
 
     bp::enum_<PySIEffect::EffectType>("EffectType")

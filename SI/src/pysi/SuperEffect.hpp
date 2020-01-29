@@ -3,6 +3,7 @@
 #ifndef PYSI_SUPEREFFECT_HPP
 #define PYSI_SUPEREFFECT_HPP
 
+#include <memory>
 #include <boost/python.hpp>
 #include <sigrun/util/Util.hpp>
 #include <map>
@@ -31,6 +32,21 @@ public:
     ///     I.e. Container(begin, end)
     template<typename Container>
     static void construct(PyObject* object, bp::converter::rvalue_from_python_stage1_data* data);
+};
+
+struct LinkRelation
+{
+    LinkRelation(const std::string& _sender, const std::string& _sender_attrib, const std::string& _recv, const std::string& _recv_attrib):
+            sender(_sender),
+            sender_attrib(_sender_attrib),
+            recv(_recv),
+            recv_attrib(_recv_attrib)
+    {}
+
+    std::string sender;
+    std::string sender_attrib;
+    std::string recv;
+    std::string recv_attrib;
 };
 
 class PySIEffect
@@ -455,7 +471,50 @@ public:
         return d_partial_regions_py;
     }
 
+    void __set_transformer_id__(const std::string& id)
+    {
+        d_transformer_id = id;
+    }
+
+    const std::string __transformer_id__() const
+    {
+        return d_transformer_id;
+    }
+
+    const std::string& transformer_id() const
+    {
+        return d_transformer_id;
+    }
+
+    void __register_link__(const std::string& sender, const std::string& sender_attrib, const std::string& recv, const std::string& recv_attrib)
+    {
+        d_link_relations.push_back(std::make_shared<LinkRelation>(sender, sender_attrib, recv, recv_attrib));
+    }
+
+    void __remove_link__(const std::string& sender, const std::string& sender_attrib, const std::string& recv, const std::string& recv_attrib)
+    {
+
+        for(int i = d_link_relations.size() - 1; i > -1; --i)
+        {
+            if(sender == d_link_relations[i]->sender &&
+                sender_attrib == d_link_relations[i]->sender_attrib &&
+                recv_attrib == d_link_relations[i]->recv_attrib)
+            {
+                d_link_relations.erase(d_link_relations.begin() + i);
+
+                break;
+            }
+        }
+    }
+
+    std::vector<std::shared_ptr<LinkRelation>>& link_relations()
+    {
+        return d_link_relations;
+    }
+
 private:
+    std::vector<std::shared_ptr<LinkRelation>> d_link_relations;
+
     int d_x = 0;
     int d_y = 0;
 
@@ -481,6 +540,7 @@ private:
     std::string d_uuid = "";
     std::string d_texture_path = "";
     std::string d_source = "";
+    std::string d_transformer_id = "";
     PySIEffect::EffectType d_effect_type = PySIEffect::EffectType::SI_CUSTOM;
 
     bool d_is_left_mouse_clicked = false;

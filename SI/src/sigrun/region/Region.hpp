@@ -30,7 +30,7 @@ public:
 
     bool is_transformed() const;
     void set_is_transformed(bool b);
-    std::string uuid() const;
+    const std::string& uuid() const;
 
     PySIEffect& effect();
     bp::object& raw_effect();

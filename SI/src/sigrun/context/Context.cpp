@@ -162,3 +162,39 @@ void Context::register_new_region(const std::vector<glm::vec3>& contour, const s
 {
     uprm->add_region(contour, std::make_shared<bp::object>(d_selected_effects_by_id[uuid]), 0);
 }
+
+void Context::update_linking_relations(const std::vector<std::shared_ptr<LinkRelation>>& relations)
+{
+    for(auto& lr: relations)
+    {
+        int index_sender = -1;
+        int index_recv = -1;
+
+        for(int i = 0; i < uprm->regions().size(); ++i)
+        {
+            auto& region = uprm->regions()[i];
+
+            if(region->uuid() == lr->sender)
+                index_sender = i;
+
+            if(region->uuid() == lr->recv)
+                index_recv = i;
+        }
+
+
+        // handling to properly add and remove links based on list of current links
+        if(index_sender != -1 && index_recv != -1)
+        {
+            if(std::find(d_links_in_ctx.begin(), d_links_in_ctx.end(), lr) == d_links_in_ctx.end())
+            {
+                DEBUG("NEW");
+                d_links_in_ctx.push_back(lr);
+                uplm->add_link(uprm->regions()[index_sender], lr->sender_attrib, uprm->regions()[index_recv], lr->recv_attrib, ILink::LINK_TYPE::UD);
+            }
+            else
+            {
+                DEBUG("OLD");
+            }
+        }
+    }
+}

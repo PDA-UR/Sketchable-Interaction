@@ -38,6 +38,7 @@ public:
     int height();
 
     void register_new_region(const std::vector<glm::vec3>& contour, const std::string& uuid);
+    void update_linking_relations(const std::vector<std::shared_ptr<LinkRelation>>& relations);
 
 private:
     static Context* self;
@@ -45,6 +46,8 @@ private:
 
     std::vector<bp::object> d_available_plugins;
     std::unordered_map<std::string, bp::object> d_selected_effects_by_id;
+
+    std::vector<std::shared_ptr<LinkRelation>> d_links_in_ctx;
 
     std::string d_mouse_uuid;
     std::string d_canvas_uuid;

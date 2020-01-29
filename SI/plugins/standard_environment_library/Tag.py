@@ -35,20 +35,23 @@ class Tag(PySIEffect.PySIEffect):
             # ...
         }
 
-    def set_position_from_position(self, x, y):
-        self.x = x
-        self.y = y
+    def set_position_from_position(self, rel_x, rel_y):
+        self.x += rel_x
+        self.y += rel_y
 
         return 0
 
-    def on_move_enter_recv(self):
-        print("enter")
+    def on_move_enter_recv(self, cursor_id, link_attrib):
+        self.transformer_id = cursor_id
+        self.register_link(cursor_id, link_attrib, self._uuid, link_attrib)
+
         return 0
 
     def on_move_continuous_recv(self):
-        print("cont")
         return 0
 
-    def on_move_leave_recv(self):
-        print("leave")
+    def on_move_leave_recv(self, cursor_id, link_attrib):
+        self.transformer_id = ""
+        self.remove_link(cursor_id, link_attrib, self._uuid, link_attrib)
+
         return 0

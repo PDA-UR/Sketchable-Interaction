@@ -88,17 +88,6 @@ void MainWindow::draw_region_representations(QPaintEvent* event)
 
     for(const auto& [key, val]: d_region_representations)
     {
-        if(val->name == "MouseCursor")
-        {
-            up_qp.setBrush(val->color);
-
-            up_qp.drawPolyline(val->poly);
-            up_qp.fillPath(val->fill, val->color);
-        }
-    }
-
-    for(const auto& [key, val]: d_region_representations)
-    {
         if(val->name == "MouseCursor" || val->name == "stdCanvas")
             continue;
 
@@ -106,6 +95,18 @@ void MainWindow::draw_region_representations(QPaintEvent* event)
 
         up_qp.drawPolyline(val->poly);
         up_qp.fillPath(val->fill, val->color);
+    }
+
+    // draw cursors last
+    for(const auto& [key, val]: d_region_representations)
+    {
+        if(val->name == "MouseCursor")
+        {
+            up_qp.setBrush(val->color);
+
+            up_qp.drawPolyline(val->poly);
+            up_qp.fillPath(val->fill, val->color);
+        }
     }
 }
 

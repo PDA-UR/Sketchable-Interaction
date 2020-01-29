@@ -99,7 +99,7 @@ void Region::set_is_transformed(bool b)
     d_is_transformed = b;
 }
 
-std::string Region::uuid() const
+const std::string& Region::uuid() const
 {
     return d_uuid;
 }
@@ -289,6 +289,10 @@ void Region::update()
             HANDLE_PYTHON_CALL (d_effect->attr("__regions_for_registration__") = bp::list();)
         }
     }
+    else
+    {
+        Context::SIContext()->update_linking_relations(d_py_effect->link_relations());
+    }
 }
 
 void Region::set_color(const glm::vec4 &color)
@@ -316,32 +320,6 @@ const std::vector<std::string> &Region::collision_caps_recv() const
 int Region::handle_collision_event(const std::string &function_name, PySIEffect &colliding_effect)
 {
     HANDLE_PYTHON_CALL(
-//        const bp::dict& colliding_emit = bp::extract<bp::dict>(colliding_effect.attr("cap_emit"));
-//        const bp::list& colliding_emit_keys = bp::extract<bp::list>(colliding_emit.keys());
-//
-//        for(int i = 0; i < bp::len(colliding_emit_keys); i++)
-//        {
-//            const bp::object& key = colliding_emit_keys[i];
-//            const bp::dict& self_recv = bp::extract<bp::dict>(d_effect->attr("cap_recv"));
-//
-//            if(self_recv.has_key(key))
-//            {
-//                const bp::object& t = colliding_emit[key][function_name](*d_effect);
-//
-//                if(t.is_none())
-//                {
-//                    return bp::extract<int>(self_recv[key][function_name]());
-//                }
-//                else
-//                {
-//                    if (bp::extract<bp::tuple>(t).check())
-//                        return bp::extract<int>(self_recv[key][function_name](*t));
-//                    else
-//                        return bp::extract<int>(self_recv[key][function_name](t));
-//                }
-//            }
-//        }
-
         for (auto&[key, value]: colliding_effect.cap_collision_emit())
         {
             if (std::find(d_collision_caps_recv.begin(), d_collision_caps_recv.end(), key) != d_collision_caps_recv.end())
@@ -350,7 +328,6 @@ int Region::handle_collision_event(const std::string &function_name, PySIEffect 
 
                 if (t.is_none())
                 {
-
                     return bp::extract<int>(d_py_effect->cap_collision_recv()[key][function_name]());
                 }
                 else
