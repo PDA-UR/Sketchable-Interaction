@@ -44,8 +44,8 @@ jobs:
         cd boost_1_69_0 
         sudo ln -s /usr/local/include/python3.7m /usr/local/include/python3.7
         sed -i "s@includes ?= \$(prefix)/include/python\$(version)@includes ?= \$(prefix)/include/python\$(version)m@" tools/build/src/tools/python.jam
-        sudo ./bootstrap.sh --with-python=$(which python3) &&
-        sudo ./b2 install
+        sudo ./bootstrap.sh --with-python=$(which python3) 
+        sudo ./b2 -j 8 install
         
     - name: configure
       run: cmake .
@@ -53,3 +53,7 @@ jobs:
     - name: Compile SI
       run: |
         cmake --build /home/runner/work/Sketchable-Interaction/Sketchable-Interaction --target run_unit_tests -j 8
+        
+    - name: Test SI
+      run: |
+        /home/runner/work/Sketchable-Interaction/Sketchable-Interaction/run_unit_tests
