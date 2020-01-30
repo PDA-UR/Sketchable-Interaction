@@ -26,6 +26,10 @@ jobs:
     - name: Install GLEW
       run: |
         sudo apt-get install libglew-dev
+        
+    - name: Install SDL2
+      run: |
+        sudo apt-get install libsdl2-dev
     
     - name: Install PythonLibs
       run: |
