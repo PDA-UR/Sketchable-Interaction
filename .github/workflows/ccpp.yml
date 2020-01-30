@@ -36,7 +36,7 @@ jobs:
         tar xzf boost_1_69_0.tar.gz
         cd boost_1_69_0 
         sudo ln -s /usr/local/include/python3.7m /usr/local/include/python3.7
-        sed -e "s@includes ?= \$(prefix)/include/python\$(version)@includes ?= \$(prefix)/include/python\$(version)m@" tools/build/src/tools/python.jam
+        sed -i "s@includes ?= \$(prefix)/include/python\$(version)@includes ?= \$(prefix)/include/python\$(version)m@" tools/build/src/tools/python.jam
         sudo ./bootstrap.sh --with-python=$(which python3) &&
         sudo ./b2 install
         
