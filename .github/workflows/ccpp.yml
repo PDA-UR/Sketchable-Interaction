@@ -51,7 +51,5 @@ jobs:
       run: cmake .
     
     - name: Compile SI
-      
       run: |
-        mkdir /home/runner/work/Sketchable-Interaction/Sketchable-Interaction/build
-        cmake --build /home/runner/work/Sketchable-Interaction/Sketchable-Interaction/build -- target run_unit_tests -j 8
+X        cmake --build /home/runner/work/Sketchable-Interaction/Sketchable-Interaction -- target run_unit_tests -j 8
