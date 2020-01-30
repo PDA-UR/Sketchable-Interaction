@@ -52,4 +52,4 @@ jobs:
     
     - name: Compile SI
       run: |
-X        cmake --build /home/runner/work/Sketchable-Interaction/Sketchable-Interaction -- target run_unit_tests -j 8
+        cmake --build /home/runner/work/Sketchable-Interaction/Sketchable-Interaction -- target run_unit_tests -j 8
