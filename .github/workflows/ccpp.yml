@@ -60,4 +60,4 @@ jobs:
         
     - name: Test SI
       run: |
-        (cd /home/runner/work/Sketchable-Interaction/SI/tests;./../../Sketchable-Interaction/run_unit_tests)
+        (cd /home/runner/work/Sketchable-Interaction/Sketchable-Interaction/SI/tests;./../../Sketchable-Interaction/run_unit_tests)
