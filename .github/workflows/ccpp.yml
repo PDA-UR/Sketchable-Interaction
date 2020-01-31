@@ -84,5 +84,9 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           
-    
+      - name: Upload artifact
+        uses: actions/upload-artifact@v1.0.0          
+        with:
+          name: sketchable_interaction_binaries
+          path: path/to/artifact
        
