@@ -15,9 +15,6 @@ jobs:
         python-version: [3.7]
 
     steps:
-    - name: Pull Request on Branch Push
-      uses: vsoch/pull-request-action@1.0.1
-      
     - uses: actions/checkout@v1
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v1
