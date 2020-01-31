@@ -3,23 +3,86 @@ name: CMake CI
 on:
   push:
     branches:
-    - runtime-dev
+    - integration
   pull_request:
     branches:
-      - runtime-dev
+      - integration
 jobs:
-   build:
+  build:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [3.7]
+
     steps:
-    - uses: actions/checkout@integration
-    - name: Commit files
-      run: |
-        git config --local user.email "action@github.com"
-        git config --local user.name "GitHub Action"
-        git commit -m "Add changes" -a
-    - name: Push changes
-      uses: ad-m/github-push-action@master
+    - name: Pull Request on Branch Push
+      uses: vsoch/pull-request-action@1.0.1
+      
+    - uses: actions/checkout@v1
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v1
       with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
+        python-version: ${{ matrix.python-version }}
+    - name: Install Qt5
+      run: |
+        sudo apt-get install qtbase5-dev
+        
+    - name: Install GLM
+      run: |
+        sudo apt-get install libglm-dev
+    - name: Install GLEW
+      run: |
+        sudo apt-get install libglew-dev
+        
+    - name: Install SDL2
+      run: |
+        sudo apt-get install libsdl2-dev
+    
+    - name: Install PythonLibs
+      run: |
+        sudo apt-get install python3-dev
+        
+    - name: Install Boost-Python
+      run: |
+        mkdir temp
+        cd temp
+        wget https://dl.bintray.com/boostorg/release/1.69.0/source/boost_1_69_0.tar.gz
+        tar xzf boost_1_69_0.tar.gz
+        cd boost_1_69_0 
+        sudo ln -s /usr/local/include/python3.7m /usr/local/include/python3.7
+        sed -i "s@includes ?= \$(prefix)/include/python\$(version)@includes ?= \$(prefix)/include/python\$(version)m@" tools/build/src/tools/python.jam
+        sudo ./bootstrap.sh --with-python=$(which python3) 
+        sudo ./b2 -j 8 install
+        cd ..
+        cd ..
+        
+    - name: configure
+      run: cmake .
+    
+    - name: Compile SI
+      run: |
+        cmake --build /home/runner/work/Sketchable-Interaction/Sketchable-Interaction --target run_unit_tests -j 8
+        
+    - name: Test SI
+      run: |
+        (cd /home/runner/work/Sketchable-Interaction/Sketchable-Interaction/SI/tests;./../../run_unit_tests)
+        
+  release:
+    runs-on: ubuntu-latest
+    if: ${{ github.ref == 'integration' }}
+    needs: build
+    
+    steps:
+      - uses: actions/checkout@master
+      - name: Commit files
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git commit -m "Add changes" -a
+      - name: GitHub Push
+        uses: ad-m/github-push-action@v0.5.0
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          
     
        
