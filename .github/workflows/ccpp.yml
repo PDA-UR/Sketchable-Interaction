@@ -34,7 +34,6 @@ jobs:
     - name: Install PythonLibs
       run: |
         sudo apt-get install python3-dev
-        echo $PWD
         
     - name: Install Boost-Python
       run: |
@@ -43,7 +42,6 @@ jobs:
         wget https://dl.bintray.com/boostorg/release/1.69.0/source/boost_1_69_0.tar.gz
         tar xzf boost_1_69_0.tar.gz
         cd boost_1_69_0 
-        echo $PWD
         sudo ln -s /usr/local/include/python3.7m /usr/local/include/python3.7
         sed -i "s@includes ?= \$(prefix)/include/python\$(version)@includes ?= \$(prefix)/include/python\$(version)m@" tools/build/src/tools/python.jam
         sudo ./bootstrap.sh --with-python=$(which python3) 
@@ -60,4 +58,4 @@ jobs:
         
     - name: Test SI
       run: |
-        (cd /home/runner/work/Sketchable-Interaction/Sketchable-Interaction/SI/tests;./../../Sketchable-Interaction/run_unit_tests)
+        (cd /home/runner/work/Sketchable-Interaction/Sketchable-Interaction/SI/tests;./run_unit_tests)
