@@ -65,16 +65,23 @@ class MouseCursor(PySIEffect.PySIEffect):
         return 0, 0, self._uuid
 
     def on_move_enter_emit(self, other):
-        self.move_target = other
-        return self._uuid, "__position__"
+        if self.move_target is None:
+            self.move_target = other
+
+        if self.move_target is other:
+            return self._uuid, "__position__"
+
+        return "", ""
 
     def on_move_continuous_emit(self, other):
         pass
 
     def on_move_leave_emit(self, other):
-        self.move_target = None
-        return self._uuid, "__position__"
+        if self.move_target is other:
+            self.move_target = None
+            return self._uuid, "__position__"
 
+        return "", ""
 
     def __handle_left_mouse_click(self):
         if self.left_mouse_clicked:

@@ -13,12 +13,15 @@
 
 namespace bp = boost::python;
 
-Region::Region(const std::vector<glm::vec3> &contour, std::shared_ptr<bp::object> effect):
-    d_effect(std::move(effect)),
+Region::Region(const std::vector<glm::vec3> &contour, const bp::object& effect):
     uprt(std::make_unique<RegionTransform>()),
     d_is_transformed(false),
     d_link_events(20)
 {SIGRUN
+    HANDLE_PYTHON_CALL(
+            d_effect = std::make_shared<bp::object>(bp::import("copy").attr("deepcopy")(effect));
+    )
+
     qRegisterMetaType<bp::object>("bp::object");
     qRegisterMetaType<bp::tuple>("bp::tuple");
 
@@ -291,7 +294,7 @@ void Region::update()
     }
     else
     {
-        Context::SIContext()->update_linking_relations(d_py_effect->link_relations());
+        Context::SIContext()->update_linking_relations(d_py_effect->link_relations(), d_uuid);
     }
 }
 

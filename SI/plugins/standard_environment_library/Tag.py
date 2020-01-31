@@ -42,16 +42,14 @@ class Tag(PySIEffect.PySIEffect):
         return 0
 
     def on_move_enter_recv(self, cursor_id, link_attrib):
-        self.transformer_id = cursor_id
-        self.register_link(cursor_id, link_attrib, self._uuid, link_attrib)
-
+        if link_attrib is not "" and cursor_id is not "":
+            self.register_link(cursor_id, link_attrib, self._uuid, link_attrib)
         return 0
 
     def on_move_continuous_recv(self):
         return 0
 
     def on_move_leave_recv(self, cursor_id, link_attrib):
-        self.transformer_id = ""
-        self.remove_link(cursor_id, link_attrib, self._uuid, link_attrib)
-
+        if link_attrib is not "" and cursor_id is not "":
+            self.remove_link(cursor_id, link_attrib, self._uuid, link_attrib)
         return 0

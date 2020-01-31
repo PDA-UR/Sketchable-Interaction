@@ -8,8 +8,6 @@ LinkingManager::LinkingManager():
         d_linking_graph(std::make_unique<LinkingGraph>())
 {SIGRUN
     qRegisterMetaType<std::string>("std::string");
-//    qRegisterMetaType<boost::python::object>("boost::python::object");
-
 }
 
 LinkingManager::~LinkingManager()
@@ -19,7 +17,7 @@ LinkingManager::~LinkingManager()
     INFO("Destroying LinkingManager...");
 }
 
-bool LinkingManager::add_link(std::shared_ptr<Region> &ra, const std::string& aa, std::shared_ptr<Region> &rb, const std::string &ab, const ILink::LINK_TYPE &type)
+bool LinkingManager::add_link(const std::shared_ptr<Region> &ra, const std::string& aa, const std::shared_ptr<Region> &rb, const std::string &ab, const ILink::LINK_TYPE &type)
 {
     if(type == ILink::LINK_TYPE::UD)
     {
@@ -107,14 +105,16 @@ void LinkingManager::add_link_to_object(std::shared_ptr<Region> &a, const Extern
     }
 }
 
-void LinkingManager::remove_link(std::shared_ptr<Region> &ra, const std::string& aa, std::shared_ptr<Region> &rb, const std::string &ab, const ILink::LINK_TYPE& type)
+void LinkingManager::remove_link(const std::shared_ptr<Region> &ra, const std::string& aa, const std::shared_ptr<Region> &rb, const std::string &ab, const ILink::LINK_TYPE& type)
 {
     if(is_linked(ra, aa, rb, ab, type))
     {
         if(type == ILink::LINK_TYPE ::UD)
         {
+            INFO("Requested Deletion of UD Link...");
             disconnect(ra.get(), &Region::LINK_SIGNAL, rb.get(), &Region::LINK_SLOT);
             d_linking_graph->remove_link(ra, aa, rb, ab, type);
+            INFO("Requested Deletion of UD Link successful!");
         }
         else if(type == ILink::LINK_TYPE ::BD)
         {

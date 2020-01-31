@@ -25,8 +25,8 @@ public:
 
 
 
-    bool add_link(std::shared_ptr<Region>& ra,  const std::string& aa, std::shared_ptr<Region>& rb, const std::string& ab, const ILink::LINK_TYPE& type);
-    void remove_link(std::shared_ptr<Region>& ra, const std::string& aa, std::shared_ptr<Region>& rb, const std::string& ab, const ILink::LINK_TYPE& type);
+    bool add_link(const std::shared_ptr<Region>& ra,  const std::string& aa, const std::shared_ptr<Region>& rb, const std::string& ab, const ILink::LINK_TYPE& type);
+    void remove_link(const std::shared_ptr<Region>& ra, const std::string& aa, const std::shared_ptr<Region>& rb, const std::string& ab, const ILink::LINK_TYPE& type);
     bool is_linked(const std::shared_ptr<Region>& ra, const std::string& aa, const std::shared_ptr<Region>& rb, const std::string& ab, const ILink::LINK_TYPE& type);
     void emit_link_event(std::shared_ptr<Region> &a, const std::string &attr_a);
 

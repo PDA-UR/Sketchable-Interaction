@@ -38,16 +38,24 @@ public:
     int height();
 
     void register_new_region(const std::vector<glm::vec3>& contour, const std::string& uuid);
-    void update_linking_relations(const std::vector<std::shared_ptr<LinkRelation>>& relations);
+    void update_linking_relations(const std::vector<std::shared_ptr<LinkRelation>>& relations, const std::string& source);
 
 private:
     static Context* self;
     Context(int width, int height, const std::unordered_map<std::string, std::unique_ptr<bp::object>>& plugins);
 
+    void add_startup_regions(const std::unordered_map<std::string, std::unique_ptr<bp::object>>& plugins);
+    void add_canvas_region(const std::unordered_map<std::string, std::unique_ptr<bp::object>>& plugins);
+    void add_cursor_regions(const std::unique_ptr<bp::object>& cursor_effect);
+
+    void remove_all_source_linking_relations(const std::vector<std::shared_ptr<LinkRelation>>& relations, const std::string& source);
+    void remove_linking_relations(const std::vector<std::shared_ptr<LinkRelation>>& relations, const std::string& source);
+    void create_linking_relations(const std::vector<std::shared_ptr<LinkRelation>>& relations, const std::string& source);
+
     std::vector<bp::object> d_available_plugins;
     std::unordered_map<std::string, bp::object> d_selected_effects_by_id;
 
-    std::vector<std::shared_ptr<LinkRelation>> d_links_in_ctx;
+    std::map<std::string, std::vector<std::shared_ptr<ILink>>> d_links_in_ctx;
 
     std::string d_mouse_uuid;
     std::string d_canvas_uuid;

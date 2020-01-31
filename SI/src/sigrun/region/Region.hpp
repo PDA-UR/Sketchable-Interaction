@@ -25,7 +25,7 @@ Q_DECLARE_METATYPE (bp::tuple)
 class Region: public QObject, public SIObject
 {Q_OBJECT
 public:
-    Region(const std::vector<glm::vec3>& contour, std::shared_ptr<bp::object> effect);
+    Region(const std::vector<glm::vec3>& contour, const bp::object& effect);
     ~Region();
 
     bool is_transformed() const;
@@ -75,7 +75,6 @@ public:
     void update();
 
 private:
-
     std::shared_ptr<PySIEffect> d_py_effect;
     std::shared_ptr<bp::object> d_effect;
 
