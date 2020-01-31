@@ -3,7 +3,7 @@ name: CMake CI
 on:
   push:
     branches:
-    - integration
+      - integration
   pull_request:
     branches:
       - integration
