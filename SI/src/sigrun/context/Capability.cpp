@@ -28,18 +28,21 @@ const std::map<std::string, int> &Capability::capabilities() const
 
 void Capability::add_capabilities(const bp::object &o)
 {
-    HANDLE_PYTHON_CALL(
-        auto obj = std::make_shared<PySIEffect>(bp::extract<PySIEffect>(o));
+    if(!o.is_none())
+    {
+        HANDLE_PYTHON_CALL(
+                auto obj = std::make_shared<PySIEffect>(bp::extract<PySIEffect>(o));
 
-        obj->cap_collision_emit();
-        obj->cap_collision_recv();
+                obj->cap_collision_emit();
+                obj->cap_collision_recv();
 
-        for(auto& [key, value]: obj->cap_collision_emit())
-            add_capability(key);
+                for(auto& [key, value]: obj->cap_collision_emit())
+                    add_capability(key);
 
-        for(auto& [key, value]: obj->cap_collision_recv())
-            add_capability(key);
-    )
+                for(auto& [key, value]: obj->cap_collision_recv())
+                    add_capability(key);
+        )
+    }
 }
 
 void Capability::add_capability(const std::string &name)

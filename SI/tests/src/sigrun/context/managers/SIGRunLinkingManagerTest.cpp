@@ -50,9 +50,9 @@ TEST_F(SIGRunLinkingManagerTest, link_creation_uni)
     std::vector<glm::vec3> contour2{glm::vec3(150, 150, 1), glm::vec3(150, 550, 1), glm::vec3(550, 550, 1),
                                     glm::vec3(550, 150, 1)};
 
-    std::shared_ptr<Region> a = std::make_shared<Region>(contour1, o);
-    std::shared_ptr<Region> b = std::make_shared<Region>(contour2, t);
-    std::shared_ptr<Region> c = std::make_shared<Region>(contour2, o);
+    std::shared_ptr<Region> a = std::make_shared<Region>(contour1, *o);
+    std::shared_ptr<Region> b = std::make_shared<Region>(contour2, *t);
+    std::shared_ptr<Region> c = std::make_shared<Region>(contour2, *o);
 
     LinkingManager lm;
 
@@ -104,9 +104,9 @@ TEST_F(SIGRunLinkingManagerTest, is_linked_uni)
     std::vector<glm::vec3> contour2{glm::vec3(150, 150, 1), glm::vec3(150, 550, 1), glm::vec3(550, 550, 1),
                                     glm::vec3(550, 150, 1)};
 
-    std::shared_ptr<Region> a = std::make_shared<Region>(contour1, o);
-    std::shared_ptr<Region> b = std::make_shared<Region>(contour2, t);
-    std::shared_ptr<Region> c = std::make_shared<Region>(contour2, o);
+    std::shared_ptr<Region> a = std::make_shared<Region>(contour1, *o);
+    std::shared_ptr<Region> b = std::make_shared<Region>(contour2, *t);
+    std::shared_ptr<Region> c = std::make_shared<Region>(contour2, *o);
 
     LinkingManager lm;
 
@@ -141,8 +141,6 @@ TEST_F(SIGRunLinkingManagerTest, link_event_execution_uni)
 
     std::shared_ptr<bp::object> o = std::make_shared<bp::object>(script.si_plugin(module_name, rpath, classes[0]));
 
-    Print::print("Here");
-
     classes.clear();
 
     base_filename = files[1].substr(files[1].find_last_of("/\\") + 1);
@@ -153,19 +151,15 @@ TEST_F(SIGRunLinkingManagerTest, link_event_execution_uni)
 
     std::shared_ptr<bp::object> t = std::make_shared<bp::object>(script.si_plugin(module_name, rpath, classes[0]));
 
-    Print::print("Here2");
-
     std::vector<glm::vec3> contour1{glm::vec3(100, 100, 1), glm::vec3(100, 600, 1), glm::vec3(600, 600, 1),
                                     glm::vec3(600, 100, 1)};
     std::vector<glm::vec3> contour2{glm::vec3(150, 150, 1), glm::vec3(150, 550, 1), glm::vec3(550, 550, 1),
                                     glm::vec3(550, 150, 1)};
 
-    std::shared_ptr<Region> a = std::make_shared<Region>(contour1, o);
-    std::shared_ptr<Region> b = std::make_shared<Region>(contour2, t);
-    std::shared_ptr<Region> c = std::make_shared<Region>(contour2, o);
-    std::shared_ptr<Region> d = std::make_shared<Region>(contour2, t);
-
-    Print::print("Here3");
+    std::shared_ptr<Region> a = std::make_shared<Region>(contour1, *o);
+    std::shared_ptr<Region> b = std::make_shared<Region>(contour2, *t);
+    std::shared_ptr<Region> c = std::make_shared<Region>(contour2, *o);
+    std::shared_ptr<Region> d = std::make_shared<Region>(contour2, *t);
 
     LinkingManager lm;
 
@@ -174,22 +168,15 @@ TEST_F(SIGRunLinkingManagerTest, link_event_execution_uni)
     QSignalSpy spy3(c.get(), &Region::LINK_SIGNAL);
     QSignalSpy spy4(d.get(), &Region::LINK_SIGNAL);
 
-    Print::print("Here4");
-
-
     a->set_name("A");
     b->set_name("B");
     c->set_name("C");
     d->set_name("D");
 
-    Print::print("Here5");
-
     ASSERT_TRUE(lm.add_link(a, "__position__", b, "__position__", ILink::LINK_TYPE::UD));
     ASSERT_TRUE(lm.add_link(b, "__position__", c, "__position__", ILink::LINK_TYPE::UD));
     ASSERT_TRUE(lm.add_link(c, "__position__", a, "__position__", ILink::LINK_TYPE::UD));
     ASSERT_TRUE(lm.add_link(c, "__position__", d, "__position__", ILink::LINK_TYPE::UD));
-
-    Print::print("Here6");
 
     ASSERT_FALSE(lm.links().empty());
 
@@ -199,11 +186,7 @@ TEST_F(SIGRunLinkingManagerTest, link_event_execution_uni)
     ASSERT_TRUE(lm.links()[2]->sender_a()->uuid() == c->uuid());
     ASSERT_TRUE(lm.links()[3]->sender_a()->uuid() == c->uuid());
 
-    Print::print("Here7");
-
     lm.emit_link_event(a, "__position__");
-
-    Print::print("Here8");
 
     ASSERT_EQ(spy1.count(), 1);
     ASSERT_EQ(spy2.count(), 1);
@@ -243,9 +226,9 @@ TEST_F(SIGRunLinkingManagerTest, link_removal_uni)
     std::vector<glm::vec3> contour2{glm::vec3(150, 150, 1), glm::vec3(150, 550, 1), glm::vec3(550, 550, 1),
                                     glm::vec3(550, 150, 1)};
 
-    std::shared_ptr<Region> a = std::make_shared<Region>(contour1, o);
-    std::shared_ptr<Region> b = std::make_shared<Region>(contour2, t);
-    std::shared_ptr<Region> c = std::make_shared<Region>(contour2, o);
+    std::shared_ptr<Region> a = std::make_shared<Region>(contour1, *o);
+    std::shared_ptr<Region> b = std::make_shared<Region>(contour2, *t);
+    std::shared_ptr<Region> c = std::make_shared<Region>(contour2, *o);
 
     LinkingManager lm;
 
@@ -326,9 +309,9 @@ TEST_F(SIGRunLinkingManagerTest, link_creation_bi)
     std::vector<glm::vec3> contour2{glm::vec3(150, 150, 1), glm::vec3(150, 550, 1), glm::vec3(550, 550, 1),
                                     glm::vec3(550, 150, 1)};
 
-    std::shared_ptr<Region> a = std::make_shared<Region>(contour1, o);
-    std::shared_ptr<Region> b = std::make_shared<Region>(contour2, t);
-    std::shared_ptr<Region> c = std::make_shared<Region>(contour2, o);
+    std::shared_ptr<Region> a = std::make_shared<Region>(contour1, *o);
+    std::shared_ptr<Region> b = std::make_shared<Region>(contour2, *t);
+    std::shared_ptr<Region> c = std::make_shared<Region>(contour2, *o);
 
     LinkingManager lm;
 
@@ -386,8 +369,8 @@ TEST_F(SIGRunLinkingManagerTest, is_linked_bi)
     std::vector<glm::vec3> contour2{glm::vec3(150, 150, 1), glm::vec3(150, 550, 1), glm::vec3(550, 550, 1),
                                     glm::vec3(550, 150, 1)};
 
-    std::shared_ptr<Region> a = std::make_shared<Region>(contour1, o);
-    std::shared_ptr<Region> b = std::make_shared<Region>(contour2, t);
+    std::shared_ptr<Region> a = std::make_shared<Region>(contour1, *o);
+    std::shared_ptr<Region> b = std::make_shared<Region>(contour2, *t);
 
     LinkingManager lm;
 
@@ -435,9 +418,9 @@ TEST_F(SIGRunLinkingManagerTest, link_event_execution_bi)
     std::vector<glm::vec3> contour2{glm::vec3(150, 150, 1), glm::vec3(150, 550, 1), glm::vec3(550, 550, 1),
                                     glm::vec3(550, 150, 1)};
 
-    std::shared_ptr<Region> a = std::make_shared<Region>(contour1, o);
-    std::shared_ptr<Region> b = std::make_shared<Region>(contour2, t);
-    std::shared_ptr<Region> c = std::make_shared<Region>(contour2, o);
+    std::shared_ptr<Region> a = std::make_shared<Region>(contour1, *o);
+    std::shared_ptr<Region> b = std::make_shared<Region>(contour2, *t);
+    std::shared_ptr<Region> c = std::make_shared<Region>(contour2, *o);
 
     a->set_name("a");
     b->set_name("b");
@@ -496,10 +479,10 @@ TEST_F(SIGRunLinkingManagerTest, link_removal_bi)
     std::vector<glm::vec3> contour2{glm::vec3(150, 150, 1), glm::vec3(150, 550, 1), glm::vec3(550, 550, 1),
                                     glm::vec3(550, 150, 1)};
 
-    std::shared_ptr<Region> a = std::make_shared<Region>(contour1, o);
-    std::shared_ptr<Region> b = std::make_shared<Region>(contour2, t);
-    std::shared_ptr<Region> c = std::make_shared<Region>(contour2, o);
-    std::shared_ptr<Region> d = std::make_shared<Region>(contour2, t);
+    std::shared_ptr<Region> a = std::make_shared<Region>(contour1, *o);
+    std::shared_ptr<Region> b = std::make_shared<Region>(contour2, *t);
+    std::shared_ptr<Region> c = std::make_shared<Region>(contour2, *o);
+    std::shared_ptr<Region> d = std::make_shared<Region>(contour2, *t);
 
 
     LinkingManager lm;
@@ -514,11 +497,6 @@ TEST_F(SIGRunLinkingManagerTest, link_removal_bi)
     c->set_name("C");
     d->set_name("D");
 
-    Print::print("a: " + a->name());
-    Print::print("b: " + b->name());
-    Print::print("c: " + c->name());
-    Print::print("d: " + d->name());
-
     ASSERT_TRUE(lm.add_link(a, "__position__", b, "__position__", ILink::LINK_TYPE::BD));
     ASSERT_TRUE(lm.add_link(b, "__position__", c, "__position__", ILink::LINK_TYPE::BD));
     ASSERT_TRUE(lm.add_link(c, "__position__", a, "__position__", ILink::LINK_TYPE::BD));
@@ -530,8 +508,6 @@ TEST_F(SIGRunLinkingManagerTest, link_removal_bi)
     ASSERT_EQ(lm.links()[5]->sender_a()->uuid(), a->uuid());
 
     lm.emit_link_event(a, "__position__");
-
-    Print::print("A   -------------------------------");
 
     ASSERT_EQ(spy1.count(), 1);
     ASSERT_EQ(spy2.count(), 1);
@@ -555,7 +531,6 @@ TEST_F(SIGRunLinkingManagerTest, link_removal_bi)
     ASSERT_EQ(lm.links()[3]->receiver_b()->uuid(), c->uuid());
 
     lm.emit_link_event(a, "__position__");
-    Print::print("B   -------------------------------");
 
     ASSERT_EQ(spy1.count(), 2);
     ASSERT_EQ(spy2.count(), 2);
@@ -564,17 +539,12 @@ TEST_F(SIGRunLinkingManagerTest, link_removal_bi)
 
     lm.emit_link_event(b, "__position__");
 
-    Print::print("C   -------------------------------");
-
-
     ASSERT_EQ(spy1.count(), 3);
     ASSERT_EQ(spy2.count(), 3);
     ASSERT_EQ(spy3.count(), 3);
     ASSERT_EQ(spy4.count(), 3);
 
     lm.emit_link_event(c, "__position__");
-
-    Print::print("D   -------------------------------");
 
     ASSERT_EQ(spy1.count(), 4);
     ASSERT_EQ(spy2.count(), 4);

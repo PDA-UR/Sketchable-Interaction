@@ -37,11 +37,14 @@ Context::Context(int width, int height, const std::unordered_map<std::string, st
 
     INFO("Plugins available for drawing: " + std::to_string(d_available_plugins.size()));
 
-    DEBUG("Test case with further effect type");
-    d_selected_effects_by_id[d_mouse_uuid] = d_available_plugins.back();
-    const std::string& selected = bp::extract<std::string>(d_selected_effects_by_id[d_mouse_uuid].attr("name"));
+    if(!d_available_plugins.empty())
+    {
+        DEBUG("Test case with further effect type");
 
-    DEBUG("Mouse Cursor: " + d_mouse_uuid + " set to " + selected);
+        d_selected_effects_by_id[d_mouse_uuid] = d_available_plugins.back();
+        const std::string& selected = bp::extract<std::string>(d_selected_effects_by_id[d_mouse_uuid].attr("name"));
+        DEBUG("Mouse Cursor: " + d_mouse_uuid + " set to " + selected);
+    }
 }
 
 void Context::add_startup_regions(const std::unordered_map<std::string, std::unique_ptr<bp::object>> &plugins)
@@ -50,16 +53,21 @@ void Context::add_startup_regions(const std::unordered_map<std::string, std::uni
 
     for(auto& [key, value]: plugins)
     {
-        switch (bp::extract<int>(value->attr("region_type")))
+        if(!value->is_none())
         {
-            case PySIEffect::EffectType::SI_CANVAS: break;
-            case PySIEffect::EffectType::SI_MOUSE_CURSOR:
-                add_cursor_regions(value);
-            break;
+            HANDLE_PYTHON_CALL(
+                    switch (bp::extract<int>(value->attr("region_type")))
+                    {
+                        case PySIEffect::EffectType::SI_CANVAS: break;
+                        case PySIEffect::EffectType::SI_MOUSE_CURSOR:
+                            add_cursor_regions(value);
+                            break;
 
-            default:
-                d_available_plugins.push_back(*value);
-                break;
+                        default:
+                            d_available_plugins.push_back(*value);
+                            break;
+                    }
+            )
         }
     }
 }
@@ -68,11 +76,18 @@ void Context::add_canvas_region(const std::unordered_map<std::string, std::uniqu
 {
     for(auto& [key, value]: plugins)
     {
-        if (bp::extract<int>(value->attr("region_type")) == PySIEffect::EffectType::SI_CANVAS)
+        if (!value->is_none())
         {
-            std::vector<glm::vec3> canvas_contour{glm::vec3(1, 1, 1), glm::vec3(1, s_height - 1, 1), glm::vec3(s_width - 1, s_height - 1, 1), glm::vec3(s_width - 1, 0, 1)};
-            uprm->add_region(canvas_contour, *value, 0);
-            d_canvas_uuid = uprm->regions().back()->uuid();
+            HANDLE_PYTHON_CALL(
+                if (bp::extract<int>(value->attr("region_type")) == PySIEffect::EffectType::SI_CANVAS)
+                {
+                    std::vector<glm::vec3> canvas_contour{glm::vec3(1, 1, 1), glm::vec3(1, s_height - 1, 1),
+                                                          glm::vec3(s_width - 1, s_height - 1, 1),
+                                                          glm::vec3(s_width - 1, 0, 1)};
+                    uprm->add_region(canvas_contour, *value, 0);
+                    d_canvas_uuid = uprm->regions().back()->uuid();
+                }
+            )
         }
     }
 }

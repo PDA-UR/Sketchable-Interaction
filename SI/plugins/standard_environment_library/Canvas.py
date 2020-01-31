@@ -11,7 +11,6 @@ class Canvas(PySIEffect.PySIEffect):
         self.texture_path = ""
         self.color = [0, 0, 255, 255]
 
-
         self.cap_emit = {
             # capability: {"on_enter": self.function, "on_continuous": self.function, "on_leave": self.function}
         }
@@ -34,6 +33,7 @@ class Canvas(PySIEffect.PySIEffect):
 
     def on_sketch_continuous_recv(self, x, y, cursor_id):
         self.add_point_to_partial_region(cursor_id, [x, y])
+
         return 0
 
     def on_sketch_leave_recv(self, x, y, sender_id):

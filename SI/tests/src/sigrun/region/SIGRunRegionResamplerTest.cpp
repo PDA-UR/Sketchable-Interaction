@@ -37,8 +37,8 @@ TEST_F(SIGRunRegionResamplerTest, resample)
     std::vector<glm::vec3> contour1 {glm::vec3(100, 100, 1), glm::vec3(100, 600, 1), glm::vec3(600, 600, 1), glm::vec3(600, 100, 1)};
     std::vector<glm::vec3> contour2 {glm::vec3(150, 150, 1), glm::vec3(150, 550, 1), glm::vec3(550, 550, 1), glm::vec3(550, 150, 1)};
 
-    std::shared_ptr<Region> a = std::make_shared<Region>(contour1, o);
-    std::shared_ptr<Region> b = std::make_shared<Region>(contour2, t);
+    std::shared_ptr<Region> a = std::make_shared<Region>(contour1, *o);
+    std::shared_ptr<Region> b = std::make_shared<Region>(contour2, *t);
 
     ASSERT_EQ(4, contour1.size());
     ASSERT_EQ(4, contour2.size());
