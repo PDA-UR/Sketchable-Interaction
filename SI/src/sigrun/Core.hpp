@@ -6,8 +6,8 @@
 #include <boost/python.hpp>
 #include <memory>
 #include <unordered_map>
+#include <sigrun/rendering/IRenderEngine.hpp>
 #include <sigrun/context/Context.hpp>
-
 #include "SIObject.hpp"
 
 /**

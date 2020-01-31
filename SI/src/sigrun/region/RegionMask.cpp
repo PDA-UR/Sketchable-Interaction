@@ -3,6 +3,9 @@
 #include <algorithm>
 #include "RegionMask.hpp"
 
+#include <iostream>
+#include <debug/Print.hpp>
+
 /**
 \brief constructor of the RegionMask class
 \details

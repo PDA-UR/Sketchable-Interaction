@@ -21,7 +21,7 @@
     This class stores the relative translation, rotation and scale of a contour.
     The initial contour remains unchanged and change in one of those three aspects does mutate this transform but not the initial contour.
     The translation, rotation and scale are stored as a 3x3 transformation matrix.
-    The transformation matrix is stored ROW MAJOR and requires LEFT pr PRE-Multiplication.
+    The transformation matrix is stored ROW MAJOR and requires LEFT or PRE-Multiplication.
     Therefore, multiplications with points look such as : p * T, where p is a point and T is the transformation matrix.
     Due to matrix multiplications being not commutative, T * p will not yield desired results.
 

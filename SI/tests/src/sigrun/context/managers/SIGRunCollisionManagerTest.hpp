@@ -5,6 +5,10 @@
 
 #include <gtest/gtest.h>
 #include <sigrun/context/managers/CollisionManager.hpp>
+#include <sigrun/context/Context.hpp>
+#include <unordered_map>
+#include <boost/python.hpp>
+#include <memory>
 
 class SIGRunCollisionManagerTest: public ::testing::Test
 {
@@ -18,6 +22,8 @@ public:
     {
 
     }
+
+    Context ctx = Context(1920, 1080, std::unordered_map<std::string, std::unique_ptr<bp::object>>());
 
     CollisionManager cm;
 

@@ -5,6 +5,7 @@
 
 #include <vector>
 #include <glm/glm.hpp>
+#include <sigrun/SIObject.hpp>
 
 
 /**
@@ -32,7 +33,7 @@
     Instead, the internal AABB is translated the same amount and the coordinate system conversion provides correct collision detection behaviour.
     \n
 */
-class RegionMask
+class RegionMask: public SIObject
 {
 public:
     RegionMask(int canvas_width, int canvas_height, const std::vector<glm::vec3>& contour, const std::vector<glm::vec3>& aabb);

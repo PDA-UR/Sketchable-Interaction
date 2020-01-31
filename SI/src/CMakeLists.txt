@@ -1,7 +1,7 @@
-cmake_minimum_required(VERSION 3.13)
+cmake_minimum_required(VERSION 3.16)
 project(SIEngine)
 
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 find_package(PythonLibs 3 REQUIRED)
@@ -19,6 +19,8 @@ set(PATH_INCLUDE_OSC_HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/SI/lib/tuio_headers/osc
 set(THREADS_PREFER_PTHREAD_FLAG ON) # linux only
 find_package(Threads REQUIRED) # linux only
 
+find_package(Qt5Widgets REQUIRED)
+
 include_directories(${PATH_INCLUDE_TUIO2_HEADERS} ${PATH_INCLUDE_OSC_HEADERS})
 
 #set(xlib TRUE)
@@ -28,12 +30,26 @@ if(xlib)
 endif()
 
 set(PySISrc
-        SI/src/pysi/SuperEffect.cpp
-        SI/src/pysi/SuperEffect.hpp)
+        SI/src/pysi/SuperEffect.cpp)
 
 # SI PYTHON3 MODULE
 add_library(PySI MODULE ${PySISrc})
-target_link_libraries(PySI ${PYTHON_LIBRARIES} ${Boost_LIBRARIES})
+target_link_libraries(PySI ${PYTHON_LIBRARIES} ${Boost_LIBRARIES} Qt5::Widgets)
+
+target_precompile_headers(PySI
+        PUBLIC
+        PRIVATE
+        <unordered_map>
+        <vector>
+        <map>
+        <boost/python/suite/indexing/vector_indexing_suite.hpp>
+        <boost/python/suite/indexing/map_indexing_suite.hpp>
+        <boost/python.hpp>
+        SI/src/sigrun/util/Util.hpp
+        <glm/glm.hpp>
+        SI/src/pysi/SuperEffect.hpp
+        SI/src/sigrun/plugin/PythonInvoker.hpp
+        )
 
 # SI RUNTIME LIBRARY
 
@@ -41,20 +57,15 @@ set(SIGRunSRC
         SI/src/SIGRun.cpp
         SI/src/SIGRun.hpp
         SI/src/pysi/SuperEffect.cpp
-        SI/src/pysi/SuperEffect.hpp
         SI/src/sigrun/Core.cpp
         SI/src/sigrun/Core.hpp
         SI/src/debug/Print.cpp
-        SI/src/debug/Print.hpp
         SI/src/sigrun/plugin/PluginCollector.cpp
         SI/src/sigrun/plugin/PluginCollector.hpp
         SI/src/sigrun/plugin/Scripting.cpp
         SI/src/sigrun/plugin/Scripting.hpp
         SI/src/sigrun/log/Log.cpp
         SI/src/sigrun/log/Log.hpp
-        SI/src/sigrun/plugin/PythonInvoker.cpp
-        SI/src/sigrun/plugin/PythonInvoker.hpp
-        SI/src/sigrun/SIObject.hpp
         SI/src/sigrun/region/RegionTransform.cpp
         SI/src/sigrun/region/RegionTransform.hpp
         SI/src/sigrun/region/RegionMask.cpp
@@ -74,14 +85,57 @@ set(SIGRunSRC
         SI/src/sigrun/region/RegionResampler.hpp
         SI/src/sigrun/rendering/IRenderEngine.hpp
         SI/src/sigrun/concurrency/StoppableTask.cpp
-        SI/src/sigrun/concurrency/StoppableTask.hpp)
+        SI/src/sigrun/concurrency/StoppableTask.hpp
+        SI/src/sigrun/context/managers/LinkingManager.cpp
+        SI/src/sigrun/context/managers/LinkingManager.hpp
+        SI/src/sigrun/concurrency/RenderWorker.cpp
+        SI/src/sigrun/concurrency/RenderWorker.hpp
+        SI/src/sigrun/context/managers/helpers/linking/Link.cpp
+        SI/src/sigrun/context/managers/helpers/linking/Link.hpp
+        SI/src/sigrun/context/managers/helpers/linking/LinkingGraph.cpp
+        SI/src/sigrun/context/managers/helpers/linking/LinkingGraph.hpp
+        SI/src/sigrun/context/managers/InputManager.cpp
+        SI/src/sigrun/context/managers/InputManager.hpp
+        SI/src/sigrun/context/managers/helpers/input/ExternalObject.cpp
+        SI/src/sigrun/context/managers/helpers/input/ExternalObject.hpp)
+
+ADD_DEFINITIONS(-DQT_NO_KEYWORDS)
 
 add_library(SIGeneralRuntime SHARED ${SIGRunSRC})
 
+target_precompile_headers(SIGeneralRuntime
+        PUBLIC
+        PRIVATE
+        <unordered_map>
+        <vector>
+        <string>
+        <boost/python/suite/indexing/vector_indexing_suite.hpp>
+        <boost/python/suite/indexing/map_indexing_suite.hpp>
+        <boost/python.hpp>
+        <QApplication>
+        <QInputEvent>
+        <QMetaMethod>
+        <QObject>
+        <QEvent>
+        <QKeyEvent>
+        <QMouseEvent>
+        SI/src/sigrun/util/Benchmark.hpp
+        SI/src/sigrun/util/UUID.hpp
+        SI/src/sigrun/util/RingBuffer.hpp
+        SI/src/debug/Print.hpp
+        SI/src/sigrun/SIObject.hpp
+        <glm/glm.hpp>
+        SI/src/sigrun/util/Util.hpp
+        SI/src/pysi/SuperEffect.hpp
+        SI/src/sigrun/plugin/PythonInvoker.hpp
+        )
+
+set_target_properties(SIGeneralRuntime PROPERTIES AUTOMOC TRUE)
+
 if (xlib)
-    target_link_libraries(SIGeneralRuntime ${PATH_LIB} glm -luuid ${PYTHON_LIBRARIES} ${Boost_LIBRARIES} -lX11)
+    target_link_libraries(SIGeneralRuntime ${PATH_LIB} -luuid ${PYTHON_LIBRARIES} ${Boost_LIBRARIES} -lX11 Qt5::Widgets)
 else()
-    target_link_libraries(SIGeneralRuntime ${PATH_LIB} glm -luuid ${PYTHON_LIBRARIES} ${Boost_LIBRARIES})
+    target_link_libraries(SIGeneralRuntime ${PATH_LIB} -luuid ${PYTHON_LIBRARIES} ${Boost_LIBRARIES} Qt5::Widgets)
 endif()
 
 if (BUILD_DOCS)

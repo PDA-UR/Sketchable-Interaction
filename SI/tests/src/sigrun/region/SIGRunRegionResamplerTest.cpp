@@ -22,7 +22,7 @@ TEST_F(SIGRunRegionResamplerTest, resample)
 
     script.load_class_names(classes, files[0]);
 
-    bp::object o = script.si_plugin(module_name, rpath, classes[0]);
+    std::shared_ptr<bp::object> o = std::make_shared<bp::object>(script.si_plugin(module_name, rpath, classes[0]));
 
     classes.clear();
 
@@ -32,20 +32,20 @@ TEST_F(SIGRunRegionResamplerTest, resample)
 
     script.load_class_names(classes, files[1]);
 
-    bp::object t = script.si_plugin(module_name, rpath, classes[0]);
+    std::shared_ptr<bp::object> t = std::make_shared<bp::object>(script.si_plugin(module_name, rpath, classes[0]));
 
     std::vector<glm::vec3> contour1 {glm::vec3(100, 100, 1), glm::vec3(100, 600, 1), glm::vec3(600, 600, 1), glm::vec3(600, 100, 1)};
     std::vector<glm::vec3> contour2 {glm::vec3(150, 150, 1), glm::vec3(150, 550, 1), glm::vec3(550, 550, 1), glm::vec3(550, 150, 1)};
 
-    std::shared_ptr<Region> a = std::make_shared<Region>(contour1, o);
-    std::shared_ptr<Region> b = std::make_shared<Region>(contour2, t);
+    std::shared_ptr<Region> a = std::make_shared<Region>(contour1, *o);
+    std::shared_ptr<Region> b = std::make_shared<Region>(contour2, *t);
 
-    ASSERT_EQ(4, a->contour().size());
-    ASSERT_EQ(4, b->contour().size());
+    ASSERT_EQ(4, contour1.size());
+    ASSERT_EQ(4, contour2.size());
 
     std::vector<glm::vec3> resample_a, resample_b;
-    EXPECT_NO_FATAL_FAILURE(RegionResampler::resample(resample_a, a->contour()));
-    EXPECT_NO_FATAL_FAILURE(RegionResampler::resample(resample_b, b->contour()));
+    EXPECT_NO_FATAL_FAILURE(RegionResampler::resample(resample_a, contour1));
+    EXPECT_NO_FATAL_FAILURE(RegionResampler::resample(resample_b, contour2));
 
     ASSERT_EQ(64, resample_a.size());
     ASSERT_EQ(64, resample_b.size());

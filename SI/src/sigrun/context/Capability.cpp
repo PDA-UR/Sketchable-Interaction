@@ -1,6 +1,9 @@
 
 
 #include "Capability.hpp"
+#include <pysi/SuperEffect.hpp>
+#include <memory>
+#include <sigrun/plugin/PythonInvoker.hpp>
 
 namespace bp = boost::python;
 
@@ -10,8 +13,7 @@ std::string Capability::__test2__ = "TEST2";
 Capability::Capability():
     d_consecutive_capability_id(0),
     d_num_capabilities(0)
-{
-
+{SIGRUN
 }
 
 Capability::~Capability()
@@ -26,17 +28,21 @@ const std::map<std::string, int> &Capability::capabilities() const
 
 void Capability::add_capabilities(const bp::object &o)
 {
-    const bp::dict& recv = bp::extract<bp::dict>(o.attr("cap_recv"));
-    const bp::dict& emit = bp::extract<bp::dict>(o.attr("cap_emit"));
+    if(!o.is_none())
+    {
+        HANDLE_PYTHON_CALL(
+                auto obj = std::make_shared<PySIEffect>(bp::extract<PySIEffect>(o));
 
-    const bp::list& items_recv = recv.items();
-    for(int i = 0; i < bp::len(items_recv); ++i)
-        add_capability(bp::extract<std::string>(items_recv[i][0]));
+                obj->cap_collision_emit();
+                obj->cap_collision_recv();
 
-    const bp::list& items_emit = emit.items();
+                for(auto& [key, value]: obj->cap_collision_emit())
+                    add_capability(key);
 
-    for(int i = 0; i < bp::len(items_emit); ++i)
-        add_capability(bp::extract<std::string>(items_emit[i][0]));
+                for(auto& [key, value]: obj->cap_collision_recv())
+                    add_capability(key);
+        )
+    }
 }
 
 void Capability::add_capability(const std::string &name)

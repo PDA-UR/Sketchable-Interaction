@@ -4,6 +4,12 @@
 #include <sigrun/region/Region.hpp>
 #include <sigrun/plugin/Scripting.hpp>
 #include <sigrun/plugin/PluginCollector.hpp>
+#include <sigrun/context/Context.hpp>
+#include <unordered_map>
+#include <boost/python.hpp>
+#include <memory>
+
+namespace bp = boost::python;
 
 TEST_F(SIGRunCollisionManagerTest, collide)
 {
@@ -20,7 +26,7 @@ TEST_F(SIGRunCollisionManagerTest, collide)
 
     script.load_class_names(classes, files[0]);
 
-    bp::object o = script.si_plugin(module_name, rpath, classes[0]);
+    std::shared_ptr<bp::object> o = std::make_shared<bp::object>(script.si_plugin(module_name, rpath, classes[0]));
 
     classes.clear();
 
@@ -30,12 +36,12 @@ TEST_F(SIGRunCollisionManagerTest, collide)
 
     script.load_class_names(classes, files[1]);
 
-    bp::object t = script.si_plugin(module_name, rpath, classes[0]);
+    std::shared_ptr<bp::object> t = std::make_shared<bp::object>(script.si_plugin(module_name, rpath, classes[0]));
 
     std::vector<glm::vec3> contour {glm::vec3(100, 100, 1), glm::vec3(100, 600, 1), glm::vec3(600, 600, 1), glm::vec3(600, 100, 1)};
 
-    std::shared_ptr<Region> r = std::make_shared<Region>(contour, o);
-    std::shared_ptr<Region> s = std::make_shared<Region>(contour, t);
+    std::shared_ptr<Region> r = std::make_shared<Region>(contour, *o);
+    std::shared_ptr<Region> s = std::make_shared<Region>(contour, *t);
 
     std::vector<std::shared_ptr<Region>> v = {r, s};
 
@@ -57,7 +63,7 @@ TEST_F(SIGRunCollisionManagerTest, has_capabilities_in_common)
 
     script.load_class_names(classes, files[0]);
 
-    bp::object o = script.si_plugin(module_name, rpath, classes[0]);
+    std::shared_ptr<bp::object> o = std::make_shared<bp::object>(script.si_plugin(module_name, rpath, classes[0]));
 
     classes.clear();
 
@@ -67,12 +73,12 @@ TEST_F(SIGRunCollisionManagerTest, has_capabilities_in_common)
 
     script.load_class_names(classes, files[1]);
 
-    bp::object t = script.si_plugin(module_name, rpath, classes[0]);
+    std::shared_ptr<bp::object> t = std::make_shared<bp::object>(script.si_plugin(module_name, rpath, classes[0]));
 
     std::vector<glm::vec3> contour {glm::vec3(100, 100, 1), glm::vec3(100, 600, 1), glm::vec3(600, 600, 1), glm::vec3(600, 100, 1)};
 
-    std::shared_ptr<Region> r = std::make_shared<Region>(contour, o);
-    std::shared_ptr<Region> s = std::make_shared<Region>(contour, t);
+    std::shared_ptr<Region> r = std::make_shared<Region>(contour, *o);
+    std::shared_ptr<Region> s = std::make_shared<Region>(contour, *t);
 
     ASSERT_TRUE(cm_has_capabilities_in_common(r, s));
 }
@@ -92,7 +98,7 @@ TEST_F(SIGRunCollisionManagerTest, collides_with_aabb)
 
     script.load_class_names(classes, files[0]);
 
-    bp::object o = script.si_plugin(module_name, rpath, classes[0]);
+    std::shared_ptr<bp::object> o = std::make_shared<bp::object>(script.si_plugin(module_name, rpath, classes[0]));
 
     classes.clear();
 
@@ -102,12 +108,12 @@ TEST_F(SIGRunCollisionManagerTest, collides_with_aabb)
 
     script.load_class_names(classes, files[1]);
 
-    bp::object t = script.si_plugin(module_name, rpath, classes[0]);
+    std::shared_ptr<bp::object> t = std::make_shared<bp::object>(script.si_plugin(module_name, rpath, classes[0]));
 
     std::vector<glm::vec3> contour {glm::vec3(100, 100, 1), glm::vec3(100, 600, 1), glm::vec3(600, 600, 1), glm::vec3(600, 100, 1)};
 
-    std::shared_ptr<Region> a = std::make_shared<Region>(contour, o);
-    std::shared_ptr<Region> b = std::make_shared<Region>(contour, t);
+    std::shared_ptr<Region> a = std::make_shared<Region>(contour, *o);
+    std::shared_ptr<Region> b = std::make_shared<Region>(contour, *t);
 
     ASSERT_TRUE(cm_collides_with_aabb(a, b));
 }
@@ -127,7 +133,7 @@ TEST_F(SIGRunCollisionManagerTest, is_aabb_enveloped_negative)
 
     script.load_class_names(classes, files[0]);
 
-    bp::object o = script.si_plugin(module_name, rpath, classes[0]);
+    std::shared_ptr<bp::object> o = std::make_shared<bp::object>(script.si_plugin(module_name, rpath, classes[0]));
 
     classes.clear();
 
@@ -137,12 +143,12 @@ TEST_F(SIGRunCollisionManagerTest, is_aabb_enveloped_negative)
 
     script.load_class_names(classes, files[1]);
 
-    bp::object t = script.si_plugin(module_name, rpath, classes[0]);
+    std::shared_ptr<bp::object> t = std::make_shared<bp::object>(script.si_plugin(module_name, rpath, classes[0]));
 
     std::vector<glm::vec3> contour {glm::vec3(100, 100, 1), glm::vec3(100, 600, 1), glm::vec3(600, 600, 1), glm::vec3(600, 100, 1)};
 
-    std::shared_ptr<Region> a = std::make_shared<Region>(contour, o);
-    std::shared_ptr<Region> b = std::make_shared<Region>(contour, t);
+    std::shared_ptr<Region> a = std::make_shared<Region>(contour, *o);
+    std::shared_ptr<Region> b = std::make_shared<Region>(contour, *t);
 
     ASSERT_FALSE(cm_is_aabb_enveloped(a, b));
     ASSERT_TRUE(cm_collides_with_aabb(a, b));
@@ -163,7 +169,7 @@ TEST_F(SIGRunCollisionManagerTest, is_aabb_enveloped_positive)
 
     script.load_class_names(classes, files[0]);
 
-    bp::object o = script.si_plugin(module_name, rpath, classes[0]);
+    std::shared_ptr<bp::object> o = std::make_shared<bp::object>(script.si_plugin(module_name, rpath, classes[0]));
 
     classes.clear();
 
@@ -173,13 +179,13 @@ TEST_F(SIGRunCollisionManagerTest, is_aabb_enveloped_positive)
 
     script.load_class_names(classes, files[1]);
 
-    bp::object t = script.si_plugin(module_name, rpath, classes[0]);
+    std::shared_ptr<bp::object> t = std::make_shared<bp::object>(script.si_plugin(module_name, rpath, classes[0]));
 
     std::vector<glm::vec3> contour1 {glm::vec3(100, 100, 1), glm::vec3(100, 600, 1), glm::vec3(600, 600, 1), glm::vec3(600, 100, 1)};
     std::vector<glm::vec3> contour2 {glm::vec3(150, 150, 1), glm::vec3(150, 550, 1), glm::vec3(550, 550, 1), glm::vec3(550, 150, 1)};
 
-    std::shared_ptr<Region> a = std::make_shared<Region>(contour1, o);
-    std::shared_ptr<Region> b = std::make_shared<Region>(contour2, t);
+    std::shared_ptr<Region> a = std::make_shared<Region>(contour1, *o);
+    std::shared_ptr<Region> b = std::make_shared<Region>(contour2, *t);
 
     ASSERT_TRUE(cm_is_aabb_enveloped(a, b));
     ASSERT_TRUE(cm_collides_with_aabb(a, b));
@@ -200,7 +206,7 @@ TEST_F(SIGRunCollisionManagerTest, cm_collides_with_mask)
 
     script.load_class_names(classes, files[0]);
 
-    bp::object o = script.si_plugin(module_name, rpath, classes[0]);
+    std::shared_ptr<bp::object> o = std::make_shared<bp::object>(script.si_plugin(module_name, rpath, classes[0]));
 
     classes.clear();
 
@@ -210,14 +216,14 @@ TEST_F(SIGRunCollisionManagerTest, cm_collides_with_mask)
 
     script.load_class_names(classes, files[1]);
 
-    bp::object t = script.si_plugin(module_name, rpath, classes[0]);
+    std::shared_ptr<bp::object> t = std::make_shared<bp::object>(script.si_plugin(module_name, rpath, classes[0]));
 
     std::vector<glm::vec3> contour1 {glm::vec3(100, 100, 1), glm::vec3(100, 600, 1), glm::vec3(600, 600, 1), glm::vec3(600, 100, 1)};
     std::vector<glm::vec3> contour2 {glm::vec3(150, 150, 1), glm::vec3(150, 550, 1), glm::vec3(550, 550, 1), glm::vec3(550, 150, 1)};
 
-    std::shared_ptr<Region> a = std::make_shared<Region>(contour1, o);
-    std::shared_ptr<Region> b = std::make_shared<Region>(contour2, t);
-    std::shared_ptr<Region> c = std::make_shared<Region>(contour1, t);
+    std::shared_ptr<Region> a = std::make_shared<Region>(contour1, *o);
+    std::shared_ptr<Region> b = std::make_shared<Region>(contour2, *t);
+    std::shared_ptr<Region> c = std::make_shared<Region>(contour1, *t);
 
     ASSERT_TRUE(cm_is_aabb_enveloped(a, b));
     ASSERT_TRUE(cm_collides_with_aabb(a, b));
@@ -240,7 +246,7 @@ TEST_F(SIGRunCollisionManagerTest, are_aabbs_equal)
 
     script.load_class_names(classes, files[0]);
 
-    bp::object o = script.si_plugin(module_name, rpath, classes[0]);
+    std::shared_ptr<bp::object> o = std::make_shared<bp::object>(script.si_plugin(module_name, rpath, classes[0]));
 
     classes.clear();
 
@@ -250,14 +256,14 @@ TEST_F(SIGRunCollisionManagerTest, are_aabbs_equal)
 
     script.load_class_names(classes, files[1]);
 
-    bp::object t = script.si_plugin(module_name, rpath, classes[0]);
+    std::shared_ptr<bp::object> t = std::make_shared<bp::object>(script.si_plugin(module_name, rpath, classes[0]));
 
     std::vector<glm::vec3> contour1 {glm::vec3(100, 100, 1), glm::vec3(100, 600, 1), glm::vec3(600, 600, 1), glm::vec3(600, 100, 1)};
     std::vector<glm::vec3> contour2 {glm::vec3(150, 150, 1), glm::vec3(150, 550, 1), glm::vec3(550, 550, 1), glm::vec3(550, 150, 1)};
 
-    std::shared_ptr<Region> a = std::make_shared<Region>(contour1, o);
-    std::shared_ptr<Region> b = std::make_shared<Region>(contour2, t);
-    std::shared_ptr<Region> c = std::make_shared<Region>(contour1, t);
+    std::shared_ptr<Region> a = std::make_shared<Region>(contour1, *o);
+    std::shared_ptr<Region> b = std::make_shared<Region>(contour2, *t);
+    std::shared_ptr<Region> c = std::make_shared<Region>(contour1, *t);
 
     ASSERT_TRUE(cm_is_aabb_enveloped(a, b));
     ASSERT_TRUE(cm_collides_with_aabb(a, b));
@@ -287,7 +293,7 @@ TEST_F(SIGRunCollisionManagerTest, handle_event_continuous)
 
     script.load_class_names(classes, files[0]);
 
-    bp::object o = script.si_plugin(module_name, rpath, classes[0]);
+    std::shared_ptr<bp::object> o = std::make_shared<bp::object>(script.si_plugin(module_name, rpath, classes[0]));
 
     classes.clear();
 
@@ -297,13 +303,13 @@ TEST_F(SIGRunCollisionManagerTest, handle_event_continuous)
 
     script.load_class_names(classes, files[1]);
 
-    bp::object t = script.si_plugin(module_name, rpath, classes[0]);
+    std::shared_ptr<bp::object> t = std::make_shared<bp::object>(script.si_plugin(module_name, rpath, classes[0]));
 
     std::vector<glm::vec3> contour1 {glm::vec3(100, 100, 1), glm::vec3(100, 600, 1), glm::vec3(600, 600, 1), glm::vec3(600, 100, 1)};
     std::vector<glm::vec3> contour2 {glm::vec3(150, 150, 1), glm::vec3(150, 550, 1), glm::vec3(550, 550, 1), glm::vec3(550, 150, 1)};
 
-    std::shared_ptr<Region> a = std::make_shared<Region>(contour1, o);
-    std::shared_ptr<Region> b = std::make_shared<Region>(contour2, t);
+    std::shared_ptr<Region> a = std::make_shared<Region>(contour1, *o);
+    std::shared_ptr<Region> b = std::make_shared<Region>(contour2, *t);
 
     EXPECT_NO_FATAL_FAILURE(cm_handle_event_continuous(a, b));
 }
@@ -323,7 +329,7 @@ TEST_F(SIGRunCollisionManagerTest, handle_event_enter)
 
     script.load_class_names(classes, files[0]);
 
-    bp::object o = script.si_plugin(module_name, rpath, classes[0]);
+    std::shared_ptr<bp::object> o = std::make_shared<bp::object>(script.si_plugin(module_name, rpath, classes[0]));
 
     classes.clear();
 
@@ -333,19 +339,17 @@ TEST_F(SIGRunCollisionManagerTest, handle_event_enter)
 
     script.load_class_names(classes, files[1]);
 
-    bp::object t = script.si_plugin(module_name, rpath, classes[0]);
+    std::shared_ptr<bp::object> t = std::make_shared<bp::object>(script.si_plugin(module_name, rpath, classes[0]));
 
     std::vector<glm::vec3> contour1 {glm::vec3(100, 100, 1), glm::vec3(100, 600, 1), glm::vec3(600, 600, 1), glm::vec3(600, 100, 1)};
     std::vector<glm::vec3> contour2 {glm::vec3(150, 150, 1), glm::vec3(150, 550, 1), glm::vec3(550, 550, 1), glm::vec3(550, 150, 1)};
 
-    std::shared_ptr<Region> a = std::make_shared<Region>(contour1, o);
-    std::shared_ptr<Region> b = std::make_shared<Region>(contour2, t);
+    std::shared_ptr<Region> a = std::make_shared<Region>(contour1, *o);
+    std::shared_ptr<Region> b = std::make_shared<Region>(contour2, *t);
 
     auto tuple = std::make_tuple(a->uuid(), b->uuid());
 
     EXPECT_NO_FATAL_FAILURE(cm_handle_event_enter(a, b, tuple));
-
-
 }
 
 TEST_F(SIGRunCollisionManagerTest, handle_event_leave)
@@ -363,7 +367,7 @@ TEST_F(SIGRunCollisionManagerTest, handle_event_leave)
 
     script.load_class_names(classes, files[0]);
 
-    bp::object o = script.si_plugin(module_name, rpath, classes[0]);
+    std::shared_ptr<bp::object> o = std::make_shared<bp::object>(script.si_plugin(module_name, rpath, classes[0]));
 
     classes.clear();
 
@@ -373,13 +377,13 @@ TEST_F(SIGRunCollisionManagerTest, handle_event_leave)
 
     script.load_class_names(classes, files[1]);
 
-    bp::object t = script.si_plugin(module_name, rpath, classes[0]);
+    std::shared_ptr<bp::object> t = std::make_shared<bp::object>(script.si_plugin(module_name, rpath, classes[0]));
 
     std::vector<glm::vec3> contour1 {glm::vec3(100, 100, 1), glm::vec3(100, 600, 1), glm::vec3(600, 600, 1), glm::vec3(600, 100, 1)};
     std::vector<glm::vec3> contour2 {glm::vec3(150, 150, 1), glm::vec3(150, 550, 1), glm::vec3(550, 550, 1), glm::vec3(550, 150, 1)};
 
-    std::shared_ptr<Region> a = std::make_shared<Region>(contour1, o);
-    std::shared_ptr<Region> b = std::make_shared<Region>(contour2, t);
+    std::shared_ptr<Region> a = std::make_shared<Region>(contour1, *o);
+    std::shared_ptr<Region> b = std::make_shared<Region>(contour2, *t);
 
     auto tuple = std::make_tuple(a->uuid(), b->uuid());
 

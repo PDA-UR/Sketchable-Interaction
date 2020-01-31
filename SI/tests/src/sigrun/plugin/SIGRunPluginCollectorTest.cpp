@@ -45,5 +45,5 @@ TEST_F(SIGRunPluginCollectorTest, collect)
 
 TEST_F(SIGRunPluginCollectorTest, meta_type)
 {
-    ASSERT_EQ(PluginCollector().meta_type(), "PLUGIN_COLLECTOR");
+    ASSERT_EQ(PluginCollector().meta_type(), "PLUGINCOLLECTOR");
 }

@@ -13,9 +13,7 @@ void PluginCollector::collect(const std::string &rel_path, std::vector<std::stri
 std::string PluginCollector::plugin_folder(const std::string &rel_path)
 {
     char buf[FILENAME_MAX];
-
     getcwd(buf, FILENAME_MAX);
-
     std::string directory(buf);
     directory += rel_path;
 

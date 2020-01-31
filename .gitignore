@@ -221,3 +221,11 @@ SI/tests/res/python_invoker/__pycache__/
 SI/tests/res/core/__pycache__/
 
 SI/plugins/standard_environment_library/__pycache__/
+/SI/examples/app/CMakeLists.txt
+/SI/src/siren/display/
+/SI/src/siren/geometry/
+/SI/src/siren/io/
+/SI/src/siren/lib/
+/SI/src/siren/region_representation/
+/SI/src/siren/res/
+/SI/src/siren/shader/

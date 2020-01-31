@@ -16,11 +16,11 @@ SpriteBatch::SpriteBatch() :
 
 SpriteBatch::~SpriteBatch()
 {
-    if(d_vbos[0] && d_vbos[1])
-        glDeleteBuffers(2, d_vbos);
+    if(d_vbos[0] && d_vbos[1] && d_vbos[2])
+        glDeleteBuffers(3, d_vbos);
 
-    if(d_vaos[0] && d_vaos[1])
-        glDeleteBuffers(2, d_vaos);
+    if(d_vaos[0] && d_vaos[1] && d_vaos[2])
+        glDeleteBuffers(3, d_vaos);
 }
 
 void SpriteBatch::initialize()
@@ -39,20 +39,19 @@ void SpriteBatch::initialize()
     create_vertex_arrays();
 }
 
-void SpriteBatch::register_region_sprites(const std::vector<std::shared_ptr<Region>> &sprites, const GLfloat *camera_matrix)
+void SpriteBatch::register_region_sprites(const std::map<std::string, RegionRepresentation*>& regions, const GLfloat *camera_matrix)
 {
-    if(!sprites.empty())
+    if(!regions.empty())
     {
         d_render_batches.clear();
-
-//        d_step_count = sprites[0]->contour_size();
+        d_step_count = regions.begin()->second->contour_size;
 
         begin_area(camera_matrix);
-        draw_area(sprites);
+        draw_area(regions);
         end_area();
 
         begin_texture(camera_matrix);
-        draw_texture(sprites);
+        draw_texture(regions);
         end_texture();
 
         create_render_batches();
@@ -79,16 +78,17 @@ void SpriteBatch::register_partial_region_sprite(const std::vector<glm::vec2> &p
     d_shader_area->unuse();
 }
 
-void SpriteBatch::render(const std::vector<std::shared_ptr<Region>> &sprites, const std::vector<glm::vec2>& partial_contour, const GLfloat *camera_matrix)
+void SpriteBatch::render(const std::map<std::string, RegionRepresentation*>& regions, const std::vector<glm::vec2>& partial_contour, const GLfloat *camera_matrix)
 {
-    register_region_sprites(sprites, camera_matrix);
-    register_partial_region_sprite(partial_contour, camera_matrix);
+    register_region_sprites(regions, camera_matrix);
+//    register_partial_region_sprite(partial_contour, camera_matrix);
 
     for (auto &batch : d_render_batches)
     {
         d_shader_area->use();
         glBindVertexArray(d_vaos[0]);
         glDrawArrays(GL_TRIANGLES, batch.offset, batch.num_vertices);
+        glBindVertexArray(0);
         d_shader_area->unuse();
 
         d_shader_texture->use();
@@ -100,13 +100,13 @@ void SpriteBatch::render(const std::vector<std::shared_ptr<Region>> &sprites, co
         d_shader_texture->unuse();
     }
 
-    d_shader_area->use();
-    glBindVertexArray(d_vaos[2]);
-
-    glDrawArrays(GL_LINE_STRIP, 0, partial_contour.size());
-
-    glBindVertexArray(0);
-    d_shader_area->unuse();
+//    d_shader_area->use();
+//    glBindVertexArray(d_vaos[2]);
+//
+//    glDrawArrays(GL_LINE_STRIP, 0, partial_contour.size());
+//
+//    glBindVertexArray(0);
+//    d_shader_area->unuse();
 }
 
 void SpriteBatch::create_vertex_arrays()
@@ -211,11 +211,11 @@ void SpriteBatch::begin_area(const GLfloat *camera_matrix, const GlyphSortType &
     d_glyphs_area.clear();
 }
 
-void SpriteBatch::draw_area(const std::vector<std::shared_ptr<Region>> &region_sprites)
+void SpriteBatch::draw_area(const std::map<std::string, RegionRepresentation*>& regions)
 {
-    for (const auto &region : region_sprites)
+    for (const auto& [key, value] : regions)
     {
-        d_glyphs_area.emplace_back(region);
+        d_glyphs_area.emplace_back(value);
         d_glyphs_area.back().depth = cummulative_depth++;
     }
 }
@@ -235,19 +235,19 @@ void SpriteBatch::begin_texture(const GLfloat *camera_matrix, const GlyphSortTyp
 {
     d_shader_texture->use();
     glActiveTexture(GL_TEXTURE0);
-    glUniformMatrix4fv(d_shader_texture->uniform_location("P"), 1, GL_FALSE,
-                       static_cast<const GLfloat *>(camera_matrix));
+    glUniformMatrix4fv(d_shader_texture->uniform_location("P"), 1, GL_FALSE, static_cast<const GLfloat *>(camera_matrix));
     glUniform1i(d_shader_texture->uniform_location("mysampler"), 0);
 
     d_glyphs_texture.clear();
     d_sort_type = type;
 }
 
-void SpriteBatch::draw_texture(const std::vector<std::shared_ptr<Region>> &region_sprites)
+void SpriteBatch::draw_texture(const std::map<std::string, RegionRepresentation*>& regions)
 {
-//    for (const auto &region_sprite : region_sprites)
-//        d_glyphs_texture.emplace_back(region_sprite->texture_rectangle(), region_sprite->texture_uv(),
-//                                      region_sprite->texture_path(), cummulative_depth++, Color(255, 255, 255, 255));
+    for (const auto& [key, value]: regions)
+    {
+        d_glyphs_texture.emplace_back(value->destination_rect, value->uv, value->texture_path, cummulative_depth++, Color(255, 255, 255, 255));
+    }
 }
 
 void SpriteBatch::end_texture()
@@ -263,8 +263,7 @@ void SpriteBatch::end_texture()
 
 void SpriteBatch::create_render_batches()
 {
-    if (d_glyphs_area.empty() || d_glyphs_texture_ptr.empty() ||
-        (d_glyphs_area_ptr.size() != d_glyphs_texture_ptr.size()))
+    if (d_glyphs_area.empty() || d_glyphs_texture_ptr.empty() || (d_glyphs_area_ptr.size() != d_glyphs_texture_ptr.size()))
         return;
 
     std::vector<Vertex> vertices_area, vertices_texture;
@@ -277,8 +276,7 @@ void SpriteBatch::create_render_batches()
     int current_vertex_area = 0;
     int current_vertex_texture = 0;
 
-    d_render_batches.emplace_back(offset_area, d_glyphs_area_ptr[0]->vertices.size(), offset_texture, 6,
-                                  d_glyphs_texture_ptr[0]->texture);
+    d_render_batches.emplace_back(offset_area, d_glyphs_area_ptr[0]->vertices.size(), offset_texture, 6, d_glyphs_texture_ptr[0]->texture);
 
     vertices_texture[current_vertex_texture++] = d_glyphs_texture_ptr[0]->tlc;
     vertices_texture[current_vertex_texture++] = d_glyphs_texture_ptr[0]->blc;
@@ -297,8 +295,7 @@ void SpriteBatch::create_render_batches()
     for (int i = 1; i < d_glyphs_area.size(); i++)
     {
         if (d_glyphs_texture_ptr[i]->texture != d_glyphs_texture_ptr[i - 1]->texture)
-            d_render_batches.emplace_back(offset_area, d_glyphs_area_ptr[i]->vertices.size(), offset_texture, 6,
-                                          d_glyphs_texture_ptr[i]->texture);
+            d_render_batches.emplace_back(offset_area, d_glyphs_area_ptr[i]->vertices.size(), offset_texture, 6,  d_glyphs_texture_ptr[i]->texture);
         else
         {
             d_render_batches.back().num_vertices2 += 6;

@@ -8,7 +8,10 @@
 #include <siren/display/Camera2D.hpp>
 #include <siren/shader/GLSLProgram.hpp>
 #include <siren/geometry/SpriteBatch.hpp>
-#include <siren/display/Timing.hpp>
+#include <siren/display/Window.hpp>
+#include <siren/geometry/TessellationPatch.hpp>
+#include <map>
+#include <siren/region_representation/RegionRepresentation.hpp>
 
 class SpriteBatch;
 
@@ -28,7 +31,7 @@ public:
     RenderEngineSDL2();
     ~RenderEngineSDL2();
 
-    void start(int width, int height) override;
+    void start(int width, int height, int argc, char** argv) override;
     void run() override;
     void pause() override;
 
@@ -36,7 +39,7 @@ private:
     void draw();
     void init_shaders();
 
-    float d_frame_time, d_time, d_fps, d_max_fps;
+    float d_time, d_max_fps;
     int d_width, d_height;
 
     STATE d_state;
@@ -49,13 +52,16 @@ private:
     bool d_is_running = false;
     bool d_is_displaying_wireframe = false;
 
+    Window d_window;
+
     GLSLProgram_ptr d_shader_program;
     Camera2D_ptr d_camera;
     SpriteBatch_ptr d_rsb;
 
-    FPSLimiter d_fps_limiter;
+    // key: region_uuid, value: tessellation result of region
+    std::map<std::string, std::vector<TesselationPatch*>> d_tesselation_objects;
 
-protected:
+    std::map<std::string, RegionRepresentation*> d_region_representations;
 };
 
 

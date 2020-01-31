@@ -55,3 +55,21 @@ TEST_F(SIGRunPrintTest, map)
 
     EXPECT_NO_FATAL_FAILURE(Print::print(map2));
 }
+
+TEST_F(SIGRunPrintTest, chain)
+{
+    std::map<int, int> map2;
+
+    for(int i = 0; i < 5; i++)
+        map2.insert(std::make_pair<int, int>(reinterpret_cast<int &&>(i), reinterpret_cast<int &&>(i)));
+
+    std::vector<std::vector<std::string>> list =
+            {
+                    {"Hello", "World", "Test", "Case"},
+                    {"World", "Test", "Case", "Hello"},
+                    {"Test", "Case", "Hello", "World"},
+                    {"Case", "Hello", "World", "Test"}
+            };
+
+    EXPECT_NO_FATAL_FAILURE(Print::print(1, map2, list));
+}

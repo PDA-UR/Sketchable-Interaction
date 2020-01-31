@@ -1,7 +1,7 @@
 
 
-#ifndef SITEST_TESSELATOR_HPP
-#define SITEST_TESSELATOR_HPP
+#ifndef SITEST_TESSELLATOR_HPP
+#define SITEST_TESSELLATOR_HPP
 
 #include <vector>
 #include <GL/glew.h>
@@ -12,10 +12,10 @@
 #define TESSELATION_CALLBACK
 #endif
 
-class Tesselator
+class Tessellator
 {
 public:
-    static bool tesselate(std::vector<glm::vec2> &out, const std::vector<glm::vec2> &vertices);
+    static bool tesselate(std::vector<glm::vec3> &out, const std::vector<glm::vec3> &vertices);
 
 private:
     static TESSELATION_CALLBACK void vertex_data(const GLvoid *data);
@@ -24,10 +24,10 @@ private:
 
     static TESSELATION_CALLBACK void vertex_combine(const GLdouble new_vertex[3], const GLdouble *neighbour_vertex[4], const GLfloat neighbour_weight[4], GLdouble **out);
 
-    static std::vector<glm::vec2> temp;
+    static std::vector<glm::vec3> temp;
     static int vertex_index;
     static std::vector<std::vector<GLdouble>> d_vertices;
 };
 
 
-#endif //SITEST_TESSELATOR_HPP
+#endif //SITEST_TESSELLATOR_HPP

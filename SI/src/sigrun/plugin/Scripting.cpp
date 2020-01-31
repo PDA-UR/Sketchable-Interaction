@@ -5,14 +5,23 @@
 #include <iosfwd>
 #include <boost/python.hpp>
 #include <debug/Print.hpp>
+#include "PythonInvoker.hpp"
 
 namespace bp = boost::python;
 
 Scripting::Scripting()
-{
+{SIGRUN
     PyImport_AppendInittab((char *) "libPySI", &PyInit_libPySI);
 
     Py_Initialize();
+
+    char buf[FILENAME_MAX];
+    getcwd(buf, FILENAME_MAX);
+    std::string directory(buf);
+
+    bp::object sys_module = bp::import("sys");
+    bp::str module_directory = directory.substr(0, directory.size() - 2).c_str();
+    sys_module.attr("path").attr("insert")(1, module_directory);
 
     d_main = bp::import("__main__");
     d_globals = d_main.attr("__dict__");
@@ -23,7 +32,14 @@ Scripting::~Scripting()
 
 bp::object Scripting::si_plugin(std::string &module_name, std::string &path, std::string &class_name)
 {
-    return import(module_name, path).attr(class_name.c_str())();
+    try
+    {
+        return import(module_name, path).attr(class_name.c_str())();
+    }
+    catch(bp::error_already_set&)
+    {}
+
+    return bp::object();
 }
 
 std::string Scripting::load_plugin_source(const char *source)
@@ -82,7 +98,10 @@ void Scripting::load_class_names(std::vector<std::string> &classes, const std::s
 
             if (found2 != std::string::npos)
             {
-                classes.push_back(source.substr(found + clazz.size() + space.size(),found2 - (found + clazz.size() + space.size())));
+                std::string class_name = source.substr(found + clazz.size() + space.size(),found2 - (found + clazz.size() + space.size()));
+
+                if(class_name.substr(0, 2) != "__")
+                    classes.push_back(class_name);
 
                 size += found2;
             }

@@ -13,9 +13,10 @@
     Specify, which Logging capabilities are desired.
 */
 Core::Core()
-{SIOBJECT("CORE")
+{SIOBJECT(SIGRUN)
     Log::__DEBUG__ = true;
     Log::SHOW = LOG_SHOW_ALL;
+    Log::WHERE = LOG_CONSOLE;
 }
 
 /**
@@ -25,9 +26,9 @@ Core::Core()
 */
 Core::~Core()
 {
-    INFO("Shutting down... ", LOG_CONSOLE);
+    INFO("Shutting down...");
 
-    INFO("Shut down", LOG_CONSOLE);
+    INFO("Shut down");
 }
 
 /**
@@ -37,26 +38,26 @@ Core::~Core()
 */
 void Core::start(char** argv, int argc, IRenderEngine* ire)
 {
-    INFO("Initializing... ", LOG_CONSOLE);
+    INFO("Initializing... ");
 
     std::unordered_map<std::string, std::unique_ptr<bp::object>> plugins;
     std::string path = std::string(argv[1]) + "/standard_environment_library/";
 
-    INFO("Loading plugins... ", LOG_CONSOLE);
+    INFO("Loading plugins... ");
     retrieve_available_plugins(plugins, path);
-    INFO("Loading plugins finished", LOG_CONSOLE);
+    INFO("Loading plugins finished");
 
     if(!plugins.empty())
-        INFO(std::to_string(plugins.size()) + " plugin(s) loaded", LOG_CONSOLE);
+        INFO(std::to_string(plugins.size()) + " plugin(s) loaded");
     else
-        ERROR("No plugins loaded", LOG_CONSOLE);
+        ERROR("No plugins loaded");
 
     std::unique_ptr<Context> upctx(new Context(1920, 1080, plugins));
 
-    INFO("Initialization finished", LOG_CONSOLE);
+    INFO("Initialization finished");
 
-    upctx->begin(ire);
-    INFO("Context closed", LOG_CONSOLE);
+    upctx->begin(ire, argc, argv);
+    INFO("Context closed");
 
 }
 
@@ -94,8 +95,6 @@ void Core::retrieve_available_plugins(std::unordered_map<std::string, std::uniqu
         std::string base_filename = path.substr(path.find_last_of("/\\") + 1);
         std::string module_name = base_filename.substr(0, base_filename.find_last_of('.'));
         std::string rpath = plugin_path + base_filename;
-
-        Print::print(rpath);
 
         script.load_class_names(classes, path);
 

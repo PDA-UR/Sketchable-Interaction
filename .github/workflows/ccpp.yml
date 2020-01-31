@@ -1,0 +1,25 @@
+name: CMake CI
+
+on:
+  push:
+    branches:
+    - runtime-dev
+  pull_request:
+    branches:
+      - runtime-dev
+jobs:
+   build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@integration
+    - name: Commit files
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git commit -m "Add changes" -a
+    - name: Push changes
+      uses: ad-m/github-push-action@master
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+    
+       
