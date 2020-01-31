@@ -27,10 +27,15 @@ jobs:
     - name: Install GLM
       run: |
         sudo apt-get install libglm-dev
+        
     - name: Install GLEW
       run: |
         sudo apt-get install libglew-dev
         
+    - name: Install uuid
+      run: |
+        sudo apt-get install uuid-dev
+
     - name: Install SDL2
       run: |
         sudo apt-get install libsdl2-dev
