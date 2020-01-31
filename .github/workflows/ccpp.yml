@@ -70,10 +70,9 @@ jobs:
         (cd /home/runner/work/Sketchable-Interaction/Sketchable-Interaction/SI/tests;./../../run_unit_tests)
         
   release:
-    runs-on: ubuntu-latest
-    if: github.ref == 'integration'
     needs: build
-    
+    runs-on: ubuntu-latest
+
     steps:
       - uses: actions/checkout@master
       - name: Commit files
