@@ -5,7 +5,7 @@
 
 #include <memory>
 
-#include <sigrun/SIObject.hpp>
+#include <SI/SI.hpp>
 
 #include <QMainWindow>
 #include <QObject>
