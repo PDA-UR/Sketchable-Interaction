@@ -74,6 +74,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - uses: actions/checkout@v2
+        with:
+          ref: integration
       - name: Commit files
         run: |
           git config --local user.email "action@github.com"
