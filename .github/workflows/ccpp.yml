@@ -77,20 +77,10 @@ jobs:
       - uses: actions/checkout@v2
         with:
           ref: integration
-      - name: Commit files
-        run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
-          git commit -m "Add changes" -a
-      - name: GitHub Push
-        uses: ad-m/github-push-action@v0.5.0
+          
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v2.2.0
         with:
+          token: ${{ secrets.GITHUB_TOKEN }}
           branch: master
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-                    
-      - name: Upload artifact
-        uses: actions/upload-artifact@v1.0.0          
-        with:
-          name: sketchable_interaction_binaries
-          path: path/to/artifact
-       
+        
