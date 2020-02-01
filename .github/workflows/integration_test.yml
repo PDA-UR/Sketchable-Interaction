@@ -1,4 +1,4 @@
-name: CMake CI
+name: Integration Tests
 
 on:
   push:
