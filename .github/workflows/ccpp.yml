@@ -85,8 +85,9 @@ jobs:
       - name: GitHub Push
         uses: ad-m/github-push-action@v0.5.0
         with:
+          branch: master
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          
+                    
       - name: Upload artifact
         uses: actions/upload-artifact@v1.0.0          
         with:
