@@ -53,7 +53,7 @@ jobs:
         cd boost_1_69_0 
         sudo ln -s /usr/local/include/python3.7m /usr/local/include/python3.7
         sed -i "s@includes ?= \$(prefix)/include/python\$(version)@includes ?= \$(prefix)/include/python\$(version)m@" tools/build/src/tools/python.jam
-        sudo ./bootstrap.sh --with-python=$(which python3) -j 8
+        sudo ./bootstrap.sh --with-python=$(which python3)
         sudo ./b2 -j 8 install
         cd ..
         cd ..
