@@ -1,9 +1,6 @@
 name: Integration Tests
 
 on:
-  push:
-    branches:
-      - integration
   pull_request:
     branches:
       - integration
@@ -22,7 +19,7 @@ jobs:
         python-version: ${{ matrix.python-version }}
     - name: Install Qt5
       run: |
-        sudo apt-get install qtbase5-dev
+        sudo apt-get --fix-missing install qtbase5-dev
         
     - name: Install GLM
       run: |
