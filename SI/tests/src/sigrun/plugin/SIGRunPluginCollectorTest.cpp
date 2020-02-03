@@ -12,7 +12,7 @@ TEST_F(SIGRunPluginCollectorTest, construction)
 
 TEST_F(SIGRunPluginCollectorTest, collect)
 {
-    std::vector<std::string> files;
+    std::vector<std::tuple<std::string, std::string>> files;
 
     EXPECT_FALSE(files.size());
     EXPECT_NO_FATAL_FAILURE(PluginCollector().collect("/" + PATH, files));
@@ -32,11 +32,11 @@ TEST_F(SIGRunPluginCollectorTest, collect)
 
     for(auto& file : files)
     {
-        if (file == level0)
+        if (std::get<0>(file) + "/"+ std::get<1>(file) == level0)
             found_l0 = true;
-        if (file == level1)
+        if (std::get<0>(file) + "/"+ std::get<1>(file) == level1)
             found_l1 = true;
-        if (file == level2)
+        if (std::get<0>(file) + "/"+ std::get<1>(file) == level2)
             found_l2 = true;
     }
 

@@ -25,6 +25,8 @@ Region::Region(const std::vector<glm::vec3> &contour, const bp::object& effect):
     qRegisterMetaType<bp::object>("bp::object");
     qRegisterMetaType<bp::tuple>("bp::tuple");
 
+
+
     d_uuid = std::string(_UUID_);
 
     d_effect->attr("_uuid") = d_uuid;

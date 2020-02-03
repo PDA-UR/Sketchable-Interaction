@@ -49,7 +49,7 @@ void MainWindow::loop(double delta, int fps)
     for(const auto& region: regions)
     {
         if(d_region_representations.find(region->uuid()) == d_region_representations.end())
-            d_region_representations.insert({region->uuid(), std::make_unique<RegionRepresentation>(region->contour(), region->transform(), region->color(), region->name(), region->texture_path())});
+            d_region_representations.insert({region->uuid(), std::make_unique<RegionRepresentation>(region->contour(), region->transform(), region->color(), region->name(), region->texture_path(), this)});
         else
         {
             if (region->is_transformed())

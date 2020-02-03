@@ -13,10 +13,8 @@
     Specify, which Logging capabilities are desired.
 */
 Core::Core()
-{SIOBJECT(SIGRUN)
-    Log::__DEBUG__ = true;
-    Log::SHOW = LOG_SHOW_ALL;
-    Log::WHERE = LOG_CONSOLE;
+{SIGRUN
+
 }
 
 /**
@@ -41,7 +39,7 @@ void Core::start(char** argv, int argc, IRenderEngine* ire)
     INFO("Initializing... ");
 
     std::unordered_map<std::string, std::unique_ptr<bp::object>> plugins;
-    std::string path = std::string(argv[1]) + "/standard_environment_library/";
+    std::string path = "plugins";
 
     INFO("Loading plugins... ");
     retrieve_available_plugins(plugins, path);
@@ -84,19 +82,23 @@ void Core::stop()
 */
 void Core::retrieve_available_plugins(std::unordered_map<std::string, std::unique_ptr<bp::object>> &plugins, const std::string& plugin_path)
 {
-    std::vector<std::string> files;
+    std::vector<std::tuple<std::string, std::string>> files;
+
     Scripting script;
 
     PluginCollector().collect("/" + plugin_path, files);
 
-    for (auto &path : files)
+    for(auto& file: files)
     {
         std::vector<std::string> classes;
-        std::string base_filename = path.substr(path.find_last_of("/\\") + 1);
-        std::string module_name = base_filename.substr(0, base_filename.find_last_of('.'));
-        std::string rpath = plugin_path + base_filename;
 
-        script.load_class_names(classes, path);
+        const std::string& full_path = std::get<0>(file);
+        const std::string& name = std::get<1>(file);
+
+        std::string module_name = name.substr(0, name.find_last_of('.'));
+        std::string rpath = full_path.substr(full_path.find(plugin_path)) + "/" + name;
+
+        script.load_class_names(classes, rpath);
 
         for (auto &ref : classes)
             plugins[ref] = std::make_unique<bp::object>(script.si_plugin(module_name, rpath, ref));

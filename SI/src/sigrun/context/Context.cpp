@@ -8,6 +8,11 @@
 #include <pysi/SuperEffect.hpp>
 #include <sigrun/util/Util.hpp>
 
+
+#include <QQuickWidget>
+
+
+
 namespace bp = boost::python;
 
 Context* Context::self = nullptr;
@@ -60,6 +65,7 @@ void Context::add_startup_regions(const std::unordered_map<std::string, std::uni
                     {
                         case PySIEffect::EffectType::SI_CANVAS: break;
                         case PySIEffect::EffectType::SI_MOUSE_CURSOR:
+                            DEBUG("HERE");
                             add_cursor_regions(value);
                             break;
 
@@ -105,6 +111,7 @@ void Context::begin(IRenderEngine* ire, int argc, char** argv)
     INFO("Creating Qt5 Application...");
     QApplication d_app(argc, argv);
     INFO("Qt5 Application created!");
+
 
     d_app.setOverrideCursor(Qt::BlankCursor);
 

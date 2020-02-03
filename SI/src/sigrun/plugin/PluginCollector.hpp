@@ -14,11 +14,11 @@ public:
     }
 
     ~PluginCollector() = default;
-    void collect(const std::string &rel_path, std::vector<std::string> &files);
+    void collect(const std::string &rel_path, std::vector<std::tuple<std::string, std::string>> &files);
 
 private:
     std::string plugin_folder(const std::string &rel_path);
-    void grab_plugin_files(const std::string &path, std::vector<std::string> &files);
+    void grab_plugin_files(const std::string &path, std::vector<std::tuple<std::string, std::string>> &files);
 };
 
 #endif //SIGRUN_PLUGINCOLLECTOR_HPP
