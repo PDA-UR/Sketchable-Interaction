@@ -21,23 +21,17 @@ jobs:
       run: |
         sudo apt-get update
         sudo apt-get --fix-missing install qtbase5-dev
+        sudo apt-get install qtdeclarative5-dev
+
         
     - name: Install GLM
       run: |
         sudo apt-get install libglm-dev
         
-    - name: Install GLEW
-      run: |
-        sudo apt-get install libglew-dev
-        
     - name: Install uuid
       run: |
         sudo apt-get install uuid-dev
 
-    - name: Install SDL2
-      run: |
-        sudo apt-get install libsdl2-dev
-    
     - name: Install PythonLibs
       run: |
         sudo apt-get install python3-dev
