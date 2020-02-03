@@ -75,5 +75,5 @@ target_precompile_headers(SIRenderEngine
 
 set_target_properties(SIRenderEngine PROPERTIES AUTOMOC TRUE)
 #target_link_libraries(SIRenderEngine ${OPENGL_LIBRARIES} ${GLEW_LIBRARY} ${SDL2_LIBRARIES} SIGeneralRuntime Qt5::Widgets)
-target_link_libraries(SIRenderEngine SIGeneralRuntime Qt5::Widgets)
+target_link_libraries(SIRenderEngine SIGeneralRuntime Qt5::QuickWidgets Qt5::Quick Qt5::Core Qt5::Widgets Qt5::Qml)
 add_dependencies(SIRenderEngine PySI SIGeneralRuntime)

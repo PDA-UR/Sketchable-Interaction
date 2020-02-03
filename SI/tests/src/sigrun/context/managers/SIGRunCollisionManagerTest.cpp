@@ -15,26 +15,31 @@ TEST_F(SIGRunCollisionManagerTest, collide)
 {
     std::string path = "res/region";
 
-    std::vector<std::string> files, classes;
+    std::vector<std::tuple<std::string, std::string>> files;
+    std::vector<std::string> classes;
 
     PluginCollector().collect("/" + path, files);
     Scripting script;
 
-    std::string base_filename = files[0].substr(files[0].find_last_of("/\\") + 1);
-    std::string module_name = base_filename.substr(0, base_filename.find_last_of('.'));
-    std::string rpath = path + "/" + base_filename;
+    const std::string& full_path = std::get<0>(files[0]);
+    const std::string& name = std::get<1>(files[0]);
 
-    script.load_class_names(classes, files[0]);
+    std::string module_name = name.substr(0, name.find_last_of('.'));
+    std::string rpath = full_path.substr(full_path.find(path)) + "/" + name;
 
-    std::shared_ptr<bp::object> o = std::make_shared<bp::object>(script.si_plugin(module_name, rpath, classes[0]));
+    script.load_class_names(classes, rpath);
+
+    bp::object o = script.si_plugin(module_name, rpath, classes[0]);
 
     classes.clear();
 
-    base_filename = files[1].substr(files[1].find_last_of("/\\") + 1);
-    module_name = base_filename.substr(0, base_filename.find_last_of('.'));
-    rpath = path + "/" + base_filename;
+    const std::string& full_path2 = std::get<0>(files[1]);
+    const std::string& name2 = std::get<1>(files[1]);
 
-    script.load_class_names(classes, files[1]);
+    module_name = name2.substr(0, name2.find_last_of('.'));
+    rpath = full_path2.substr(full_path2.find(path)) + "/" + name2;
+
+    script.load_class_names(classes, rpath);
 
     std::shared_ptr<bp::object> t = std::make_shared<bp::object>(script.si_plugin(module_name, rpath, classes[0]));
 
@@ -52,26 +57,31 @@ TEST_F(SIGRunCollisionManagerTest, has_capabilities_in_common)
 {
     std::string path = "res/region";
 
-    std::vector<std::string> files, classes;
+    std::vector<std::tuple<std::string, std::string>> files;
+    std::vector<std::string> classes;
 
     PluginCollector().collect("/" + path, files);
     Scripting script;
 
-    std::string base_filename = files[0].substr(files[0].find_last_of("/\\") + 1);
-    std::string module_name = base_filename.substr(0, base_filename.find_last_of('.'));
-    std::string rpath = path + "/" + base_filename;
+    const std::string& full_path = std::get<0>(files[0]);
+    const std::string& name = std::get<1>(files[0]);
 
-    script.load_class_names(classes, files[0]);
+    std::string module_name = name.substr(0, name.find_last_of('.'));
+    std::string rpath = full_path.substr(full_path.find(path)) + "/" + name;
 
-    std::shared_ptr<bp::object> o = std::make_shared<bp::object>(script.si_plugin(module_name, rpath, classes[0]));
+    script.load_class_names(classes, rpath);
+
+    bp::object o = script.si_plugin(module_name, rpath, classes[0]);
 
     classes.clear();
 
-    base_filename = files[1].substr(files[1].find_last_of("/\\") + 1);
-    module_name = base_filename.substr(0, base_filename.find_last_of('.'));
-    rpath = path + "/" + base_filename;
+    const std::string& full_path2 = std::get<0>(files[1]);
+    const std::string& name2 = std::get<1>(files[1]);
 
-    script.load_class_names(classes, files[1]);
+    module_name = name2.substr(0, name2.find_last_of('.'));
+    rpath = full_path2.substr(full_path2.find(path)) + "/" + name2;
+
+    script.load_class_names(classes, rpath);
 
     std::shared_ptr<bp::object> t = std::make_shared<bp::object>(script.si_plugin(module_name, rpath, classes[0]));
 
@@ -87,26 +97,31 @@ TEST_F(SIGRunCollisionManagerTest, collides_with_aabb)
 {
     std::string path = "res/region";
 
-    std::vector<std::string> files, classes;
+    std::vector<std::tuple<std::string, std::string>> files;
+    std::vector<std::string> classes;
 
     PluginCollector().collect("/" + path, files);
     Scripting script;
 
-    std::string base_filename = files[0].substr(files[0].find_last_of("/\\") + 1);
-    std::string module_name = base_filename.substr(0, base_filename.find_last_of('.'));
-    std::string rpath = path + "/" + base_filename;
+    const std::string& full_path = std::get<0>(files[0]);
+    const std::string& name = std::get<1>(files[0]);
 
-    script.load_class_names(classes, files[0]);
+    std::string module_name = name.substr(0, name.find_last_of('.'));
+    std::string rpath = full_path.substr(full_path.find(path)) + "/" + name;
 
-    std::shared_ptr<bp::object> o = std::make_shared<bp::object>(script.si_plugin(module_name, rpath, classes[0]));
+    script.load_class_names(classes, rpath);
+
+    bp::object o = script.si_plugin(module_name, rpath, classes[0]);
 
     classes.clear();
 
-    base_filename = files[1].substr(files[1].find_last_of("/\\") + 1);
-    module_name = base_filename.substr(0, base_filename.find_last_of('.'));
-    rpath = path + "/" + base_filename;
+    const std::string& full_path2 = std::get<0>(files[1]);
+    const std::string& name2 = std::get<1>(files[1]);
 
-    script.load_class_names(classes, files[1]);
+    module_name = name2.substr(0, name2.find_last_of('.'));
+    rpath = full_path2.substr(full_path2.find(path)) + "/" + name2;
+
+    script.load_class_names(classes, rpath);
 
     std::shared_ptr<bp::object> t = std::make_shared<bp::object>(script.si_plugin(module_name, rpath, classes[0]));
 
@@ -122,26 +137,31 @@ TEST_F(SIGRunCollisionManagerTest, is_aabb_enveloped_negative)
 {
     std::string path = "res/region";
 
-    std::vector<std::string> files, classes;
+    std::vector<std::tuple<std::string, std::string>> files;
+    std::vector<std::string> classes;
 
     PluginCollector().collect("/" + path, files);
     Scripting script;
 
-    std::string base_filename = files[0].substr(files[0].find_last_of("/\\") + 1);
-    std::string module_name = base_filename.substr(0, base_filename.find_last_of('.'));
-    std::string rpath = path + "/" + base_filename;
+    const std::string& full_path = std::get<0>(files[0]);
+    const std::string& name = std::get<1>(files[0]);
 
-    script.load_class_names(classes, files[0]);
+    std::string module_name = name.substr(0, name.find_last_of('.'));
+    std::string rpath = full_path.substr(full_path.find(path)) + "/" + name;
 
-    std::shared_ptr<bp::object> o = std::make_shared<bp::object>(script.si_plugin(module_name, rpath, classes[0]));
+    script.load_class_names(classes, rpath);
+
+    bp::object o = script.si_plugin(module_name, rpath, classes[0]);
 
     classes.clear();
 
-    base_filename = files[1].substr(files[1].find_last_of("/\\") + 1);
-    module_name = base_filename.substr(0, base_filename.find_last_of('.'));
-    rpath = path + "/" + base_filename;
+    const std::string& full_path2 = std::get<0>(files[1]);
+    const std::string& name2 = std::get<1>(files[1]);
 
-    script.load_class_names(classes, files[1]);
+    module_name = name2.substr(0, name2.find_last_of('.'));
+    rpath = full_path2.substr(full_path2.find(path)) + "/" + name2;
+
+    script.load_class_names(classes, rpath);
 
     std::shared_ptr<bp::object> t = std::make_shared<bp::object>(script.si_plugin(module_name, rpath, classes[0]));
 
@@ -158,26 +178,31 @@ TEST_F(SIGRunCollisionManagerTest, is_aabb_enveloped_positive)
 {
     std::string path = "res/region";
 
-    std::vector<std::string> files, classes;
+    std::vector<std::tuple<std::string, std::string>> files;
+    std::vector<std::string> classes;
 
     PluginCollector().collect("/" + path, files);
     Scripting script;
 
-    std::string base_filename = files[0].substr(files[0].find_last_of("/\\") + 1);
-    std::string module_name = base_filename.substr(0, base_filename.find_last_of('.'));
-    std::string rpath = path + "/" + base_filename;
+    const std::string& full_path = std::get<0>(files[0]);
+    const std::string& name = std::get<1>(files[0]);
 
-    script.load_class_names(classes, files[0]);
+    std::string module_name = name.substr(0, name.find_last_of('.'));
+    std::string rpath = full_path.substr(full_path.find(path)) + "/" + name;
 
-    std::shared_ptr<bp::object> o = std::make_shared<bp::object>(script.si_plugin(module_name, rpath, classes[0]));
+    script.load_class_names(classes, rpath);
+
+    bp::object o = script.si_plugin(module_name, rpath, classes[0]);
 
     classes.clear();
 
-    base_filename = files[1].substr(files[1].find_last_of("/\\") + 1);
-    module_name = base_filename.substr(0, base_filename.find_last_of('.'));
-    rpath = path + "/" + base_filename;
+    const std::string& full_path2 = std::get<0>(files[1]);
+    const std::string& name2 = std::get<1>(files[1]);
 
-    script.load_class_names(classes, files[1]);
+    module_name = name2.substr(0, name2.find_last_of('.'));
+    rpath = full_path2.substr(full_path2.find(path)) + "/" + name2;
+
+    script.load_class_names(classes, rpath);
 
     std::shared_ptr<bp::object> t = std::make_shared<bp::object>(script.si_plugin(module_name, rpath, classes[0]));
 
@@ -195,26 +220,31 @@ TEST_F(SIGRunCollisionManagerTest, cm_collides_with_mask)
 {
     std::string path = "res/region";
 
-    std::vector<std::string> files, classes;
+    std::vector<std::tuple<std::string, std::string>> files;
+    std::vector<std::string> classes;
 
     PluginCollector().collect("/" + path, files);
     Scripting script;
 
-    std::string base_filename = files[0].substr(files[0].find_last_of("/\\") + 1);
-    std::string module_name = base_filename.substr(0, base_filename.find_last_of('.'));
-    std::string rpath = path + "/" + base_filename;
+    const std::string& full_path = std::get<0>(files[0]);
+    const std::string& name = std::get<1>(files[0]);
 
-    script.load_class_names(classes, files[0]);
+    std::string module_name = name.substr(0, name.find_last_of('.'));
+    std::string rpath = full_path.substr(full_path.find(path)) + "/" + name;
 
-    std::shared_ptr<bp::object> o = std::make_shared<bp::object>(script.si_plugin(module_name, rpath, classes[0]));
+    script.load_class_names(classes, rpath);
+
+    bp::object o = script.si_plugin(module_name, rpath, classes[0]);
 
     classes.clear();
 
-    base_filename = files[1].substr(files[1].find_last_of("/\\") + 1);
-    module_name = base_filename.substr(0, base_filename.find_last_of('.'));
-    rpath = path + "/" + base_filename;
+    const std::string& full_path2 = std::get<0>(files[1]);
+    const std::string& name2 = std::get<1>(files[1]);
 
-    script.load_class_names(classes, files[1]);
+    module_name = name2.substr(0, name2.find_last_of('.'));
+    rpath = full_path2.substr(full_path2.find(path)) + "/" + name2;
+
+    script.load_class_names(classes, rpath);
 
     std::shared_ptr<bp::object> t = std::make_shared<bp::object>(script.si_plugin(module_name, rpath, classes[0]));
 
@@ -235,26 +265,31 @@ TEST_F(SIGRunCollisionManagerTest, are_aabbs_equal)
 {
     std::string path = "res/region";
 
-    std::vector<std::string> files, classes;
+    std::vector<std::tuple<std::string, std::string>> files;
+    std::vector<std::string> classes;
 
     PluginCollector().collect("/" + path, files);
     Scripting script;
 
-    std::string base_filename = files[0].substr(files[0].find_last_of("/\\") + 1);
-    std::string module_name = base_filename.substr(0, base_filename.find_last_of('.'));
-    std::string rpath = path + "/" + base_filename;
+    const std::string& full_path = std::get<0>(files[0]);
+    const std::string& name = std::get<1>(files[0]);
 
-    script.load_class_names(classes, files[0]);
+    std::string module_name = name.substr(0, name.find_last_of('.'));
+    std::string rpath = full_path.substr(full_path.find(path)) + "/" + name;
 
-    std::shared_ptr<bp::object> o = std::make_shared<bp::object>(script.si_plugin(module_name, rpath, classes[0]));
+    script.load_class_names(classes, rpath);
+
+    bp::object o = script.si_plugin(module_name, rpath, classes[0]);
 
     classes.clear();
 
-    base_filename = files[1].substr(files[1].find_last_of("/\\") + 1);
-    module_name = base_filename.substr(0, base_filename.find_last_of('.'));
-    rpath = path + "/" + base_filename;
+    const std::string& full_path2 = std::get<0>(files[1]);
+    const std::string& name2 = std::get<1>(files[1]);
 
-    script.load_class_names(classes, files[1]);
+    module_name = name2.substr(0, name2.find_last_of('.'));
+    rpath = full_path2.substr(full_path2.find(path)) + "/" + name2;
+
+    script.load_class_names(classes, rpath);
 
     std::shared_ptr<bp::object> t = std::make_shared<bp::object>(script.si_plugin(module_name, rpath, classes[0]));
 
@@ -282,26 +317,31 @@ TEST_F(SIGRunCollisionManagerTest, handle_event_continuous)
 {
     std::string path = "res/region";
 
-    std::vector<std::string> files, classes;
+    std::vector<std::tuple<std::string, std::string>> files;
+    std::vector<std::string> classes;
 
     PluginCollector().collect("/" + path, files);
     Scripting script;
 
-    std::string base_filename = files[0].substr(files[0].find_last_of("/\\") + 1);
-    std::string module_name = base_filename.substr(0, base_filename.find_last_of('.'));
-    std::string rpath = path + "/" + base_filename;
+    const std::string& full_path = std::get<0>(files[0]);
+    const std::string& name = std::get<1>(files[0]);
 
-    script.load_class_names(classes, files[0]);
+    std::string module_name = name.substr(0, name.find_last_of('.'));
+    std::string rpath = full_path.substr(full_path.find(path)) + "/" + name;
 
-    std::shared_ptr<bp::object> o = std::make_shared<bp::object>(script.si_plugin(module_name, rpath, classes[0]));
+    script.load_class_names(classes, rpath);
+
+    bp::object o = script.si_plugin(module_name, rpath, classes[0]);
 
     classes.clear();
 
-    base_filename = files[1].substr(files[1].find_last_of("/\\") + 1);
-    module_name = base_filename.substr(0, base_filename.find_last_of('.'));
-    rpath = path + "/" + base_filename;
+    const std::string& full_path2 = std::get<0>(files[1]);
+    const std::string& name2 = std::get<1>(files[1]);
 
-    script.load_class_names(classes, files[1]);
+    module_name = name2.substr(0, name2.find_last_of('.'));
+    rpath = full_path2.substr(full_path2.find(path)) + "/" + name2;
+
+    script.load_class_names(classes, rpath);
 
     std::shared_ptr<bp::object> t = std::make_shared<bp::object>(script.si_plugin(module_name, rpath, classes[0]));
 
@@ -318,26 +358,31 @@ TEST_F(SIGRunCollisionManagerTest, handle_event_enter)
 {
     std::string path = "res/region";
 
-    std::vector<std::string> files, classes;
+    std::vector<std::tuple<std::string, std::string>> files;
+    std::vector<std::string> classes;
 
     PluginCollector().collect("/" + path, files);
     Scripting script;
 
-    std::string base_filename = files[0].substr(files[0].find_last_of("/\\") + 1);
-    std::string module_name = base_filename.substr(0, base_filename.find_last_of('.'));
-    std::string rpath = path + "/" + base_filename;
+    const std::string& full_path = std::get<0>(files[0]);
+    const std::string& name = std::get<1>(files[0]);
 
-    script.load_class_names(classes, files[0]);
+    std::string module_name = name.substr(0, name.find_last_of('.'));
+    std::string rpath = full_path.substr(full_path.find(path)) + "/" + name;
 
-    std::shared_ptr<bp::object> o = std::make_shared<bp::object>(script.si_plugin(module_name, rpath, classes[0]));
+    script.load_class_names(classes, rpath);
+
+    bp::object o = script.si_plugin(module_name, rpath, classes[0]);
 
     classes.clear();
 
-    base_filename = files[1].substr(files[1].find_last_of("/\\") + 1);
-    module_name = base_filename.substr(0, base_filename.find_last_of('.'));
-    rpath = path + "/" + base_filename;
+    const std::string& full_path2 = std::get<0>(files[1]);
+    const std::string& name2 = std::get<1>(files[1]);
 
-    script.load_class_names(classes, files[1]);
+    module_name = name2.substr(0, name2.find_last_of('.'));
+    rpath = full_path2.substr(full_path2.find(path)) + "/" + name2;
+
+    script.load_class_names(classes, rpath);
 
     std::shared_ptr<bp::object> t = std::make_shared<bp::object>(script.si_plugin(module_name, rpath, classes[0]));
 
@@ -356,26 +401,31 @@ TEST_F(SIGRunCollisionManagerTest, handle_event_leave)
 {
     std::string path = "res/region";
 
-    std::vector<std::string> files, classes;
+    std::vector<std::tuple<std::string, std::string>> files;
+    std::vector<std::string> classes;
 
     PluginCollector().collect("/" + path, files);
     Scripting script;
 
-    std::string base_filename = files[0].substr(files[0].find_last_of("/\\") + 1);
-    std::string module_name = base_filename.substr(0, base_filename.find_last_of('.'));
-    std::string rpath = path + "/" + base_filename;
+    const std::string& full_path = std::get<0>(files[0]);
+    const std::string& name = std::get<1>(files[0]);
 
-    script.load_class_names(classes, files[0]);
+    std::string module_name = name.substr(0, name.find_last_of('.'));
+    std::string rpath = full_path.substr(full_path.find(path)) + "/" + name;
 
-    std::shared_ptr<bp::object> o = std::make_shared<bp::object>(script.si_plugin(module_name, rpath, classes[0]));
+    script.load_class_names(classes, rpath);
+
+    bp::object o = script.si_plugin(module_name, rpath, classes[0]);
 
     classes.clear();
 
-    base_filename = files[1].substr(files[1].find_last_of("/\\") + 1);
-    module_name = base_filename.substr(0, base_filename.find_last_of('.'));
-    rpath = path + "/" + base_filename;
+    const std::string& full_path2 = std::get<0>(files[1]);
+    const std::string& name2 = std::get<1>(files[1]);
 
-    script.load_class_names(classes, files[1]);
+    module_name = name2.substr(0, name2.find_last_of('.'));
+    rpath = full_path2.substr(full_path2.find(path)) + "/" + name2;
+
+    script.load_class_names(classes, rpath);
 
     std::shared_ptr<bp::object> t = std::make_shared<bp::object>(script.si_plugin(module_name, rpath, classes[0]));
 

@@ -5,10 +5,12 @@
 
 #include <QColor>
 #include <glm/glm.hpp>
+#include <QQuickWidget>
+#include <memory>
 
 struct RegionRepresentation
 {
-    RegionRepresentation(const std::vector<glm::vec3>& c, const glm::mat3x3& t, const glm::vec4& col, const std::string& _name, const std::string& tex_path):
+    RegionRepresentation(const std::vector<glm::vec3>& c, const glm::mat3x3& t, const glm::vec4& col, const std::string& _name, const std::string& tex_path, QWidget* parent):
             r(col.r),
             g(col.g),
             b(col.b),
@@ -16,7 +18,8 @@ struct RegionRepresentation
             color(QColor(col.r, col.g, col.b, col.a)),
             source_contour(c),
             texture_path(tex_path),
-            name(_name)
+            name(_name),
+            view(std::make_unique<QQuickWidget>())
     {
         fill.moveTo(c[0].x, c[0].y);
 
@@ -27,6 +30,10 @@ struct RegionRepresentation
         }
 
         poly << QPoint(c[0].x, c[0].y);
+
+        view->setParent(parent);
+//        view->setSource(QUrl::fromLocalFile("plugins/standard_environment_library/cursor/qml/test.qml"));
+//        view->show();
     }
 
     void update(const glm::mat3x3& transform)
@@ -59,6 +66,8 @@ struct RegionRepresentation
     QPolygonF poly;
     QPainterPath fill;
     std::vector<glm::vec3> source_contour;
+    std::unique_ptr<QQuickWidget> view;
+
 };
 
 #endif //SITEST_REGIONREPRESENTATION_HPP
