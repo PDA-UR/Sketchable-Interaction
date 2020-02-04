@@ -22,8 +22,6 @@ jobs:
         sudo apt-get update
         sudo apt-get --fix-missing install qtbase5-dev
         sudo apt-get install qtdeclarative5-dev
-
-    
         
     - name: Install GLM
       run: |
@@ -64,14 +62,9 @@ jobs:
       if: success()
       run: |
         (cd /home/runner/work/Sketchable-Interaction/Sketchable-Interaction/SI/tests;./../../run_unit_tests)
-        
-    - name: Fetch Commit Message
-      if: success()
-      run: |
-        echo "::set-env name=COMMIT_MESSAGE::${{ github.event.head_commit.message }}"
-    
+   
     - name: Major Versioning
-      if: success() && contains(${{ env.COMMIT_MESSAGE }},'[MAJOR]')
+      if: success() && contains(${{ github.event.head_commit.message }},'[MAJOR]')
       run: |
         current=$(cat .version)
         IFS="." tokens=($current)
@@ -83,7 +76,7 @@ jobs:
         # echo "::set-env name=CURRENT_VERSION::$current"
           
     - name: Patch Versioning
-      if: success() && !"contains(${{ env.COMMIT_MESSAGE }},'[MINOR]')" && !"contains(${{ env.COMMIT_MESSAGE }},'[MAJOR]')" 
+      if: success() && !"contains(${{ github.event.head_commit.message }},'[MINOR]')" && !"contains(${{ github.event.head_commit.message }},'[MAJOR]')" 
       run: |
         cat version
       #run: |
