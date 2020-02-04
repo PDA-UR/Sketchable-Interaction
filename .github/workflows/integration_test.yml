@@ -38,8 +38,8 @@ jobs:
           new_patch_version=$((${last_patch_version} + 1))
         fi
         
-        echo $new_major_version.$new_minor_version.new_patch_version 
-        echo $new_major_version.$new_minor_version.new_patch_version > '.version'
+        echo $new_major_version.$new_minor_version.$new_patch_version 
+        echo $new_major_version.$new_minor_version.$new_patch_version > '.version'
      
 
 
