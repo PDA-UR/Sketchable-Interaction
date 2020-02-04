@@ -52,47 +52,46 @@ jobs:
         cd ..
         
     - name: configure
+      if: success()
       run: cmake .
     
     - name: Compile SI
+      if: success()
       run: |
         cmake --build /home/runner/work/Sketchable-Interaction/Sketchable-Interaction --target run_unit_tests -j 8
         
     - name: Test SI
+      if: success()
       run: |
         (cd /home/runner/work/Sketchable-Interaction/Sketchable-Interaction/SI/tests;./../../run_unit_tests)
         
     - name: Fetch Commit Message
+      if: success()
       run: |
         echo "::set-env name=COMMIT_MESSAGE::${{ github.event.head_commit.message }}"
-        
-  release:
-    needs: build
-    runs-on: ubuntu-latest
+    
+    - name: Major Versioning
+      if: success() && contains(${{ env.COMMIT_MESSAGE }},'[MAJOR]')
+      run: |
+        current=$(cat .version)
+        IFS="." tokens=($current)
+        last_major_version=${tokens[0]}
+        new_major_version=$((${last_major_version} + 1))
+        new_version=$new_major_version${tokens[1]}${tokens[2]}
 
-    steps:
-      - name: Major Versioning
-        if: contains(${{ env.COMMIT_MESSAGE }},'[MAJOR]')
-        run: |
-          current=$(cat .version)
-          IFS="." tokens=($current)
-          last_major_version=${tokens[0]}
-          new_major_version=$((${last_major_version} + 1))
-          new_version=$new_major_version${tokens[1]}${tokens[2]}
+        echo new_versiom > '.version'
+        # echo "::set-env name=CURRENT_VERSION::$current"
           
-          echo new_versiom > '.version'
-          # echo "::set-env name=CURRENT_VERSION::$current"
-          
-      - name: Patch Versioning
-        if: -- !"contains(${{ env.COMMIT_MESSAGE }},'[MINOR]')" && !"contains(${{ env.COMMIT_MESSAGE }},'[MAJOR]')" 
-        run: |
-          cat version
-        #run: |
-         # current=$(cat .version)
-          #IFS="." tokens=($current)
-          #last_major_version=${tokens[0]}
-          #new_major_version=$((${last_major_version} + 1))
-          #new_version=$new_major_version${tokens[1]}${tokens[2]}
+    - name: Patch Versioning
+      if: success() && !"contains(${{ env.COMMIT_MESSAGE }},'[MINOR]')" && !"contains(${{ env.COMMIT_MESSAGE }},'[MAJOR]')" 
+      run: |
+        cat version
+      #run: |
+       # current=$(cat .version)
+        #IFS="." tokens=($current)
+        #last_major_version=${tokens[0]}
+        #new_major_version=$((${last_major_version} + 1))
+        #new_version=$new_major_version${tokens[1]}${tokens[2]}
           
          # echo new_versiom > '.version'
           # echo "::set-env name=CURRENT_VERSION::$current"
