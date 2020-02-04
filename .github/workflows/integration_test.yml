@@ -64,7 +64,7 @@ jobs:
       run: |
         (cd /home/runner/work/Sketchable-Interaction/Sketchable-Interaction/SI/tests;./../../run_unit_tests)
         
-    - name: Patch Versioning
+    - name: Versioning
       if: success()
       run: |
         current=$(cat .version)
@@ -85,11 +85,7 @@ jobs:
         fi
         
         echo $new_major_version.$new_minor_version.$new_patch_version > '.version'  
-          
-    - uses: actions/checkout@v2
-      with:
-        ref: integration
-          
+               
     - name: Create Pull Request
       uses: peter-evans/create-pull-request@v2.2.0
       with:
