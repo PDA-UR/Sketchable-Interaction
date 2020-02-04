@@ -62,23 +62,27 @@ jobs:
       if: success()
       run: |
         (cd /home/runner/work/Sketchable-Interaction/Sketchable-Interaction/SI/tests;./../../run_unit_tests)
-   
-    - name: Major Versioning
-      if: success() && contains(${{ github.event.head_commit.message }},'[MAJOR]')
+        
+    - name: Retrieve Commit Message
       run: |
-        current=$(cat .version)
-        IFS="." tokens=($current)
-        last_major_version=${tokens[0]}
-        new_major_version=$((${last_major_version} + 1))
-        new_version=$new_major_version${tokens[1]}${tokens[2]}
+        echo ${{ github.event.head_commit.message }}
+   
+    #- name: Major Versioning
+     # if: success() && contains(${{ github.event.head_commit.message }},'[MAJOR]')
+      #run: |
+       # current=$(cat .version)
+        #IFS="." tokens=($current)
+        #last_major_version=${tokens[0]}
+        #new_major_version=$((${last_major_version} + 1))
+        #new_version=$new_major_version${tokens[1]}${tokens[2]}
 
-        echo new_versiom > '.version'
+        #echo new_versiom > '.version'
         # echo "::set-env name=CURRENT_VERSION::$current"
           
-    - name: Patch Versioning
-      if: success() && !"contains(${{ github.event.head_commit.message }},'[MINOR]')" && !"contains(${{ github.event.head_commit.message }},'[MAJOR]')" 
-      run: |
-        cat version
+    #- name: Patch Versioning
+     # if: success() && !"contains(${{ github.event.head_commit.message }},'[MINOR]')" && !"contains(${{ github.event.head_commit.message }},'[MAJOR]')" 
+      #run: |
+       # cat version
       #run: |
        # current=$(cat .version)
         #IFS="." tokens=($current)
