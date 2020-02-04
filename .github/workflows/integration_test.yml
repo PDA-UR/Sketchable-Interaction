@@ -85,9 +85,22 @@ jobs:
         fi
         
         echo $new_major_version.$new_minor_version.$new_patch_version > '.version'  
-               
-    - name: Push to Master
-      if: success()
-      uses: tcitry/push-to-master@v1.0
+        
+  pull-request:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1
+      
+    - name: Create Pull Request
+      uses: repo-sync/pull-request@v2
       with:
-          token: ${{ secrets.GITHUB_TOKEN }}     
+        source_branch: ""                     # If blank, default: triggered branch
+        destination_branch: "master"          # If blank, default: master
+        pr_title: "Pulling ${{ github.ref }} into master"
+        pr_body: ":crown: *An automated PR*"  # Full markdown support, requires pr_title to be set
+        pr_reviewer: "wei,worker"             # Comma-separated list (no spaces)
+        pr_assignee: "wei,worker"             # Comma-separated list (no spaces)
+        pr_label: "auto-pr"                   # Comma-separated list (no spaces)
+        pr_milestone: "Milestone 1"           # Milestone name
+        github_token: ${{ secrets.GITHUB_TOKEN }}
