@@ -30,9 +30,9 @@ jobs:
         last_patch_version=${tokens[2]}
         new_patch_version=${tokens[2]}
         
-        if [[ ${{ github.event.head_commit.message }} = *"[MAJOR]"* ]]; then
+        if [ "${{ github.event.head_commit.message }}" == *"[MAJOR]"* ]; then
           new_major_version=$((${last_major_version} + 1))
-        elif [[ ${{ github.event.head_commit.message }} = *"[MINOR]"* ]]; then
+        elif [ "${{ github.event.head_commit.message }}" == *"[MINOR]"* ]; then
           new_minor_version=$((${last_minor_version} + 1))
         else
           new_patch_version=$((${last_patch_version} + 1))
