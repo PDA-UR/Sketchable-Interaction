@@ -79,24 +79,32 @@ jobs:
     - name: Patch Versioning
       if: success()
       run: |
-        echo ${{ github.event.head_commit.message }}   
+        current=$(cat .version)
+        IFS="." tokens=($current)
+        last_major_version=${tokens[0]}
+        new_major_version=${tokens[0]}
+        last_minor_version=${tokens[1]}
+        new_minor_version=${tokens[1]}
+        last_patch_version=${tokens[2]}
+        new_patch_version=${tokens[2]}
         
-      #run: |
-       # current=$(cat .version)
-        #IFS="." tokens=($current)
-        #last_major_version=${tokens[0]}
-        #new_major_version=$((${last_major_version} + 1))
-        #new_version=$new_major_version${tokens[1]}${tokens[2]}
+        if [[ ${{ github.event.head_commit.message }} == *"[MAJOR]"* ]]; 
+        then
+          new_major_version=$((${last_major_version} + 1))
+        elif [[ ${{ github.event.head_commit.message }} == *"[MINOR]"* ]]
+        then
+          new_minor_version=$((${last_minor_version} + 1))
+        else
+          new_patch_version=$((${last_patch_version} + 1))
+        fi
+        
+        echo $new_major_version.$new_minor_version.new_patch_version > '.version'
+     
+    - uses: actions/checkout@v2
+      with:
+        ref: integration
           
-         # echo new_versiom > '.version'
-          # echo "::set-env name=CURRENT_VERSION::$current"
-          
-          
-      #- uses: actions/checkout@v2
-        #with:
-          #ref: integration
-          
-      #- name: Create Pull Request
-        #uses: peter-evans/create-pull-request@v2.2.0
-        #with:
-          #token: ${{ secrets.GITHUB_TOKEN }}        
+    - name: Create Pull Request
+      uses: peter-evans/create-pull-request@v2.2.0
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}        
