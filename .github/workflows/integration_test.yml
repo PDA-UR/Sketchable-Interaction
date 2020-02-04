@@ -66,11 +66,38 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
-        with:
-          ref: integration
+      - name: Major Versioning
+        if: contains(${{ github.event.head_commit.message }},'[MAJOR]')
+        run: |
+          current=$(cat .version)
+          IFS="." tokens=($current)
+          last_major_version=${tokens[0]}
+          new_major_version=$((${last_major_version} + 1))
+          new_version=$new_major_version${tokens[1]}${tokens[2]}
           
-      - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v2.2.0
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}        
+          echo new_versiom > '.version'
+          # echo "::set-env name=CURRENT_VERSION::$current"
+          
+      - name: Patch Versioning
+        if: -- !"contains(${{ github.event.head_commit.message }},'[MINOR]')" && !"contains(${{ github.event.head_commit.message }},'[MAJOR]')" 
+        run: |
+          cat version
+        #run: |
+         # current=$(cat .version)
+          #IFS="." tokens=($current)
+          #last_major_version=${tokens[0]}
+          #new_major_version=$((${last_major_version} + 1))
+          #new_version=$new_major_version${tokens[1]}${tokens[2]}
+          
+         # echo new_versiom > '.version'
+          # echo "::set-env name=CURRENT_VERSION::$current"
+          
+          
+      #- uses: actions/checkout@v2
+        #with:
+          #ref: integration
+          
+      #- name: Create Pull Request
+        #uses: peter-evans/create-pull-request@v2.2.0
+        #with:
+          #token: ${{ secrets.GITHUB_TOKEN }}        
