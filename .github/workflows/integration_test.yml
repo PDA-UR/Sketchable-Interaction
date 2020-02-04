@@ -63,16 +63,10 @@ jobs:
       run: |
         (cd /home/runner/work/Sketchable-Interaction/Sketchable-Interaction/SI/tests;./../../run_unit_tests)
         
-    - name: Retrieve Commit Message
-      id: commit_msg
-      run: |
-        commit_message=${{ github.event.head_commit.message }}   
-        echo "::set-env name=COMMIT_MESSAGE::$commit_message"
-
-    - name: Major Versioning
-      if: success() && contains(${{ github.event.head_commit.message }},'[MAJOR]')
-      run: | 
-        echo success
+    #- name: Major Versioning
+      #if: success()
+      #run: | 
+        #echo success
        # current=$(cat .version)
         #IFS="." tokens=($current)
         #last_major_version=${tokens[0]}
@@ -82,10 +76,11 @@ jobs:
         #echo new_versiom > '.version'
         # echo "::set-env name=CURRENT_VERSION::$current"
           
-    #- name: Patch Versioning
-     # if: success() && !"contains(${{ github.event.head_commit.message }},'[MINOR]')" && !"contains(${{ github.event.head_commit.message }},'[MAJOR]')" 
-      #run: |
-       # cat version
+    - name: Patch Versioning
+      if: success()
+      run: |
+        echo ${{ github.event.head_commit.message }}   
+        
       #run: |
        # current=$(cat .version)
         #IFS="." tokens=($current)
