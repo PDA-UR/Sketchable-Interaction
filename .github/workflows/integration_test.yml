@@ -99,3 +99,4 @@ jobs:
         uses: peter-evans/create-pull-request@v2.2.0
         with:
           token: ${{ secrets.GITHUB_TOKEN }}     
+          branch: master
