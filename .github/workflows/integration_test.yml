@@ -65,11 +65,13 @@ jobs:
         
     - name: Retrieve Commit Message
       run: |
-        echo ${{ github.event.head_commit.message }}
-   
-    #- name: Major Versioning
-     # if: success() && contains(${{ github.event.head_commit.message }},'[MAJOR]')
-      #run: |
+        commit_message=${{ github.event.head_commit.message }}   
+        echo "::set-env name=COMMIT_MESSAGE::$commit_message"
+
+    - name: Major Versioning
+      if: success() && contains(${{ env.COMMIT_MESSAGE }},'[MAJOR]')
+      run: | 
+        echo success
        # current=$(cat .version)
         #IFS="." tokens=($current)
         #last_major_version=${tokens[0]}
