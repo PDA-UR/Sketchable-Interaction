@@ -86,17 +86,8 @@ jobs:
         
         echo $new_major_version.$new_minor_version.$new_patch_version > '.version'  
                
-  release:
-    needs: build
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v2
-        with:
-          ref: integration
-          
-      - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v2.2.0
-        with:
+    - name: Push to Master
+      if: success()
+      uses: tcitry/push-to-master@v1.0
+      with:
           token: ${{ secrets.GITHUB_TOKEN }}     
-          branch: master
