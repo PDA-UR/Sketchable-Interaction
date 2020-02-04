@@ -70,7 +70,7 @@ jobs:
         echo "::set-env name=COMMIT_MESSAGE::$commit_message"
 
     - name: Major Versioning
-      if: success() && contains(${{ env.COMMIT_MESSAGE }},'[MAJOR]')
+      if: success() && contains(${{ github.event.head_commit.message }},'[MAJOR]')
       run: | 
         echo success
        # current=$(cat .version)
