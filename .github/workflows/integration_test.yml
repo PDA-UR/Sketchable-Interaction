@@ -64,6 +64,7 @@ jobs:
         (cd /home/runner/work/Sketchable-Interaction/Sketchable-Interaction/SI/tests;./../../run_unit_tests)
         
     - name: Retrieve Commit Message
+      id: commit_msg
       run: |
         commit_message=${{ github.event.head_commit.message }}   
         echo "::set-env name=COMMIT_MESSAGE::$commit_message"
