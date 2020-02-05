@@ -60,9 +60,6 @@ jobs:
       run: 
         mkdir artifact && 7z a -t7z artifact/si.zip libPySI.so libSIGeneralRuntime.so libSIRenderEngine.so si_test_application
         
-    - name: Echo commit message
-      run: echo ${{ github.event.head_commit.message }}
-    
     - name: Create Artifact
       uses: actions/upload-artifact@v1
       with:
