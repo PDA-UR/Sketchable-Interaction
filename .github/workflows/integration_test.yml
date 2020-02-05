@@ -29,15 +29,20 @@ jobs:
         new_minor_version=${tokens[1]}
         last_patch_version=${tokens[2]}
         new_patch_version=${tokens[2]}
-        
-        if [ "${{ github.event.head_commit.message }}" == *"[MAJOR]"* ]; then
+                
+        if [[ "${{ github.event.head_commit.message }}" == *"[MAJOR]"* ]]; then
           new_major_version=$((${last_major_version} + 1))
-        elif [ "${{ github.event.head_commit.message }}" == *"[MINOR]"* ]; then
+          new_minor_version=0
+          new_patch_version=0
+        elif [[ "${{ github.event.head_commit.message }}" == *"[MINOR]"* ]]; then
           new_minor_version=$((${last_minor_version} + 1))
+          new_patch_version=0
         else
           new_patch_version=$((${last_patch_version} + 1))
         fi
         
+        echo Old Version: $last_major_version.$last_minor_version.$last_patch_version
+        echo New Version: $new_major_version.$new_minor_version.$new_patch_version
         echo $new_major_version.$new_minor_version.$new_patch_version > '.version'  
     
         git config --local user.email "action@github.com"
@@ -108,9 +113,8 @@ jobs:
     - name: Create Pull Request
       uses: repo-sync/pull-request@v2
       with:
-        source_branch: "integration"                     # If blank, default: triggered branch
-        destination_branch: "master"          # If blank, default: master
+        source_branch: "integration"
+        destination_branch: "master"
         pr_title: "Pulling ${{ github.ref }} into master"
         commit-message: ${{ github.event.head_commit.message }}
         github_token: ${{ secrets.GITHUB_TOKEN }}
-  
