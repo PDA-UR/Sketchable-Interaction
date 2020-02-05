@@ -98,4 +98,5 @@ jobs:
         source_branch: "integration"                     # If blank, default: triggered branch
         destination_branch: "master"          # If blank, default: master
         pr_title: "Pulling ${{ github.ref }} into master"
+        commit-message: ${{ github.event.head_commit.message }}
         github_token: ${{ secrets.GITHUB_TOKEN }}
