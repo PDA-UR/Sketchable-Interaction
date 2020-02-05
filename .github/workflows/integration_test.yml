@@ -39,6 +39,8 @@ jobs:
         fi
         
         echo $new_major_version.$new_minor_version.$new_patch_version > '.version'  
-        ls
+        ls -la
+        echo .version
+        echo .gitignore
         
   
