@@ -17,7 +17,34 @@ jobs:
       uses: actions/setup-python@v1
       with:
         python-version: ${{ matrix.python-version }}
-
+        
+    - name: Retrieve Version
+      if: success()
+      run: |
+        current=$(cat .version)
+        IFS="." tokens=($current)
+        last_major_version=${tokens[0]}
+        new_major_version=${tokens[0]}
+        last_minor_version=${tokens[1]}
+        new_minor_version=${tokens[1]}
+        last_patch_version=${tokens[2]}
+        new_patch_version=${tokens[2]}
+        
+        if [ "${{ github.event.head_commit.message }}" == *"[MAJOR]"* ]; then
+          new_major_version=$((${last_major_version} + 1))
+        elif [ "${{ github.event.head_commit.message }}" == *"[MINOR]"* ]; then
+          new_minor_version=$((${last_minor_version} + 1))
+        else
+          new_patch_version=$((${last_patch_version} + 1))
+        fi
+        
+        echo $new_major_version.$new_minor_version.$new_patch_version > '.version'  
+    
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git add .version
+        git commit -m "Update Version"
+        
     - name: Install Qt5
       run: |
         sudo apt-get update
@@ -64,28 +91,14 @@ jobs:
       run: |
         (cd /home/runner/work/Sketchable-Interaction/Sketchable-Interaction/SI/tests;./../../run_unit_tests)
         
-    - name: Versioning
+    - name: Push Version
       if: success()
-      run: |
-        current=$(cat .version)
-        IFS="." tokens=($current)
-        last_major_version=${tokens[0]}
-        new_major_version=${tokens[0]}
-        last_minor_version=${tokens[1]}
-        new_minor_version=${tokens[1]}
-        last_patch_version=${tokens[2]}
-        new_patch_version=${tokens[2]}
+      uses: ad-m/github-push-action@master
+      with:
+        branch: integration
+        github_token: ${{ secrets.GITHUB_TOKEN }}
         
-        if [ "${{ github.event.head_commit.message }}" == *"[MAJOR]"* ]; then
-          new_major_version=$((${last_major_version} + 1))
-        elif [ "${{ github.event.head_commit.message }}" == *"[MINOR]"* ]; then
-          new_minor_version=$((${last_minor_version} + 1))
-        else
-          new_patch_version=$((${last_patch_version} + 1))
-        fi
-        
-        echo $new_major_version.$new_minor_version.$new_patch_version > '.version'  
-        
+  
   pull-request:
     needs: build
     runs-on: ubuntu-latest
@@ -100,3 +113,4 @@ jobs:
         pr_title: "Pulling ${{ github.ref }} into master"
         commit-message: ${{ github.event.head_commit.message }}
         github_token: ${{ secrets.GITHUB_TOKEN }}
+  
