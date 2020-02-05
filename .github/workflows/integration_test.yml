@@ -39,8 +39,8 @@ jobs:
         fi
         
         echo $new_major_version.$new_minor_version.$new_patch_version > '.version'  
-        ls -la
-        echo .version
-        echo .gitignore
-        
+      
+        git add .version
+        git commit -m 'updated version'
+        git push origin integration
   
