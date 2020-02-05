@@ -65,7 +65,6 @@ void Context::add_startup_regions(const std::unordered_map<std::string, std::uni
                     {
                         case PySIEffect::EffectType::SI_CANVAS: break;
                         case PySIEffect::EffectType::SI_MOUSE_CURSOR:
-                            DEBUG("HERE");
                             add_cursor_regions(value);
                             break;
 

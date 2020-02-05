@@ -48,7 +48,8 @@ set(SIRENDERENGINESrc
         SI/src/siren/RenderEngineQt5.hpp
         SI/src/siren/window/MainWindow.cpp
         SI/src/siren/window/MainWindow.hpp
-        SI/src/siren/background/UpdateWorker.cpp)
+        SI/src/siren/background/UpdateWorker.cpp
+        SI/src/siren/region/RegionRepresentation.cpp)
 
 ADD_DEFINITIONS(-DQT_NO_KEYWORDS)
 

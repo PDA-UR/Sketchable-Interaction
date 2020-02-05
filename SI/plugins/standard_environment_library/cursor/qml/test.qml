@@ -1,10 +1,9 @@
 import QtQuick 2.2
 
-Item {
-    width: 100; height: 100
+Rectangle {
+    width: 100
+    height: 100
+    color: "red"
 
-    Rectangle {
-        anchors.fill: parent
-        objectName: "rect"
-    }
+    NumberAnimation on rotation { from: 0; to: 360; duration: 2000; loops: Animation.Infinite; }
 }

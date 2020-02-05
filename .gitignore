@@ -229,3 +229,5 @@ SI/plugins/standard_environment_library/__pycache__/
 /SI/src/siren/region_representation/
 /SI/src/siren/res/
 /SI/src/siren/shader/
+
+SI/plugins/standard_environment_library/cursor/__pycache__/
