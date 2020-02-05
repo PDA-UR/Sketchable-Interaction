@@ -39,8 +39,14 @@ jobs:
         fi
         
         echo $new_major_version.$new_minor_version.$new_patch_version > '.version'  
-      
+    
+    - name: Commit files
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
         git add .version
-        git commit -m 'updated version'
-        git push origin integration
-  
+        git commit -m "Update Version"
+    - name: Push changes
+      uses: ad-m/github-push-action@master
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
