@@ -9,6 +9,7 @@
 #include <map>
 #include <glm/glm.hpp>
 #include <debug/Print.hpp>
+#include <sigrun/SITypes.hpp>
 
 namespace bp = boost::python;
 
@@ -54,10 +55,10 @@ class PySIEffect
 public:
     enum EffectType
     {
-        SI_CANVAS = 0,
-        SI_CURSOR = 1,
-        SI_MOUSE_CURSOR = 2,
-        SI_CUSTOM = 1000
+        SI_CANVAS = SI_TYPE_CANVAS,
+        SI_CURSOR = SI_TYPE_CURSOR,
+        SI_MOUSE_CURSOR = SI_TYPE_MOUSE_CURSOR,
+        SI_CUSTOM = SI_TYPE_CUSTOM
     };
 
     void __set_angle_degrees__(float angle);
@@ -66,10 +67,16 @@ public:
     float __angle_degrees__();
     void __set_x__(float x);
     void __set_y__(float y);
+    void __set_width__(float width);
+    void __set_height__(float height);
     int __x__();
     int __y__();
+    int __width__();
+    int __height__();
     int x();
     int y();
+    int width();
+    int height();
     void __set_color__(const std::vector<int>& rgba);
     const std::vector<int> __color__() const;
     void __set_scale__(float factor);
@@ -87,15 +94,15 @@ public:
     void __set_collision_recv__(const bp::dict& dict);
     const bp::dict __collision_recv__() const;
     void __set__name__(const std::string& name);
-    void __set__texture_path__(const std::string& text_path);
-    void __set__source__(const std::string& source);
+    void __set_qml_path__(const std::string& path);
+    void __set_source__(const std::string& source);
     void __set_effect_type__(int type);
     const std::string __name__() const;
-    const std::string __texture_path__() const;
+    const std::string __qml_path__() const;
     const std::string __source__() const;
     const int __effect_type__() const;
     const std::string& name() const;
-    const std::string& texture_path() const;
+    const std::string& qml_path() const;
     const std::string& source() const;
     const int effect_type() const;
     bool __is_left_mouse_clicked();
@@ -116,9 +123,6 @@ public:
     std::map<std::string, std::vector<glm::vec3>>& partial_region_contours();
     void __set_partial_regions__(const std::map<std::string, std::vector<std::vector<float>>>& partials);
     std::map<std::string, std::vector<std::vector<float>>> __partial_regions__();
-    void __set_transformer_id__(const std::string& id);
-    const std::string __transformer_id__() const;
-    const std::string& transformer_id() const;
     void __register_link__(const std::string& sender, const std::string& sender_attrib, const std::string& recv, const std::string& recv_attrib);
     void __remove_link__(const std::string& sender, const std::string& sender_attrib, const std::string& recv, const std::string& recv_attrib);
     std::vector<std::shared_ptr<LinkRelation>>& link_relations();
@@ -128,6 +132,8 @@ private:
 
     int d_x = 0;
     int d_y = 0;
+    int d_width = 0;
+    int d_height = 0;
 
     float d_angle_deg = 0.0;
     float d_angle_radians = 0.0;
@@ -149,7 +155,7 @@ private:
 
     std::string d_name = "";
     std::string d_uuid = "";
-    std::string d_texture_path = "";
+    std::string d_qml_path = "";
     std::string d_source = "";
     std::string d_transformer_id = "";
     PySIEffect::EffectType d_effect_type = PySIEffect::EffectType::SI_CUSTOM;

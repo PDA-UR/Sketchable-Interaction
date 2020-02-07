@@ -10,6 +10,7 @@
 #include <sigrun/util/UUID.hpp>
 #include <sigrun/context/Context.hpp>
 #include <sigrun/util/Benchmark.hpp>
+#include <any>
 
 namespace bp = boost::python;
 
@@ -25,10 +26,7 @@ Region::Region(const std::vector<glm::vec3> &contour, const bp::object& effect):
     qRegisterMetaType<bp::object>("bp::object");
     qRegisterMetaType<bp::tuple>("bp::tuple");
 
-
-
     d_uuid = std::string(_UUID_);
-
     d_effect->attr("_uuid") = d_uuid;
 
     HANDLE_PYTHON_CALL(
@@ -44,8 +42,11 @@ Region::Region(const std::vector<glm::vec3> &contour, const bp::object& effect):
     d_name = d_py_effect->name();
     d_name = d_name.empty() ? "custom": d_name;
 
-    d_texture_path_default = d_py_effect->texture_path();
-    d_texture_path_default = d_texture_path_default.empty() ? "src/siren/res/textures/placeholder.png": d_texture_path_default;
+    d_width = d_py_effect->width();
+    d_height = d_py_effect->height();
+
+    d_qml_path_default = d_py_effect->qml_path();
+    d_type = d_py_effect->effect_type();
 
     HANDLE_PYTHON_CALL (
             for(auto& [key, value]: d_py_effect->attr_link_emit())
@@ -76,7 +77,9 @@ void Region::move(int x, int y)
         int prev_x = d_aabb[0].x;
         int prev_y = d_aabb[0].y;
 
-        uprt->update(glm::vec2(x, y));
+        glm::vec2 center(d_aabb[0].x + d_aabb[3].x - d_aabb[0].x, d_aabb[0].y + d_aabb[1].y - d_aabb[0].y);
+
+        uprt->update(glm::vec2(x, y), 0, 1, center);
 
         set_aabb();
 
@@ -160,9 +163,9 @@ void Region::set_aabb()
     };
 }
 
-const std::string &Region::texture_path() const
+const std::string &Region::qml_path() const
 {
-    return d_texture_path_default;
+    return d_qml_path_default;
 }
 
 const glm::mat3x3& Region::transform() const
@@ -239,6 +242,21 @@ const std::string &Region::name() const
     return d_name;
 }
 
+const int Region::type() const
+{
+    return d_type;
+}
+
+const int Region::width() const
+{
+    return d_width;
+}
+
+const int Region::height() const
+{
+    return d_height;
+}
+
 void Region::update()
 {
     HANDLE_PYTHON_CALL(d_py_effect = std::shared_ptr<PySIEffect>(new PySIEffect(bp::extract<PySIEffect>(*d_effect)));)
@@ -295,9 +313,7 @@ void Region::update()
         }
     }
     else
-    {
         Context::SIContext()->update_linking_relations(d_py_effect->link_relations(), d_uuid);
-    }
 }
 
 void Region::set_color(const glm::vec4 &color)
@@ -332,9 +348,7 @@ int Region::handle_collision_event(const std::string &function_name, PySIEffect 
                 const bp::object &t = colliding_effect.cap_collision_emit()[key][function_name](*d_effect);
 
                 if (t.is_none())
-                {
                     return bp::extract<int>(d_py_effect->cap_collision_recv()[key][function_name]());
-                }
                 else
                 {
                     if (bp::extract<bp::tuple>(t).check())

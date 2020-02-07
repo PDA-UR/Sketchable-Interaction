@@ -49,7 +49,7 @@ void MainWindow::loop(double delta, int fps)
     for(const auto& region: regions)
     {
         if(d_region_representations.find(region->uuid()) == d_region_representations.end())
-            d_region_representations.insert({region->uuid(), std::make_unique<RegionRepresentation>(region->contour(), region->transform(), region->color(), region->name(), region->texture_path(), this)});
+            d_region_representations.insert({region->uuid(), std::make_unique<RegionRepresentation>(this, region)});
         else
         {
             if (region->is_transformed())
@@ -74,39 +74,15 @@ void MainWindow::draw_background(QPaintEvent* event)
 
 void MainWindow::draw_region_representations(QPaintEvent* event)
 {
-    // draw canvas first
     for(const auto& [key, val]: d_region_representations)
     {
-        if(val->name == "stdCanvas")
-        {
-            up_qp.setBrush(val->color);
-
-            up_qp.drawPolyline(val->poly);
-            up_qp.fillPath(val->fill, val->color);
-        }
-    }
-
-    for(const auto& [key, val]: d_region_representations)
-    {
-        if(val->name == "MouseCursor" || val->name == "stdCanvas")
+        if(val->name() == "MouseCursor" || val->name() == "stdCanvas")
             continue;
 
-        up_qp.setBrush(val->color);
+        up_qp.setBrush(val->color());
 
-        up_qp.drawPolyline(val->poly);
-        up_qp.fillPath(val->fill, val->color);
-    }
-
-    // draw cursors last
-    for(const auto& [key, val]: d_region_representations)
-    {
-        if(val->name == "MouseCursor")
-        {
-            up_qp.setBrush(val->color);
-
-            up_qp.drawPolyline(val->poly);
-            up_qp.fillPath(val->fill, val->color);
-        }
+        up_qp.drawPolyline(val->poly());
+        up_qp.fillPath(val->fill(), val->color());
     }
 }
 

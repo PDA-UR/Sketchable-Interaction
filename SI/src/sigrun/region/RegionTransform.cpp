@@ -17,6 +17,8 @@
 RegionTransform::RegionTransform():
     d_transform(1),
     d_translation(1),
+    d_positive_rotation_origin(1),
+    d_negative_rotation_origin(1),
     d_rotation(1),
     d_scale(1),
     d_angle(0)
@@ -47,14 +49,20 @@ RegionTransform::~RegionTransform()
 \see d_scale
 \see d_transform
  */
-void RegionTransform::update(const glm::vec2& translation, float angle, float scale)
+void RegionTransform::update(const glm::vec2& translation, float angle, float scale, const glm::vec2& rotation_origin)
 {
     d_translation[0][2] = translation.x;
     d_translation[1][2] = translation.y;
 
+    d_positive_rotation_origin[0][2] = rotation_origin.x;
+    d_positive_rotation_origin[1][2] = rotation_origin.y;
+
+    d_negative_rotation_origin[0][2] = -rotation_origin.x;
+    d_negative_rotation_origin[1][2] = -rotation_origin.y;
+
     d_angle += angle;
 
-    if(angle >= 0.0001)
+    if(angle >= 0.1)
     {
         float radians = PI_DIV_180 * d_angle;
 
@@ -67,7 +75,7 @@ void RegionTransform::update(const glm::vec2& translation, float angle, float sc
     d_scale[0][0] = scale;
     d_scale[1][1] = scale;
 
-    d_transform = d_translation * d_rotation * d_scale;
+    d_transform = d_translation * d_positive_rotation_origin* d_rotation * d_negative_rotation_origin * d_scale;
 }
 
 /**

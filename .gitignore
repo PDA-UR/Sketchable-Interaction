@@ -231,3 +231,9 @@ SI/plugins/standard_environment_library/__pycache__/
 /SI/src/siren/shader/
 
 SI/plugins/standard_environment_library/cursor/__pycache__/
+
+SI/plugins/standard_environment_library/canvas/__pycache__/
+
+SI/plugins/standard_environment_library/tag/__pycache__/
+
+SI/tests/res/region/__pycache__/

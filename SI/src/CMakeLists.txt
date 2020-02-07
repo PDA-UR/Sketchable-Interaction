@@ -52,6 +52,7 @@ target_precompile_headers(PySI
         <glm/glm.hpp>
         SI/src/pysi/SuperEffect.hpp
         SI/src/sigrun/plugin/PythonInvoker.hpp
+        SI/src/sigrun/SITypes.hpp
         )
 
 # SI RUNTIME LIBRARY
@@ -100,7 +101,9 @@ set(SIGRunSRC
         SI/src/sigrun/context/managers/InputManager.cpp
         SI/src/sigrun/context/managers/InputManager.hpp
         SI/src/sigrun/context/managers/helpers/input/ExternalObject.cpp
-        SI/src/sigrun/context/managers/helpers/input/ExternalObject.hpp)
+        SI/src/sigrun/context/managers/helpers/input/ExternalObject.hpp
+        SI/src/sigrun/region/RegionData.cpp
+        SI/src/sigrun/region/RegionData.hpp)
 
 ADD_DEFINITIONS(-DQT_NO_KEYWORDS)
 
@@ -112,6 +115,10 @@ target_precompile_headers(SIGeneralRuntime
         <unordered_map>
         <vector>
         <string>
+        <any>
+        <queue>
+        <memory>
+        <map>
         <boost/python/suite/indexing/vector_indexing_suite.hpp>
         <boost/python/suite/indexing/map_indexing_suite.hpp>
         <boost/python.hpp>
@@ -127,6 +134,7 @@ target_precompile_headers(SIGeneralRuntime
         SI/src/sigrun/util/RingBuffer.hpp
         SI/src/debug/Print.hpp
         SI/src/sigrun/SIObject.hpp
+        SI/src/sigrun/SITypes.hpp
         <glm/glm.hpp>
         SI/src/sigrun/util/Util.hpp
         SI/src/pysi/SuperEffect.hpp
