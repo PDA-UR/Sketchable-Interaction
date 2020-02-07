@@ -8,7 +8,8 @@ class Canvas(PySIEffect.PySIEffect):
         self.name = "stdCanvas"
         self.region_type = PySIEffect.EffectType.SI_CANVAS
         self.source = "libstdSI"
-        self.texture_path = ""
+        self.qml_path = ""
+
         self.color = [0, 0, 255, 255]
 
         self.cap_emit = {

@@ -99,7 +99,7 @@ void Context::add_canvas_region(const std::unordered_map<std::string, std::uniqu
 
 void Context::add_cursor_regions(const std::unique_ptr<bp::object>& cursor_effect)
 {
-    std::vector<glm::vec3> mouse_contour {glm::vec3(0, 0, 1), glm::vec3(0, 16, 1), glm::vec3(12, 16, 1), glm::vec3(12, 0, 1) };
+    std::vector<glm::vec3> mouse_contour {glm::vec3(0, 0, 1), glm::vec3(0, 24, 1), glm::vec3(18, 24, 1), glm::vec3(18, 0, 1) };
     uprm->add_region(mouse_contour, *cursor_effect, 0);
     uplm->add_link_to_object(uprm->regions().back(), ExternalObject::ExternalObjectType::MOUSE);
     d_mouse_uuid = uprm->regions().back()->uuid();
