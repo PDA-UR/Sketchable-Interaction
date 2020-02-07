@@ -1,5 +1,4 @@
 
-
 #ifndef SI_SI_HPP
 #define SI_SI_HPP
 
@@ -7,6 +6,7 @@
 #include "../../src/siren/RenderEngineQt5.hpp"
 #include "sigrun/log/Log.hpp"
 #include "sigrun/SIObject.hpp"
+#include "sigrun/SITypes.hpp"
 
 
 #endif //SI_SI_HPP

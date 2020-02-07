@@ -272,12 +272,12 @@ void PySIEffect::__set__name__(const std::string& name)
     d_name = name;
 }
 
-void PySIEffect::__set__texture_path__(const std::string& text_path)
+void PySIEffect::__set_qml_path__(const std::string& path)
 {
-    d_texture_path = text_path;
+    d_qml_path = path;
 }
 
-void PySIEffect::__set__source__(const std::string& source)
+void PySIEffect::__set_source__(const std::string& source)
 {
     d_source = source;
 }
@@ -292,9 +292,9 @@ const std::string PySIEffect::__name__() const
     return d_name;
 }
 
-const std::string PySIEffect::__texture_path__() const
+const std::string PySIEffect::__qml_path__() const
 {
-    return d_texture_path;
+    return d_qml_path;
 }
 
 const std::string PySIEffect::__source__() const
@@ -312,9 +312,9 @@ const std::string& PySIEffect::name() const
     return d_name;
 }
 
-const std::string& PySIEffect::texture_path() const
+const std::string& PySIEffect::qml_path() const
 {
-    return d_texture_path;
+    return d_qml_path;
 }
 
 const std::string& PySIEffect::source() const
@@ -455,21 +455,6 @@ std::map<std::string, std::vector<std::vector<float>>> PySIEffect::__partial_reg
     return d_partial_regions_py;
 }
 
-void PySIEffect::__set_transformer_id__(const std::string& id)
-{
-    d_transformer_id = id;
-}
-
-const std::string PySIEffect::__transformer_id__() const
-{
-    return d_transformer_id;
-}
-
-const std::string& PySIEffect::transformer_id() const
-{
-    return d_transformer_id;
-}
-
 void PySIEffect::__register_link__(const std::string& sender, const std::string& sender_attrib, const std::string& recv, const std::string& recv_attrib)
 {
     d_link_relations.push_back(std::make_shared<LinkRelation>(sender, sender_attrib, recv, recv_attrib));
@@ -488,6 +473,36 @@ void PySIEffect::__remove_link__(const std::string& sender, const std::string& s
             break;
         }
     }
+}
+
+void PySIEffect::__set_width__(float width)
+{
+    d_width = width;
+}
+
+void PySIEffect::__set_height__(float height)
+{
+    d_height = height;
+}
+
+int PySIEffect::__width__()
+{
+    return d_width;
+}
+
+int PySIEffect::__height__()
+{
+    return d_height;
+}
+
+int PySIEffect::width()
+{
+    return d_width;
+}
+
+int PySIEffect::height()
+{
+    return d_height;
 }
 
 std::vector<std::shared_ptr<LinkRelation>>& PySIEffect::link_relations()
@@ -554,8 +569,6 @@ BOOST_PYTHON_MODULE(libPySI)
     ;
 
     bp::class_<PySIEffect, boost::noncopyable>("PySIEffect", bp::init<>())
-//        .def("__deepcopy__", &generic__deepcopy__<PySIEffect>)
-
         .def("add_point_to_partial_region", &PySIEffect::__add_point_to_partial_region__)
         .def("register_region", &PySIEffect::__register_region__)
         .def("register_link", &PySIEffect::__register_link__)
@@ -572,6 +585,8 @@ BOOST_PYTHON_MODULE(libPySI)
         .add_property("cap_link_recv", &PySIEffect::__link_recv__, &PySIEffect::__set_link_recv__)
         .add_property("x", &PySIEffect::__x__, &PySIEffect::__set_x__)
         .add_property("y", &PySIEffect::__y__, &PySIEffect::__set_y__)
+        .add_property("width", &PySIEffect::__width__, &PySIEffect::__set_width__)
+        .add_property("height", &PySIEffect::__height__, &PySIEffect::__set_height__)
         .add_property("angle_degres", &PySIEffect::__angle_degrees__, &PySIEffect::__set_angle_degrees__)
         .add_property("angle_radians", &PySIEffect::__angle_radians__, &PySIEffect::__set_angle_radians__)
         .add_property("color", &PySIEffect::__color__, &PySIEffect::__set_color__)
@@ -579,9 +594,8 @@ BOOST_PYTHON_MODULE(libPySI)
         .add_property("name", &PySIEffect::__name__, &PySIEffect::__set__name__)
         .add_property("_uuid", &PySIEffect::__uuid__, &PySIEffect::__set_uuid__)
         .add_property("region_type", &PySIEffect::__effect_type__, &PySIEffect::__set_effect_type__)
-        .add_property("source", &PySIEffect::__source__, &PySIEffect::__set__source__)
-        .add_property("texture_path", &PySIEffect::__texture_path__, &PySIEffect::__set__texture_path__)
-        .add_property("transformer_id", &PySIEffect::__transformer_id__, &PySIEffect::__set_transformer_id__)
+        .add_property("source", &PySIEffect::__source__, &PySIEffect::__set_source__)
+        .add_property("qml_path", &PySIEffect::__qml_path__, &PySIEffect::__set_qml_path__)
 
         .enable_pickling()
         ;

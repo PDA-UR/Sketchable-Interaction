@@ -14,7 +14,7 @@
 
 #include "../background/UpdateWorker.hpp"
 #include "../region/RegionRepresentation.hpp"
-
+class RegionRepresentation;
 class MainWindow: public SIObject, public QMainWindow
 {
 public:

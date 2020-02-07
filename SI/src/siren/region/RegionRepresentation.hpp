@@ -4,27 +4,46 @@
 #define SITEST_REGIONREPRESENTATION_HPP
 
 #include <QColor>
+#include <QObject>
 #include <glm/glm.hpp>
 #include <QQuickWidget>
+#include <QVariant>
+#include <QMatrix4x4>
 #include <memory>
+#include <SI/SI.hpp>
 
-struct RegionRepresentation
-{
-    RegionRepresentation(const std::vector<glm::vec3>& c, const glm::mat3x3& t, const glm::vec4& col, const std::string& _name, const std::string& tex_path, QWidget* parent);
+class RegionRepresentation: public QObject, public SIObject
+{ Q_OBJECT
+
+public:
+    RegionRepresentation(QWidget* parent, const std::shared_ptr<Region>& region);
 
     void update(const glm::mat3x3& transform);
 
-    int r;
-    int g;
-    int b;
-    int a;
-    QColor color;
-    std::string texture_path;
-    std::string name;
-    QPolygonF poly;
-    QPainterPath fill;
-    std::vector<glm::vec3> source_contour;
-    std::unique_ptr<QQuickWidget> view;
+    Q_SIGNAL void transformChanged(const QMatrix4x4& tform);
+    Q_SIGNAL void dimensionsChanged(int width, int height);
+    Q_SIGNAL void dataChanged(const QMap<QString, QVariant>& data);
+
+    const std::string& name() const;
+    const QColor& color() const;
+    const QPolygonF& poly() const;
+    const QPainterPath& fill() const;
+
+private:
+    int d_r;
+    int d_g;
+    int d_b;
+    int d_a;
+    int d_type;
+    int d_width;
+    int d_height;
+    QColor d_color;
+    std::string d_qml_path;
+    std::string d_name;
+    QPolygonF d_poly;
+    QPainterPath d_fill;
+    std::vector<glm::vec3> d_source_contour;
+    std::unique_ptr<QQuickWidget> d_view;
 };
 
 #endif //SITEST_REGIONREPRESENTATION_HPP

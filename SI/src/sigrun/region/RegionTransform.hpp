@@ -37,7 +37,7 @@ public:
     RegionTransform();
     ~RegionTransform();
 
-    void update(const glm::vec2& translation=glm::vec2(0, 0), float angle=0, float scale=1);
+    void update(const glm::vec2& translation=glm::vec2(0, 0), float angle=0, float scale=1, const glm::vec2& rotation_origin=glm::vec2(0, 0));
     const glm::mat3x3& transform();
     const glm::vec3& operator[](int index);
 
@@ -46,6 +46,18 @@ private:
         3x3 matrix object storing the relative translation of a contour
     */
     glm::mat3x3 d_translation;
+
+    /**
+        3x3 matrix object storing the positive values of a point to be used as rotation origin
+        used for rotating around an arbitrary point
+    */
+    glm::mat3x3 d_positive_rotation_origin;
+
+    /**
+        3x3 matrix object storing the negative values of a point to be used as rotation origin
+        used for rotating around an arbitrary point
+    */
+    glm::mat3x3 d_negative_rotation_origin;
 
     /**
         3x3 matrix object storing the relative rotation of a contour

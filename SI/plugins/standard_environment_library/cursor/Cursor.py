@@ -8,8 +8,11 @@ class MouseCursor(PySIEffect.PySIEffect):
         self.name = "MouseCursor"
         self.region_type = PySIEffect.EffectType.SI_MOUSE_CURSOR
         self.source = "libstdSI"
-        self.texture_path = ""
+        self.qml_path = "plugins/standard_environment_library/cursor/Cursor.qml"
         self.color = [0, 255, 255, 255]
+
+        self.width = 18
+        self.height = 24
 
         self.parent_canvas = None
         self.move_target = None

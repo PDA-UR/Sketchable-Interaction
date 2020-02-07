@@ -42,7 +42,7 @@ public:
 
     void set_aabb();
 
-    const std::string& texture_path() const;
+    const std::string& qml_path() const;
 
     void move(int x, int y);
 
@@ -67,6 +67,12 @@ public:
     void set_color(const glm::vec4& color);
     const glm::vec4 color() const;
 
+    const int type() const;
+    int set_type(int type);
+
+    const int width() const;
+    const int height() const;
+
     const std::vector<std::string>& collision_caps_emit() const;
     const std::vector<std::string>& collision_caps_recv() const;
 
@@ -88,8 +94,11 @@ private:
     std::string d_uuid;
     bool d_is_transformed;
 
-    std::string d_texture_path_default;
+    std::string d_qml_path_default;
     std::string d_name;
+    int d_type;
+    int d_width;
+    int d_height;
 
     glm::vec4 d_color;
 

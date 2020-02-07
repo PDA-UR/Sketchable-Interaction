@@ -17,8 +17,6 @@ std::string PluginCollector::plugin_folder(const std::string &rel_path)
     std::string directory(buf);
     directory += rel_path;
 
-    Print::print(directory);
-
     return directory;
 }
 
