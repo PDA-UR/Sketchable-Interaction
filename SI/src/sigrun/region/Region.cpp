@@ -10,12 +10,10 @@
 
 namespace bp = boost::python;
 
-Region::Region(const std::vector<glm::vec3> &contour, const bp::object& effect, int width, int height):
+Region::Region(const std::vector<glm::vec3> &contour, const bp::object& effect, int mask_width, int mask_height):
     uprt(std::make_unique<RegionTransform>()),
     d_is_transformed(false),
-    d_link_events(20),
-    d_width(width),
-    d_height(height)
+    d_link_events(20)
 {SIGRUN
     HANDLE_PYTHON_CALL(
             d_effect = std::make_shared<bp::object>(bp::import("copy").attr("deepcopy")(effect));
@@ -35,13 +33,13 @@ Region::Region(const std::vector<glm::vec3> &contour, const bp::object& effect, 
 
     set_aabb();
 
-    if(width == 0 && height == 0)
+    if(mask_width == 0 && mask_height == 0)
     {
-        d_width = Context::SIContext()->width();
-        d_height = Context::SIContext()->height();
+        mask_width = Context::SIContext()->width();
+        mask_height = Context::SIContext()->height();
     }
 
-    uprm = std::make_unique<RegionMask>(d_width, d_height, d_contour, d_aabb);
+    uprm = std::make_unique<RegionMask>(mask_width, mask_height, d_contour, d_aabb);
 
     d_name = d_py_effect->name();
     d_name = d_name.empty() ? "custom": d_name;
