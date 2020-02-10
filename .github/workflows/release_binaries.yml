@@ -1,0 +1,101 @@
+name: Release Binaries
+
+on:
+  push:
+    branches:
+      - master
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [3.7]
+  
+    steps:
+    - uses: actions/checkout@v1
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v1
+      with:
+        python-version: ${{ matrix.python-version }}
+        
+    - name: Update C++-Compiler
+      run: sudo apt-get install -y g++-9
+      
+    - name: Install Qt5
+      run: |
+        sudo apt-get update
+        sudo apt-get install qtbase5-dev
+        sudo apt-get install qtdeclarative5-dev
+        
+    - name: Install GLM
+      run: |
+        sudo apt-get install libglm-dev
+        
+    - name: Install uuid
+      run: |
+        sudo apt-get install uuid-dev
+    
+    - name: Install PythonLibs
+      run: |
+        sudo apt-get install python3-dev
+        
+    - name: Install Boost with components System, Python and Filesystem
+      run: |
+        mkdir temp
+        cd temp
+        wget https://dl.bintray.com/boostorg/release/1.69.0/source/boost_1_69_0.tar.gz
+        tar xzf boost_1_69_0.tar.gz
+        cd boost_1_69_0 
+        sudo ln -s /usr/local/include/python3.7m /usr/local/include/python3.7
+        sed -i "s@includes ?= \$(prefix)/include/python\$(version)@includes ?= \$(prefix)/include/python\$(version)m@" tools/build/src/tools/python.jam
+        sudo ./bootstrap.sh --with-python=$(which python3)
+        sudo ./b2 --with-system --with-python --with-filesystem -j 8 install
+        cd ..
+        cd ..
+        
+    - name: configure
+      run: cmake .
+    
+    - name: Compile SI
+      run: |
+        cmake --build /home/runner/work/Sketchable-Interaction/Sketchable-Interaction --target all -j 8
+        
+    - name: Create SI Archive
+      run: 
+        mkdir artifact && 7z a -t7z artifact/si.zip libPySI.so libSIGeneralRuntime.so libSIRenderEngine.so si_test_application
+        
+    - name: Create Artifact
+      uses: actions/upload-artifact@v1
+      with:
+        name: si-binary-archives
+        path: artifact
+        
+    - name: Versioning
+      id: version
+      run: |
+        current=$(cat .version)
+        echo "::set-env name=CURRENT_VERSION::$current"
+        
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1.0.0
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: v${{ env.CURRENT_VERSION }}
+        release_name: SIv${{ env.CURRENT_VERSION }}
+        draft: false
+        prerelease: false
+          
+    - name: Upload release asset
+      uses: actions/upload-release-asset@v1.0.1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: artifact/si.zip
+        asset_name: si
+        asset_content_type: application/zip
+      
+        
+  
