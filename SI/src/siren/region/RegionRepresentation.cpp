@@ -40,42 +40,50 @@ RegionRepresentation::RegionRepresentation(QWidget *parent, const std::shared_pt
     d_view->setAttribute(Qt::WA_AlwaysStackOnTop);
     d_view->show();
 
-    if(d_type == SI_TYPE_MOUSE_CURSOR)
-    {
-        QMap<QString, QVariant> map;
-        map.insert("width", d_width);
-        map.insert("height", d_height);
-        map.insert("img_path", QString("res/mouse_cursor.png"));
+    if(region->effect().has_data_changed())
+        Q_EMIT dataChanged(region->data());
+}
 
-        Q_EMIT dataChanged(map);
+void RegionRepresentation::update(const std::shared_ptr<Region>& region)
+{
+    perform_transform_update(region);
+    perform_data_update(region);
+}
+
+void RegionRepresentation::perform_transform_update(const std::shared_ptr<Region> &region)
+{
+    if(region->is_transformed())
+    {
+        d_fill = QPainterPath();
+        d_poly = QPolygonF();
+
+        const glm::mat3x3 &transform = region->transform();
+
+        for (glm::vec3 &p: d_source_contour)
+        {
+            glm::vec3 p_ = glm::vec3(p.x, p.y, 1) * transform;
+
+            d_poly << QPoint(p_.x / p_.z, p_.y / p_.z);
+        }
+
+        d_fill.moveTo(d_poly[0].x(), d_poly[0].y());
+
+        for (int i = 1; i < d_poly.size(); i++)
+            d_fill.lineTo(d_poly[i]);
+
+        QMatrix4x4 matrix(transform[0].x, transform[0].y, 0, transform[0].z,
+                          transform[1].x, transform[1].y, 0, transform[1].z,
+                          transform[2].x, transform[2].y, 1, 0,
+                          0, 0, 0, 1);
+
+        Q_EMIT transformChanged(matrix);
     }
 }
 
-void RegionRepresentation::update(const glm::mat3x3 &transform)
+void RegionRepresentation::perform_data_update(const std::shared_ptr<Region> &region)
 {
-    d_fill = QPainterPath();
-    d_poly = QPolygonF();
-
-    for(glm::vec3& p: d_source_contour)
-    {
-        glm::vec3 p_ = glm::vec3(p.x, p.y, 1) * transform;
-        p_.x /= p_.z;
-        p_.y /= p_.z;
-
-        d_poly << QPoint(p_.x, p_.y);
-    }
-
-    d_fill.moveTo(d_poly[0].x(), d_poly[0].y());
-
-    for(int i = 1; i < d_poly.size(); i++)
-        d_fill.lineTo(d_poly[i]);
-
-    QMatrix4x4 matrix(transform[0].x, transform[0].y, 0, transform[0].z,
-                      transform[1].x, transform[1].y, 0, transform[1].z,
-                      transform[2].x, transform[2].y, 1, 0,
-                      0,           0,            0, 1);
-
-    Q_EMIT transformChanged(matrix);
+    if (region->effect().has_data_changed())
+            Q_EMIT dataChanged(region->data());
 }
 
 const std::string& RegionRepresentation::name() const

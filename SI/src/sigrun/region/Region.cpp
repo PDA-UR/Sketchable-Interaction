@@ -3,21 +3,19 @@
 #include "sigrun/plugin/PythonInvoker.hpp"
 #include "Region.hpp"
 
-#include <utility>
 #include "RegionResampler.hpp"
 #include <sigrun/log/Log.hpp>
-#include <sigrun/context/managers/helpers/linking/Link.hpp>
 #include <sigrun/util/UUID.hpp>
 #include <sigrun/context/Context.hpp>
-#include <sigrun/util/Benchmark.hpp>
-#include <any>
 
 namespace bp = boost::python;
 
-Region::Region(const std::vector<glm::vec3> &contour, const bp::object& effect):
+Region::Region(const std::vector<glm::vec3> &contour, const bp::object& effect, int width, int height):
     uprt(std::make_unique<RegionTransform>()),
     d_is_transformed(false),
-    d_link_events(20)
+    d_link_events(20),
+    d_width(width),
+    d_height(height)
 {SIGRUN
     HANDLE_PYTHON_CALL(
             d_effect = std::make_shared<bp::object>(bp::import("copy").attr("deepcopy")(effect));
@@ -37,7 +35,13 @@ Region::Region(const std::vector<glm::vec3> &contour, const bp::object& effect):
 
     set_aabb();
 
-    uprm = std::make_unique<RegionMask>(1920, 1080, d_contour, d_aabb);
+    if(width == 0 && height == 0)
+    {
+        d_width = Context::SIContext()->width();
+        d_height = Context::SIContext()->height();
+    }
+
+    uprm = std::make_unique<RegionMask>(d_width, d_height, d_contour, d_aabb);
 
     d_name = d_py_effect->name();
     d_name = d_name.empty() ? "custom": d_name;
@@ -292,7 +296,7 @@ void Region::update()
                 d_collision_caps_recv.push_back(key);
     )
 
-    if(d_py_effect->effect_type() == PySIEffect::EffectType::SI_CANVAS)
+    if(d_py_effect->effect_type() == SI_TYPE_CANVAS)
     {
         Context::SIContext()->region_manager()->set_partial_regions(d_py_effect->partial_region_contours());
 
@@ -314,6 +318,11 @@ void Region::update()
     }
     else
         Context::SIContext()->update_linking_relations(d_py_effect->link_relations(), d_uuid);
+}
+
+const QMap<QString, QVariant>& Region::data() const
+{
+    return d_py_effect->data();
 }
 
 void Region::set_color(const glm::vec4 &color)

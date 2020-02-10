@@ -25,7 +25,7 @@ Q_DECLARE_METATYPE (bp::tuple)
 class Region: public QObject, public SIObject
 {Q_OBJECT
 public:
-    Region(const std::vector<glm::vec3>& contour, const bp::object& effect);
+    Region(const std::vector<glm::vec3>& contour, const bp::object& effect, int width=0, int height=0);
     ~Region();
 
     bool is_transformed() const;
@@ -79,6 +79,7 @@ public:
     int handle_collision_event(const std::string& function_name, PySIEffect& colliding_effect);
 
     void update();
+    const QMap<QString, QVariant>& data() const;
 
 private:
     std::shared_ptr<PySIEffect> d_py_effect;

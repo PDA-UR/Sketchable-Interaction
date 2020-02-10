@@ -1,6 +1,9 @@
 
 #include "RenderEngineQt5.hpp"
 
+#include <QDesktopWidget>
+#include <QScreen>
+
 RenderEngineQT5::RenderEngineQT5()
 { SIREN
 }
@@ -12,16 +15,23 @@ RenderEngineQT5::~RenderEngineQT5()
     INFO("Rendering Engine terminated!");
 }
 
-void RenderEngineQT5::start(int width, int height)
+void RenderEngineQT5::start(int& width, int& height)
 {
+    width = QApplication::primaryScreen()->geometry().width();
+    height = QApplication::primaryScreen()->geometry().height();
+
     d_window = new MainWindow(width, height);
 
+    d_window->setGeometry(QApplication::primaryScreen()->availableGeometry());
     run();
 }
 
 void RenderEngineQT5::run()
 {
-    d_window->show();
+    d_window->showFullScreen();
+
+    DEBUG(d_window->width());
+    DEBUG(d_window->height());
 }
 
 void RenderEngineQT5::pause()

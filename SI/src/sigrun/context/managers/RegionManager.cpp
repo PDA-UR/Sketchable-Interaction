@@ -28,7 +28,7 @@ void RegionManager::activate_mouse_region_button_down(int mouse_btn)
 {
     for(auto& region: d_regions)
     {
-        if(region->effect().effect_type() == PySIEffect::EffectType::SI_MOUSE_CURSOR && !region->effect().has_mouse_pressed_capability(mouse_btn))
+        if(region->effect().effect_type() == SI_TYPE_MOUSE_CURSOR && !region->effect().has_mouse_pressed_capability(mouse_btn))
         {
             region->effect().set_mouse_pressed_capability(mouse_btn, true);
 
@@ -46,7 +46,7 @@ void RegionManager::deactivate_mouse_region_button_down(int mouse_btn)
 {
     for(auto& region: d_regions)
     {
-        if(region->effect().effect_type() == PySIEffect::EffectType::SI_MOUSE_CURSOR && region->effect().has_mouse_pressed_capability(mouse_btn))
+        if(region->effect().effect_type() == SI_TYPE_MOUSE_CURSOR && region->effect().has_mouse_pressed_capability(mouse_btn))
         {
             region->effect().set_mouse_pressed_capability(mouse_btn, false);
 

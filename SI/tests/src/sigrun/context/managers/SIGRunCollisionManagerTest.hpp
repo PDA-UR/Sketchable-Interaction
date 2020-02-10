@@ -23,7 +23,7 @@ public:
 
     }
 
-    Context ctx = Context(1920, 1080, std::unordered_map<std::string, std::unique_ptr<bp::object>>());
+    Context ctx = Context();
 
     CollisionManager cm;
 

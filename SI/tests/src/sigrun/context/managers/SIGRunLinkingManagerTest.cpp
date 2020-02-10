@@ -55,9 +55,9 @@ TEST_F(SIGRunLinkingManagerTest, link_creation_uni)
     std::vector<glm::vec3> contour2{glm::vec3(150, 150, 1), glm::vec3(150, 550, 1), glm::vec3(550, 550, 1),
                                     glm::vec3(550, 150, 1)};
 
-    std::shared_ptr<Region> a = std::make_shared<Region>(contour1, *o);
-    std::shared_ptr<Region> b = std::make_shared<Region>(contour2, *t);
-    std::shared_ptr<Region> c = std::make_shared<Region>(contour2, *o);
+    std::shared_ptr<Region> a = std::make_shared<Region>(contour1, *o, 1920, 1080);
+    std::shared_ptr<Region> b = std::make_shared<Region>(contour2, *t, 1920, 1080);
+    std::shared_ptr<Region> c = std::make_shared<Region>(contour2, *o, 1920, 1080);
 
     LinkingManager lm;
 
@@ -114,9 +114,9 @@ TEST_F(SIGRunLinkingManagerTest, is_linked_uni)
     std::vector<glm::vec3> contour2{glm::vec3(150, 150, 1), glm::vec3(150, 550, 1), glm::vec3(550, 550, 1),
                                     glm::vec3(550, 150, 1)};
 
-    std::shared_ptr<Region> a = std::make_shared<Region>(contour1, *o);
-    std::shared_ptr<Region> b = std::make_shared<Region>(contour2, *t);
-    std::shared_ptr<Region> c = std::make_shared<Region>(contour2, *o);
+    std::shared_ptr<Region> a = std::make_shared<Region>(contour1, *o, 1920, 1080);
+    std::shared_ptr<Region> b = std::make_shared<Region>(contour2, *t, 1920, 1080);
+    std::shared_ptr<Region> c = std::make_shared<Region>(contour2, *o, 1920, 1080);
 
     LinkingManager lm;
 
@@ -171,10 +171,10 @@ TEST_F(SIGRunLinkingManagerTest, link_event_execution_uni)
     std::vector<glm::vec3> contour2{glm::vec3(150, 150, 1), glm::vec3(150, 550, 1), glm::vec3(550, 550, 1),
                                     glm::vec3(550, 150, 1)};
 
-    std::shared_ptr<Region> a = std::make_shared<Region>(contour1, *o);
-    std::shared_ptr<Region> b = std::make_shared<Region>(contour2, *t);
-    std::shared_ptr<Region> c = std::make_shared<Region>(contour2, *o);
-    std::shared_ptr<Region> d = std::make_shared<Region>(contour2, *t);
+    std::shared_ptr<Region> a = std::make_shared<Region>(contour1, *o, 1920, 1080);
+    std::shared_ptr<Region> b = std::make_shared<Region>(contour2, *t, 1920, 1080);
+    std::shared_ptr<Region> c = std::make_shared<Region>(contour2, *o, 1920, 1080);
+    std::shared_ptr<Region> d = std::make_shared<Region>(contour2, *t, 1920, 1080);
 
     LinkingManager lm;
 
@@ -246,9 +246,9 @@ TEST_F(SIGRunLinkingManagerTest, link_removal_uni)
     std::vector<glm::vec3> contour2{glm::vec3(150, 150, 1), glm::vec3(150, 550, 1), glm::vec3(550, 550, 1),
                                     glm::vec3(550, 150, 1)};
 
-    std::shared_ptr<Region> a = std::make_shared<Region>(contour1, *o);
-    std::shared_ptr<Region> b = std::make_shared<Region>(contour2, *t);
-    std::shared_ptr<Region> c = std::make_shared<Region>(contour2, *o);
+    std::shared_ptr<Region> a = std::make_shared<Region>(contour1, *o, 1920, 1080);
+    std::shared_ptr<Region> b = std::make_shared<Region>(contour2, *t, 1920, 1080);
+    std::shared_ptr<Region> c = std::make_shared<Region>(contour2, *o, 1920, 1080);
 
     LinkingManager lm;
 
@@ -334,9 +334,9 @@ TEST_F(SIGRunLinkingManagerTest, link_creation_bi)
     std::vector<glm::vec3> contour2{glm::vec3(150, 150, 1), glm::vec3(150, 550, 1), glm::vec3(550, 550, 1),
                                     glm::vec3(550, 150, 1)};
 
-    std::shared_ptr<Region> a = std::make_shared<Region>(contour1, *o);
-    std::shared_ptr<Region> b = std::make_shared<Region>(contour2, *t);
-    std::shared_ptr<Region> c = std::make_shared<Region>(contour2, *o);
+    std::shared_ptr<Region> a = std::make_shared<Region>(contour1, *o, 1920, 1080);
+    std::shared_ptr<Region> b = std::make_shared<Region>(contour2, *t, 1920, 1080);
+    std::shared_ptr<Region> c = std::make_shared<Region>(contour2, *o, 1920, 1080);
 
     LinkingManager lm;
 
@@ -399,8 +399,8 @@ TEST_F(SIGRunLinkingManagerTest, is_linked_bi)
     std::vector<glm::vec3> contour2{glm::vec3(150, 150, 1), glm::vec3(150, 550, 1), glm::vec3(550, 550, 1),
                                     glm::vec3(550, 150, 1)};
 
-    std::shared_ptr<Region> a = std::make_shared<Region>(contour1, *o);
-    std::shared_ptr<Region> b = std::make_shared<Region>(contour2, *t);
+    std::shared_ptr<Region> a = std::make_shared<Region>(contour1, *o, 1920, 1080);
+    std::shared_ptr<Region> b = std::make_shared<Region>(contour2, *t, 1920, 1080);
 
     LinkingManager lm;
 
@@ -453,9 +453,9 @@ TEST_F(SIGRunLinkingManagerTest, link_event_execution_bi)
     std::vector<glm::vec3> contour2{glm::vec3(150, 150, 1), glm::vec3(150, 550, 1), glm::vec3(550, 550, 1),
                                     glm::vec3(550, 150, 1)};
 
-    std::shared_ptr<Region> a = std::make_shared<Region>(contour1, *o);
-    std::shared_ptr<Region> b = std::make_shared<Region>(contour2, *t);
-    std::shared_ptr<Region> c = std::make_shared<Region>(contour2, *o);
+    std::shared_ptr<Region> a = std::make_shared<Region>(contour1, *o, 1920, 1080);
+    std::shared_ptr<Region> b = std::make_shared<Region>(contour2, *t, 1920, 1080);
+    std::shared_ptr<Region> c = std::make_shared<Region>(contour2, *o, 1920, 1080);
 
     a->set_name("a");
     b->set_name("b");
@@ -519,10 +519,10 @@ TEST_F(SIGRunLinkingManagerTest, link_removal_bi)
     std::vector<glm::vec3> contour2{glm::vec3(150, 150, 1), glm::vec3(150, 550, 1), glm::vec3(550, 550, 1),
                                     glm::vec3(550, 150, 1)};
 
-    std::shared_ptr<Region> a = std::make_shared<Region>(contour1, *o);
-    std::shared_ptr<Region> b = std::make_shared<Region>(contour2, *t);
-    std::shared_ptr<Region> c = std::make_shared<Region>(contour2, *o);
-    std::shared_ptr<Region> d = std::make_shared<Region>(contour2, *t);
+    std::shared_ptr<Region> a = std::make_shared<Region>(contour1, *o, 1920, 1080);
+    std::shared_ptr<Region> b = std::make_shared<Region>(contour2, *t, 1920, 1080);
+    std::shared_ptr<Region> c = std::make_shared<Region>(contour2, *o, 1920, 1080);
+    std::shared_ptr<Region> d = std::make_shared<Region>(contour2, *t, 1920, 1080);
 
 
     LinkingManager lm;

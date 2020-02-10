@@ -14,7 +14,7 @@ public:
     RenderEngineQT5();
     ~RenderEngineQT5();
 
-    void start(int width, int height) override;
+    void start(int& width, int& height) override;
     void run() override;
     void pause() override;
     void stop() override;

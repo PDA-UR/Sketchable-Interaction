@@ -50,11 +50,11 @@ void Core::start(char** argv, int argc, IRenderEngine* ire)
     else
         ERROR("No plugins loaded");
 
-    std::unique_ptr<Context> upctx(new Context(1920, 1080, plugins));
+    std::unique_ptr<Context> upctx(new Context());
 
     INFO("Initialization finished");
 
-    upctx->begin(ire, argc, argv);
+    upctx->begin(plugins, ire, argc, argv);
     INFO("Context closed");
 
 }

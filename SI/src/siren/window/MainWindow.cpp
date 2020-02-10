@@ -19,8 +19,6 @@ MainWindow::MainWindow(int width, int height):
 
     up_update_worker.start();
     INFO("Update Loop started...");
-    setGeometry(0, 0, width, height);
-    showFullScreen();
 }
 
 void MainWindow::loop(double delta, int fps)
@@ -51,10 +49,7 @@ void MainWindow::loop(double delta, int fps)
         if(d_region_representations.find(region->uuid()) == d_region_representations.end())
             d_region_representations.insert({region->uuid(), std::make_unique<RegionRepresentation>(this, region)});
         else
-        {
-            if (region->is_transformed())
-                d_region_representations[region->uuid()]->update(region->transform());
-        }
+            d_region_representations[region->uuid()]->update(region);
     }
 
     update();
