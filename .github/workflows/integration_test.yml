@@ -51,7 +51,7 @@ jobs:
         git commit -m "Update Version"
         
     - name: Update C++-Compiler
-      run: apt-get install -y g++-8
+      run: sudo apt-get install -y g++-8
         
     - name: Install Qt5
       run: |
