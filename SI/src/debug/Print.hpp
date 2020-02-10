@@ -8,6 +8,8 @@
 #include <iostream>
 #include <map>
 #include <sstream>
+#include <QString>
+#include <QVariant>
 
 namespace bp = boost::python;
 
@@ -95,6 +97,23 @@ public:
             os += std::to_string(it.first) + std::string(" : ") + std::to_string(it.second) + std::string("\n");
 
         return os;
+    }
+
+    static std::string _print(const QString& qs)
+    {
+        return qs.toStdString();
+    }
+
+    static std::string _print(const QVariant& qv)
+    {
+        if(std::string(qv.typeName()) == "int")
+            return std::to_string(qv.value<int>());
+
+        if(std::string(qv.typeName()) == "float")
+            return std::to_string(qv.value<float>());
+
+        if(std::string(qv.typeName()) == "QString")
+            return _print(qv.value<QString>());
     }
 
     template<typename T>

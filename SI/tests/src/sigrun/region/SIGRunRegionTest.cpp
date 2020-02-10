@@ -34,7 +34,7 @@ TEST_F(SIGRunRegionTest, construction)
 
     std::shared_ptr<bp::object> o = std::make_shared<bp::object>(script.si_plugin(module_name, rpath, classes[0]));
 
-    EXPECT_NO_FATAL_FAILURE(Region r(contour, *o));
+    EXPECT_NO_FATAL_FAILURE(Region r(contour, *o, 1920, 1080));
 }
 
 TEST_F(SIGRunRegionTest, aabb)
@@ -59,7 +59,7 @@ TEST_F(SIGRunRegionTest, aabb)
 
     std::shared_ptr<bp::object> o = std::make_shared<bp::object>(script.si_plugin(module_name, rpath, classes[0]));
 
-    Region r(contour, *o);
+    Region r(contour, *o, 1920, 1080);
 
     ASSERT_EQ(contour.size(), r.aabb().size());
 
@@ -88,7 +88,7 @@ TEST_F(SIGRunRegionTest, contour)
     script.load_class_names(classes, rpath);
 
     std::shared_ptr<bp::object> o = std::make_shared<bp::object>(script.si_plugin(module_name, rpath, classes[0]));
-    Region r(contour, *o);
+    Region r(contour, *o, 1920, 1080);
 
     ASSERT_EQ(contour.size(), 4);
     ASSERT_EQ(r.contour().size(), 64);
@@ -128,7 +128,7 @@ TEST_F(SIGRunRegionTest, on_enter)
 
     std::vector<glm::vec3> contour {glm::vec3(100, 100, 1), glm::vec3(100, 600, 1), glm::vec3(600, 600, 1), glm::vec3(600, 100, 1)};
 
-    Region r(contour, *o);
+    Region r(contour, *o, 1920, 1080);
 
     PySIEffect te = bp::extract<PySIEffect>(*t);
 
@@ -169,7 +169,7 @@ TEST_F(SIGRunRegionTest, on_continuous)
 
     std::vector<glm::vec3> contour {glm::vec3(100, 100, 1), glm::vec3(100, 600, 1), glm::vec3(600, 600, 1), glm::vec3(600, 100, 1)};
 
-    Region r(contour, *o);
+    Region r(contour, *o, 1920, 1080);
 
     PySIEffect te = bp::extract<PySIEffect>(*t);
 
@@ -210,7 +210,7 @@ TEST_F(SIGRunRegionTest, on_leave)
 
     std::vector<glm::vec3> contour {glm::vec3(100, 100, 1), glm::vec3(100, 600, 1), glm::vec3(600, 600, 1), glm::vec3(600, 100, 1)};
 
-    Region r(contour, *o);
+    Region r(contour, *o, 1920, 1080);
 
     PySIEffect te = bp::extract<PySIEffect>(*t);
 

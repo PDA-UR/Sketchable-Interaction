@@ -284,7 +284,7 @@ void PySIEffect::__set_source__(const std::string& source)
 
 void PySIEffect::__set_effect_type__(int type)
 {
-    d_effect_type = (PySIEffect::EffectType) type;
+    d_effect_type = type;
 }
 
 const std::string PySIEffect::__name__() const
@@ -510,6 +510,40 @@ std::vector<std::shared_ptr<LinkRelation>>& PySIEffect::link_relations()
     return d_link_relations;
 }
 
+void PySIEffect::__set_data__(const std::string &key, const bp::object &value, const int type)
+{
+    QVariant qv;
+
+    switch (type)
+    {
+        case SI_DATA_TYPE_INT:
+            d_data[QString(key.c_str())] = QVariant( bp::extract<int>(value));
+        break;
+
+        case SI_DATA_TYPE_FLOAT:
+            d_data[QString(key.c_str())] = QVariant(bp::extract<float>(value));
+        break;
+
+        case SI_DATA_TYPE_STRING:
+            d_data[QString(key.c_str())] = QVariant(QString(bp::extract<char*>(value)));
+        break;
+    }
+
+    d_data_changed = true;
+}
+
+const QMap<QString, QVariant> &PySIEffect::data()
+{
+    d_data_changed = false;
+
+    return d_data;
+}
+
+bool PySIEffect::has_data_changed()
+{
+    return d_data_changed;
+}
+
 BOOST_PYTHON_MODULE(libPySI)
 {
     IterableConverter()
@@ -573,6 +607,7 @@ BOOST_PYTHON_MODULE(libPySI)
         .def("register_region", &PySIEffect::__register_region__)
         .def("register_link", &PySIEffect::__register_link__)
         .def("remove_link", &PySIEffect::__remove_link__)
+        .def("set_data", &PySIEffect::__set_data__)
 
         .add_property("__partial_regions__", &PySIEffect::__partial_regions__, &PySIEffect::__set_partial_regions__)
         .add_property("__regions_for_registration__", &PySIEffect::__regions_for_registration__, &PySIEffect::__set_regions_for_registration__)
@@ -600,11 +635,17 @@ BOOST_PYTHON_MODULE(libPySI)
         .enable_pickling()
         ;
 
-    bp::enum_<PySIEffect::EffectType>("EffectType")
-        .value("SI_CANVAS", PySIEffect::SI_CANVAS)
-        .value("SI_CURSOR", PySIEffect::SI_CURSOR)
-        .value("SI_MOUSE_CURSOR", PySIEffect::SI_MOUSE_CURSOR)
-        .value("SI_CUSTOM", PySIEffect::SI_CUSTOM)
+    bp::enum_<int>("DataType")
+        .value("INT", SI_DATA_TYPE_INT)
+        .value("FLOAT", SI_DATA_TYPE_FLOAT)
+        .value("STRING", SI_DATA_TYPE_STRING)
+        ;
+
+    bp::enum_<int>("EffectType")
+        .value("SI_CANVAS", SI_TYPE_CANVAS)
+        .value("SI_CURSOR", SI_TYPE_CURSOR)
+        .value("SI_MOUSE_CURSOR", SI_TYPE_MOUSE_CURSOR)
+        .value("SI_CUSTOM", SI_TYPE_CUSTOM)
         .export_values()
         ;
 }

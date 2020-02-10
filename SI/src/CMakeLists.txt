@@ -44,6 +44,7 @@ target_precompile_headers(PySI
         PRIVATE
         <unordered_map>
         <vector>
+        <QVariant>
         <map>
         <boost/python/suite/indexing/vector_indexing_suite.hpp>
         <boost/python/suite/indexing/map_indexing_suite.hpp>
@@ -101,9 +102,7 @@ set(SIGRunSRC
         SI/src/sigrun/context/managers/InputManager.cpp
         SI/src/sigrun/context/managers/InputManager.hpp
         SI/src/sigrun/context/managers/helpers/input/ExternalObject.cpp
-        SI/src/sigrun/context/managers/helpers/input/ExternalObject.hpp
-        SI/src/sigrun/region/RegionData.cpp
-        SI/src/sigrun/region/RegionData.hpp)
+        SI/src/sigrun/context/managers/helpers/input/ExternalObject.hpp)
 
 ADD_DEFINITIONS(-DQT_NO_KEYWORDS)
 
