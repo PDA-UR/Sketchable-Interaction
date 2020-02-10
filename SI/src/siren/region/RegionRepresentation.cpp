@@ -34,7 +34,7 @@ RegionRepresentation::RegionRepresentation(QWidget *parent, const std::shared_pt
     if(!d_qml_path.empty())
         d_view->setSource(QUrl(QString(d_qml_path.c_str())));
 
-    d_view->setGeometry(0, 0, 1920, 1080);
+    d_view->setGeometry(0, 0, Context::SIContext()->width(), Context::SIContext()->height());
     d_view->setStyleSheet("background-color: #00000000;");
     d_view->setClearColor(Qt::transparent);
     d_view->setAttribute(Qt::WA_AlwaysStackOnTop);

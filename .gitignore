@@ -237,3 +237,12 @@ SI/plugins/standard_environment_library/canvas/__pycache__/
 SI/plugins/standard_environment_library/tag/__pycache__/
 
 SI/tests/res/region/__pycache__/
+
+SI-Doc/abstract_concept
+SI-Doc/control_structure
+SI-Doc/core_interaction_concept
+SI-Doc/process_graphs
+SI-Doc/silang
+SI-Doc/targeted_users
+SI-Doc/si/html
+SI-Doc/si/latex
