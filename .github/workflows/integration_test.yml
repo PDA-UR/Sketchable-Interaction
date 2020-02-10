@@ -50,6 +50,9 @@ jobs:
         git add .version
         git commit -m "Update Version"
         
+    - name: Update C++-Compiler
+      run: sudo apt-get install g++
+        
     - name: Install Qt5
       run: |
         sudo apt-get update
