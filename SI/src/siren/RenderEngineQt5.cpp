@@ -28,10 +28,7 @@ void RenderEngineQT5::start(int& width, int& height)
 
 void RenderEngineQT5::run()
 {
-    d_window->showFullScreen();
-
-    DEBUG(d_window->width());
-    DEBUG(d_window->height());
+    d_window->show();
 }
 
 void RenderEngineQT5::pause()

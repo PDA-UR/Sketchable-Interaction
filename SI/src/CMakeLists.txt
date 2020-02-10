@@ -102,7 +102,9 @@ set(SIGRunSRC
         SI/src/sigrun/context/managers/InputManager.cpp
         SI/src/sigrun/context/managers/InputManager.hpp
         SI/src/sigrun/context/managers/helpers/input/ExternalObject.cpp
-        SI/src/sigrun/context/managers/helpers/input/ExternalObject.hpp)
+        SI/src/sigrun/context/managers/helpers/input/ExternalObject.hpp
+        SI/src/sigrun/context/managers/helpers/input/Filessystem.cpp
+        SI/src/sigrun/context/managers/helpers/input/Filessystem.hpp)
 
 ADD_DEFINITIONS(-DQT_NO_KEYWORDS)
 
@@ -128,6 +130,7 @@ target_precompile_headers(SIGeneralRuntime
         <QEvent>
         <QKeyEvent>
         <QMouseEvent>
+        <filesystem>
         SI/src/sigrun/util/Benchmark.hpp
         SI/src/sigrun/util/UUID.hpp
         SI/src/sigrun/util/RingBuffer.hpp
