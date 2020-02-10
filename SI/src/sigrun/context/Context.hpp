@@ -22,7 +22,7 @@ public:
 
     ~Context();
 
-    void begin(IRenderEngine* ire, int argc, char** argv);
+    void begin(const std::unordered_map<std::string, std::unique_ptr<bp::object>>& plugins, IRenderEngine* ire, int argc, char** argv);
     void end();
 
     Capability* capability_manager();
@@ -42,7 +42,7 @@ public:
 
 private:
     static Context* self;
-    Context(int width, int height, const std::unordered_map<std::string, std::unique_ptr<bp::object>>& plugins);
+    Context();
 
     void add_startup_regions(const std::unordered_map<std::string, std::unique_ptr<bp::object>>& plugins);
     void add_canvas_region(const std::unordered_map<std::string, std::unique_ptr<bp::object>>& plugins);
@@ -67,7 +67,9 @@ private:
     std::unique_ptr<CollisionManager> uprcm;
 
 
-    int s_width, s_height;
+    int s_width = 0;
+    int s_height = 0;
+
     IRenderEngine* d_ire;
 
     friend class Core;

@@ -31,6 +31,8 @@ target_precompile_headers(SIRenderEngine
         <QObject>
         <QQmlEngine>
         <QQmlContext>
+        <QDesktopWidget>
+        <QScreen>
         <QPaintEvent>
         <QPainter>
         SI/src/siren/background/UpdateWorker.hpp

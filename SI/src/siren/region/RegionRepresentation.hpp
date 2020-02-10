@@ -18,10 +18,9 @@ class RegionRepresentation: public QObject, public SIObject
 public:
     RegionRepresentation(QWidget* parent, const std::shared_ptr<Region>& region);
 
-    void update(const glm::mat3x3& transform);
+    void update(const std::shared_ptr<Region>& region);
 
     Q_SIGNAL void transformChanged(const QMatrix4x4& tform);
-    Q_SIGNAL void dimensionsChanged(int width, int height);
     Q_SIGNAL void dataChanged(const QMap<QString, QVariant>& data);
 
     const std::string& name() const;
@@ -30,6 +29,9 @@ public:
     const QPainterPath& fill() const;
 
 private:
+    void perform_transform_update(const std::shared_ptr<Region>& region);
+    void perform_data_update(const std::shared_ptr<Region>& region);
+
     int d_r;
     int d_g;
     int d_b;

@@ -8,11 +8,6 @@
 #include <pysi/SuperEffect.hpp>
 #include <sigrun/util/Util.hpp>
 
-
-#include <QQuickWidget>
-
-
-
 namespace bp = boost::python;
 
 Context* Context::self = nullptr;
@@ -23,36 +18,18 @@ Context::~Context()
     INFO("Destroyed Context");
 }
 
-Context::Context(int width, int height, const std::unordered_map<std::string, std::unique_ptr<bp::object>>& plugins)
+Context::Context()
 {SIGRUN
     self = this;
-    s_width = width;
-    s_height = height;
 
     uprm = std::unique_ptr<RegionManager>(new RegionManager);
     uplm = std::unique_ptr<LinkingManager>(new LinkingManager);
     upim = std::unique_ptr<InputManager>(new InputManager);
     upcm = std::unique_ptr<Capability>(new Capability);
     uprcm = std::unique_ptr<CollisionManager>(new CollisionManager);
-
-    for(const auto& item: plugins)
-        upcm->add_capabilities(*item.second);
-
-    add_startup_regions(plugins);
-
-    INFO("Plugins available for drawing: " + std::to_string(d_available_plugins.size()));
-
-    if(!d_available_plugins.empty())
-    {
-        DEBUG("Test case with further effect type");
-
-        d_selected_effects_by_id[d_mouse_uuid] = d_available_plugins.back();
-        const std::string& selected = bp::extract<std::string>(d_selected_effects_by_id[d_mouse_uuid].attr("name"));
-        DEBUG("Mouse Cursor: " + d_mouse_uuid + " set to " + selected);
-    }
 }
 
-void Context::add_startup_regions(const std::unordered_map<std::string, std::unique_ptr<bp::object>> &plugins)
+void Context::add_startup_regions(const std::unordered_map<std::string, std::unique_ptr<bp::object>>& plugins)
 {
     add_canvas_region(plugins);
 
@@ -63,8 +40,8 @@ void Context::add_startup_regions(const std::unordered_map<std::string, std::uni
             HANDLE_PYTHON_CALL(
                     switch (bp::extract<int>(value->attr("region_type")))
                     {
-                        case PySIEffect::EffectType::SI_CANVAS: break;
-                        case PySIEffect::EffectType::SI_MOUSE_CURSOR:
+                        case SI_TYPE_CANVAS: break;
+                        case SI_TYPE_MOUSE_CURSOR:
                             add_cursor_regions(value);
                             break;
 
@@ -77,14 +54,14 @@ void Context::add_startup_regions(const std::unordered_map<std::string, std::uni
     }
 }
 
-void Context::add_canvas_region(const std::unordered_map<std::string, std::unique_ptr<bp::object>> &plugins)
+void Context::add_canvas_region(const std::unordered_map<std::string, std::unique_ptr<bp::object>>& plugins)
 {
     for(auto& [key, value]: plugins)
     {
         if (!value->is_none())
         {
             HANDLE_PYTHON_CALL(
-                if (bp::extract<int>(value->attr("region_type")) == PySIEffect::EffectType::SI_CANVAS)
+                if (bp::extract<int>(value->attr("region_type")) == SI_TYPE_CANVAS)
                 {
                     std::vector<glm::vec3> canvas_contour{glm::vec3(1, 1, 1), glm::vec3(1, s_height - 1, 1),
                                                           glm::vec3(s_width - 1, s_height - 1, 1),
@@ -99,34 +76,57 @@ void Context::add_canvas_region(const std::unordered_map<std::string, std::uniqu
 
 void Context::add_cursor_regions(const std::unique_ptr<bp::object>& cursor_effect)
 {
-    std::vector<glm::vec3> mouse_contour {glm::vec3(0, 0, 1), glm::vec3(0, 24, 1), glm::vec3(18, 24, 1), glm::vec3(18, 0, 1) };
+    int width_mouse_cursor = bp::extract<int>(cursor_effect->attr("width"));
+    int height_mouse_cursor = bp::extract<int>(cursor_effect->attr("height"));
+
+    std::vector<glm::vec3> mouse_contour {glm::vec3(0, 0, 1), glm::vec3(0, height_mouse_cursor, 1), glm::vec3(width_mouse_cursor, height_mouse_cursor, 1), glm::vec3(width_mouse_cursor, 0, 1) };
     uprm->add_region(mouse_contour, *cursor_effect, 0);
     uplm->add_link_to_object(uprm->regions().back(), ExternalObject::ExternalObjectType::MOUSE);
     d_mouse_uuid = uprm->regions().back()->uuid();
 }
 
-void Context::begin(IRenderEngine* ire, int argc, char** argv)
+void Context::begin(const std::unordered_map<std::string, std::unique_ptr<bp::object>>& plugins, IRenderEngine* ire, int argc, char** argv)
 {
-    INFO("Creating Qt5 Application...");
-    QApplication d_app(argc, argv);
-    INFO("Qt5 Application created!");
+    if(ire)
+    {
+        d_ire = ire;
+
+        INFO("Creating Qt5 Application...");
+        QApplication d_app(argc, argv);
+        INFO("Qt5 Application created!");
+
+        for(const auto& item: plugins)
+            upcm->add_capabilities(*item.second);
+
+        d_app.setOverrideCursor(Qt::BlankCursor);
 
 
-    d_app.setOverrideCursor(Qt::BlankCursor);
+        d_app.installEventFilter(upim.get());
 
-    d_ire = ire;
+        d_ire->start(s_width, s_height);
 
-    d_app.installEventFilter(upim.get());
+        add_startup_regions(plugins);
 
-    d_ire->start(s_width, s_height);
+        INFO("Plugins available for drawing: " + std::to_string(d_available_plugins.size()));
 
-    d_app.exec();
-    INFO("QT5 Application terminated!");
+        if(!d_available_plugins.empty())
+        {
+            DEBUG("Test case with further effect type");
+
+            d_selected_effects_by_id[d_mouse_uuid] = d_available_plugins.back();
+            const std::string& selected = bp::extract<std::string>(d_selected_effects_by_id[d_mouse_uuid].attr("name"));
+            DEBUG("Mouse Cursor: " + d_mouse_uuid + " set to " + selected);
+        }
+
+        d_app.exec();
+        INFO("QT5 Application terminated!");
+    }
 }
 
 void Context::end()
 {
-    d_ire->stop();
+    if(d_ire)
+        d_ire->stop();
 }
 
 Capability* Context::capability_manager()
@@ -169,18 +169,16 @@ void Context::update()
     upim->update();
     uprcm->collide(uprm->regions());
     uprm->update();
-
-    self = this;
 }
 
 int Context::width()
 {
-    return 0;
+    return s_width;
 }
 
 int Context::height()
 {
-    return 0;
+    return s_height;
 }
 
 void Context::enable(int what)
