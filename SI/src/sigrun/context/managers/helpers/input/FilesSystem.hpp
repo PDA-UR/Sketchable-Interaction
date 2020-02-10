@@ -3,8 +3,10 @@
 #ifndef SITEST_FILESSYSTEM_HPP
 #define SITEST_FILESSYSTEM_HPP
 
+#include<boost/filesystem.hpp>
 
-class Filessystem
+
+class FilesSystem
 {
 
 };

@@ -6,7 +6,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 find_package(PythonLibs 3 REQUIRED)
 find_package(Python3 REQUIRED)
-find_package(Boost 1.69.0 COMPONENTS system python3.7 REQUIRED)
+find_package(Boost 1.69.0 COMPONENTS system python3.7 filesystem REQUIRED)
 find_package(glm REQUIRED)
 
 include_directories(${Boost_INCLUDE_DIRS})
@@ -103,8 +103,8 @@ set(SIGRunSRC
         SI/src/sigrun/context/managers/InputManager.hpp
         SI/src/sigrun/context/managers/helpers/input/ExternalObject.cpp
         SI/src/sigrun/context/managers/helpers/input/ExternalObject.hpp
-        SI/src/sigrun/context/managers/helpers/input/Filessystem.cpp
-        SI/src/sigrun/context/managers/helpers/input/Filessystem.hpp)
+        SI/src/sigrun/context/managers/helpers/input/FilesSystem.cpp
+        SI/src/sigrun/context/managers/helpers/input/FilesSystem.hpp)
 
 ADD_DEFINITIONS(-DQT_NO_KEYWORDS)
 
@@ -123,6 +123,7 @@ target_precompile_headers(SIGeneralRuntime
         <boost/python/suite/indexing/vector_indexing_suite.hpp>
         <boost/python/suite/indexing/map_indexing_suite.hpp>
         <boost/python.hpp>
+        <boost/filesystem.hpp>
         <QApplication>
         <QInputEvent>
         <QMetaMethod>
@@ -130,7 +131,6 @@ target_precompile_headers(SIGeneralRuntime
         <QEvent>
         <QKeyEvent>
         <QMouseEvent>
-        <filesystem>
         SI/src/sigrun/util/Benchmark.hpp
         SI/src/sigrun/util/UUID.hpp
         SI/src/sigrun/util/RingBuffer.hpp
