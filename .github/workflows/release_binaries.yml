@@ -17,6 +17,10 @@ jobs:
       uses: actions/setup-python@v1
       with:
         python-version: ${{ matrix.python-version }}
+        
+    - name: Update C++-Compiler
+      run: sudo apt-get install -y g++-9
+      
     - name: Install Qt5
       run: |
         sudo apt-get update
@@ -35,7 +39,7 @@ jobs:
       run: |
         sudo apt-get install python3-dev
         
-    - name: Install Boost-Python
+    - name: Install Boost with components System, Python and Filesystem
       run: |
         mkdir temp
         cd temp
@@ -45,7 +49,7 @@ jobs:
         sudo ln -s /usr/local/include/python3.7m /usr/local/include/python3.7
         sed -i "s@includes ?= \$(prefix)/include/python\$(version)@includes ?= \$(prefix)/include/python\$(version)m@" tools/build/src/tools/python.jam
         sudo ./bootstrap.sh --with-python=$(which python3)
-        sudo ./b2 --with-system --with-python -j 8 install
+        sudo ./b2 --with-system --with-python --with-filesystem -j 8 install
         cd ..
         cd ..
         
