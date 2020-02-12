@@ -13,6 +13,7 @@
 #include <QVariant>
 #include <QMap>
 
+
 namespace bp = boost::python;
 
 class IterableConverter
@@ -113,10 +114,7 @@ public:
     const std::string __uuid__() const;
     void __set_regions_for_registration__(const std::vector<std::string>& candidates);
     std::vector<std::string> __regions_for_registration__();
-    void __add_point_to_partial_region__(const std::string& sender_id, const std::vector<float>& point);
     std::map<std::string, std::vector<glm::vec3>>& partial_region_contours();
-    void __set_partial_regions__(const std::map<std::string, std::vector<std::vector<float>>>& partials);
-    std::map<std::string, std::vector<std::vector<float>>> __partial_regions__();
     void __register_link__(const std::string& sender, const std::string& sender_attrib, const std::string& recv, const std::string& recv_attrib);
     void __remove_link__(const std::string& sender, const std::string& sender_attrib, const std::string& recv, const std::string& recv_attrib);
     std::vector<std::shared_ptr<LinkRelation>>& link_relations();
@@ -125,8 +123,10 @@ public:
     const QMap<QString, QVariant>& data();
     bool has_data_changed();
 
+    std::map<std::string, std::vector<glm::vec3>> d_partial_regions;
 
 private:
+
     std::vector<std::shared_ptr<LinkRelation>> d_link_relations;
 
     int d_x = 0;
@@ -150,8 +150,6 @@ private:
     std::map<std::string, bp::object> d_cap_link_emit;
     std::map<std::string, std::map<std::string, bp::object>> d_cap_link_recv;
 
-    std::map<std::string, std::vector<glm::vec3>> d_partial_regions;
-    std::map<std::string, std::vector<std::vector<float>>> d_partial_regions_py;
 
     std::vector<std::string> d_regions_marked_for_registration;
 
