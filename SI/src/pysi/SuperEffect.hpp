@@ -76,10 +76,6 @@ public:
     const std::vector<int> __color__() const;
     void __set_scale__(float factor);
     const float __scale__() const;
-    void __set_link_emit__(const bp::dict& dict);
-    const bp::dict __link_emit__() const;
-    void __set_link_recv__(const bp::dict& dict);
-    const bp::dict __link_recv__() const;
     std::map<std::string, bp::object>& attr_link_emit();
     std::map<std::string, std::map<std::string, bp::object>>& attr_link_recv();
     std::map<std::string, std::map<std::string, bp::object>>& cap_collision_emit();
@@ -108,8 +104,6 @@ public:
     std::vector<std::string>& regions_for_registration();
     void __set_uuid__(const std::string& uuid);
     const std::string __uuid__() const;
-    void __set_regions_for_registration__(const std::vector<std::string>& candidates);
-    std::vector<std::string> __regions_for_registration__();
     std::map<std::string, std::vector<glm::vec3>>& partial_region_contours();
     void __register_link__(const std::string& sender, const std::string& sender_attrib, const std::string& recv, const std::string& recv_attrib);
     void __remove_link__(const std::string& sender, const std::string& sender_attrib, const std::string& recv, const std::string& recv_attrib);
@@ -123,15 +117,12 @@ public:
     std::map<std::string, std::vector<glm::vec3>> d_partial_regions;
     std::map<std::string, std::map<std::string, bp::object>> d_cap_collision_emit;
     std::map<std::string, std::map<std::string, bp::object>> d_cap_collision_recv;
-
-    //
-    std::vector<std::shared_ptr<LinkRelation>> d_link_relations;
-
-    // pending
     std::map<std::string, bp::object> d_cap_link_emit;
     std::map<std::string, std::map<std::string, bp::object>> d_cap_link_recv;
-
     std::vector<std::string> d_regions_marked_for_registration;
+
+    // pending
+    std::vector<std::shared_ptr<LinkRelation>> d_link_relations;
 
     glm::vec4 d_color = glm::vec4(255, 255, 255, 255);
 

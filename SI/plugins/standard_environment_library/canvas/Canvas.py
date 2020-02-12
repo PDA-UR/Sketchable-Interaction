@@ -12,20 +12,17 @@ class Canvas(PySIEffect.PySIEffect):
 
         self.color = [0, 0, 255, 255]
 
+        self.registered_regions = PySIEffect.StringVector()
+
         self.cap_emit = PySIEffect.CollisionEventMap()
         self.cap_recv = PySIEffect.CollisionEventMap()
 
-        self.cap_recv["SKETCH"] = PySIEffect.String2FunctionMap()
+        self.cap_recv["SKETCH"] = PySIEffect.LinkEmissionEventMap()
         self.cap_recv["SKETCH"]["on_enter"] = self.on_sketch_enter_recv
         self.cap_recv["SKETCH"]["on_continuous"] = self.on_sketch_continuous_recv
         self.cap_recv["SKETCH"]["on_leave"] = self.on_sketch_leave_recv
 
-        self.cap_link_emit = {
-            # attr: self.get_function,
-        }
-        self.cap_link_recv = {
-            # "source_attr": {"recv_attr": self.set_function},
-        }
+        self.cap_link_recv = PySIEffect.LinkReceptionEventMap()
 
     def on_sketch_enter_recv(self, x, y, sender_id):
         return 0
@@ -39,5 +36,5 @@ class Canvas(PySIEffect.PySIEffect):
         return 0
 
     def on_sketch_leave_recv(self, x, y, sender_id):
-        self.register_region(sender_id)
+        self.registered_regions.append(sender_id)
         return 0

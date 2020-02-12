@@ -26,15 +26,12 @@ class MouseCursor(PySIEffect.PySIEffect):
         self.cap_emit = PySIEffect.CollisionEventMap()
         self.cap_recv = PySIEffect.CollisionEventMap()
 
-        self.cap_link_emit = {
-            # attr: self.get_function,
-            "__position__": self.position
-        }
+        self.cap_link_emit = PySIEffect.LinkEmissionEventMap()
+        self.cap_link_emit["__position__"] = self.position
 
-        self.cap_link_recv = {
-            # "source_attr": {"recv_attr": self.set_function},
-            "__position__": {"__position__": self.set_position}
-        }
+        self.cap_link_recv = PySIEffect.LinkReceptionEventMap()
+        self.cap_link_recv["__position__"] = PySIEffect.String2FunctionMap()
+        self.cap_link_recv["__position__"]["__position__"] = self.set_position
 
     def position(self):
         rel_x = self.x - self.last_x
