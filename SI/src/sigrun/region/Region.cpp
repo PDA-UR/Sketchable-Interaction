@@ -277,7 +277,9 @@ void Region::update()
 
     HANDLE_PYTHON_CALL (
             for(auto& [key, value]: d_py_effect->attr_link_emit())
+            {
                 d_attributes_emit.push_back(key);
+            }
 
             for(auto& [key, value]: d_py_effect->attr_link_recv())
             {
@@ -288,7 +290,9 @@ void Region::update()
             }
 
             for(auto& [key, value]: d_py_effect->cap_collision_emit())
+            {
                 d_collision_caps_emit.push_back(key);
+            }
 
             for(auto& [key, value]: d_py_effect->cap_collision_recv())
                 d_collision_caps_recv.push_back(key);

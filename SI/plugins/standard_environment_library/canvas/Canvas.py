@@ -12,19 +12,17 @@ class Canvas(PySIEffect.PySIEffect):
 
         self.color = [0, 0, 255, 255]
 
-        self.cap_emit = {
-            # capability: {"on_enter": self.function, "on_continuous": self.function, "on_leave": self.function}
-        }
+        self.cap_emit = PySIEffect.CollisionEventMap()
+        self.cap_recv = PySIEffect.CollisionEventMap()
 
-        self.cap_recv = {
-            # capability: {"on_enter": self.function, "on_continuous": self.function, "on_leave": self.function}
-            "SKETCH": {"on_enter": self.on_sketch_enter_recv, "on_continuous": self.on_sketch_continuous_recv, "on_leave": self.on_sketch_leave_recv}
-        }
+        self.cap_recv["SKETCH"] = PySIEffect.String2FunctionMap()
+        self.cap_recv["SKETCH"]["on_enter"] = self.on_sketch_enter_recv
+        self.cap_recv["SKETCH"]["on_continuous"] = self.on_sketch_continuous_recv
+        self.cap_recv["SKETCH"]["on_leave"] = self.on_sketch_leave_recv
 
         self.cap_link_emit = {
             # attr: self.get_function,
         }
-
         self.cap_link_recv = {
             # "source_attr": {"recv_attr": self.set_function},
         }

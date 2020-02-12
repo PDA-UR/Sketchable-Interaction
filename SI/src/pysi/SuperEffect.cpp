@@ -195,80 +195,6 @@ std::map<std::string, std::map<std::string, bp::object>>& PySIEffect::cap_collis
     return d_cap_collision_recv;
 }
 
-void PySIEffect::__set_collision_emit__(const bp::dict& dict)
-{
-    d_cap_collision_emit.clear();
-
-    const bp::list& keys = dict.keys();
-
-    for(int i = 0; i < bp::len(keys); ++i)
-    {
-        std::map<std::string, bp::object> map;
-
-        const bp::dict &inner_dict = bp::extract<bp::dict>(dict[keys[i]]);
-        const bp::list &inner_keys = inner_dict.keys();
-
-        for (int k = 0; k < bp::len(inner_keys); ++k)
-            map.insert({bp::extract<std::string>(inner_keys[k]), inner_dict[inner_keys[k]]});
-
-        d_cap_collision_emit.insert({bp::extract<std::string>(keys[i]), map});
-    }
-}
-
-const bp::dict PySIEffect::__collision_emit__() const
-{
-    bp::dict ret;
-
-    for(auto& [key, value]: d_cap_collision_emit)
-    {
-        bp::dict temp;
-
-        for(auto& [key2, value2]: value)
-            temp[key2] = value2;
-
-        ret[key] = temp;
-    }
-
-    return ret;
-}
-
-void PySIEffect::__set_collision_recv__(const bp::dict& dict)
-{
-    d_cap_collision_recv.clear();
-
-    const bp::list& keys = dict.keys();
-
-    for(int i = 0; i < bp::len(keys); ++i)
-    {
-        std::map<std::string, bp::object> map;
-
-        const bp::dict &inner_dict = bp::extract<bp::dict>(dict[keys[i]]);
-        const bp::list &inner_keys = inner_dict.keys();
-
-        for (int k = 0; k < bp::len(inner_keys); ++k)
-            map.insert({bp::extract<std::string>(inner_keys[k]), inner_dict[inner_keys[k]]});
-
-        d_cap_collision_recv.insert({bp::extract<std::string>(keys[i]), map});
-    }
-}
-
-const bp::dict PySIEffect::__collision_recv__() const
-{
-    bp::dict ret;
-
-    for(auto& [key, value]: d_cap_collision_recv)
-    {
-        bp::dict temp;
-
-        for(auto& [key2, value2]: value)
-            temp[key2] = value2;
-
-        ret[key] = temp;
-    }
-
-    return ret;
-}
-
 void PySIEffect::__set__name__(const std::string& name)
 {
     d_name = name;
@@ -529,11 +455,8 @@ BOOST_PYTHON_MODULE(libPySI)
     IterableConverter()
         .from_python<std::vector<int>>()
         .from_python<std::vector<std::string>>()
-        .from_python<std::vector<float>>()
-        .from_python<std::vector<std::vector<float>>>()
-        .from_python<std::map<std::string, bp::object>>()
-        .from_python<std::map<std::string, std::vector<std::vector<float>>>>()
-        .from_python<std::map<std::string, std::map<std::string, bp::object>>>()
+//        .from_python<std::map<std::string, bp::object>>()
+//        .from_python<std::map<std::string, std::map<std::string, bp::object>>>()
         ;
 
     bp::class_<std::vector<int>>("int_vec")
@@ -542,11 +465,11 @@ BOOST_PYTHON_MODULE(libPySI)
     bp::class_<std::vector<std::string>>("string_vec")
             .def(bp::vector_indexing_suite<std::vector<std::string>>() );
 
-    bp::class_<std::map<std::string, bp::object>>("string_bpo_map")
-            .def(bp::map_indexing_suite<std::map<std::string, bp::object>>());
+//    bp::class_<std::map<std::string, bp::object>>("string_bpo_map")
+//            .def(bp::map_indexing_suite<std::map<std::string, bp::object>>());
 
-    bp::class_<std::map<std::string, std::map<std::string, bp::object>>>("string_map_string_bpo_map")
-            .def(bp::map_indexing_suite<std::map<std::string, std::map<std::string, bp::object>>>());
+//    bp::class_<std::map<std::string, std::map<std::string, bp::object>>>("string_map_string_bpo_map")
+//            .def(bp::map_indexing_suite<std::map<std::string, std::map<std::string, bp::object>>>());
 
     bp::class_<Capability>("PySICapability")
         .add_static_property("__TEST1__", bp::make_getter(&Capability::__test1__))
@@ -569,6 +492,8 @@ BOOST_PYTHON_MODULE(libPySI)
 
     create_vector<std::vector<glm::vec3>>("PointVector");
     create_map<std::map<std::string, std::vector<glm::vec3>>>("PartialContour");
+    create_map<std::map<std::string, bp::object>>("String2FunctionMap");
+    create_map<std::map<std::string, std::map<std::string, bp::object>>>("CollisionEventMap");
 
     bp::class_<PySIEffect, boost::noncopyable>("PySIEffect", bp::init<>())
         .def("register_region", &PySIEffect::__register_region__)
@@ -577,13 +502,16 @@ BOOST_PYTHON_MODULE(libPySI)
         .def("set_data", &PySIEffect::__set_data__)
 
         .def_readwrite("__partial_regions__", &PySIEffect::d_partial_regions)
+        .def_readwrite("cap_emit", &PySIEffect::d_cap_collision_emit)
+        .def_readwrite("cap_recv", &PySIEffect::d_cap_collision_recv)
+
 
         .add_property("__regions_for_registration__", &PySIEffect::__regions_for_registration__, &PySIEffect::__set_regions_for_registration__)
         .add_property("left_mouse_clicked", &PySIEffect::__is_left_mouse_clicked, &PySIEffect::__set_left_mouse_clicked__)
         .add_property("right_mouse_clicked", &PySIEffect::__is_right_mouse_clicked, &PySIEffect::__set_right_mouse_clicked__)
         .add_property("middle_mouse_clicked", &PySIEffect::__is_middle_mouse_clicked, &PySIEffect::__set_middle_mouse_clicked__)
-        .add_property("cap_emit", &PySIEffect::__collision_emit__, &PySIEffect::__set_collision_emit__)
-        .add_property("cap_recv", &PySIEffect::__collision_recv__, &PySIEffect::__set_collision_recv__)
+//        .add_property("cap_emit", &PySIEffect::__collision_emit__, &PySIEffect::__set_collision_emit__)
+//        .add_property("cap_recv", &PySIEffect::__collision_recv__, &PySIEffect::__set_collision_recv__)
         .add_property("cap_link_emit", &PySIEffect::__link_emit__, &PySIEffect::__set_link_emit__)
         .add_property("cap_link_recv", &PySIEffect::__link_recv__, &PySIEffect::__set_link_recv__)
 

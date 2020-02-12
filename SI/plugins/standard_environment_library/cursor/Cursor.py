@@ -13,6 +13,8 @@ class MouseCursor(PySIEffect.PySIEffect):
 
         self.width = 18
         self.height = 24
+        self.last_x = 0
+        self.last_y = 0
 
         self.set_data("width", self.width, PySIEffect.DataType.INT)
         self.set_data("height", self.height, PySIEffect.DataType.INT)
@@ -21,17 +23,8 @@ class MouseCursor(PySIEffect.PySIEffect):
         self.parent_canvas = None
         self.move_target = None
 
-        self.last_x = 0
-        self.last_y = 0
-
-
-        self.cap_emit = {
-            # capability: {"on_enter": self.function, "on_continuous": self.function, "on_leave": self.function}
-        }
-
-        self.cap_recv = {
-            # capability: {"on_enter": self.function, "on_continuous": self.function, "on_leave": self.function}
-        }
+        self.cap_emit = PySIEffect.CollisionEventMap()
+        self.cap_recv = PySIEffect.CollisionEventMap()
 
         self.cap_link_emit = {
             # attr: self.get_function,
@@ -94,26 +87,25 @@ class MouseCursor(PySIEffect.PySIEffect):
     def __handle_left_mouse_click(self):
         if self.left_mouse_clicked:
             if "SKETCH" not in self.cap_emit.keys():
-                temp = self.cap_emit
-                temp["SKETCH"] = {"on_enter": self.self_on_sketch_enter_emit, "on_continuous": self.on_sketch_continuous_emit, "on_leave": self.on_sketch_leave_emit}
-                self.cap_emit = temp
+                self.cap_emit["SKETCH"] = PySIEffect.String2FunctionMap()
+                self.cap_emit["SKETCH"]["on_enter"] = self.self_on_sketch_enter_emit
+                self.cap_emit["SKETCH"]["on_continuous"] = self.on_sketch_continuous_emit
+                self.cap_emit["SKETCH"]["on_leave"] = self.on_sketch_leave_emit
         elif "SKETCH" in self.cap_emit.keys():
-            temp = self.cap_emit
-            del temp["SKETCH"]
-            self.cap_emit = temp
+            del self.cap_emit["SKETCH"]
+
             if self.parent_canvas is not None:
                 self.parent_canvas.on_sketch_leave_recv(*self.on_sketch_leave_emit(self.parent_canvas))
 
     def __handle_right_mouse_click(self):
         if self.right_mouse_clicked:
             if "MOVE" not in self.cap_emit.keys():
-                temp = self.cap_emit
-                temp["MOVE"] = {"on_enter": self.on_move_enter_emit, "on_continuous": self.on_move_continuous_emit, "on_leave": self.on_move_leave_emit}
-                self.cap_emit = temp
+                self.cap_emit["MOVE"] = PySIEffect.String2FunctionMap()
+                self.cap_emit["MOVE"]["on_enter"] = self.on_move_enter_emit
+                self.cap_emit["MOVE"]["on_continuous"] = self.on_move_continuous_emit
+                self.cap_emit["MOVE"]["on_leave"] = self.on_move_leave_emit
         elif "MOVE" in self.cap_emit.keys():
-            temp = self.cap_emit
-            del temp["MOVE"]
-            self.cap_emit = temp
+            del self.cap_emit["MOVE"]
             if self.move_target is not None:
                 self.move_target.on_move_leave_recv(*self.on_move_leave_emit(self.move_target))
 
