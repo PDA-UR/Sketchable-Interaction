@@ -4,8 +4,8 @@
 #include <boost/python/suite/indexing/vector_indexing_suite.hpp>
 #include <boost/python/suite/indexing/map_indexing_suite.hpp>
 #include <sigrun/context/Capability.hpp>
-#include "pysi/stl_container_exposure/MapItem.hpp"
-#include "pysi/stl_container_exposure/VectorItem.hpp"
+#include "pysi/stl_container_exposure/MapExposure.hpp"
+#include "pysi/stl_container_exposure/VectorExposure.hpp"
 
 template<typename Container>
 IterableConverter& IterableConverter::from_python()
@@ -556,15 +556,6 @@ BOOST_PYTHON_MODULE(libPySI)
     bp::scope the_scope = bp::class_<PySIEffect>("PySIEffect")
     ;
 
-    bp::class_<std::vector<float>>("float_vec")
-            .def(bp::vector_indexing_suite<std::vector<float>>());
-
-    bp::class_<std::vector<std::vector<float>>>("float_vec_vec")
-            .def(bp::vector_indexing_suite<std::vector<std::vector<float>>>());
-
-    bp::class_<std::map<std::string, std::vector<std::vector<float>>>>("map_str_float_vec_vec")
-            .def(bp::map_indexing_suite<std::map<std::string, std::vector<std::vector<float>>>>());
-
     bp::class_<glm::vec2>("Point2", bp::init<float, float>())
             .def_readwrite("x", &glm::vec2::x)
             .def_readwrite("y", &glm::vec2::y)
@@ -576,29 +567,8 @@ BOOST_PYTHON_MODULE(libPySI)
             .def_readwrite("z", &glm::vec3::z)
             ;
 
-    bp::class_<std::vector<glm::vec3>>("PointVector")
-        .def("__len__", &std::vector<glm::vec3>::size)
-        .def("clear", &std::vector<glm::vec3>::clear)
-        .def("append", &VectorItem<std::vector<glm::vec3>>::add)
-        .def("__getitem__", &VectorItem<std::vector<glm::vec3>>::get, bp::return_value_policy<bp::reference_existing_object>())
-        .def("__setitem__", &VectorItem<std::vector<glm::vec3>>::set)
-        .def("__delitem__", &VectorItem<std::vector<glm::vec3>>::del)
-        .def("__iter__", bp::iterator<std::vector<glm::vec3>>())
-        .def("__contains__", &VectorItem<std::vector<glm::vec3>>::in)
-        ;
-
-    bp::class_<std::map<std::string, std::vector<glm::vec3>>>("PartialContour")
-        .def("__len__", &std::map<std::string, std::vector<glm::vec3>>::size)
-        .def("clear", &std::map<std::string, std::vector<glm::vec3>>::clear)
-        .def("__getitem__", &MapItem<std::map<std::string, std::vector<glm::vec3>>>::get, bp::return_value_policy<bp::reference_existing_object>())
-        .def("__setitem__", &MapItem<std::map<std::string, std::vector<glm::vec3>>>::set)
-        .def("__delitem__", &MapItem<std::map<std::string, std::vector<glm::vec3>>>::del)
-        .def("__contains__", &MapItem<std::map<std::string, std::vector<glm::vec3>>>::in)
-        .def("has_key", &MapItem<std::map<std::string, std::vector<glm::vec3>>>::in)
-        .def("keys", &MapItem<std::map<std::string, std::vector<glm::vec3>>>::keys)
-        .def("values", &MapItem<std::map<std::string, std::vector<glm::vec3>>>::values)
-        .def("items", &MapItem<std::map<std::string, std::vector<glm::vec3>>>::items)
-        ;
+    create_vector<std::vector<glm::vec3>>("PointVector");
+    create_map<std::map<std::string, std::vector<glm::vec3>>>("PartialContour");
 
     bp::class_<PySIEffect, boost::noncopyable>("PySIEffect", bp::init<>())
         .def("register_region", &PySIEffect::__register_region__)
@@ -616,6 +586,7 @@ BOOST_PYTHON_MODULE(libPySI)
         .add_property("cap_recv", &PySIEffect::__collision_recv__, &PySIEffect::__set_collision_recv__)
         .add_property("cap_link_emit", &PySIEffect::__link_emit__, &PySIEffect::__set_link_emit__)
         .add_property("cap_link_recv", &PySIEffect::__link_recv__, &PySIEffect::__set_link_recv__)
+
         .add_property("x", &PySIEffect::__x__, &PySIEffect::__set_x__)
         .add_property("y", &PySIEffect::__y__, &PySIEffect::__set_y__)
         .add_property("width", &PySIEffect::__width__, &PySIEffect::__set_width__)

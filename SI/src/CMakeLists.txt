@@ -40,8 +40,8 @@ target_precompile_headers(PySI
         <vector>
         <QVariant>
         <map>
-        SI/src/pysi/stl_container_exposure/VectorItem.hpp
-        SI/src/pysi/stl_container_exposure/MapItem.hpp
+        SI/src/pysi/stl_container_exposure/VectorExposure.hpp
+        SI/src/pysi/stl_container_exposure/MapExposure.hpp
         <boost/python/suite/indexing/vector_indexing_suite.hpp>
         <boost/python/suite/indexing/map_indexing_suite.hpp>
         <boost/python.hpp>
@@ -50,7 +50,6 @@ target_precompile_headers(PySI
         SI/src/pysi/SuperEffect.hpp
         SI/src/sigrun/plugin/PythonInvoker.hpp
         SI/src/sigrun/SITypes.hpp
-#        SI/src/pysi/stl_container_exposure/ObjectHolder.hpp
         )
 
 # SI RUNTIME LIBRARY
