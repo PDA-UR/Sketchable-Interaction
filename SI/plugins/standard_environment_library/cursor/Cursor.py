@@ -24,6 +24,7 @@ class MouseCursor(PySIEffect.PySIEffect):
         self.last_x = 0
         self.last_y = 0
 
+
         self.cap_emit = {
             # capability: {"on_enter": self.function, "on_continuous": self.function, "on_leave": self.function}
         }

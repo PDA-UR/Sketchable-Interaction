@@ -33,7 +33,10 @@ class Canvas(PySIEffect.PySIEffect):
         return 0
 
     def on_sketch_continuous_recv(self, x, y, cursor_id):
-        self.add_point_to_partial_region(cursor_id, [x, y])
+        if cursor_id not in self.__partial_regions__.keys():
+            self.__partial_regions__[cursor_id] = PySIEffect.PointVector()
+
+        self.__partial_regions__[cursor_id].append(PySIEffect.Point3(x, y, 1))
 
         return 0
 

@@ -305,9 +305,7 @@ void Region::update()
                 Context::SIContext()->register_new_region(d_py_effect->partial_region_contours()[candidate], candidate);
 
                 HANDLE_PYTHON_CALL(
-                        bp::object temp = d_effect->attr("__partial_regions__");
-                        bp::delitem(temp, bp::object(candidate));
-                        d_effect->attr("__partial_regions__") = temp;
+                        bp::delitem(d_effect->attr("__partial_regions__"), bp::object(candidate));
                 )
             }
 

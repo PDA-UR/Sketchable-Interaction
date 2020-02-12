@@ -4,6 +4,8 @@
 #include <boost/python/suite/indexing/vector_indexing_suite.hpp>
 #include <boost/python/suite/indexing/map_indexing_suite.hpp>
 #include <sigrun/context/Capability.hpp>
+#include "pysi/stl_container_exposure/MapItem.hpp"
+#include "pysi/stl_container_exposure/VectorItem.hpp"
 
 template<typename Container>
 IterableConverter& IterableConverter::from_python()
@@ -420,39 +422,9 @@ std::vector<std::string> PySIEffect::__regions_for_registration__()
     return d_regions_marked_for_registration;
 }
 
-void PySIEffect::__add_point_to_partial_region__(const std::string& sender_id, const std::vector<float>& point)
-{
-    if(d_partial_regions_py.find(sender_id) == d_partial_regions_py.end())
-        d_partial_regions_py.insert({sender_id, std::vector<std::vector<float>>()});
-
-    d_partial_regions_py[sender_id].emplace_back(point);
-}
-
 std::map<std::string, std::vector<glm::vec3>>& PySIEffect::partial_region_contours()
 {
-    d_partial_regions.clear();
-
-    for(auto& [key, value]: d_partial_regions_py)
-    {
-        d_partial_regions[key] = std::vector<glm::vec3>();
-
-        for(auto p: value)
-        {
-            d_partial_regions[key].emplace_back(p[0], p[1], 1);
-        }
-    }
-
     return d_partial_regions;
-}
-
-void PySIEffect::__set_partial_regions__(const std::map<std::string, std::vector<std::vector<float>>>& partials)
-{
-    d_partial_regions_py = partials;
-}
-
-std::map<std::string, std::vector<std::vector<float>>> PySIEffect::__partial_regions__()
-{
-    return d_partial_regions_py;
 }
 
 void PySIEffect::__register_link__(const std::string& sender, const std::string& sender_attrib, const std::string& recv, const std::string& recv_attrib)
@@ -544,6 +516,14 @@ bool PySIEffect::has_data_changed()
     return d_data_changed;
 }
 
+////////////////////////////////////////////////////////////////////////
+
+// Found at https://stackoverflow.com/questions/27077518/wrapping-an-stdvector-using-boostpython-vector-indexing-suite
+// and at https://wiki.python.org/moin/boost.python/StlContainers
+
+/// @brief Mockup type.
+
+
 BOOST_PYTHON_MODULE(libPySI)
 {
     IterableConverter()
@@ -551,48 +531,22 @@ BOOST_PYTHON_MODULE(libPySI)
         .from_python<std::vector<std::string>>()
         .from_python<std::vector<float>>()
         .from_python<std::vector<std::vector<float>>>()
-        .from_python<std::vector<std::vector<int>>>()
-        .from_python<std::vector<std::vector<std::vector<int>>>>()
-        .from_python<std::vector<std::vector<std::vector<float>>>>()
-        .from_python<std::map<std::string, int>>()
-        .from_python<std::map<std::string, bp::object>>()
         .from_python<std::map<std::string, bp::object>>()
         .from_python<std::map<std::string, std::vector<std::vector<float>>>>()
         .from_python<std::map<std::string, std::map<std::string, bp::object>>>()
         ;
 
-    bp::class_<std::vector<std::vector<std::vector<int>>>>("int_vec_vec_vec")
-            .def(bp::vector_indexing_suite<std::vector<std::vector<std::vector<int>>>>());
-
-    bp::class_<std::vector<std::vector<int>>>("int_vec_vec")
-            .def(bp::vector_indexing_suite<std::vector<std::vector<int>>>());
-
-    bp::class_<std::vector<std::vector<float>>>("float_vec_vec")
-            .def(bp::vector_indexing_suite<std::vector<std::vector<float>>>());
-
-    bp::class_<std::vector<std::vector<std::vector<float>>>>("float_vec_vec")
-            .def(bp::vector_indexing_suite<std::vector<std::vector<std::vector<float>>>>());
-
     bp::class_<std::vector<int>>("int_vec")
             .def(bp::vector_indexing_suite<std::vector<int>>() );
 
-    bp::class_<std::vector<std::string>>("int_vec")
+    bp::class_<std::vector<std::string>>("string_vec")
             .def(bp::vector_indexing_suite<std::vector<std::string>>() );
 
-    bp::class_<std::vector<float>>("float_vec")
-            .def(bp::vector_indexing_suite<std::vector<float>>() );
-
-    bp::class_<std::map<std::string, int>>("string_int_map")
-            .def(bp::map_indexing_suite<std::map<std::string, int>>());
-
-    bp::class_<std::map<std::string, int>>("string_bpo_map")
+    bp::class_<std::map<std::string, bp::object>>("string_bpo_map")
             .def(bp::map_indexing_suite<std::map<std::string, bp::object>>());
 
-    bp::class_<std::map<std::string, int>>("string_map_string_bpo_map")
+    bp::class_<std::map<std::string, std::map<std::string, bp::object>>>("string_map_string_bpo_map")
             .def(bp::map_indexing_suite<std::map<std::string, std::map<std::string, bp::object>>>());
-
-    bp::class_<std::map<std::string, std::vector<std::vector<float>>>>("map_str, float_vec_vec")
-            .def(bp::map_indexing_suite<std::map<std::string, std::vector<std::vector<float>>>>());
 
     bp::class_<Capability>("PySICapability")
         .add_static_property("__TEST1__", bp::make_getter(&Capability::__test1__))
@@ -602,14 +556,58 @@ BOOST_PYTHON_MODULE(libPySI)
     bp::scope the_scope = bp::class_<PySIEffect>("PySIEffect")
     ;
 
+    bp::class_<std::vector<float>>("float_vec")
+            .def(bp::vector_indexing_suite<std::vector<float>>());
+
+    bp::class_<std::vector<std::vector<float>>>("float_vec_vec")
+            .def(bp::vector_indexing_suite<std::vector<std::vector<float>>>());
+
+    bp::class_<std::map<std::string, std::vector<std::vector<float>>>>("map_str_float_vec_vec")
+            .def(bp::map_indexing_suite<std::map<std::string, std::vector<std::vector<float>>>>());
+
+    bp::class_<glm::vec2>("Point2", bp::init<float, float>())
+            .def_readwrite("x", &glm::vec2::x)
+            .def_readwrite("y", &glm::vec2::y)
+            ;
+
+    bp::class_<glm::vec3>("Point3", bp::init<float, float, float>())
+            .def_readwrite("x", &glm::vec3::x)
+            .def_readwrite("y", &glm::vec3::y)
+            .def_readwrite("z", &glm::vec3::z)
+            ;
+
+    bp::class_<std::vector<glm::vec3>>("PointVector")
+        .def("__len__", &std::vector<glm::vec3>::size)
+        .def("clear", &std::vector<glm::vec3>::clear)
+        .def("append", &VectorItem<std::vector<glm::vec3>>::add)
+        .def("__getitem__", &VectorItem<std::vector<glm::vec3>>::get, bp::return_value_policy<bp::reference_existing_object>())
+        .def("__setitem__", &VectorItem<std::vector<glm::vec3>>::set)
+        .def("__delitem__", &VectorItem<std::vector<glm::vec3>>::del)
+        .def("__iter__", bp::iterator<std::vector<glm::vec3>>())
+        .def("__contains__", &VectorItem<std::vector<glm::vec3>>::in)
+        ;
+
+    bp::class_<std::map<std::string, std::vector<glm::vec3>>>("PartialContour")
+        .def("__len__", &std::map<std::string, std::vector<glm::vec3>>::size)
+        .def("clear", &std::map<std::string, std::vector<glm::vec3>>::clear)
+        .def("__getitem__", &MapItem<std::map<std::string, std::vector<glm::vec3>>>::get, bp::return_value_policy<bp::reference_existing_object>())
+        .def("__setitem__", &MapItem<std::map<std::string, std::vector<glm::vec3>>>::set)
+        .def("__delitem__", &MapItem<std::map<std::string, std::vector<glm::vec3>>>::del)
+        .def("__contains__", &MapItem<std::map<std::string, std::vector<glm::vec3>>>::in)
+        .def("has_key", &MapItem<std::map<std::string, std::vector<glm::vec3>>>::in)
+        .def("keys", &MapItem<std::map<std::string, std::vector<glm::vec3>>>::keys)
+        .def("values", &MapItem<std::map<std::string, std::vector<glm::vec3>>>::values)
+        .def("items", &MapItem<std::map<std::string, std::vector<glm::vec3>>>::items)
+        ;
+
     bp::class_<PySIEffect, boost::noncopyable>("PySIEffect", bp::init<>())
-        .def("add_point_to_partial_region", &PySIEffect::__add_point_to_partial_region__)
         .def("register_region", &PySIEffect::__register_region__)
         .def("register_link", &PySIEffect::__register_link__)
         .def("remove_link", &PySIEffect::__remove_link__)
         .def("set_data", &PySIEffect::__set_data__)
 
-        .add_property("__partial_regions__", &PySIEffect::__partial_regions__, &PySIEffect::__set_partial_regions__)
+        .def_readwrite("__partial_regions__", &PySIEffect::d_partial_regions)
+
         .add_property("__regions_for_registration__", &PySIEffect::__regions_for_registration__, &PySIEffect::__set_regions_for_registration__)
         .add_property("left_mouse_clicked", &PySIEffect::__is_left_mouse_clicked, &PySIEffect::__set_left_mouse_clicked__)
         .add_property("right_mouse_clicked", &PySIEffect::__is_right_mouse_clicked, &PySIEffect::__set_right_mouse_clicked__)
