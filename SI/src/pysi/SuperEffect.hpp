@@ -123,42 +123,42 @@ public:
     const QMap<QString, QVariant>& data();
     bool has_data_changed();
 
+    // migrated to new system
     std::map<std::string, std::vector<glm::vec3>> d_partial_regions;
 
-private:
-
-    std::vector<std::shared_ptr<LinkRelation>> d_link_relations;
-
-    int d_x = 0;
-    int d_y = 0;
-    int d_width = 0;
-    int d_height = 0;
-
-    float d_angle_deg = 0.0;
-    float d_angle_radians = 0.0;
-
-    float d_scale = 1.0f;
-
-    glm::vec4 d_color = glm::vec4(255, 255, 255, 255);
-
+    // in progress
     std::map<std::string, std::map<std::string, bp::object>> d_cap_collision_emit;
+
+    // pending
     std::map<std::string, std::map<std::string, bp::object>> d_cap_collision_recv;
 
-    QMap<QString, QVariant> d_data;
-    bool d_data_changed;
+    std::vector<std::shared_ptr<LinkRelation>> d_link_relations;
 
     std::map<std::string, bp::object> d_cap_link_emit;
     std::map<std::string, std::map<std::string, bp::object>> d_cap_link_recv;
 
-
     std::vector<std::string> d_regions_marked_for_registration;
+
+    glm::vec4 d_color = glm::vec4(255, 255, 255, 255);
+
+private:
+    int d_x = 0;
+    int d_y = 0;
+    int d_width = 0;
+    int d_height = 0;
+    int d_effect_type = SI_TYPE_CUSTOM;
+
+    float d_angle_deg = 0.0;
+    float d_angle_radians = 0.0;
+    float d_scale = 1.0f;
 
     std::string d_name = "";
     std::string d_uuid = "";
     std::string d_qml_path = "";
     std::string d_source = "";
-    std::string d_transformer_id = "";
-    int d_effect_type = SI_TYPE_CUSTOM;
+
+    QMap<QString, QVariant> d_data;
+    bool d_data_changed;
 
     bool d_is_left_mouse_clicked = false;
     bool d_is_right_mouse_clicked = false;
