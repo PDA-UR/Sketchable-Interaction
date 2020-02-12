@@ -118,63 +118,6 @@ const float PySIEffect::__scale__() const
     return d_scale;
 }
 
-void PySIEffect::__set_link_emit__(const bp::dict& dict)
-{
-    d_cap_link_emit.clear();
-
-    const bp::list& keys = dict.keys();
-
-    for(int i = 0; i < bp::len(keys); ++i)
-        d_cap_link_emit.insert({bp::extract<std::string>(keys[i]), dict[keys[i]]});
-}
-
-const bp::dict PySIEffect::__link_emit__() const
-{
-    bp::dict ret;
-
-    for(auto& [key, value]: d_cap_link_emit)
-        ret[key] = *value;
-
-    return ret;
-}
-
-void PySIEffect::__set_link_recv__(const bp::dict& dict)
-{
-    d_cap_link_recv.clear();
-
-    const bp::list& keys = dict.keys();
-
-    for(int i = 0; i < bp::len(keys); ++i)
-    {
-        std::map<std::string, bp::object> map;
-
-        const bp::dict &inner_dict = bp::extract<bp::dict>(dict[keys[i]]);
-        const bp::list &inner_keys = inner_dict.keys();
-
-        for (int k = 0; k < bp::len(inner_keys); ++k)
-            map.insert({bp::extract<std::string>(inner_keys[k]), inner_dict[inner_keys[k]]});
-
-        d_cap_link_recv.insert({bp::extract<std::string>(keys[i]), map});
-    }
-}
-
-const bp::dict PySIEffect::__link_recv__() const
-{
-    bp::dict ret;
-
-    for(auto& [key, value]: d_cap_link_recv)
-    {
-        bp::dict temp;
-
-        for(auto& [key2, value2]: value)
-            temp[key2] = value2;
-
-        ret[key] = temp;
-    }
-
-    return ret;
-}
-
 std::map<std::string, bp::object>& PySIEffect::attr_link_emit()
 {
     return d_cap_link_emit;
@@ -338,16 +281,6 @@ const std::string PySIEffect::__uuid__() const
     return d_uuid;
 }
 
-void PySIEffect::__set_regions_for_registration__(const std::vector<std::string>& candidates)
-{
-    d_regions_marked_for_registration = candidates;
-}
-
-std::vector<std::string> PySIEffect::__regions_for_registration__()
-{
-    return d_regions_marked_for_registration;
-}
-
 std::map<std::string, std::vector<glm::vec3>>& PySIEffect::partial_region_contours()
 {
     return d_partial_regions;
@@ -454,22 +387,11 @@ BOOST_PYTHON_MODULE(libPySI)
 {
     IterableConverter()
         .from_python<std::vector<int>>()
-        .from_python<std::vector<std::string>>()
-//        .from_python<std::map<std::string, bp::object>>()
-//        .from_python<std::map<std::string, std::map<std::string, bp::object>>>()
         ;
 
     bp::class_<std::vector<int>>("int_vec")
             .def(bp::vector_indexing_suite<std::vector<int>>() );
 
-    bp::class_<std::vector<std::string>>("string_vec")
-            .def(bp::vector_indexing_suite<std::vector<std::string>>() );
-
-//    bp::class_<std::map<std::string, bp::object>>("string_bpo_map")
-//            .def(bp::map_indexing_suite<std::map<std::string, bp::object>>());
-
-//    bp::class_<std::map<std::string, std::map<std::string, bp::object>>>("string_map_string_bpo_map")
-//            .def(bp::map_indexing_suite<std::map<std::string, std::map<std::string, bp::object>>>());
 
     bp::class_<Capability>("PySICapability")
         .add_static_property("__TEST1__", bp::make_getter(&Capability::__test1__))
@@ -490,10 +412,15 @@ BOOST_PYTHON_MODULE(libPySI)
             .def_readwrite("z", &glm::vec3::z)
             ;
 
+    // evaluate if friend keyword exposes private SuperEffect members
+
     create_vector<std::vector<glm::vec3>>("PointVector");
+    create_vector<std::vector<std::string>>("StringVector");
     create_map<std::map<std::string, std::vector<glm::vec3>>>("PartialContour");
     create_map<std::map<std::string, bp::object>>("String2FunctionMap");
+    create_map<std::map<std::string, bp::object>>("LinkEmissionEventMap");
     create_map<std::map<std::string, std::map<std::string, bp::object>>>("CollisionEventMap");
+    create_map<std::map<std::string, std::map<std::string, bp::object>>>("LinkReceptionEventMap");
 
     bp::class_<PySIEffect, boost::noncopyable>("PySIEffect", bp::init<>())
         .def("register_region", &PySIEffect::__register_region__)
@@ -504,16 +431,13 @@ BOOST_PYTHON_MODULE(libPySI)
         .def_readwrite("__partial_regions__", &PySIEffect::d_partial_regions)
         .def_readwrite("cap_emit", &PySIEffect::d_cap_collision_emit)
         .def_readwrite("cap_recv", &PySIEffect::d_cap_collision_recv)
+        .def_readwrite("cap_link_emit", &PySIEffect::d_cap_link_emit)
+        .def_readwrite("cap_link_recv", &PySIEffect::d_cap_link_recv)
+        .def_readwrite("registered_regions", &PySIEffect::d_regions_marked_for_registration)
 
-
-        .add_property("__regions_for_registration__", &PySIEffect::__regions_for_registration__, &PySIEffect::__set_regions_for_registration__)
         .add_property("left_mouse_clicked", &PySIEffect::__is_left_mouse_clicked, &PySIEffect::__set_left_mouse_clicked__)
         .add_property("right_mouse_clicked", &PySIEffect::__is_right_mouse_clicked, &PySIEffect::__set_right_mouse_clicked__)
         .add_property("middle_mouse_clicked", &PySIEffect::__is_middle_mouse_clicked, &PySIEffect::__set_middle_mouse_clicked__)
-//        .add_property("cap_emit", &PySIEffect::__collision_emit__, &PySIEffect::__set_collision_emit__)
-//        .add_property("cap_recv", &PySIEffect::__collision_recv__, &PySIEffect::__set_collision_recv__)
-        .add_property("cap_link_emit", &PySIEffect::__link_emit__, &PySIEffect::__set_link_emit__)
-        .add_property("cap_link_recv", &PySIEffect::__link_recv__, &PySIEffect::__set_link_recv__)
 
         .add_property("x", &PySIEffect::__x__, &PySIEffect::__set_x__)
         .add_property("y", &PySIEffect::__y__, &PySIEffect::__set_y__)

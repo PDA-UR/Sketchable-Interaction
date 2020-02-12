@@ -313,7 +313,7 @@ void Region::update()
                 )
             }
 
-            HANDLE_PYTHON_CALL (d_effect->attr("__regions_for_registration__") = bp::list();)
+            HANDLE_PYTHON_CALL (d_effect->attr("registered_regions").attr("clear")();)
         }
     }
     else

@@ -25,17 +25,20 @@ class Dummy1(PySIEffect.PySIEffect):
         self.cap_recv[PySICapability.__TEST2__]["on_continuous"] = self.test_on_continuous_recv
         self.cap_recv[PySICapability.__TEST2__]["on_leave"] = self.test_on_leave_recv
 
-        self.cap_link_emit = {
-            "__position__": self.position,
-            "__rotation__": self.rotation
-        }
+        self.cap_link_emit = PySIEffect.LinkEmissionEventMap()
+        self.cap_link_emit["__position__"] = self.position
+        self.cap_link_emit["__rotation__"] = self.rotation
 
-        self.cap_link_recv = {
-            "__position__": {"__position__": self.set_position_from_position},
-            "__color__": {"__position__": self.set_position_from_color},
-            "__scale__": {"__position__": self.set_position_from_scale},
-            "__rotation__": {"__rotation__": self.set_rotation_from_rotation}
-        }
+        self.cap_link_recv = PySIEffect.LinkReceptionEventMap()
+        self.cap_link_recv["__position__"] = PySIEffect.String2FunctionMap()
+        self.cap_link_recv["__position__"]["__position__"] = self.set_position_from_position
+        self.cap_link_recv["__color__"] = PySIEffect.String2FunctionMap()
+        self.cap_link_recv["__color__"]["__position__"] = self.set_position_from_color
+        self.cap_link_recv["__scale__"] = PySIEffect.String2FunctionMap()
+        self.cap_link_recv["__scale__"]["__position__"] = self.set_position_from_scale
+        self.cap_link_recv["__rotation__"] = PySIEffect.String2FunctionMap()
+        self.cap_link_recv["__rotation__"]["__rotation__"] = self.set_rotation_from_rotation
+
 
     def __repr__(self):
         return ""
