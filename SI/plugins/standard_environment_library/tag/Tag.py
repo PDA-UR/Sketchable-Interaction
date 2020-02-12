@@ -11,18 +11,13 @@ class Tag(PySIEffect.PySIEffect):
         self.qml_path = "plugins/standard_environment_library/tag/Tag.qml"
         self.color = [255, 0, 0, 255]
 
+        self.cap_emit = PySIEffect.CollisionEventMap()
+        self.cap_recv = PySIEffect.CollisionEventMap()
 
-        self.cap_emit = {
-            # <capability>: {"on_enter": self.<emit_enter_function>, "on_continuous": self.<emit_continuous_function>, "on_leave": self.<emit_leave_function>
-            # ...
-        }
-
-        self.cap_recv = {
-            # <capability>: {"on_enter": self.<recv_enter_function>, "on_continuous": self.<recv_continuous_function>, "on_leave": self.<recv_leave_function>
-            # ...
-
-            "MOVE": {"on_enter": self.on_move_enter_recv, "on_continuous": self.on_move_continuous_recv, "on_leave": self.on_move_leave_recv}
-        }
+        self.cap_recv["MOVE"] = PySIEffect.String2FunctionMap()
+        self.cap_recv["MOVE"]["on_enter"] = self.on_move_enter_recv
+        self.cap_recv["MOVE"]["on_continuous"] = self.on_move_continuous_recv
+        self.cap_recv["MOVE"]["on_leave"] = self.on_move_leave_recv
 
         self.cap_link_emit = {
             # <attribute>: self.<get_function>

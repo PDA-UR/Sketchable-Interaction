@@ -84,10 +84,6 @@ public:
     std::map<std::string, std::map<std::string, bp::object>>& attr_link_recv();
     std::map<std::string, std::map<std::string, bp::object>>& cap_collision_emit();
     std::map<std::string, std::map<std::string, bp::object>>& cap_collision_recv();
-    void __set_collision_emit__(const bp::dict& dict);
-    const bp::dict __collision_emit__() const;
-    void __set_collision_recv__(const bp::dict& dict);
-    const bp::dict __collision_recv__() const;
     void __set__name__(const std::string& name);
     void __set_qml_path__(const std::string& path);
     void __set_source__(const std::string& source);
@@ -125,15 +121,13 @@ public:
 
     // migrated to new system
     std::map<std::string, std::vector<glm::vec3>> d_partial_regions;
-
-    // in progress
     std::map<std::string, std::map<std::string, bp::object>> d_cap_collision_emit;
-
-    // pending
     std::map<std::string, std::map<std::string, bp::object>> d_cap_collision_recv;
 
+    //
     std::vector<std::shared_ptr<LinkRelation>> d_link_relations;
 
+    // pending
     std::map<std::string, bp::object> d_cap_link_emit;
     std::map<std::string, std::map<std::string, bp::object>> d_cap_link_recv;
 

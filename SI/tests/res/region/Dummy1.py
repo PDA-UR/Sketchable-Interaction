@@ -12,13 +12,18 @@ class Dummy1(PySIEffect.PySIEffect):
         self.x = 0
         self.y = 0
 
-        self.cap_emit = {
-            PySICapability.__TEST1__: {"on_enter": self.test_on_enter_emit, "on_continuous": self.test_on_continuous_emit, "on_leave": self.test_on_leave_emit}
-        }
+        self.cap_emit = PySIEffect.CollisionEventMap()
+        self.cap_recv = PySIEffect.CollisionEventMap()
 
-        self.cap_recv = {
-            PySICapability.__TEST2__: {"on_enter": self.test_on_enter_recv, "on_continuous": self.test_on_continuous_recv, "on_leave": self.test_on_leave_recv}
-        }
+        self.cap_emit[PySICapability.__TEST1__] = PySIEffect.String2FunctionMap()
+        self.cap_emit[PySICapability.__TEST1__]["on_enter"] = self.test_on_enter_emit
+        self.cap_emit[PySICapability.__TEST1__]["on_continuous"] = self.test_on_continuous_emit
+        self.cap_emit[PySICapability.__TEST1__]["on_leave"] = self.test_on_leave_emit
+
+        self.cap_recv[PySICapability.__TEST2__] = PySIEffect.String2FunctionMap()
+        self.cap_recv[PySICapability.__TEST2__]["on_enter"] = self.test_on_enter_recv
+        self.cap_recv[PySICapability.__TEST2__]["on_continuous"] = self.test_on_continuous_recv
+        self.cap_recv[PySICapability.__TEST2__]["on_leave"] = self.test_on_leave_recv
 
         self.cap_link_emit = {
             "__position__": self.position,
