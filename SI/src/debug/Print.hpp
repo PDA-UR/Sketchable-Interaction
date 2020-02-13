@@ -10,6 +10,8 @@
 #include <sstream>
 #include <QString>
 #include <QVariant>
+#include <glm/glm.hpp>
+#include <pysi/PySIEffect.hpp>
 
 namespace bp = boost::python;
 
@@ -120,6 +122,11 @@ public:
     static T _print(const T& p)
     {
         return p;
+    }
+
+    static std::string _print(const glm::vec3& p)
+    {
+        return "(" + std::to_string(p.x) + ", " + std::to_string(p.y) + "),";
     }
 
     template<class... Args>

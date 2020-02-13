@@ -3,7 +3,7 @@
 #include "RegionManager.hpp"
 #include "../../log/Log.hpp"
 #include <sigrun/context/Context.hpp>
-#include <pysi/SuperEffect.hpp>
+#include <pysi/PySIEffect.hpp>
 #include <sigrun/plugin/PythonInvoker.hpp>
 
 RegionManager::RegionManager()

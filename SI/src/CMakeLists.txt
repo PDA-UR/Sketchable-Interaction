@@ -27,7 +27,7 @@ FIND_PACKAGE(Qt5Quick REQUIRED)
 include_directories(${PATH_INCLUDE_TUIO2_HEADERS} ${PATH_INCLUDE_OSC_HEADERS})
 
 set(PySISrc
-        SI/src/pysi/SuperEffect.cpp)
+        SI/src/pysi/PySIEffect.cpp)
 
 # SI PYTHON3 MODULE
 add_library(PySI MODULE ${PySISrc})
@@ -47,7 +47,7 @@ target_precompile_headers(PySI
         <boost/python.hpp>
         SI/src/sigrun/util/Util.hpp
         <glm/glm.hpp>
-        SI/src/pysi/SuperEffect.hpp
+        SI/src/pysi/PySIEffect.hpp
         SI/src/sigrun/plugin/PythonInvoker.hpp
         SI/src/sigrun/SITypes.hpp
         )
@@ -57,7 +57,7 @@ target_precompile_headers(PySI
 set(SIGRunSRC
         SI/src/SIGRun.cpp
         SI/src/SIGRun.hpp
-        SI/src/pysi/SuperEffect.cpp
+        SI/src/pysi/PySIEffect.cpp
         SI/src/sigrun/Core.cpp
         SI/src/sigrun/Core.hpp
         SI/src/debug/Print.cpp
@@ -135,7 +135,7 @@ target_precompile_headers(SIGeneralRuntime
         SI/src/sigrun/SITypes.hpp
         <glm/glm.hpp>
         SI/src/sigrun/util/Util.hpp
-        SI/src/pysi/SuperEffect.hpp
+        SI/src/pysi/PySIEffect.hpp
         SI/src/sigrun/plugin/PythonInvoker.hpp
         )
 
