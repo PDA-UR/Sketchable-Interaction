@@ -9,8 +9,7 @@ class Canvas(PySIEffect.PySIEffect):
         self.region_type = PySIEffect.EffectType.SI_CANVAS
         self.source = "libstdSI"
         self.qml_path = ""
-
-        self.color = [0, 0, 255, 255]
+        self.color = PySIEffect.Color(0, 0, 255, 255)
 
         self.registered_regions = PySIEffect.StringVector()
 

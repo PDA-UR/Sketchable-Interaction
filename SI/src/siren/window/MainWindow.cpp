@@ -75,8 +75,6 @@ void MainWindow::draw_region_representations(QPaintEvent* event)
             continue;
 
         up_qp.setBrush(val->color());
-
-        up_qp.drawPolyline(val->poly());
         up_qp.fillPath(val->fill(), val->color());
     }
 }

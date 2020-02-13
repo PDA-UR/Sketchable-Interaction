@@ -325,16 +325,9 @@ const QMap<QString, QVariant>& Region::data() const
     return d_py_effect->data();
 }
 
-void Region::set_color(const glm::vec4 &color)
-{
-    d_py_effect->__set_color__(std::vector<int>{(int) color.r, (int) color.g, (int) color.b, (int) color.a});
-}
-
 const glm::vec4 Region::color() const
 {
-    auto& color = d_py_effect->__color__();
-
-    return glm::vec4(color[0], color[1], color[2], color[3]);
+    return d_py_effect->color();
 }
 
 const std::vector<std::string> &Region::collision_caps_emit() const

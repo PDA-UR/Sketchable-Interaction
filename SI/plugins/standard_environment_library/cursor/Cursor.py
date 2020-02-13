@@ -9,7 +9,7 @@ class MouseCursor(PySIEffect.PySIEffect):
         self.region_type = PySIEffect.EffectType.SI_MOUSE_CURSOR
         self.source = "libstdSI"
         self.qml_path = "plugins/standard_environment_library/cursor/Cursor.qml"
-        self.color = [0, 255, 255, 255]
+        self.color = PySIEffect.Color(0, 255, 255, 255)
 
         self.width = 18
         self.height = 24

@@ -13,30 +13,7 @@
 #include <QVariant>
 #include <QMap>
 
-
 namespace bp = boost::python;
-
-class IterableConverter
-{
-public:
-    /// @note Registers converter from a python interable type to the
-    ///       provided type.
-    template<typename Container>
-    IterableConverter &from_python();
-
-    /// @brief Check if PyObject is iterable.
-    static void* convertible(PyObject* object);
-
-    /// @brief Convert iterable PyObject to C++ container type.
-    ///
-    /// Container Concept requirements:
-    ///
-    ///   * Container::value_type is CopyConstructable.
-    ///   * Container can be constructed and populated with two iterators.
-    ///     I.e. Container(begin, end)
-    template<typename Container>
-    static void construct(PyObject* object, bp::converter::rvalue_from_python_stage1_data* data);
-};
 
 struct LinkRelation
 {
@@ -72,8 +49,7 @@ public:
     int y();
     int width();
     int height();
-    void __set_color__(const std::vector<int>& rgba);
-    const std::vector<int> __color__() const;
+    const glm::vec4& color() const;
     void __set_scale__(float factor);
     const float __scale__() const;
     std::map<std::string, bp::object>& attr_link_emit();
@@ -120,11 +96,11 @@ public:
     std::map<std::string, bp::object> d_cap_link_emit;
     std::map<std::string, std::map<std::string, bp::object>> d_cap_link_recv;
     std::vector<std::string> d_regions_marked_for_registration;
+    glm::vec4 d_color;
 
     // pending
     std::vector<std::shared_ptr<LinkRelation>> d_link_relations;
 
-    glm::vec4 d_color = glm::vec4(255, 255, 255, 255);
 
 private:
     int d_x = 0;

@@ -1,48 +1,8 @@
 
 #include "SuperEffect.hpp"
-
-#include <boost/python/suite/indexing/vector_indexing_suite.hpp>
-#include <boost/python/suite/indexing/map_indexing_suite.hpp>
 #include <sigrun/context/Capability.hpp>
 #include "pysi/stl_container_exposure/MapExposure.hpp"
 #include "pysi/stl_container_exposure/VectorExposure.hpp"
-
-template<typename Container>
-IterableConverter& IterableConverter::from_python()
-{
-    bp::converter::registry::push_back(&IterableConverter::convertible, &IterableConverter::construct<Container>, bp::type_id<Container>());
-
-    // Support chaining.
-    return *this;
-}
-
-void* IterableConverter::convertible(PyObject* object)
-{
-    return PyObject_GetIter(object) ? object : nullptr;
-}
-
-template<typename Container>
-void IterableConverter::construct(PyObject *object, bp::converter::rvalue_from_python_stage1_data *data)
-{
-    // Object is a borrowed reference, so create a handle indicting it is
-    // borrowed for proper reference counting.
-    bp::handle<> handle(bp::borrowed(object));
-
-    // Obtain a handle to the memory block that the converter has allocated
-    // for the C++ type.
-    typedef bp::converter::rvalue_from_python_storage<Container> storage_type;
-
-    void* storage = reinterpret_cast<storage_type *>(data)->storage.bytes;
-
-    typedef bp::stl_input_iterator<typename Container::value_type> iterator;
-
-    // Allocate the C++ type into the converter's memory block, and assign
-    // its handle to the converter's convertible variable.  The C++
-    // container is populated by passing the begin and end iterators of
-    // the python object to the container's constructor.
-    new(storage) Container( iterator(bp::object(handle)), iterator());
-    data->convertible = storage;
-}
 
 namespace bp = boost::python;
 
@@ -98,14 +58,9 @@ int PySIEffect::y()
     return __y__();
 }
 
-void PySIEffect::__set_color__(const std::vector<int>& rgba)
+const glm::vec4& PySIEffect::color() const
 {
-    d_color = glm::vec4(rgba[0], rgba[1], rgba[2], rgba[3]);
-}
-
-const std::vector<int> PySIEffect::__color__() const
-{
-    return std::vector<int> {(int) d_color.r, (int) d_color.g, (int) d_color.b, (int) d_color.a};
+    return d_color;
 }
 
 void PySIEffect::__set_scale__(float factor)
@@ -385,14 +340,6 @@ bool PySIEffect::has_data_changed()
 
 BOOST_PYTHON_MODULE(libPySI)
 {
-    IterableConverter()
-        .from_python<std::vector<int>>()
-        ;
-
-    bp::class_<std::vector<int>>("int_vec")
-            .def(bp::vector_indexing_suite<std::vector<int>>() );
-
-
     bp::class_<Capability>("PySICapability")
         .add_static_property("__TEST1__", bp::make_getter(&Capability::__test1__))
         .add_static_property("__TEST2__", bp::make_getter(&Capability::__test2__))
@@ -410,6 +357,13 @@ BOOST_PYTHON_MODULE(libPySI)
             .def_readwrite("x", &glm::vec3::x)
             .def_readwrite("y", &glm::vec3::y)
             .def_readwrite("z", &glm::vec3::z)
+            ;
+
+    bp::class_<glm::vec4>("Color", bp::init<float, float, float, float>())
+            .def_readwrite("r", &glm::vec4::r)
+            .def_readwrite("g", &glm::vec4::g)
+            .def_readwrite("b", &glm::vec4::b)
+            .def_readwrite("a", &glm::vec4::a)
             ;
 
     // evaluate if friend keyword exposes private SuperEffect members
@@ -434,6 +388,7 @@ BOOST_PYTHON_MODULE(libPySI)
         .def_readwrite("cap_link_emit", &PySIEffect::d_cap_link_emit)
         .def_readwrite("cap_link_recv", &PySIEffect::d_cap_link_recv)
         .def_readwrite("registered_regions", &PySIEffect::d_regions_marked_for_registration)
+        .def_readwrite("color", &PySIEffect::d_color)
 
         .add_property("left_mouse_clicked", &PySIEffect::__is_left_mouse_clicked, &PySIEffect::__set_left_mouse_clicked__)
         .add_property("right_mouse_clicked", &PySIEffect::__is_right_mouse_clicked, &PySIEffect::__set_right_mouse_clicked__)
@@ -445,7 +400,6 @@ BOOST_PYTHON_MODULE(libPySI)
         .add_property("height", &PySIEffect::__height__, &PySIEffect::__set_height__)
         .add_property("angle_degres", &PySIEffect::__angle_degrees__, &PySIEffect::__set_angle_degrees__)
         .add_property("angle_radians", &PySIEffect::__angle_radians__, &PySIEffect::__set_angle_radians__)
-        .add_property("color", &PySIEffect::__color__, &PySIEffect::__set_color__)
         .add_property("scale", &PySIEffect::__scale__, &PySIEffect::__set_scale__)
         .add_property("name", &PySIEffect::__name__, &PySIEffect::__set__name__)
         .add_property("_uuid", &PySIEffect::__uuid__, &PySIEffect::__set_uuid__)

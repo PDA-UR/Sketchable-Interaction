@@ -9,7 +9,7 @@ class Tag(PySIEffect.PySIEffect):
         self.region_type = PySIEffect.EffectType.SI_CUSTOM
         self.source = "libstdSI"
         self.qml_path = "plugins/standard_environment_library/tag/Tag.qml"
-        self.color = [255, 0, 0, 255]
+        self.color = PySIEffect.Color(255, 0, 0, 255)
 
         self.cap_emit = PySIEffect.CollisionEventMap()
         self.cap_recv = PySIEffect.CollisionEventMap()

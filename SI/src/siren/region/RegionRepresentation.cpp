@@ -21,13 +21,10 @@ RegionRepresentation::RegionRepresentation(QWidget *parent, const std::shared_pt
 {
     d_fill.moveTo(d_source_contour[0].x, d_source_contour[0].y);
 
-    for(auto& p: d_source_contour)
+    for (int i = 1; i < d_source_contour.size(); ++i)
     {SIREN
-        d_fill.lineTo(p.x, p.y);
-        d_poly << QPoint(p.x, p.y);
+        d_fill.lineTo(d_source_contour[i].x, d_source_contour[i].y);
     }
-
-    d_poly << QPoint(d_source_contour[0].x, d_source_contour[0].y);
 
     d_view->engine()->rootContext()->setContextProperty("Region", this);
 
@@ -55,21 +52,17 @@ void RegionRepresentation::perform_transform_update(const std::shared_ptr<Region
     if(region->is_transformed())
     {
         d_fill = QPainterPath();
-        d_poly = QPolygonF();
 
         const glm::mat3x3 &transform = region->transform();
 
-        for (glm::vec3 &p: d_source_contour)
+        glm::vec3 p_ = glm::vec3(d_source_contour[0].x, d_source_contour[0].y, 1) * transform;
+        d_fill.moveTo(p_.x, p_.y);
+
+        for (int i = 1; i < d_source_contour.size(); ++i)
         {
-            glm::vec3 p_ = glm::vec3(p.x, p.y, 1) * transform;
-
-            d_poly << QPoint(p_.x / p_.z, p_.y / p_.z);
+            glm::vec3 p__ = glm::vec3(d_source_contour[i].x, d_source_contour[i].y, 1) * transform;
+            d_fill.lineTo(p__.x, p__.y);
         }
-
-        d_fill.moveTo(d_poly[0].x(), d_poly[0].y());
-
-        for (int i = 1; i < d_poly.size(); i++)
-            d_fill.lineTo(d_poly[i]);
 
         QMatrix4x4 matrix(transform[0].x, transform[0].y, 0, transform[0].z,
                           transform[1].x, transform[1].y, 0, transform[1].z,
