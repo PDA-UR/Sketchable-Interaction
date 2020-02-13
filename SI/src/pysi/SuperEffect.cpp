@@ -4,73 +4,23 @@
 #include "pysi/stl_container_exposure/MapExposure.hpp"
 #include "pysi/stl_container_exposure/VectorExposure.hpp"
 
+#include <tuple>
+
 namespace bp = boost::python;
 
-void PySIEffect::__set_angle_degrees__(float angle)
-{
-    d_angle_deg = angle;
-    d_angle_radians = TO_RADIANS(angle);
-}
-
-void PySIEffect::__set_angle_radians__(float angle)
-{
-    d_angle_radians = angle;
-    d_angle_deg = TO_DEGREES(angle);
-}
-
-float PySIEffect::__angle_radians__()
-{
-    return d_angle_radians;
-}
-
-float PySIEffect::__angle_degrees__()
-{
-    return d_angle_deg;
-}
-
-void PySIEffect::__set_x__(float x)
-{
-    d_x = (int) std::round(x);
-}
-
-void PySIEffect::__set_y__(float y)
-{
-    d_y = (int) std::round(y);
-}
-
-int PySIEffect::__x__()
+const int PySIEffect::x() const
 {
     return d_x;
 }
 
-int PySIEffect::__y__()
+const int PySIEffect::y() const
 {
     return d_y;
-}
-
-int PySIEffect::x()
-{
-    return __x__();
-}
-
-int PySIEffect::y()
-{
-    return __y__();
 }
 
 const glm::vec4& PySIEffect::color() const
 {
     return d_color;
-}
-
-void PySIEffect::__set_scale__(float factor)
-{
-    d_scale = factor;
-}
-
-const float PySIEffect::__scale__() const
-{
-    return d_scale;
 }
 
 std::map<std::string, bp::object>& PySIEffect::attr_link_emit()
@@ -93,46 +43,6 @@ std::map<std::string, std::map<std::string, bp::object>>& PySIEffect::cap_collis
     return d_cap_collision_recv;
 }
 
-void PySIEffect::__set__name__(const std::string& name)
-{
-    d_name = name;
-}
-
-void PySIEffect::__set_qml_path__(const std::string& path)
-{
-    d_qml_path = path;
-}
-
-void PySIEffect::__set_source__(const std::string& source)
-{
-    d_source = source;
-}
-
-void PySIEffect::__set_effect_type__(int type)
-{
-    d_effect_type = type;
-}
-
-const std::string PySIEffect::__name__() const
-{
-    return d_name;
-}
-
-const std::string PySIEffect::__qml_path__() const
-{
-    return d_qml_path;
-}
-
-const std::string PySIEffect::__source__() const
-{
-    return d_source;
-}
-
-const int PySIEffect::__effect_type__() const
-{
-    return d_effect_type;
-}
-
 const std::string& PySIEffect::name() const
 {
     return d_name;
@@ -151,36 +61,6 @@ const std::string& PySIEffect::source() const
 const int PySIEffect::effect_type() const
 {
     return d_effect_type;
-}
-
-bool PySIEffect::__is_left_mouse_clicked()
-{
-    return d_is_left_mouse_clicked;
-}
-
-void PySIEffect::__set_left_mouse_clicked__(bool active)
-{
-    d_is_left_mouse_clicked = active;
-}
-
-bool PySIEffect::__is_right_mouse_clicked()
-{
-    return d_is_right_mouse_clicked;
-}
-
-void PySIEffect::__set_right_mouse_clicked__(bool active)
-{
-    d_is_right_mouse_clicked = active;
-}
-
-bool PySIEffect::__is_middle_mouse_clicked()
-{
-    return d_is_middle_mouse_clicked;
-}
-
-void PySIEffect::__set_middle_mouse_clicked__(bool active)
-{
-    d_is_middle_mouse_clicked = active;
 }
 
 bool PySIEffect::has_mouse_pressed_capability(int btn)
@@ -203,22 +83,17 @@ void PySIEffect::set_mouse_pressed_capability(int btn, bool active)
     switch (btn)
     {
         case 0: // left mouse button
-            __set_left_mouse_clicked__(active);
+            d_is_left_mouse_clicked = active;
             break;
         case 1: // right mouse button
-            __set_right_mouse_clicked__(active);
+            d_is_right_mouse_clicked = active;
             break;
         case 2: // middle mouse button
-            __set_middle_mouse_clicked__(active);
+            d_is_middle_mouse_clicked = active;
             break;
         default:
             break;
     }
-}
-
-void PySIEffect::__register_region__(const std::string& sender_id)
-{
-    d_regions_marked_for_registration.push_back(sender_id);
 }
 
 std::vector<std::string>& PySIEffect::regions_for_registration()
@@ -226,12 +101,7 @@ std::vector<std::string>& PySIEffect::regions_for_registration()
     return d_regions_marked_for_registration;
 }
 
-void PySIEffect::__set_uuid__(const std::string& uuid)
-{
-    d_uuid = uuid;
-}
-
-const std::string PySIEffect::__uuid__() const
+const std::string& PySIEffect::uuid() const
 {
     return d_uuid;
 }
@@ -241,62 +111,32 @@ std::map<std::string, std::vector<glm::vec3>>& PySIEffect::partial_region_contou
     return d_partial_regions;
 }
 
-void PySIEffect::__register_link__(const std::string& sender, const std::string& sender_attrib, const std::string& recv, const std::string& recv_attrib)
-{
-    d_link_relations.push_back(std::make_shared<LinkRelation>(sender, sender_attrib, recv, recv_attrib));
-}
-
-void PySIEffect::__remove_link__(const std::string& sender, const std::string& sender_attrib, const std::string& recv, const std::string& recv_attrib)
-{
-    for(int i = d_link_relations.size() - 1; i > -1; --i)
-    {
-        if(sender == d_link_relations[i]->sender &&
-           sender_attrib == d_link_relations[i]->sender_attrib &&
-           recv_attrib == d_link_relations[i]->recv_attrib)
-        {
-            d_link_relations.erase(d_link_relations.begin() + i);
-
-            break;
-        }
-    }
-}
-
-void PySIEffect::__set_width__(float width)
-{
-    d_width = width;
-}
-
-void PySIEffect::__set_height__(float height)
-{
-    d_height = height;
-}
-
-int PySIEffect::__width__()
+const int PySIEffect::width() const
 {
     return d_width;
 }
 
-int PySIEffect::__height__()
+const int PySIEffect::height() const
 {
     return d_height;
 }
 
-int PySIEffect::width()
+const float PySIEffect::scale() const
 {
-    return d_width;
+    return d_scale;
 }
 
-int PySIEffect::height()
+const float PySIEffect::angle_degrees() const
 {
-    return d_height;
+    return d_angle_deg;
 }
 
-std::vector<std::shared_ptr<LinkRelation>>& PySIEffect::link_relations()
+std::vector<LinkRelation>& PySIEffect::link_relations()
 {
     return d_link_relations;
 }
 
-void PySIEffect::__set_data__(const std::string &key, const bp::object &value, const int type)
+void PySIEffect::__add_data__(const std::string &key, const bp::object &value, const int type)
 {
     QVariant qv;
 
@@ -325,18 +165,10 @@ const QMap<QString, QVariant> &PySIEffect::data()
     return d_data;
 }
 
-bool PySIEffect::has_data_changed()
+const bool PySIEffect::has_data_changed() const
 {
     return d_data_changed;
 }
-
-////////////////////////////////////////////////////////////////////////
-
-// Found at https://stackoverflow.com/questions/27077518/wrapping-an-stdvector-using-boostpython-vector-indexing-suite
-// and at https://wiki.python.org/moin/boost.python/StlContainers
-
-/// @brief Mockup type.
-
 
 BOOST_PYTHON_MODULE(libPySI)
 {
@@ -366,9 +198,15 @@ BOOST_PYTHON_MODULE(libPySI)
             .def_readwrite("a", &glm::vec4::a)
             ;
 
-    // evaluate if friend keyword exposes private SuperEffect members
+    bp::class_<LinkRelation>("LinkRelation", bp::init<const std::string&, const std::string&, const std::string&, const std::string&>())
+        .def_readwrite("sender", &LinkRelation::sender)
+        .def_readwrite("sender_attrib", &LinkRelation::sender_attrib)
+        .def_readwrite("recv", &LinkRelation::recv)
+        .def_readwrite("recv_attrib", &LinkRelation::recv_attrib)
+        ;
 
     create_vector<std::vector<glm::vec3>>("PointVector");
+    create_vector<std::vector<LinkRelation>>("LinkRelationVector");
     create_vector<std::vector<std::string>>("StringVector");
     create_map<std::map<std::string, std::vector<glm::vec3>>>("PartialContour");
     create_map<std::map<std::string, bp::object>>("String2FunctionMap");
@@ -377,10 +215,7 @@ BOOST_PYTHON_MODULE(libPySI)
     create_map<std::map<std::string, std::map<std::string, bp::object>>>("LinkReceptionEventMap");
 
     bp::class_<PySIEffect, boost::noncopyable>("PySIEffect", bp::init<>())
-        .def("register_region", &PySIEffect::__register_region__)
-        .def("register_link", &PySIEffect::__register_link__)
-        .def("remove_link", &PySIEffect::__remove_link__)
-        .def("set_data", &PySIEffect::__set_data__)
+        .def("add_data", &PySIEffect::__add_data__)
 
         .def_readwrite("__partial_regions__", &PySIEffect::d_partial_regions)
         .def_readwrite("cap_emit", &PySIEffect::d_cap_collision_emit)
@@ -389,23 +224,21 @@ BOOST_PYTHON_MODULE(libPySI)
         .def_readwrite("cap_link_recv", &PySIEffect::d_cap_link_recv)
         .def_readwrite("registered_regions", &PySIEffect::d_regions_marked_for_registration)
         .def_readwrite("color", &PySIEffect::d_color)
-
-        .add_property("left_mouse_clicked", &PySIEffect::__is_left_mouse_clicked, &PySIEffect::__set_left_mouse_clicked__)
-        .add_property("right_mouse_clicked", &PySIEffect::__is_right_mouse_clicked, &PySIEffect::__set_right_mouse_clicked__)
-        .add_property("middle_mouse_clicked", &PySIEffect::__is_middle_mouse_clicked, &PySIEffect::__set_middle_mouse_clicked__)
-
-        .add_property("x", &PySIEffect::__x__, &PySIEffect::__set_x__)
-        .add_property("y", &PySIEffect::__y__, &PySIEffect::__set_y__)
-        .add_property("width", &PySIEffect::__width__, &PySIEffect::__set_width__)
-        .add_property("height", &PySIEffect::__height__, &PySIEffect::__set_height__)
-        .add_property("angle_degres", &PySIEffect::__angle_degrees__, &PySIEffect::__set_angle_degrees__)
-        .add_property("angle_radians", &PySIEffect::__angle_radians__, &PySIEffect::__set_angle_radians__)
-        .add_property("scale", &PySIEffect::__scale__, &PySIEffect::__set_scale__)
-        .add_property("name", &PySIEffect::__name__, &PySIEffect::__set__name__)
-        .add_property("_uuid", &PySIEffect::__uuid__, &PySIEffect::__set_uuid__)
-        .add_property("region_type", &PySIEffect::__effect_type__, &PySIEffect::__set_effect_type__)
-        .add_property("source", &PySIEffect::__source__, &PySIEffect::__set_source__)
-        .add_property("qml_path", &PySIEffect::__qml_path__, &PySIEffect::__set_qml_path__)
+        .def_readwrite("x", &PySIEffect::d_x)
+        .def_readwrite("y", &PySIEffect::d_y)
+        .def_readwrite("width", &PySIEffect::d_width)
+        .def_readwrite("height", &PySIEffect::d_height)
+        .def_readwrite("angle_degrees", &PySIEffect::d_angle_deg)
+        .def_readwrite("scale", &PySIEffect::d_scale)
+        .def_readwrite("name", &PySIEffect::d_name)
+        .def_readwrite("_uuid", &PySIEffect::d_uuid)
+        .def_readwrite("source", &PySIEffect::d_source)
+        .def_readwrite("qml_path", &PySIEffect::d_qml_path)
+        .def_readwrite("region_type", &PySIEffect::d_effect_type)
+        .def_readwrite("left_mouse_clicked", &PySIEffect::d_is_left_mouse_clicked)
+        .def_readwrite("right_mouse_clicked", &PySIEffect::d_is_right_mouse_clicked)
+        .def_readwrite("middle_mouse_clicked", &PySIEffect::d_is_middle_mouse_clicked)
+        .def_readwrite("link_relations", &PySIEffect::d_link_relations)
 
         .enable_pickling()
         ;

@@ -30,12 +30,17 @@ class Tag(PySIEffect.PySIEffect):
         return 0
 
     def on_move_enter_recv(self, cursor_id, link_attrib):
-        self.register_link(cursor_id, link_attrib, self._uuid, link_attrib)
+        self.link_relations.append(PySIEffect.LinkRelation(cursor_id, link_attrib, self._uuid, link_attrib))
+
         return 0
 
     def on_move_continuous_recv(self):
         return 0
 
     def on_move_leave_recv(self, cursor_id, link_attrib):
-        self.remove_link(cursor_id, link_attrib, self._uuid, link_attrib)
+        lr = PySIEffect.LinkRelation(cursor_id, link_attrib, self._uuid, link_attrib)
+
+        if lr in self.link_relations:
+            del self.link_relations[self.link_relations.index(lr)]
+
         return 0

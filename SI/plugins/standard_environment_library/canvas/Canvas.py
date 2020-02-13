@@ -10,7 +10,6 @@ class Canvas(PySIEffect.PySIEffect):
         self.source = "libstdSI"
         self.qml_path = ""
         self.color = PySIEffect.Color(0, 0, 255, 255)
-
         self.registered_regions = PySIEffect.StringVector()
 
         self.cap_emit = PySIEffect.CollisionEventMap()
