@@ -23,6 +23,8 @@ class Tag(PySIEffect.PySIEffect):
         self.cap_link_recv["__position__"] = PySIEffect.String2FunctionMap()
         self.cap_link_recv["__position__"]["__position__"] = self.set_position_from_position
 
+        self.link_relations = PySIEffect.LinkRelationVector([])
+
     def set_position_from_position(self, rel_x, rel_y):
         self.x += rel_x
         self.y += rel_y

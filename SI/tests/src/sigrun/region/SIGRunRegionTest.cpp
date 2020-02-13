@@ -1,6 +1,6 @@
 
 
-#include <pysi/SuperEffect.hpp>
+#include <pysi/PySIEffect.hpp>
 #include "SIGRunRegionTest.hpp"
 
 #include <glm/glm.hpp>

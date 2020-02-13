@@ -1,7 +1,7 @@
 
 
 #include "Capability.hpp"
-#include <pysi/SuperEffect.hpp>
+#include <pysi/PySIEffect.hpp>
 #include <memory>
 #include <sigrun/plugin/PythonInvoker.hpp>
 

@@ -14,7 +14,7 @@
 #include <sigrun/SIObject.hpp>
 #include <sigrun/util/RingBuffer.hpp>
 #include <QObject>
-#include <pysi/SuperEffect.hpp>
+#include <pysi/PySIEffect.hpp>
 
 namespace bp = boost::python;
 

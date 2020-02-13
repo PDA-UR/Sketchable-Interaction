@@ -4,18 +4,21 @@
 #define SITEST_MAPEXPOSURE_HPP
 
 #include <boost/python.hpp>
-#include <glm/glm.hpp>
 #include <map>
-#include <boost/python/suite/indexing/map_indexing_suite.hpp>
 
 namespace bp = boost::python;
 
-void KeyError() { PyErr_SetString(PyExc_KeyError, "Key not found"); }
+
 
 template<typename T>
 class MapExposure
 {
 public:
+    static void KeyError()
+    {
+        PyErr_SetString(PyExc_KeyError, "Key not found");
+    }
+
     typedef typename T::key_type K;
     typedef typename T::mapped_type V;
 
@@ -24,7 +27,7 @@ public:
         if(x.find(i) != x.end())
             return x[i];
 
-        KeyError();
+        MapExposure<T>::KeyError();
     }
 
     static void set(T& x, K const& i, V const& v)
@@ -37,7 +40,7 @@ public:
         if(x.find(i) != x.end())
             x.erase(i);
         else
-            KeyError();
+            MapExposure<T>::KeyError();
     }
 
     static bool in(T const& x, K const& i)
