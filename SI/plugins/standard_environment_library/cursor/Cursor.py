@@ -9,38 +9,29 @@ class MouseCursor(PySIEffect.PySIEffect):
         self.region_type = PySIEffect.EffectType.SI_MOUSE_CURSOR
         self.source = "libstdSI"
         self.qml_path = "plugins/standard_environment_library/cursor/Cursor.qml"
-        self.color = [0, 255, 255, 255]
+        self.color = PySIEffect.Color(0, 255, 255, 255)
 
         self.width = 18
         self.height = 24
+        self.last_x = 0
+        self.last_y = 0
 
-        self.set_data("width", self.width, PySIEffect.DataType.INT)
-        self.set_data("height", self.height, PySIEffect.DataType.INT)
-        self.set_data("img_path", "res/mouse_cursor.png", PySIEffect.DataType.STRING)
+        self.add_data("width", self.width, PySIEffect.DataType.INT)
+        self.add_data("height", self.height, PySIEffect.DataType.INT)
+        self.add_data("img_path", "res/mouse_cursor.png", PySIEffect.DataType.STRING)
 
         self.parent_canvas = None
         self.move_target = None
 
-        self.last_x = 0
-        self.last_y = 0
+        self.cap_emit = PySIEffect.CollisionEventMap()
+        self.cap_recv = PySIEffect.CollisionEventMap()
 
-        self.cap_emit = {
-            # capability: {"on_enter": self.function, "on_continuous": self.function, "on_leave": self.function}
-        }
+        self.cap_link_emit = PySIEffect.LinkEmissionEventMap()
+        self.cap_link_emit["__position__"] = self.position
 
-        self.cap_recv = {
-            # capability: {"on_enter": self.function, "on_continuous": self.function, "on_leave": self.function}
-        }
-
-        self.cap_link_emit = {
-            # attr: self.get_function,
-            "__position__": self.position
-        }
-
-        self.cap_link_recv = {
-            # "source_attr": {"recv_attr": self.set_function},
-            "__position__": {"__position__": self.set_position}
-        }
+        self.cap_link_recv = PySIEffect.LinkReceptionEventMap()
+        self.cap_link_recv["__position__"] = PySIEffect.String2FunctionMap()
+        self.cap_link_recv["__position__"]["__position__"] = self.set_position
 
     def position(self):
         rel_x = self.x - self.last_x
@@ -93,26 +84,25 @@ class MouseCursor(PySIEffect.PySIEffect):
     def __handle_left_mouse_click(self):
         if self.left_mouse_clicked:
             if "SKETCH" not in self.cap_emit.keys():
-                temp = self.cap_emit
-                temp["SKETCH"] = {"on_enter": self.self_on_sketch_enter_emit, "on_continuous": self.on_sketch_continuous_emit, "on_leave": self.on_sketch_leave_emit}
-                self.cap_emit = temp
+                self.cap_emit["SKETCH"] = PySIEffect.String2FunctionMap()
+                self.cap_emit["SKETCH"]["on_enter"] = self.self_on_sketch_enter_emit
+                self.cap_emit["SKETCH"]["on_continuous"] = self.on_sketch_continuous_emit
+                self.cap_emit["SKETCH"]["on_leave"] = self.on_sketch_leave_emit
         elif "SKETCH" in self.cap_emit.keys():
-            temp = self.cap_emit
-            del temp["SKETCH"]
-            self.cap_emit = temp
+            del self.cap_emit["SKETCH"]
+
             if self.parent_canvas is not None:
                 self.parent_canvas.on_sketch_leave_recv(*self.on_sketch_leave_emit(self.parent_canvas))
 
     def __handle_right_mouse_click(self):
         if self.right_mouse_clicked:
             if "MOVE" not in self.cap_emit.keys():
-                temp = self.cap_emit
-                temp["MOVE"] = {"on_enter": self.on_move_enter_emit, "on_continuous": self.on_move_continuous_emit, "on_leave": self.on_move_leave_emit}
-                self.cap_emit = temp
+                self.cap_emit["MOVE"] = PySIEffect.String2FunctionMap()
+                self.cap_emit["MOVE"]["on_enter"] = self.on_move_enter_emit
+                self.cap_emit["MOVE"]["on_continuous"] = self.on_move_continuous_emit
+                self.cap_emit["MOVE"]["on_leave"] = self.on_move_leave_emit
         elif "MOVE" in self.cap_emit.keys():
-            temp = self.cap_emit
-            del temp["MOVE"]
-            self.cap_emit = temp
+            del self.cap_emit["MOVE"]
             if self.move_target is not None:
                 self.move_target.on_move_leave_recv(*self.on_move_leave_emit(self.move_target))
 

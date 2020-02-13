@@ -26,12 +26,6 @@ FIND_PACKAGE(Qt5Quick REQUIRED)
 
 include_directories(${PATH_INCLUDE_TUIO2_HEADERS} ${PATH_INCLUDE_OSC_HEADERS})
 
-#set(xlib TRUE)
-set(xlib FALSE)
-if(xlib)
-    add_definitions(-Dxlib)
-endif()
-
 set(PySISrc
         SI/src/pysi/SuperEffect.cpp)
 
@@ -46,6 +40,8 @@ target_precompile_headers(PySI
         <vector>
         <QVariant>
         <map>
+        SI/src/pysi/stl_container_exposure/VectorExposure.hpp
+        SI/src/pysi/stl_container_exposure/MapExposure.hpp
         <boost/python/suite/indexing/vector_indexing_suite.hpp>
         <boost/python/suite/indexing/map_indexing_suite.hpp>
         <boost/python.hpp>
@@ -144,12 +140,7 @@ target_precompile_headers(SIGeneralRuntime
         )
 
 set_target_properties(SIGeneralRuntime PROPERTIES AUTOMOC TRUE)
-
-if (xlib)
-    target_link_libraries(SIGeneralRuntime ${PATH_LIB} -luuid ${PYTHON_LIBRARIES} ${Boost_LIBRARIES} -lX11 Qt5::QuickWidgets Qt5::Quick Qt5::Core Qt5::Widgets Qt5::Qml)
-else()
-    target_link_libraries(SIGeneralRuntime ${PATH_LIB} -luuid ${PYTHON_LIBRARIES} ${Boost_LIBRARIES} Qt5::QuickWidgets Qt5::Quick Qt5::Core Qt5::Widgets Qt5::Qml)
-endif()
+target_link_libraries(SIGeneralRuntime ${PATH_LIB} -luuid ${PYTHON_LIBRARIES} ${Boost_LIBRARIES} Qt5::QuickWidgets Qt5::Quick Qt5::Core Qt5::Widgets Qt5::Qml)
 
 if (BUILD_DOCS)
     find_package(Doxygen)

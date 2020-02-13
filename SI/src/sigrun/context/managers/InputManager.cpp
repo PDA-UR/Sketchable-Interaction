@@ -158,25 +158,20 @@ bool InputManager::eventFilter(QObject *watched, QEvent *event)
     {
         QMouseEvent* mouse_event = (QMouseEvent*) event;
 
-        int i = -1;
-
         switch (mouse_event->button())
         {
             case Qt::LeftButton:
-                i = SI_LEFT_MOUSE_BUTTON;
+                press_mouse_button(SI_LEFT_MOUSE_BUTTON);
                 break;
 
             case Qt::MiddleButton:
-                i = SI_MIDDLE_MOUSE_BUTTON;
+                press_mouse_button(SI_MIDDLE_MOUSE_BUTTON);
                 break;
 
             case Qt::RightButton:
-                i = SI_RIGHT_MOUSE_BUTTON;
+                press_mouse_button(SI_RIGHT_MOUSE_BUTTON);
                 break;
         }
-
-        if(i == 0 || i == 1 || i == 2)
-            press_mouse_button(i);
 
         return true;
     }
@@ -184,26 +179,20 @@ bool InputManager::eventFilter(QObject *watched, QEvent *event)
     {
         QMouseEvent* mouse_event = (QMouseEvent*) event;
 
-        int i = -1;
-
         switch (mouse_event->button())
         {
             case Qt::LeftButton:
-                i = SI_LEFT_MOUSE_BUTTON;
+                release_mouse_button(SI_LEFT_MOUSE_BUTTON);
                 break;
 
             case Qt::MiddleButton:
-                i = SI_MIDDLE_MOUSE_BUTTON;
+                release_mouse_button(SI_MIDDLE_MOUSE_BUTTON);
                 break;
 
             case Qt::RightButton:
-                i = SI_RIGHT_MOUSE_BUTTON;
+                release_mouse_button(SI_RIGHT_MOUSE_BUTTON);
                 break;
         }
-
-        if(i == 0 || i == 1 || i == 2)
-            release_mouse_button(i);
-
         return true;
     }
 

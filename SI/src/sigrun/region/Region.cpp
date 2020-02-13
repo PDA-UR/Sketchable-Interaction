@@ -277,7 +277,9 @@ void Region::update()
 
     HANDLE_PYTHON_CALL (
             for(auto& [key, value]: d_py_effect->attr_link_emit())
+            {
                 d_attributes_emit.push_back(key);
+            }
 
             for(auto& [key, value]: d_py_effect->attr_link_recv())
             {
@@ -288,7 +290,9 @@ void Region::update()
             }
 
             for(auto& [key, value]: d_py_effect->cap_collision_emit())
+            {
                 d_collision_caps_emit.push_back(key);
+            }
 
             for(auto& [key, value]: d_py_effect->cap_collision_recv())
                 d_collision_caps_recv.push_back(key);
@@ -305,13 +309,11 @@ void Region::update()
                 Context::SIContext()->register_new_region(d_py_effect->partial_region_contours()[candidate], candidate);
 
                 HANDLE_PYTHON_CALL(
-                        bp::object temp = d_effect->attr("__partial_regions__");
-                        bp::delitem(temp, bp::object(candidate));
-                        d_effect->attr("__partial_regions__") = temp;
+                        bp::delitem(d_effect->attr("__partial_regions__"), bp::object(candidate));
                 )
             }
 
-            HANDLE_PYTHON_CALL (d_effect->attr("__regions_for_registration__") = bp::list();)
+            HANDLE_PYTHON_CALL (d_effect->attr("registered_regions").attr("clear")();)
         }
     }
     else
@@ -323,16 +325,9 @@ const QMap<QString, QVariant>& Region::data() const
     return d_py_effect->data();
 }
 
-void Region::set_color(const glm::vec4 &color)
-{
-    d_py_effect->__set_color__(std::vector<int>{(int) color.r, (int) color.g, (int) color.b, (int) color.a});
-}
-
 const glm::vec4 Region::color() const
 {
-    auto& color = d_py_effect->__color__();
-
-    return glm::vec4(color[0], color[1], color[2], color[3]);
+    return d_py_effect->color();
 }
 
 const std::vector<std::string> &Region::collision_caps_emit() const

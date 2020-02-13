@@ -4,6 +4,7 @@
 #include "../../log/Log.hpp"
 #include <sigrun/context/Context.hpp>
 #include <pysi/SuperEffect.hpp>
+#include <sigrun/plugin/PythonInvoker.hpp>
 
 RegionManager::RegionManager()
 {SIGRUN
@@ -26,38 +27,42 @@ std::vector<std::shared_ptr<Region>> &RegionManager::regions()
 
 void RegionManager::activate_mouse_region_button_down(int mouse_btn)
 {
-    for(auto& region: d_regions)
-    {
-        if(region->effect().effect_type() == SI_TYPE_MOUSE_CURSOR && !region->effect().has_mouse_pressed_capability(mouse_btn))
+    HANDLE_PYTHON_CALL (
+        for(auto& region: d_regions)
         {
-            region->effect().set_mouse_pressed_capability(mouse_btn, true);
-
-            switch(mouse_btn)
+            if(region->effect().effect_type() == SI_TYPE_MOUSE_CURSOR && !region->effect().has_mouse_pressed_capability(mouse_btn))
             {
-                case 0: region->raw_effect().attr("left_mouse_clicked") = true; break;
-                case 1: region->raw_effect().attr("right_mouse_clicked") = true; break;
-                case 2: region->raw_effect().attr("middle_mouse_clicked") = true; break;
+                region->effect().set_mouse_pressed_capability(mouse_btn, true);
+
+                switch(mouse_btn)
+                {
+                    case 0: region->raw_effect().attr("left_mouse_clicked") = true; break;
+                    case 1: region->raw_effect().attr("right_mouse_clicked") = true; break;
+                    case 2: region->raw_effect().attr("middle_mouse_clicked") = true; break;
+                }
             }
         }
-    }
+    )
 }
 
 void RegionManager::deactivate_mouse_region_button_down(int mouse_btn)
 {
-    for(auto& region: d_regions)
-    {
-        if(region->effect().effect_type() == SI_TYPE_MOUSE_CURSOR && region->effect().has_mouse_pressed_capability(mouse_btn))
+    HANDLE_PYTHON_CALL (
+        for(auto& region: d_regions)
         {
-            region->effect().set_mouse_pressed_capability(mouse_btn, false);
-
-            switch(mouse_btn)
+            if(region->effect().effect_type() == SI_TYPE_MOUSE_CURSOR && region->effect().has_mouse_pressed_capability(mouse_btn))
             {
-                case 0: region->raw_effect().attr("left_mouse_clicked") = false; break;
-                case 1: region->raw_effect().attr("right_mouse_clicked") = false; break;
-                case 2: region->raw_effect().attr("middle_mouse_clicked") = false; break;
+                region->effect().set_mouse_pressed_capability(mouse_btn, false);
+
+                switch(mouse_btn)
+                {
+                    case 0: region->raw_effect().attr("left_mouse_clicked") = false; break;
+                    case 1: region->raw_effect().attr("right_mouse_clicked") = false; break;
+                    case 2: region->raw_effect().attr("middle_mouse_clicked") = false; break;
+                }
             }
         }
-    }
+    )
 }
 
 void RegionManager::set_partial_regions(std::map<std::string, std::vector<glm::vec3>>& partials)
