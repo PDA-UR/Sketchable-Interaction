@@ -196,10 +196,10 @@ void Context::register_new_region(const std::vector<glm::vec3>& contour, const s
     uprm->add_region(contour, d_selected_effects_by_id[uuid], 0);
 }
 
-void Context::update_linking_relations(const std::vector<std::shared_ptr<LinkRelation>>& relations, const std::string& source)
+void Context::update_linking_relations(const std::vector<LinkRelation>& relations, const std::string& source)
 {
     if (relations.empty())
-        remove_all_source_linking_relations(relations, source);
+        remove_all_source_linking_relations(source);
     else
     {
         remove_linking_relations(relations, source);
@@ -207,7 +207,7 @@ void Context::update_linking_relations(const std::vector<std::shared_ptr<LinkRel
     }
 }
 
-void Context::remove_all_source_linking_relations(const std::vector<std::shared_ptr<LinkRelation>> &relations, const std::string &source)
+void Context::remove_all_source_linking_relations(const std::string &source)
 {
     if(MAP_HAS_KEY(d_links_in_ctx, source))
     {
@@ -218,7 +218,7 @@ void Context::remove_all_source_linking_relations(const std::vector<std::shared_
     }
 }
 
-void Context::remove_linking_relations(const std::vector<std::shared_ptr<LinkRelation>> &relations, const std::string &source)
+void Context::remove_linking_relations(const std::vector<LinkRelation> &relations, const std::string &source)
 {
     if (MAP_HAS_KEY(d_links_in_ctx, source))
     {
@@ -227,16 +227,15 @@ void Context::remove_linking_relations(const std::vector<std::shared_ptr<LinkRel
         while (it != d_links_in_ctx[source].end())
         {
             if (std::find_if(relations.begin(), relations.end(),
-                             [&it](const std::shared_ptr<LinkRelation> &x)
+                             [&it](const LinkRelation &x)
                              {
-                                 return it->get()->sender_a()->uuid() == x->sender &&
-                                        it->get()->attribute_a() == x->sender_attrib &&
-                                        it->get()->receiver_b()->uuid() == x->recv &&
-                                        it->get()->attribute_b() == x->recv_attrib;
+                                 return it->get()->sender_a()->uuid() == x.sender &&
+                                        it->get()->attribute_a() == x.sender_attrib &&
+                                        it->get()->receiver_b()->uuid() == x.recv &&
+                                        it->get()->attribute_b() == x.recv_attrib;
                              }) == relations.end())
             {
-                uplm->remove_link(it->get()->sender_a(), it->get()->attribute_a(), it->get()->receiver_b(),
-                                  it->get()->attribute_b(), ILink::LINK_TYPE::UD);
+                uplm->remove_link(it->get()->sender_a(), it->get()->attribute_a(), it->get()->receiver_b(), it->get()->attribute_b(), ILink::LINK_TYPE::UD);
                 it = d_links_in_ctx[source].erase(it);
             }
             else
@@ -245,7 +244,7 @@ void Context::remove_linking_relations(const std::vector<std::shared_ptr<LinkRel
     }
 }
 
-void Context::create_linking_relations(const std::vector<std::shared_ptr<LinkRelation>> &relations, const std::string &source)
+void Context::create_linking_relations(const std::vector<LinkRelation> &relations, const std::string &source)
 {
     if (!MAP_HAS_KEY(d_links_in_ctx, source))
     {
@@ -260,17 +259,17 @@ void Context::create_linking_relations(const std::vector<std::shared_ptr<LinkRel
             {
                 auto &region = uprm->regions()[i];
 
-                if (region->uuid() == relation->sender)
+                if (region->uuid() == relation.sender)
                     index_sender = i;
 
-                if (region->uuid() == relation->recv)
+                if (region->uuid() == relation.recv)
                     index_recv = i;
             }
 
             if (index_sender != -1 && index_recv != -1)
             {
-                if (uplm->add_link(uprm->regions()[index_sender], relation->sender_attrib, uprm->regions()[index_recv], relation->recv_attrib, ILink::LINK_TYPE::UD))
-                    d_links_in_ctx[source].push_back(std::make_shared<UnidirectionalLink>(uprm->regions()[index_sender], uprm->regions()[index_recv], relation->sender_attrib, relation->recv_attrib));
+                if (uplm->add_link(uprm->regions()[index_sender], relation.sender_attrib, uprm->regions()[index_recv], relation.recv_attrib, ILink::LINK_TYPE::UD))
+                    d_links_in_ctx[source].push_back(std::make_shared<UnidirectionalLink>(uprm->regions()[index_sender], uprm->regions()[index_recv], relation.sender_attrib, relation.recv_attrib));
             }
         }
     }

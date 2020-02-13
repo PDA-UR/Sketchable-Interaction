@@ -16,9 +16,9 @@ class MouseCursor(PySIEffect.PySIEffect):
         self.last_x = 0
         self.last_y = 0
 
-        self.set_data("width", self.width, PySIEffect.DataType.INT)
-        self.set_data("height", self.height, PySIEffect.DataType.INT)
-        self.set_data("img_path", "res/mouse_cursor.png", PySIEffect.DataType.STRING)
+        self.add_data("width", self.width, PySIEffect.DataType.INT)
+        self.add_data("height", self.height, PySIEffect.DataType.INT)
+        self.add_data("img_path", "res/mouse_cursor.png", PySIEffect.DataType.STRING)
 
         self.parent_canvas = None
         self.move_target = None
