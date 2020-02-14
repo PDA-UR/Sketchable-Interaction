@@ -123,6 +123,23 @@ public:
             IndexError();
     }
 
+    static const std::string repr(std::vector<glm::vec3>& self)
+    {
+        std::string ret = "List of Points: [";
+
+        for(int i = 0; i < self.size(); ++i)
+        {
+            ret += ("[" + std::to_string(self[i].x) + ", " + std::to_string(self[i].y) + "]");
+
+            if(i != self.size() - 1)
+                ret += ", ";
+        }
+
+        ret += "]";
+
+        return ret;
+    }
+
 private:
     static void apply_lists_of_lists(boost::shared_ptr<std::vector<glm::vec3>>& self, const bp::list& list)
     {
@@ -172,6 +189,23 @@ public:
             self[i] = s;
         else
             IndexError();
+    }
+
+    static const std::string repr(std::vector<std::string>& self)
+    {
+        std::string ret = "List of strings: [";
+
+        for(int i = 0; i < self.size(); ++i)
+        {
+            ret += self[i];
+
+            if(i != self.size() - 1)
+                ret += ", ";
+        }
+
+        ret += "]";
+
+        return ret;
     }
 };
 
@@ -229,6 +263,23 @@ public:
             IndexError();
     }
 
+    static const std::string repr(std::vector<LinkRelation>& self)
+    {
+        std::string ret = "List of LinkRelations: [";
+
+        for(int i = 0; i < self.size(); ++i)
+        {
+            ret += ("[" + self[i].sender + ", " + self[i].sender_attrib + ", " + self[i].recv + ", " + self[i].recv_attrib + "]");
+
+            if(i != self.size() - 1)
+                ret += ", ";
+        }
+
+        ret += "]";
+
+        return ret;
+    }
+
 private:
     static void apply_lists_of_lists(boost::shared_ptr<std::vector<LinkRelation>>& self, const bp::list& list)
     {
@@ -266,6 +317,7 @@ bp::class_<VectorType> create_vector(const char* name)
             .def("__iter__", bp::iterator<VectorType>())
             .def("__contains__", &VectorExposure<VectorType>::in)
             .def("index", &VectorExposure<VectorType>::index)
+            .def("__repr__", &VectorExposureType::repr)
             ;
 }
 

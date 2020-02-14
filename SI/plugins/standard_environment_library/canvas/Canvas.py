@@ -33,4 +33,5 @@ class Canvas(PySIEffect.PySIEffect):
 
     def on_sketch_leave_recv(self, x, y, sender_id):
         self.registered_regions.append(sender_id)
+
         return 0
