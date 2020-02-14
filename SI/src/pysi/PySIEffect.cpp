@@ -203,7 +203,6 @@ BOOST_PYTHON_MODULE(libPySI)
         .def_readwrite("recv_attrib", &LinkRelation::recv_attrib)
         ;
 
-
     create_vector<VectorExposureVec3, std::vector<glm::vec3>>("PointVector");
     create_vector<VectorExposureLinkRelation, std::vector<LinkRelation>>("LinkRelationVector");
     create_vector<VectorExposureString, std::vector<std::string>>("StringVector");

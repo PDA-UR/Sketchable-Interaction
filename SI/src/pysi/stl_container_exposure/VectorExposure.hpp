@@ -81,14 +81,65 @@ public:
 class VectorExposureVec3
 {
 public:
-        static boost::shared_ptr<std::vector<glm::vec3>> init(const bp::list& list=bp::list())
+    static boost::shared_ptr<std::vector<glm::vec3>> init(const bp::list& list=bp::list())
+    {
+        auto self = boost::make_shared<std::vector<glm::vec3>>();
+
+        if(bp::len(list) > 0)
         {
-            auto self = boost::make_shared<std::vector<glm::vec3>>();
-
-            Print::print("vec3");
-
-            return self;
+            if(bp::extract<bp::list>(list[0]).check())
+                apply_lists_of_lists(self, list);
+            else
+                apply_list(self, list);
         }
+
+        return self;
+    }
+
+    static void add(std::vector<glm::vec3>& self, const bp::list& list)
+    {
+        if(bp::len(list) > 0)
+        {
+            float x = bp::extract<float>(list[0]);
+            float y = bp::extract<float>(list[1]);
+
+            self.emplace_back(x, y, 1);
+        }
+    }
+
+    static void set(std::vector<glm::vec3>& self, int i, const bp::list& list)
+    {
+        if(i < 0)
+            i += self.size();
+
+        if(i >= 0 && i < self.size())
+        {
+            float x = bp::extract<float>(list[0]);
+            float y = bp::extract<float>(list[1]);
+
+            self[i] = glm::vec3(x, y, 1);
+        }
+        else
+            IndexError();
+    }
+
+private:
+    static void apply_lists_of_lists(boost::shared_ptr<std::vector<glm::vec3>>& self, const bp::list& list)
+    {
+        for(int i = 0; i < bp::len(list); ++i)
+        {
+            const bp::list& l = bp::extract<bp::list>(list[i]);
+            apply_list(self, l);
+        }
+    }
+
+    static void apply_list(boost::shared_ptr<std::vector<glm::vec3>>& self, const bp::list& list)
+    {
+        float x = bp::extract<float>(list[0]);
+        float y = bp::extract<float>(list[1]);
+
+        self->emplace_back(x, y, 1);
+    }
 };
 
 class VectorExposureString
@@ -98,9 +149,29 @@ public:
     {
         auto self = boost::make_shared<std::vector<std::string>>();
 
-        Print::print("string");
+        for(int i = 0; i < bp::len(list); ++i)
+        {
+            const std::string& s = bp::extract<std::string>(list[i]);
+            self->emplace_back(s);
+        }
 
         return self;
+    }
+
+    static void add(std::vector<std::string>& self, const std::string& s)
+    {
+        self.push_back(s);
+    }
+
+    static void set(std::vector<std::string>& self, int i, const std::string& s)
+    {
+        if(i < 0)
+            i += self.size();
+
+        if(i >= 0 && i < self.size())
+            self[i] = s;
+        else
+            IndexError();
     }
 };
 
@@ -111,9 +182,71 @@ public:
     {
         auto self = boost::make_shared<std::vector<LinkRelation>>();
 
-        Print::print("lr");
+
+        if(bp::len(list) > 0)
+        {
+            if(bp::extract<bp::list>(list[0]).check())
+                apply_lists_of_lists(self, list);
+            else
+                apply_list(self, list);
+        }
 
         return self;
+    }
+
+    // weird stuff happens with strings; scrambles data; unclear why
+    static void add(std::vector<LinkRelation>& self, const bp::list& list)
+    {
+        if(bp::len(list) > 0)
+        {
+            const char* sender = bp::extract<char*>(list[0]);
+            const char* sender_attrib = bp::extract<char*>(list[1]);
+            const char* recv = bp::extract<char*>(list[2]);
+            const char* recv_attrib = bp::extract<char*>(list[3]);
+
+            self.emplace_back(sender, sender_attrib, recv, recv_attrib);
+        }
+    }
+
+    static void set(std::vector<LinkRelation>& self, int i, const bp::list& list)
+    {
+        if(i < 0)
+            i += self.size();
+
+        if(i >= 0 && i < self.size())
+        {
+            if(bp::len(list) > 0)
+            {
+                const char* sender = bp::extract<char*>(list[0]);
+                const char* sender_attrib = bp::extract<char*>(list[1]);
+                const char* recv = bp::extract<char*>(list[2]);
+                const char* recv_attrib = bp::extract<char*>(list[3]);
+
+                self[i] = LinkRelation(sender, sender_attrib, recv, recv_attrib);
+            }
+        }
+        else
+            IndexError();
+    }
+
+private:
+    static void apply_lists_of_lists(boost::shared_ptr<std::vector<LinkRelation>>& self, const bp::list& list)
+    {
+        for(int i = 0; i < bp::len(list); ++i)
+        {
+            const bp::list& l = bp::extract<bp::list>(list[i]);
+            apply_list(self, l);
+        }
+    }
+
+    static void apply_list(boost::shared_ptr<std::vector<LinkRelation>>& self, const bp::list& list)
+    {
+        const std::string& sender = bp::extract<std::string>(list[0]);
+        const std::string& sender_attrib = bp::extract<std::string>(list[1]);
+        const std::string& recv = bp::extract<std::string>(list[2]);
+        const std::string& recv_attrib = bp::extract<std::string>(list[3]);
+
+        self->emplace_back(sender, sender_attrib, recv, recv_attrib);
     }
 };
 
@@ -121,12 +254,14 @@ template <typename VectorExposureType, typename VectorType>
 bp::class_<VectorType> create_vector(const char* name)
 {
     return bp::class_<VectorType>(name, bp::no_init)
-            .def("__init__", bp::make_constructor(&VectorExposureType::init))
+            .def("__init__", bp::make_constructor(&VectorExposureType::init, bp::default_call_policies(), (bp::arg("list")=bp::list())))
             .def("__len__", &VectorType::size)
             .def("clear", &VectorType::clear)
             .def("append", &VectorExposure<VectorType>::add)
+            .def("append", &VectorExposureType::add)
             .def("__getitem__", &VectorExposure<VectorType>::get, bp::return_value_policy<bp::reference_existing_object>())
             .def("__setitem__", &VectorExposure<VectorType>::set)
+            .def("__setitem__", &VectorExposureType::set)
             .def("__delitem__", &VectorExposure<VectorType>::del)
             .def("__iter__", bp::iterator<VectorType>())
             .def("__contains__", &VectorExposure<VectorType>::in)
