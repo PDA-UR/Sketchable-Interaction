@@ -206,11 +206,11 @@ BOOST_PYTHON_MODULE(libPySI)
     create_vector<VectorExposureVec3, std::vector<glm::vec3>>("PointVector");
     create_vector<VectorExposureLinkRelation, std::vector<LinkRelation>>("LinkRelationVector");
     create_vector<VectorExposureString, std::vector<std::string>>("StringVector");
-    create_map<std::map<std::string, std::vector<glm::vec3>>>("PartialContour");
-    create_map<std::map<std::string, bp::object>>("String2FunctionMap");
-    create_map<std::map<std::string, bp::object>>("LinkEmissionEventMap");
-    create_map<std::map<std::string, std::map<std::string, bp::object>>>("CollisionEventMap");
-    create_map<std::map<std::string, std::map<std::string, bp::object>>>("LinkReceptionEventMap");
+    create_map<MapExposurePartialContour, std::map<std::string, std::vector<glm::vec3>>>("PartialContour");
+    create_map<MapExposureString2Function, std::map<std::string, bp::object>>("String2FunctionMap");
+    create_map<MapExposureString2Function, std::map<std::string, bp::object>>("LinkEmissionEventMap");
+    create_map<MapExposureCollisionEventMap, std::map<std::string, std::map<std::string, bp::object>>>("CollisionEventMap");
+    create_map<MapExposureCollisionEventMap, std::map<std::string, std::map<std::string, bp::object>>>("LinkReceptionEventMap");
 
     bp::class_<PySIEffect, boost::noncopyable>("PySIEffect", bp::init<>())
         .def("add_data", &PySIEffect::__add_data__)

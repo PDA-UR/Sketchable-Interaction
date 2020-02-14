@@ -14,14 +14,11 @@ class Tag(PySIEffect.PySIEffect):
         self.cap_emit = PySIEffect.CollisionEventMap()
         self.cap_recv = PySIEffect.CollisionEventMap()
 
-        self.cap_recv["MOVE"] = PySIEffect.LinkEmissionEventMap()
-        self.cap_recv["MOVE"]["on_enter"] = self.on_move_enter_recv
-        self.cap_recv["MOVE"]["on_continuous"] = self.on_move_continuous_recv
-        self.cap_recv["MOVE"]["on_leave"] = self.on_move_leave_recv
+        self.cap_recv["MOVE"] = {"on_enter": self.on_move_enter_recv, "on_continuous": self.on_move_continuous_recv, "on_leave": self.on_move_leave_recv}
 
-        self.cap_link_recv = PySIEffect.LinkReceptionEventMap()
-        self.cap_link_recv["__position__"] = PySIEffect.String2FunctionMap()
-        self.cap_link_recv["__position__"]["__position__"] = self.set_position_from_position
+        self.cap_link_recv = PySIEffect.LinkReceptionEventMap({
+            "__position__": {"__position__": self.set_position_from_position}
+        })
 
         self.link_relations = PySIEffect.LinkRelationVector()
 
