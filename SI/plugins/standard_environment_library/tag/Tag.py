@@ -23,7 +23,7 @@ class Tag(PySIEffect.PySIEffect):
         self.cap_link_recv["__position__"] = PySIEffect.String2FunctionMap()
         self.cap_link_recv["__position__"]["__position__"] = self.set_position_from_position
 
-        self.link_relations = PySIEffect.LinkRelationVector([])
+        self.link_relations = PySIEffect.LinkRelationVector()
 
     def set_position_from_position(self, rel_x, rel_y):
         self.x += rel_x
@@ -32,7 +32,7 @@ class Tag(PySIEffect.PySIEffect):
         return 0
 
     def on_move_enter_recv(self, cursor_id, link_attrib):
-        self.link_relations.append(PySIEffect.LinkRelation(cursor_id, link_attrib, self._uuid, link_attrib))
+        self.link_relations.append([cursor_id, link_attrib, self._uuid, link_attrib])
 
         return 0
 
