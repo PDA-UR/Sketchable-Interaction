@@ -35,6 +35,29 @@ public:
         IndexError();
     }
 
+    static T get_slice(T const& self, const bp::slice& i)
+    {
+        T result;
+
+        bp::slice::range<typename T::const_iterator> range;
+
+        try
+        {
+            range = i.get_indices(self.begin(), self.end());
+        }
+        catch (std::invalid_argument)
+        {
+            return result;
+        }
+
+        for (; range.start != range.stop; std::advance(range.start, range.step))
+            result.push_back(*range.start);
+
+        result.push_back(*range.start);
+
+        return result;
+    }
+
     static void set(T& x, int i, V const& v)
     {
         if(i < 0)
@@ -228,7 +251,6 @@ public:
         return self;
     }
 
-    // weird stuff happens with strings; scrambles data; unclear why
     static void add(std::vector<LinkRelation>& self, const bp::list& list)
     {
         if(bp::len(list) > 0)
@@ -292,10 +314,10 @@ private:
 
     static void apply_list(boost::shared_ptr<std::vector<LinkRelation>>& self, const bp::list& list)
     {
-        const std::string& sender = bp::extract<std::string>(list[0]);
-        const std::string& sender_attrib = bp::extract<std::string>(list[1]);
-        const std::string& recv = bp::extract<std::string>(list[2]);
-        const std::string& recv_attrib = bp::extract<std::string>(list[3]);
+        const char* sender = bp::extract<char*>(list[0]);
+        const char* sender_attrib = bp::extract<char*>(list[1]);
+        const char* recv = bp::extract<char*>(list[2]);
+        const char* recv_attrib = bp::extract<char*>(list[3]);
 
         self->emplace_back(sender, sender_attrib, recv, recv_attrib);
     }
@@ -311,6 +333,7 @@ bp::class_<VectorType> create_vector(const char* name)
             .def("append", &VectorExposure<VectorType>::add)
             .def("append", &VectorExposureType::add)
             .def("__getitem__", &VectorExposure<VectorType>::get, bp::return_value_policy<bp::reference_existing_object>())
+            .def("__getitem__", &VectorExposure<VectorType>::get_slice)
             .def("__setitem__", &VectorExposure<VectorType>::set)
             .def("__setitem__", &VectorExposureType::set)
             .def("__delitem__", &VectorExposure<VectorType>::del)
