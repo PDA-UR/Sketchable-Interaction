@@ -6,6 +6,13 @@
 
 namespace bp = boost::python;
 
+void PySIEffect::init(const std::vector<glm::vec3>& contour, const std::vector<glm::vec3>& aabb, const std::string& uuid)
+{
+    d_contour = contour;
+    d_aabb = aabb;
+    d_uuid = uuid;
+}
+
 const int PySIEffect::x() const
 {
     return d_x;
@@ -134,6 +141,16 @@ std::vector<LinkRelation>& PySIEffect::link_relations()
     return d_link_relations;
 }
 
+std::vector<glm::vec3> &PySIEffect::contour()
+{
+    return d_contour;
+}
+
+std::vector<glm::vec3> &PySIEffect::aabb()
+{
+    return d_aabb;
+}
+
 void PySIEffect::__add_data__(const std::string &key, const bp::object &value, const int type)
 {
     QVariant qv;
@@ -181,12 +198,16 @@ BOOST_PYTHON_MODULE(libPySI)
     bp::class_<glm::vec2>("Point2", bp::init<float, float>())
             .def_readwrite("x", &glm::vec2::x)
             .def_readwrite("y", &glm::vec2::y)
+
+            .enable_pickling()
             ;
 
     bp::class_<glm::vec3>("Point3", bp::init<float, float, float>())
             .def_readwrite("x", &glm::vec3::x)
             .def_readwrite("y", &glm::vec3::y)
             .def_readwrite("z", &glm::vec3::z)
+
+            .enable_pickling()
             ;
 
     bp::class_<glm::vec4>("Color", bp::init<float, float, float, float>())
@@ -194,6 +215,8 @@ BOOST_PYTHON_MODULE(libPySI)
             .def_readwrite("g", &glm::vec4::g)
             .def_readwrite("b", &glm::vec4::b)
             .def_readwrite("a", &glm::vec4::a)
+
+            .enable_pickling()
             ;
 
     bp::class_<LinkRelation>("LinkRelation", bp::init<const std::string&, const std::string&, const std::string&, const std::string&>())
@@ -201,6 +224,8 @@ BOOST_PYTHON_MODULE(libPySI)
         .def_readwrite("sender_attrib", &LinkRelation::sender_attrib)
         .def_readwrite("recv", &LinkRelation::recv)
         .def_readwrite("recv_attrib", &LinkRelation::recv_attrib)
+
+        .enable_pickling()
         ;
 
     create_vector<VectorExposureVec3, std::vector<glm::vec3>>("PointVector");
@@ -211,6 +236,7 @@ BOOST_PYTHON_MODULE(libPySI)
     create_map<MapExposureString2_String2FunctionMap_Map, std::map<std::string, std::map<std::string, bp::object>>>("String2_String2FunctionMap_Map");
 
     bp::class_<PySIEffect, boost::noncopyable>("PySIEffect", bp::init<>())
+        .def("__init__", bp::make_constructor(&PySIEffect::init, bp::default_call_policies(), (bp::arg("shape")=std::vector<glm::vec3>(), bp::arg("aabb")=std::vector<glm::vec3>(), bp::arg("uuid")=std::string())))
         .def("add_data", &PySIEffect::__add_data__)
 
         .def_readwrite("__partial_regions__", &PySIEffect::d_partial_regions)
@@ -235,6 +261,8 @@ BOOST_PYTHON_MODULE(libPySI)
         .def_readwrite("right_mouse_clicked", &PySIEffect::d_is_right_mouse_clicked)
         .def_readwrite("middle_mouse_clicked", &PySIEffect::d_is_middle_mouse_clicked)
         .def_readwrite("link_relations", &PySIEffect::d_link_relations)
+        .def_readwrite("shape", &PySIEffect::d_contour)
+        .def_readwrite("aabb", &PySIEffect::d_aabb)
 
         .enable_pickling()
         ;

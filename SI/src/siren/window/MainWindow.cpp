@@ -71,7 +71,7 @@ void MainWindow::draw_region_representations(QPaintEvent* event)
 {
     for(const auto& [key, val]: d_region_representations)
     {
-        if(val->name() == "MouseCursor" || val->name() == "stdCanvas")
+        if(val->name() == "MouseCursor") // || val->name() == "stdCanvas")
             continue;
 
         up_qp.setBrush(val->color());

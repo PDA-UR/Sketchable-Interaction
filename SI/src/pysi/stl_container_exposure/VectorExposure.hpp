@@ -515,6 +515,8 @@ bp::class_<VectorType> create_vector(const char* name)
             .def("__contains__", &VectorExposure<VectorType>::in)
             .def("index", &VectorExposure<VectorType>::index)
             .def("__repr__", &VectorExposureType::repr)
+
+            .enable_pickling()
             ;
 }
 
