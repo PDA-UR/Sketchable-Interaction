@@ -25,7 +25,6 @@ public:
 
     const std::string& name() const;
     const QColor& color() const;
-    const QPolygonF& poly() const;
     const QPainterPath& fill() const;
 
 private:
@@ -42,7 +41,6 @@ private:
     QColor d_color;
     std::string d_qml_path;
     std::string d_name;
-    QPolygonF d_poly;
     QPainterPath d_fill;
     std::vector<glm::vec3> d_source_contour;
     std::unique_ptr<QQuickWidget> d_view;

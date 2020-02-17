@@ -11,16 +11,32 @@
 
 namespace bp = boost::python;
 
+/**
+ * \brief global helper function to display a key error
+ */
 void KeyError()
 {
     PyErr_SetString(PyExc_KeyError, "Key not found");
 }
 
+/**
+ * \class MapExposure
+ * \brief MapExposure class providing the interface for exposing STL maps to the python3 bindings (PySI) in a pythonic way
+ * @tparam T the STL map to be exposed
+ */
 template<typename T>
 class MapExposure
 {
 public:
+
+    /**
+     * @tparam K the type of key the STL map T contains
+     */
     typedef typename T::key_type K;
+
+    /**
+     * @tparam V the type of value the STL map T contains
+     */
     typedef typename T::mapped_type V;
 
     static V& get(T& x, K const& i)
@@ -174,7 +190,7 @@ public:
 private:
 };
 
-class MapExposureCollisionEventMap
+class MapExposureString2_String2FunctionMap_Map
 {
 public:
     static boost::shared_ptr<std::map<std::string, std::map<std::string, bp::object>>> init(const bp::dict& dict=bp::dict())
@@ -191,13 +207,11 @@ public:
 
             for(int k = 0; k < bp::len(inner_keys); ++k)
             {
-                const std::string inner_key = bp::extract<std::string>(inner_keys[i]);
+                const std::string inner_key = bp::extract<std::string>(inner_keys[k]);
 
                 (*self)[outer_key][inner_key] = inner_dict[inner_keys[k]];
             }
         }
-
-        repr(*self);
 
         return self;
     }

@@ -73,9 +73,6 @@ public:
     const int width() const;
     const int height() const;
 
-    const std::vector<std::string>& collision_caps_emit() const;
-    const std::vector<std::string>& collision_caps_recv() const;
-
     int handle_collision_event(const std::string& function_name, PySIEffect& colliding_effect);
 
     void update();
@@ -105,9 +102,6 @@ private:
 
     std::vector<std::string> d_attributes_emit;
     std::unordered_map<std::string, std::vector<std::string>> d_attributes_recv;
-
-    std::vector<std::string> d_collision_caps_emit;
-    std::vector<std::string> d_collision_caps_recv;
 };
 
 

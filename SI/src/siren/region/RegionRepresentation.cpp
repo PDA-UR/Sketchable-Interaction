@@ -18,11 +18,11 @@ RegionRepresentation::RegionRepresentation(QWidget *parent, const std::shared_pt
     d_type(region->type()),
     d_width(region->width()),
     d_height(region->height())
-{
+{SIREN
     d_fill.moveTo(d_source_contour[0].x, d_source_contour[0].y);
 
     for (int i = 1; i < d_source_contour.size(); ++i)
-    {SIREN
+    {
         d_fill.lineTo(d_source_contour[i].x, d_source_contour[i].y);
     }
 
@@ -87,11 +87,6 @@ const std::string& RegionRepresentation::name() const
 const QColor &RegionRepresentation::color() const
 {
     return d_color;
-}
-
-const QPolygonF &RegionRepresentation::poly() const
-{
-    return d_poly;
 }
 
 const QPainterPath &RegionRepresentation::fill() const
