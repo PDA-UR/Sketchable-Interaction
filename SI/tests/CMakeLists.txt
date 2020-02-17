@@ -8,9 +8,6 @@ project(SITest)
 find_package(PythonLibs 3 REQUIRED)
 find_package(Python3 REQUIRED)
 find_package(Boost 1.69.0 COMPONENTS system python3.7 REQUIRED)
-#find_package(SDL2 REQUIRED)
-#find_package(OpenGL REQUIRED)
-#find_package(GLEW REQUIRED)
 
 include_directories(${Boost_INCLUDE_DIRS})
 include_directories(${PYTHON_INCLUDE_DIRS})
@@ -87,6 +84,5 @@ target_precompile_headers(run_unit_tests
 
 set_target_properties(run_unit_tests PROPERTIES AUTOMOC TRUE)
 
-#target_link_libraries(run_unit_tests ${GLEW_LIBRARY} ${OPENGL_LIBRARIES} ${SDL2_LIBRARIES} ${PYTHON_LIBRARIES} ${Boost_LIBRARIES} gtest gtest_main gmock gmock_main pthread -ldl -lutil SIGeneralRuntime)
 target_link_libraries(run_unit_tests Qt5::Widgets Qt5::Test ${PYTHON_LIBRARIES} ${Boost_LIBRARIES} gtest gtest_main gmock gmock_main pthread -ldl -lutil SIGeneralRuntime)
 add_dependencies(run_unit_tests PySI SIGeneralRuntime)
