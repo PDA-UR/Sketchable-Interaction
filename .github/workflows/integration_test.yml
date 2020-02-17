@@ -116,7 +116,8 @@ jobs:
       if: success()
       run: |
         if [[ "${{ github.event.head_commit.message }}" != *"[NO CI]"* ]]; then
-          (cd /home/runner/work/Sketchable-Interaction/Sketchable-Interaction/SI/tests; test_output="$(./../../run_unit_tests)")
+          cd /home/runner/work/Sketchable-Interaction/Sketchable-Interaction/SI/tests
+          test_output="$(./../../run_unit_tests)")
           
           echo ${test_output}
           
