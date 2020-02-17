@@ -5,7 +5,7 @@
 #include <QApplication>
 #include <sigrun/rendering/IRenderEngine.hpp>
 #include <boost/python.hpp>
-#include <pysi/SuperEffect.hpp>
+#include <pysi/PySIEffect.hpp>
 #include <sigrun/util/Util.hpp>
 
 namespace bp = boost::python;

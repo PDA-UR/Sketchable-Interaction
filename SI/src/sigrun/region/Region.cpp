@@ -61,12 +61,6 @@ Region::Region(const std::vector<glm::vec3> &contour, const bp::object& effect, 
                 for(auto& [key2, value2]: value)
                     d_attributes_recv[key].push_back(key2);
             }
-
-            for(auto& [key, value]: d_py_effect->cap_collision_emit())
-                d_collision_caps_emit.push_back(key);
-
-            for(auto& [key, value]: d_py_effect->cap_collision_recv())
-                d_collision_caps_recv.push_back(key);
     )
 }
 
@@ -270,34 +264,6 @@ void Region::update()
 
     move(x, y);
 
-    d_attributes_emit.clear();
-    d_attributes_recv.clear();
-    d_collision_caps_emit.clear();
-    d_collision_caps_recv.clear();
-
-    HANDLE_PYTHON_CALL (
-            for(auto& [key, value]: d_py_effect->attr_link_emit())
-            {
-                d_attributes_emit.push_back(key);
-            }
-
-            for(auto& [key, value]: d_py_effect->attr_link_recv())
-            {
-                d_attributes_recv.insert({key, std::vector<std::string>()});
-
-                for(auto& [key2, value2]: value)
-                    d_attributes_recv[key].push_back(key2);
-            }
-
-            for(auto& [key, value]: d_py_effect->cap_collision_emit())
-            {
-                d_collision_caps_emit.push_back(key);
-            }
-
-            for(auto& [key, value]: d_py_effect->cap_collision_recv())
-                d_collision_caps_recv.push_back(key);
-    )
-
     if(d_py_effect->effect_type() == SI_TYPE_CANVAS)
     {
         Context::SIContext()->region_manager()->set_partial_regions(d_py_effect->partial_region_contours());
@@ -330,22 +296,12 @@ const glm::vec4 Region::color() const
     return d_py_effect->color();
 }
 
-const std::vector<std::string> &Region::collision_caps_emit() const
-{
-    return d_collision_caps_emit;
-}
-
-const std::vector<std::string> &Region::collision_caps_recv() const
-{
-    return d_collision_caps_recv;
-}
-
 int Region::handle_collision_event(const std::string &function_name, PySIEffect &colliding_effect)
 {
     HANDLE_PYTHON_CALL(
         for (auto&[key, value]: colliding_effect.cap_collision_emit())
         {
-            if (std::find(d_collision_caps_recv.begin(), d_collision_caps_recv.end(), key) != d_collision_caps_recv.end())
+            if (d_py_effect->cap_collision_recv().find(key) != d_py_effect->cap_collision_recv().end())
             {
                 const bp::object &t = colliding_effect.cap_collision_emit()[key][function_name](*d_effect);
 
@@ -354,7 +310,7 @@ int Region::handle_collision_event(const std::string &function_name, PySIEffect 
                 else
                 {
                     if (bp::extract<bp::tuple>(t).check())
-                        return bp::extract<int>(d_py_effect->cap_collision_recv()[key][function_name](*t));
+                    return bp::extract<int>(d_py_effect->cap_collision_recv()[key][function_name](*t));
                     else
                         return bp::extract<int>(d_py_effect->cap_collision_recv()[key][function_name](t));
                 }

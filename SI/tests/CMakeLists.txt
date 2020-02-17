@@ -77,8 +77,6 @@ target_precompile_headers(run_unit_tests
         PRIVATE
         <unordered_map>
         <vector>
-        <boost/python/suite/indexing/vector_indexing_suite.hpp>
-        <boost/python/suite/indexing/map_indexing_suite.hpp>
         <boost/python.hpp>
         <QApplication>
         <QObject>

@@ -1,10 +1,8 @@
 
-#include "SuperEffect.hpp"
+#include "PySIEffect.hpp"
 #include <sigrun/context/Capability.hpp>
 #include "pysi/stl_container_exposure/MapExposure.hpp"
 #include "pysi/stl_container_exposure/VectorExposure.hpp"
-
-#include <tuple>
 
 namespace bp = boost::python;
 
@@ -205,14 +203,12 @@ BOOST_PYTHON_MODULE(libPySI)
         .def_readwrite("recv_attrib", &LinkRelation::recv_attrib)
         ;
 
-    create_vector<std::vector<glm::vec3>>("PointVector");
-    create_vector<std::vector<LinkRelation>>("LinkRelationVector");
-    create_vector<std::vector<std::string>>("StringVector");
-    create_map<std::map<std::string, std::vector<glm::vec3>>>("PartialContour");
-    create_map<std::map<std::string, bp::object>>("String2FunctionMap");
-    create_map<std::map<std::string, bp::object>>("LinkEmissionEventMap");
-    create_map<std::map<std::string, std::map<std::string, bp::object>>>("CollisionEventMap");
-    create_map<std::map<std::string, std::map<std::string, bp::object>>>("LinkReceptionEventMap");
+    create_vector<VectorExposureVec3, std::vector<glm::vec3>>("PointVector");
+    create_vector<VectorExposureLinkRelation, std::vector<LinkRelation>>("LinkRelationVector");
+    create_vector<VectorExposureString, std::vector<std::string>>("StringVector");
+    create_map<MapExposurePartialContour, std::map<std::string, std::vector<glm::vec3>>>("PartialContour");
+    create_map<MapExposureString2Function, std::map<std::string, bp::object>>("String2FunctionMap");
+    create_map<MapExposureString2_String2FunctionMap_Map, std::map<std::string, std::map<std::string, bp::object>>>("String2_String2FunctionMap_Map");
 
     bp::class_<PySIEffect, boost::noncopyable>("PySIEffect", bp::init<>())
         .def("add_data", &PySIEffect::__add_data__)
