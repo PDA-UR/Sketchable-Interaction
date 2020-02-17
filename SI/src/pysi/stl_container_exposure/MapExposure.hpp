@@ -267,6 +267,8 @@ bp::class_<MapType> create_map(const char* name)
             .def("items", &MapExposure<MapType>::items)
             .def("index", &MapExposure<MapType>::index)
             .def("__repr__", &MapExposureType::repr)
+
+            .enable_pickling()
             ;
 }
 

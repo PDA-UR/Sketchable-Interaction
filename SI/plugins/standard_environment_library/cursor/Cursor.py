@@ -2,9 +2,11 @@ from libPySI import PySIEffect, PySICapability
 
 
 class MouseCursor(PySIEffect.PySIEffect):
-    def __init__(self):
+    def __init__(self, shape=PySIEffect.PointVector(), aabb=PySIEffect.PointVector(), uuid=""):
         super(MouseCursor, self).__init__()
-
+        self.shape = shape
+        self.aabb = aabb
+        self._uuid = uuid
         self.name = "MouseCursor"
         self.region_type = PySIEffect.EffectType.SI_MOUSE_CURSOR
         self.source = "libstdSI"

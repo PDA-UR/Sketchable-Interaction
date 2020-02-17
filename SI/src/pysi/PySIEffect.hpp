@@ -38,6 +38,7 @@ struct LinkRelation
 class PySIEffect
 {
 public:
+    void init(const std::vector<glm::vec3>& contour, const std::vector<glm::vec3>& aabb, const std::string& uuid);
     void __add_data__(const std::string& key, const bp::object& value, const int type);
 
     float d_x = 0;
@@ -78,6 +79,12 @@ public:
 
     std::vector<LinkRelation> d_link_relations;
     std::vector<LinkRelation>& link_relations();
+
+    std::vector<glm::vec3> d_contour;
+    std::vector<glm::vec3> d_aabb;
+
+    std::vector<glm::vec3>& contour();
+    std::vector<glm::vec3>& aabb();
 
     glm::vec4 d_color;
     const glm::vec4& color() const;
