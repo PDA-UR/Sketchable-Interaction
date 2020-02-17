@@ -34,7 +34,7 @@ Region::Region(const std::vector<glm::vec3> &contour, const bp::object& effect, 
         mask_height = Context::SIContext()->height();
     }
 
-    uprm = std::make_unique<RegionMask>(mask_width, mask_height, d_py_effect->contour(), d_py_effect->aabb());
+    uprm = std::make_unique<RegionMask>(mask_width, mask_height, d_contour, d_aabb);
 }
 
 Region::~Region()= default;
