@@ -144,17 +144,17 @@ bool CollisionManager::collides_with_mask(const std::shared_ptr<Region> &a, cons
 
 bool CollisionManager::has_capabilities_in_common(const std::shared_ptr<Region>& a, const std::shared_ptr<Region>& b)
 {
-    const std::vector<std::string>& a_recv = a->collision_caps_recv();
-    const std::vector<std::string>& a_emit = a->collision_caps_emit();
-    const std::vector<std::string>& b_recv = b->collision_caps_recv();
-    const std::vector<std::string>& b_emit = b->collision_caps_emit();
+    const std::map<std::string, std::map<std::string, bp::object>>& a_recv = a->effect().cap_collision_recv();
+    const std::map<std::string, std::map<std::string, bp::object>>& a_emit = a->effect().cap_collision_emit();
+    const std::map<std::string, std::map<std::string, bp::object>>& b_recv = b->effect().cap_collision_recv();
+    const std::map<std::string, std::map<std::string, bp::object>>& b_emit = b->effect().cap_collision_emit();
 
-    for(auto& s: a_emit)
-        if(std::find(b_recv.begin(), b_recv.end(), s) != b_recv.end())
+    for(auto& [key, value]: a_emit)
+        if(b_recv.find(key) != b_recv.end())
             return true;
 
-    for(auto& s: b_emit)
-        if(std::find(a_recv.begin(), a_recv.end(), s) != a_recv.end())
+    for(auto& [key, value]: b_emit)
+        if(a_recv.find(key) != a_recv.end())
             return true;
 
     return false;

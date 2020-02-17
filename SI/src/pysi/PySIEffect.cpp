@@ -208,9 +208,7 @@ BOOST_PYTHON_MODULE(libPySI)
     create_vector<VectorExposureString, std::vector<std::string>>("StringVector");
     create_map<MapExposurePartialContour, std::map<std::string, std::vector<glm::vec3>>>("PartialContour");
     create_map<MapExposureString2Function, std::map<std::string, bp::object>>("String2FunctionMap");
-    create_map<MapExposureString2Function, std::map<std::string, bp::object>>("LinkEmissionEventMap");
-    create_map<MapExposureCollisionEventMap, std::map<std::string, std::map<std::string, bp::object>>>("CollisionEventMap");
-    create_map<MapExposureCollisionEventMap, std::map<std::string, std::map<std::string, bp::object>>>("LinkReceptionEventMap");
+    create_map<MapExposureString2_String2FunctionMap_Map, std::map<std::string, std::map<std::string, bp::object>>>("String2_String2FunctionMap_Map");
 
     bp::class_<PySIEffect, boost::noncopyable>("PySIEffect", bp::init<>())
         .def("add_data", &PySIEffect::__add_data__)
