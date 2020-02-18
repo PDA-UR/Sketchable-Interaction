@@ -53,6 +53,8 @@ public:
 
     void move(const glm::vec2& v);
 
+    void rebuild(const std::vector<glm::vec3>& contour, const std::vector<glm::vec3>& aabb);
+
     bool operator[](int i) const;
     bool operator[](const glm::vec3& v) const;
 

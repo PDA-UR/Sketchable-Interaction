@@ -7,7 +7,7 @@
 
 MainWindow::MainWindow(int width, int height):
     QMainWindow(),
-    up_update_worker(UpdateWorker()),
+    up_update_worker(UpdateWorker(120)),
     up_qp(QPainter()),
     d_width(width),
     d_height(height)
@@ -82,6 +82,7 @@ void MainWindow::draw_region_representations(QPaintEvent* event)
 void MainWindow::paintEvent(QPaintEvent* event)
 {
     up_qp.begin(this);
+//    up_qp.setRenderHint(QPainter::Antialiasing);
 
     draw_background(event);
     draw_region_representations(event);
