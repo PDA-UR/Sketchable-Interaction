@@ -40,7 +40,7 @@ public:
     const std::vector<glm::vec3>& aabb();
     const std::vector<glm::vec3>& contour();
 
-    void set_aabb();
+    void set_aabb(std::vector<glm::vec3>& out_aabb, const std::vector<glm::vec3>& contour);
 
     const std::string& qml_path() const;
 
@@ -79,14 +79,10 @@ private:
     std::shared_ptr<PySIEffect> d_py_effect;
     std::shared_ptr<bp::object> d_effect;
 
-    std::vector<glm::vec3> d_contour;
-    std::vector<glm::vec3> d_aabb;
-
     RingBuffer<std::tuple<std::string, std::string>> d_link_events;
 
     std::unique_ptr<RegionMask> uprm;
     std::unique_ptr<RegionTransform> uprt;
-    std::string d_uuid;
     bool d_is_transformed;
 };
 
