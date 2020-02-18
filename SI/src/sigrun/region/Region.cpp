@@ -18,13 +18,15 @@ Region::Region(const std::vector<glm::vec3> &contour, const bp::object& effect, 
     qRegisterMetaType<bp::object>("bp::object");
     qRegisterMetaType<bp::tuple>("bp::tuple");
 
-    RegionResampler::resample(d_contour, contour);
+    std::vector<glm::vec3> c, aabb;
 
-    set_aabb();
+    RegionResampler::resample(c, contour);
+
+    set_aabb(aabb, c);
 
     HANDLE_PYTHON_CALL(
             d_effect = std::make_shared<bp::object>(bp::import("copy").attr("deepcopy")(effect));
-            d_effect->attr("__init__")(d_contour, d_aabb, std::string(_UUID_));
+            d_effect->attr("__init__")(c, aabb, std::string(_UUID_));
             d_py_effect = std::shared_ptr<PySIEffect>(new PySIEffect(bp::extract<PySIEffect>(*d_effect)));
     )
 
@@ -34,7 +36,7 @@ Region::Region(const std::vector<glm::vec3> &contour, const bp::object& effect, 
         mask_height = Context::SIContext()->height();
     }
 
-    uprm = std::make_unique<RegionMask>(mask_width, mask_height, d_contour, d_aabb);
+    uprm = std::make_unique<RegionMask>(mask_width, mask_height, d_py_effect->contour(), d_py_effect->aabb());
 }
 
 Region::~Region()= default;
@@ -43,17 +45,20 @@ void Region::move(int x, int y)
 {
     if(x != 0 || y != 0)
     {
-        int prev_x = d_aabb[0].x;
-        int prev_y = d_aabb[0].y;
+        int prev_x = d_py_effect->aabb()[0].x;
+        int prev_y = d_py_effect->aabb()[0].y;
 
-        glm::vec2 center(d_aabb[0].x + (d_aabb[3].x - d_aabb[0].x), d_aabb[0].y + (d_aabb[1].y - d_aabb[0].y));
+        glm::vec2 center(d_py_effect->aabb()[0].x + (d_py_effect->aabb()[3].x - d_py_effect->aabb()[0].x), d_py_effect->aabb()[0].y + (d_py_effect->aabb()[1].y - d_py_effect->aabb()[0].y));
 
         uprt->update(glm::vec2(x, y), 0, 1, center);
 
-        set_aabb();
+        std::vector<glm::vec3> aabb;
+        set_aabb(aabb, d_py_effect->contour());
 
-        int new_x = d_aabb[0].x;
-        int new_y = d_aabb[0].y;
+        d_effect->attr("aabb") = aabb;
+
+        int new_x = aabb[0].x;
+        int new_y = aabb[0].y;
 
         int delta_x = new_x - prev_x;
         int delta_y = new_y - prev_y;
@@ -98,22 +103,22 @@ const std::unique_ptr<RegionMask> &Region::mask() const
 
 const std::vector<glm::vec3>& Region::aabb()
 {
-    return d_aabb;
+    return d_py_effect->aabb();
 }
 
 const std::vector<glm::vec3>& Region::contour()
 {
-    return d_contour;
+    return d_py_effect->contour();
 }
 
-void Region::set_aabb()
+void Region::set_aabb(std::vector<glm::vec3>& out_aabb, const std::vector<glm::vec3>& contour)
 {
     int x_min = std::numeric_limits<int>::max();
     int x_max = std::numeric_limits<int>::min();
     int y_min = std::numeric_limits<int>::max();
     int y_max = std::numeric_limits<int>::min();
 
-    for (auto &vertex : d_contour)
+    for (auto &vertex: contour)
     {
         glm::vec3 v = vertex * transform();
         v /= v.z;
@@ -126,7 +131,7 @@ void Region::set_aabb()
 
     glm::vec3 tlc(x_min, y_min, 1), blc(x_min, y_max, 1), brc(x_max, y_max, 1), trc(x_max, y_min, 1);
 
-    d_aabb = std::vector<glm::vec3>
+    out_aabb = std::vector<glm::vec3>
     {
         tlc, blc, brc , trc
     };
@@ -171,11 +176,7 @@ void Region::LINK_SLOT(const std::string& uuid, const std::string& source_cap, c
                 d_py_effect->attr_link_recv()[source_cap][key](*args);
 
                 if(d_py_effect->attr_link_emit().find(key) != d_py_effect->attr_link_emit().end())
-                {
-                    const bp::tuple& args2 = bp::extract<bp::tuple>(d_py_effect->attr_link_emit()[key]());
-
-                    Q_EMIT LINK_SIGNAL(uuid, key, args2);
-                }
+                    Q_EMIT LINK_SIGNAL(uuid, key, bp::extract<bp::tuple>(d_py_effect->attr_link_emit()[key]()));
             )
         }
     }
@@ -225,7 +226,6 @@ void Region::update()
 {
     HANDLE_PYTHON_CALL(d_py_effect = std::shared_ptr<PySIEffect>(new PySIEffect(bp::extract<PySIEffect>(*d_effect)));)
 
-    // handle changes to contour here
     move(d_py_effect->x(), d_py_effect->y());
 
     process_canvas_specifics();

@@ -11,6 +11,11 @@ void PySIEffect::init(const std::vector<glm::vec3>& contour, const std::vector<g
     d_contour = contour;
     d_aabb = aabb;
     d_uuid = uuid;
+
+    d_regions_marked_for_registration.reserve(10);
+    d_link_relations.reserve(100);
+    d_contour.reserve(64);
+    d_aabb.reserve(4);
 }
 
 const int PySIEffect::x() const
@@ -271,6 +276,8 @@ BOOST_PYTHON_MODULE(libPySI)
         .value("INT", SI_DATA_TYPE_INT)
         .value("FLOAT", SI_DATA_TYPE_FLOAT)
         .value("STRING", SI_DATA_TYPE_STRING)
+
+        .export_values()
         ;
 
     bp::enum_<int>("EffectType")
@@ -278,6 +285,7 @@ BOOST_PYTHON_MODULE(libPySI)
         .value("SI_CURSOR", SI_TYPE_CURSOR)
         .value("SI_MOUSE_CURSOR", SI_TYPE_MOUSE_CURSOR)
         .value("SI_CUSTOM", SI_TYPE_CUSTOM)
+
         .export_values()
         ;
 }
