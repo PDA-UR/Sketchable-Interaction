@@ -221,24 +221,28 @@ void Region::update()
 {
     HANDLE_PYTHON_CALL(d_py_effect = std::shared_ptr<PySIEffect>(new PySIEffect(bp::extract<PySIEffect>(*d_effect)));)
 
-    if(d_py_effect->has_shape_changed())
-    {
-        d_effect->attr("has_shape_changed") = false;
-
-//        d_contour = d_py_effect->contour();
-
-//        set_aabb();
-
-//        d_effect->attr("aabb") = d_aabb;
-
-//        uprm->rebuild(d_contour, d_aabb);
-//        DEBUG("HERE");
-    }
+    process_contour_change();
 
     move(d_py_effect->x(), d_py_effect->y());
 
     process_canvas_specifics();
     process_linking_relationships();
+}
+
+void Region::process_contour_change()
+{
+    if(d_py_effect->has_shape_changed())
+    {
+        d_effect->attr("has_shape_changed") = false;
+
+        d_contour = d_py_effect->contour();
+
+        set_aabb();
+
+        d_effect->attr("aabb") = d_aabb;
+
+        uprm = std::make_unique<RegionMask>(Context::SIContext()->width(), Context::SIContext()->height(), d_contour, d_aabb);
+    }
 }
 
 void Region::process_canvas_specifics()
