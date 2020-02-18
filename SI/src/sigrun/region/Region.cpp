@@ -15,23 +15,18 @@ Region::Region(const std::vector<glm::vec3> &contour, const bp::object& effect, 
     d_is_transformed(false),
     d_link_events(20)
 {SIGRUN
-    HANDLE_PYTHON_CALL(
-            d_effect = std::make_shared<bp::object>(bp::import("copy").attr("deepcopy")(effect));
-    )
-
     qRegisterMetaType<bp::object>("bp::object");
     qRegisterMetaType<bp::tuple>("bp::tuple");
-
-    d_uuid = std::string(_UUID_);
-    d_effect->attr("_uuid") = d_uuid;
-
-    HANDLE_PYTHON_CALL(
-        d_py_effect = std::shared_ptr<PySIEffect>(new PySIEffect(bp::extract<PySIEffect>(*d_effect)));
-    )
 
     RegionResampler::resample(d_contour, contour);
 
     set_aabb();
+
+    HANDLE_PYTHON_CALL(
+            d_effect = std::make_shared<bp::object>(bp::import("copy").attr("deepcopy")(effect));
+            d_effect->attr("__init__")(d_contour, d_aabb, std::string(_UUID_));
+            d_py_effect = std::shared_ptr<PySIEffect>(new PySIEffect(bp::extract<PySIEffect>(*d_effect)));
+    )
 
     if(mask_width == 0 && mask_height == 0)
     {
@@ -40,28 +35,6 @@ Region::Region(const std::vector<glm::vec3> &contour, const bp::object& effect, 
     }
 
     uprm = std::make_unique<RegionMask>(mask_width, mask_height, d_contour, d_aabb);
-
-    d_name = d_py_effect->name();
-    d_name = d_name.empty() ? "custom": d_name;
-
-    d_width = d_py_effect->width();
-    d_height = d_py_effect->height();
-
-    d_qml_path_default = d_py_effect->qml_path();
-    d_type = d_py_effect->effect_type();
-
-    HANDLE_PYTHON_CALL (
-            for(auto& [key, value]: d_py_effect->attr_link_emit())
-                d_attributes_emit.push_back(key);
-
-            for(auto& [key, value]: d_py_effect->attr_link_recv())
-            {
-                d_attributes_recv.insert({key, std::vector<std::string>()});
-
-                for(auto& [key2, value2]: value)
-                    d_attributes_recv[key].push_back(key2);
-            }
-    )
 }
 
 Region::~Region()= default;
@@ -73,7 +46,7 @@ void Region::move(int x, int y)
         int prev_x = d_aabb[0].x;
         int prev_y = d_aabb[0].y;
 
-        glm::vec2 center(d_aabb[0].x + d_aabb[3].x - d_aabb[0].x, d_aabb[0].y + d_aabb[1].y - d_aabb[0].y);
+        glm::vec2 center(d_aabb[0].x + (d_aabb[3].x - d_aabb[0].x), d_aabb[0].y + (d_aabb[1].y - d_aabb[0].y));
 
         uprt->update(glm::vec2(x, y), 0, 1, center);
 
@@ -105,7 +78,7 @@ void Region::set_is_transformed(bool b)
 
 const std::string& Region::uuid() const
 {
-    return d_uuid;
+    return d_py_effect->uuid();
 }
 
 PySIEffect &Region::effect()
@@ -161,7 +134,7 @@ void Region::set_aabb()
 
 const std::string &Region::qml_path() const
 {
-    return d_qml_path_default;
+    return d_py_effect->qml_path();
 }
 
 const glm::mat3x3& Region::transform() const
@@ -192,18 +165,18 @@ void Region::LINK_SLOT(const std::string& uuid, const std::string& source_cap, c
     {
         register_link_event(event);
 
-        for(auto& recv: d_attributes_recv[source_cap])
+        for(auto& [key, value]: d_py_effect->attr_link_recv()[source_cap])
         {
-            HANDLE_PYTHON_CALL(d_py_effect->attr_link_recv()[source_cap][recv](*args);)
+            HANDLE_PYTHON_CALL(
+                d_py_effect->attr_link_recv()[source_cap][key](*args);
 
-            if(std::find(d_attributes_emit.begin(), d_attributes_emit.end(), recv) != d_attributes_emit.end())
-            {
-                HANDLE_PYTHON_CALL(
-                    const bp::tuple &args2 = bp::extract<bp::tuple>(d_py_effect->attr_link_emit()[recv]());
+                if(d_py_effect->attr_link_emit().find(key) != d_py_effect->attr_link_emit().end())
+                {
+                    const bp::tuple& args2 = bp::extract<bp::tuple>(d_py_effect->attr_link_emit()[key]());
 
-                    Q_EMIT LINK_SIGNAL(uuid, recv, args2);
-                )
-            }
+                    Q_EMIT LINK_SIGNAL(uuid, key, args2);
+                }
+            )
         }
     }
 }
@@ -228,42 +201,39 @@ bool Region::is_link_event_registered(const std::tuple<std::string, std::string>
     return d_link_events & link_event;
 }
 
-void Region::set_name(const std::string &name)
-{
-    d_name = name;
-}
-
 const std::string &Region::name() const
 {
-    return d_name;
+    return d_py_effect->name();
 }
 
 const int Region::type() const
 {
-    return d_type;
+    return d_py_effect->effect_type();
 }
 
 const int Region::width() const
 {
-    return d_width;
+    return d_py_effect->width();
 }
 
 const int Region::height() const
 {
-    return d_height;
+    return d_py_effect->height();
 }
 
 void Region::update()
 {
     HANDLE_PYTHON_CALL(d_py_effect = std::shared_ptr<PySIEffect>(new PySIEffect(bp::extract<PySIEffect>(*d_effect)));)
 
-    // apply new data
+    // handle changes to contour here
+    move(d_py_effect->x(), d_py_effect->y());
 
-    int x = d_py_effect->x();
-    int y = d_py_effect->y();
+    process_canvas_specifics();
+    process_linking_relationships();
+}
 
-    move(x, y);
-
+void Region::process_canvas_specifics()
+{
     if(d_py_effect->effect_type() == SI_TYPE_CANVAS)
     {
         Context::SIContext()->region_manager()->set_partial_regions(d_py_effect->partial_region_contours());
@@ -274,16 +244,18 @@ void Region::update()
             {
                 Context::SIContext()->register_new_region(d_py_effect->partial_region_contours()[candidate], candidate);
 
-                HANDLE_PYTHON_CALL(
-                        bp::delitem(d_effect->attr("__partial_regions__"), bp::object(candidate));
-                )
+                HANDLE_PYTHON_CALL(bp::delitem(d_effect->attr("__partial_regions__"), bp::object(candidate));)
             }
 
-            HANDLE_PYTHON_CALL (d_effect->attr("registered_regions").attr("clear")();)
+            HANDLE_PYTHON_CALL(d_effect->attr("registered_regions").attr("clear")();)
         }
     }
-    else
-        Context::SIContext()->update_linking_relations(d_py_effect->link_relations(), d_uuid);
+}
+
+void Region::process_linking_relationships()
+{
+    if(d_py_effect->effect_type() != SI_TYPE_CANVAS)
+        Context::SIContext()->update_linking_relations(d_py_effect->link_relations(), d_py_effect->uuid());
 }
 
 const QMap<QString, QVariant>& Region::data() const

@@ -2,9 +2,11 @@ from libPySI import PySIEffect, PySICapability
 
 
 class Dummy1(PySIEffect.PySIEffect):
-    def __init__(self):
+    def __init__(self, shape=PySIEffect.PointVector(), aabb=PySIEffect.PointVector(), uuid=""):
         super(Dummy1, self).__init__()
-
+        self.shape = shape
+        self.aabb = aabb
+        self._uuid = uuid
         self.name = "Dummy1"
         self.region_type = PySIEffect.EffectType.SI_CUSTOM
         self.source = "testSI"
@@ -12,33 +14,25 @@ class Dummy1(PySIEffect.PySIEffect):
         self.x = 0
         self.y = 0
 
-        self.cap_emit = PySIEffect.CollisionEventMap()
-        self.cap_recv = PySIEffect.CollisionEventMap()
+        self.cap_emit = PySIEffect.String2_String2FunctionMap_Map({
+            PySICapability.__TEST1__: {"on_enter": self.test_on_enter_emit, "on_continuous": self.test_on_continuous_emit, "on_leave": self.test_on_leave_emit}
+        })
 
-        self.cap_emit[PySICapability.__TEST1__] = PySIEffect.String2FunctionMap()
-        self.cap_emit[PySICapability.__TEST1__]["on_enter"] = self.test_on_enter_emit
-        self.cap_emit[PySICapability.__TEST1__]["on_continuous"] = self.test_on_continuous_emit
-        self.cap_emit[PySICapability.__TEST1__]["on_leave"] = self.test_on_leave_emit
+        self.cap_recv = PySIEffect.String2_String2FunctionMap_Map({
+            PySICapability.__TEST2__: {"on_enter": self.test_on_enter_recv, "on_continuous": self.test_on_continuous_recv, "on_leave": self.test_on_leave_recv}
+        })
 
-        self.cap_recv[PySICapability.__TEST2__] = PySIEffect.String2FunctionMap()
-        self.cap_recv[PySICapability.__TEST2__]["on_enter"] = self.test_on_enter_recv
-        self.cap_recv[PySICapability.__TEST2__]["on_continuous"] = self.test_on_continuous_recv
-        self.cap_recv[PySICapability.__TEST2__]["on_leave"] = self.test_on_leave_recv
+        self.cap_link_emit = PySIEffect.String2FunctionMap({
+            "__position__": self.position,
+            "__rotation__": self.rotation
+        })
 
-        self.cap_link_emit = PySIEffect.LinkEmissionEventMap()
-        self.cap_link_emit["__position__"] = self.position
-        self.cap_link_emit["__rotation__"] = self.rotation
-
-        self.cap_link_recv = PySIEffect.LinkReceptionEventMap()
-        self.cap_link_recv["__position__"] = PySIEffect.String2FunctionMap()
-        self.cap_link_recv["__position__"]["__position__"] = self.set_position_from_position
-        self.cap_link_recv["__color__"] = PySIEffect.String2FunctionMap()
-        self.cap_link_recv["__color__"]["__position__"] = self.set_position_from_color
-        self.cap_link_recv["__scale__"] = PySIEffect.String2FunctionMap()
-        self.cap_link_recv["__scale__"]["__position__"] = self.set_position_from_scale
-        self.cap_link_recv["__rotation__"] = PySIEffect.String2FunctionMap()
-        self.cap_link_recv["__rotation__"]["__rotation__"] = self.set_rotation_from_rotation
-
+        self.cap_link_recv = PySIEffect.String2_String2FunctionMap_Map({
+            "__position__": {"__position__": self.set_position_from_position},
+            "__color__": {"__position__": self.set_position_from_color},
+            "__scale__": {"__position__": self.set_position_from_scale},
+            "__rotation__": {"__rotation__": self.set_rotation_from_rotation}
+        })
 
     def __repr__(self):
         return ""

@@ -36,9 +36,25 @@ void RegionManager::activate_mouse_region_button_down(int mouse_btn)
 
                 switch(mouse_btn)
                 {
-                    case 0: region->raw_effect().attr("left_mouse_clicked") = true; break;
-                    case 1: region->raw_effect().attr("right_mouse_clicked") = true; break;
-                    case 2: region->raw_effect().attr("middle_mouse_clicked") = true; break;
+                    case 0:
+                    {
+                        region->raw_effect().attr("left_mouse_clicked") = true;
+                        region->raw_effect().attr("on_left_mouse_click")(true);
+                        break;
+                    }
+                    case 1:
+                    {
+                        region->raw_effect().attr("right_mouse_clicked") = true;
+                        region->raw_effect().attr("on_right_mouse_click")(true);
+                        break;
+                    }
+
+                    case 2:
+                    {
+                        region->raw_effect().attr("middle_mouse_clicked") = true;
+                        region->raw_effect().attr("on_middle_mouse_click")(true);
+                        break;
+                    }
                 }
             }
         }
@@ -56,9 +72,25 @@ void RegionManager::deactivate_mouse_region_button_down(int mouse_btn)
 
                 switch(mouse_btn)
                 {
-                    case 0: region->raw_effect().attr("left_mouse_clicked") = false; break;
-                    case 1: region->raw_effect().attr("right_mouse_clicked") = false; break;
-                    case 2: region->raw_effect().attr("middle_mouse_clicked") = false; break;
+                    case 0:
+                    {
+                        region->raw_effect().attr("left_mouse_clicked") = false;
+                        region->raw_effect().attr("on_left_mouse_click")(false);
+                        break;
+                    }
+                    case 1:
+                    {
+                        region->raw_effect().attr("right_mouse_clicked") = false;
+                        region->raw_effect().attr("on_right_mouse_click")(false);
+                        break;
+                    }
+
+                    case 2:
+                    {
+                        region->raw_effect().attr("middle_mouse_clicked") = false;
+                        region->raw_effect().attr("on_middle_mouse_click")(false);
+                        break;
+                    }
                 }
             }
         }

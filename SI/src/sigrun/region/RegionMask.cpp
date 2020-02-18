@@ -4,7 +4,7 @@
 #include "RegionMask.hpp"
 
 #include <iostream>
-#include <debug/Print.hpp>
+#include <sigrun/log/Log.hpp>
 
 /**
 \brief constructor of the RegionMask class
@@ -39,7 +39,7 @@ RegionMask::RegionMask(int canvas_width, int canvas_height, const std::vector<gl
     d_width_aabb(d_brc_aabb_x - d_tlc_aabb_x),
     d_height_aabb(d_brc_aabb_y - d_tlc_aabb_y),
     d_values(std::vector<bool>(d_width_aabb * d_height_aabb))
-{
+{SIGRUN
     scanlinefill(contour, aabb);
 
 //    for(int i = 0; i < d_width_aabb; ++i)
@@ -257,7 +257,7 @@ bool RegionMask::operator[](const glm::vec3 &v) const
     So, after updating the AABB with the new translation values, the mask continues to function, due to its relative dependence on the AABB.
     Therefore, no recomputation is required.
 
-@param v a constant reference to a glm::vec2 object containg the translation vector
+@param v a constant reference to a glm::vec2 object containing the translation vector
 */
 void RegionMask::move(const glm::vec2& v)
 {

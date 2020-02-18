@@ -183,11 +183,6 @@ TEST_F(SIGRunLinkingManagerTest, link_event_execution_uni)
     QSignalSpy spy3(c.get(), &Region::LINK_SIGNAL);
     QSignalSpy spy4(d.get(), &Region::LINK_SIGNAL);
 
-    a->set_name("A");
-    b->set_name("B");
-    c->set_name("C");
-    d->set_name("D");
-
     ASSERT_TRUE(lm.add_link(a, "__position__", b, "__position__", ILink::LINK_TYPE::UD));
     ASSERT_TRUE(lm.add_link(b, "__position__", c, "__position__", ILink::LINK_TYPE::UD));
     ASSERT_TRUE(lm.add_link(c, "__position__", a, "__position__", ILink::LINK_TYPE::UD));
@@ -255,10 +250,6 @@ TEST_F(SIGRunLinkingManagerTest, link_removal_uni)
     QSignalSpy spy1(a.get(), &Region::LINK_SIGNAL);
     QSignalSpy spy2(b.get(), &Region::LINK_SIGNAL);
     QSignalSpy spy3(c.get(), &Region::LINK_SIGNAL);
-
-    a->set_name("a");
-    b->set_name("b");
-    c->set_name("c");
 
     ASSERT_TRUE(lm.add_link(a, "__position__", b, "__position__", ILink::LINK_TYPE::UD));
     ASSERT_TRUE(lm.add_link(b, "__position__", c, "__position__", ILink::LINK_TYPE::UD));
@@ -457,10 +448,6 @@ TEST_F(SIGRunLinkingManagerTest, link_event_execution_bi)
     std::shared_ptr<Region> b = std::make_shared<Region>(contour2, *t, 1920, 1080);
     std::shared_ptr<Region> c = std::make_shared<Region>(contour2, *o, 1920, 1080);
 
-    a->set_name("a");
-    b->set_name("b");
-    c->set_name("c");
-
     LinkingManager lm;
 
     QSignalSpy spy1(a.get(), &Region::LINK_SIGNAL);
@@ -531,11 +518,6 @@ TEST_F(SIGRunLinkingManagerTest, link_removal_bi)
     QSignalSpy spy2(b.get(), &Region::LINK_SIGNAL);
     QSignalSpy spy3(c.get(), &Region::LINK_SIGNAL);
     QSignalSpy spy4(d.get(), &Region::LINK_SIGNAL);
-
-    a->set_name("A");
-    b->set_name("B");
-    c->set_name("C");
-    d->set_name("D");
 
     ASSERT_TRUE(lm.add_link(a, "__position__", b, "__position__", ILink::LINK_TYPE::BD));
     ASSERT_TRUE(lm.add_link(b, "__position__", c, "__position__", ILink::LINK_TYPE::BD));

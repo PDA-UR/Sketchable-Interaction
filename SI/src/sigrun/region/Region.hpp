@@ -61,15 +61,9 @@ public:
     bool is_link_event_registered(const std::string& uuid, const std::string& attribute);
     bool is_link_event_registered(const std::tuple<std::string, std::string>& link_event);
 
-    void set_name(const std::string& name);
     const std::string& name() const;
-
-    void set_color(const glm::vec4& color);
     const glm::vec4 color() const;
-
     const int type() const;
-    int set_type(int type);
-
     const int width() const;
     const int height() const;
 
@@ -79,6 +73,9 @@ public:
     const QMap<QString, QVariant>& data() const;
 
 private:
+    void process_canvas_specifics();
+    void process_linking_relationships();
+
     std::shared_ptr<PySIEffect> d_py_effect;
     std::shared_ptr<bp::object> d_effect;
 
@@ -91,17 +88,6 @@ private:
     std::unique_ptr<RegionTransform> uprt;
     std::string d_uuid;
     bool d_is_transformed;
-
-    std::string d_qml_path_default;
-    std::string d_name;
-    int d_type;
-    int d_width;
-    int d_height;
-
-    glm::vec4 d_color;
-
-    std::vector<std::string> d_attributes_emit;
-    std::unordered_map<std::string, std::vector<std::string>> d_attributes_recv;
 };
 
 
