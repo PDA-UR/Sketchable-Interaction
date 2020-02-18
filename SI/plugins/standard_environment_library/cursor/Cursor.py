@@ -49,9 +49,6 @@ class MouseCursor(PySIEffect.PySIEffect):
         self.x = x
         self.y = y
 
-        self.__handle_left_mouse_click()
-        self.__handle_right_mouse_click()
-
         return 0
 
     def self_on_sketch_enter_emit(self, other):
@@ -84,17 +81,18 @@ class MouseCursor(PySIEffect.PySIEffect):
 
         return "", ""
 
-    def __handle_left_mouse_click(self):
-        if self.left_mouse_clicked:
+    def on_left_mouse_click(self, is_active):
+        if is_active:
             if "SKETCH" not in self.cap_emit.keys():
                 self.cap_emit["SKETCH"] = {"on_enter": self.self_on_sketch_enter_emit, "on_continuous": self.on_sketch_continuous_emit, "on_leave": self.on_sketch_leave_emit}
-        elif "SKETCH" in self.cap_emit.keys():
-            del self.cap_emit["SKETCH"]
+        else:
+            if "SKETCH" in self.cap_emit.keys():
+                del self.cap_emit["SKETCH"]
 
-            if self.parent_canvas is not None:
-                self.parent_canvas.on_sketch_leave_recv(*self.on_sketch_leave_emit(self.parent_canvas))
+                if self.parent_canvas is not None:
+                    self.parent_canvas.on_sketch_leave_recv(*self.on_sketch_leave_emit(self.parent_canvas))
 
-    def __handle_right_mouse_click(self):
+    def on_right_mouse_click(self, is_active):
         if self.right_mouse_clicked:
             if "MOVE" not in self.cap_emit.keys():
                 self.cap_emit["MOVE"] = {"on_enter": self.on_move_enter_emit, "on_continuous": self.on_move_continuous_emit, "on_leave": self.on_move_leave_emit}
