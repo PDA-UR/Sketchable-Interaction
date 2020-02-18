@@ -33,6 +33,9 @@ class Tag(PySIEffect.PySIEffect):
     def on_move_enter_recv(self, cursor_id, link_attrib):
         self.link_relations.append([cursor_id, link_attrib, self._uuid, link_attrib])
 
+        # self.shape[25] = [0, 100]
+        # self.notify_shape_changed()
+
         return 0
 
     def on_move_continuous_recv(self):

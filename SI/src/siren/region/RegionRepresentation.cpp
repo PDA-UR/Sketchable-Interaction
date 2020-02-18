@@ -11,7 +11,6 @@ RegionRepresentation::RegionRepresentation(QWidget *parent, const std::shared_pt
     d_b(region->color().b),
     d_a(region->color().a),
     d_color(QColor(d_r, d_g, d_g, d_a)),
-    d_source_contour(region->contour()),
     d_qml_path(region->qml_path()),
     d_name(region->name()),
     d_view(std::make_unique<QQuickWidget>(parent)),
@@ -19,10 +18,12 @@ RegionRepresentation::RegionRepresentation(QWidget *parent, const std::shared_pt
     d_width(region->width()),
     d_height(region->height())
 {SIREN
-    d_fill.moveTo(d_source_contour[0].x, d_source_contour[0].y);
+    connect(this, &RegionRepresentation::dataChanged, region.get(), &Region::REGION_DATA_CHANGED_SLOT);
 
-    for (int i = 1; i < d_source_contour.size(); ++i)
-        d_fill.lineTo(d_source_contour[i].x, d_source_contour[i].y);
+    d_fill.moveTo(region->contour()[0].x, region->contour()[0].y);
+
+    for (int i = 1; i < region->contour().size(); ++i)
+        d_fill.lineTo(region->contour()[i].x, region->contour()[i].y);
 
     d_view->engine()->rootContext()->setContextProperty("Region", this);
 
@@ -53,12 +54,12 @@ void RegionRepresentation::perform_transform_update(const std::shared_ptr<Region
 
         const glm::mat3x3 &transform = region->transform();
 
-        glm::vec3 p_ = glm::vec3(d_source_contour[0].x, d_source_contour[0].y, 1) * transform;
+        glm::vec3 p_ = glm::vec3(region->contour()[0].x, region->contour()[0].y, 1) * transform;
         d_fill.moveTo(p_.x, p_.y);
 
-        for (int i = 1; i < d_source_contour.size(); ++i)
+        for (int i = 1; i < region->contour().size(); ++i)
         {
-            glm::vec3 p__ = glm::vec3(d_source_contour[i].x, d_source_contour[i].y, 1) * transform;
+            glm::vec3 p__ = glm::vec3(region->contour()[i].x, region->contour()[i].y, 1) * transform;
             d_fill.lineTo(p__.x, p__.y);
         }
 
@@ -74,7 +75,7 @@ void RegionRepresentation::perform_transform_update(const std::shared_ptr<Region
 void RegionRepresentation::perform_data_update(const std::shared_ptr<Region> &region)
 {
     if (region->effect().has_data_changed())
-            Q_EMIT dataChanged(region->data());
+        Q_EMIT dataChanged(region->data());
 }
 
 const std::string& RegionRepresentation::name() const

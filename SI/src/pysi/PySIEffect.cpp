@@ -11,11 +11,23 @@ void PySIEffect::init(const std::vector<glm::vec3>& contour, const std::vector<g
     d_contour = contour;
     d_aabb = aabb;
     d_uuid = uuid;
+    d_has_shape_changed = false;
 
     d_regions_marked_for_registration.reserve(10);
     d_link_relations.reserve(100);
     d_contour.reserve(64);
     d_aabb.reserve(4);
+}
+
+// has to be set to false from elsewhere
+void PySIEffect::notify_shape_changed()
+{
+    d_has_shape_changed = true;
+}
+
+bool PySIEffect::has_shape_changed()
+{
+    return d_has_shape_changed;
 }
 
 const int PySIEffect::x() const
@@ -243,6 +255,7 @@ BOOST_PYTHON_MODULE(libPySI)
     bp::class_<PySIEffect, boost::noncopyable>("PySIEffect", bp::init<>())
         .def("__init__", bp::make_constructor(&PySIEffect::init, bp::default_call_policies(), (bp::arg("shape")=std::vector<glm::vec3>(), bp::arg("aabb")=std::vector<glm::vec3>(), bp::arg("uuid")=std::string())))
         .def("add_data", &PySIEffect::__add_data__)
+        .def("notify_shape_changed", &PySIEffect::notify_shape_changed)
 
         .def_readwrite("__partial_regions__", &PySIEffect::d_partial_regions)
         .def_readwrite("cap_emit", &PySIEffect::d_cap_collision_emit)
@@ -268,6 +281,8 @@ BOOST_PYTHON_MODULE(libPySI)
         .def_readwrite("link_relations", &PySIEffect::d_link_relations)
         .def_readwrite("shape", &PySIEffect::d_contour)
         .def_readwrite("aabb", &PySIEffect::d_aabb)
+        .def_readwrite("has_shape_changed", &PySIEffect::d_has_shape_changed)
+        .def_readwrite("has_data_changed", &PySIEffect::d_data_changed)
 
         .enable_pickling()
         ;

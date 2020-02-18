@@ -202,6 +202,14 @@ int RegionMask::height() const
     return d_height_aabb;
 }
 
+void RegionMask::rebuild(const std::vector<glm::vec3> &contour, const std::vector<glm::vec3> &aabb)
+{
+    d_values.clear();
+    d_values.reserve(d_width_aabb * d_height_aabb);
+
+    scanlinefill(contour, aabb);
+}
+
 /**
 \brief [] operator overloaded for returning the value of d_values at index i
 \details

@@ -40,7 +40,7 @@ public:
     const std::vector<glm::vec3>& aabb();
     const std::vector<glm::vec3>& contour();
 
-    void set_aabb(std::vector<glm::vec3>& out_aabb, const std::vector<glm::vec3>& contour);
+    void set_aabb();
 
     const std::string& qml_path() const;
 
@@ -54,6 +54,7 @@ public:
 
     Q_SIGNAL void LINK_SIGNAL(const std::string& uuid, const std::string& source_cap, const bp::tuple& args);
     Q_SLOT void LINK_SLOT(const std::string& uuid, const std::string& source_cap, const bp::tuple& args);
+    Q_SLOT void REGION_DATA_CHANGED_SLOT(const QMap<QString, QVariant>& data);
 
     void register_link_event(const std::string& uuid, const std::string& attribute);
     void register_link_event(const std::tuple<std::string, std::string>& link_event);
@@ -79,11 +80,17 @@ private:
     std::shared_ptr<PySIEffect> d_py_effect;
     std::shared_ptr<bp::object> d_effect;
 
+    std::vector<glm::vec3> d_contour;
+    std::vector<glm::vec3> d_aabb;
+
     RingBuffer<std::tuple<std::string, std::string>> d_link_events;
 
     std::unique_ptr<RegionMask> uprm;
     std::unique_ptr<RegionTransform> uprt;
     bool d_is_transformed;
+
+    int d_last_x;
+    int d_last_y;
 };
 
 

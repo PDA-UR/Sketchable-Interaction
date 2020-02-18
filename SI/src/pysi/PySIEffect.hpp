@@ -40,6 +40,7 @@ class PySIEffect
 public:
     void init(const std::vector<glm::vec3>& contour, const std::vector<glm::vec3>& aabb, const std::string& uuid);
     void __add_data__(const std::string& key, const bp::object& value, const int type);
+    void notify_shape_changed();
 
     float d_x = 0;
     float d_y = 0;
@@ -72,6 +73,10 @@ public:
     void set_mouse_pressed_capability(int btn, bool active);
     bool has_mouse_pressed_capability(int btn);
 
+
+    bool d_has_shape_changed = false;
+    bool has_shape_changed();
+
     const bool has_data_changed() const;
 
     std::vector<std::string> d_regions_marked_for_registration;
@@ -103,10 +108,10 @@ public:
     std::map<std::string, std::vector<glm::vec3>>& partial_region_contours();
 
     const QMap<QString, QVariant>& data();
+    bool d_data_changed;
 
 private:
     QMap<QString, QVariant> d_data;
-    bool d_data_changed;
 };
 
 
