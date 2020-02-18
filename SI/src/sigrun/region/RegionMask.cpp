@@ -207,6 +207,8 @@ void RegionMask::rebuild(const std::vector<glm::vec3> &contour, const std::vecto
     d_values.clear();
     d_values.reserve(d_width_aabb * d_height_aabb);
 
+
+
     scanlinefill(contour, aabb);
 }
 
