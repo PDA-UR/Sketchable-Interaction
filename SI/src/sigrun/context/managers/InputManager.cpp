@@ -33,7 +33,7 @@ void InputManager::update()
             {
                 bp::tuple args = bp::make_tuple(d_mouse_coords.x, d_mouse_coords.y);
 
-                Q_EMIT obj->LINK_SIGNAL(UUID::uuid(), "__position__", args);
+                Q_EMIT obj->LINK_SIGNAL(_UUID_, "__position__", args);
                 break;
             }
         }
