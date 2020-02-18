@@ -43,19 +43,17 @@ void Region::move(int x, int y)
 {
     if(x != 0 || y != 0)
     {
-        auto& aabb = d_py_effect->aabb();
+        int prev_x = d_aabb[0].x;
+        int prev_y = d_aabb[0].y;
 
-        int prev_x = aabb[0].x;
-        int prev_y = aabb[0].y;
-
-        glm::vec2 center(aabb[0].x + aabb[3].x - aabb[0].x, aabb[0].y + aabb[1].y - aabb[0].y);
+        glm::vec2 center(d_aabb[0].x + (d_aabb[3].x - d_aabb[0].x), d_aabb[0].y + (d_aabb[1].y - d_aabb[0].y));
 
         uprt->update(glm::vec2(x, y), 0, 1, center);
 
         set_aabb();
 
-        int new_x = aabb[0].x;
-        int new_y = aabb[0].y;
+        int new_x = d_aabb[0].x;
+        int new_y = d_aabb[0].y;
 
         int delta_x = new_x - prev_x;
         int delta_y = new_y - prev_y;

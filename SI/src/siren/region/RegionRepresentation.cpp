@@ -22,9 +22,7 @@ RegionRepresentation::RegionRepresentation(QWidget *parent, const std::shared_pt
     d_fill.moveTo(d_source_contour[0].x, d_source_contour[0].y);
 
     for (int i = 1; i < d_source_contour.size(); ++i)
-    {
         d_fill.lineTo(d_source_contour[i].x, d_source_contour[i].y);
-    }
 
     d_view->engine()->rootContext()->setContextProperty("Region", this);
 
