@@ -99,6 +99,9 @@ private:
     */
     int d_height_aabb;
 
+    int d_move_x;
+    int d_move_y;
+
     /**
         std::vector of bools containing the bit array used for testing for collisions
     */

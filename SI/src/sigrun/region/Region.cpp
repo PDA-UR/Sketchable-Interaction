@@ -223,7 +223,7 @@ void Region::update()
 
     if(d_py_effect->has_shape_changed())
     {
-//        d_effect->attr("has_shape_changed") = false;
+        d_effect->attr("has_shape_changed") = false;
 
 //        d_contour = d_py_effect->contour();
 
