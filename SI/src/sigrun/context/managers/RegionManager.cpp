@@ -123,6 +123,25 @@ void RegionManager::update_via_mouse_input()
         activate_mouse_region_button_down(SI_MIDDLE_MOUSE_BUTTON);
     else
         deactivate_mouse_region_button_down(SI_MIDDLE_MOUSE_BUTTON);
+
+    auto wheel_angles = Context::SIContext()->input_manager()->mouse_wheel_angles();
+
+    float angle_px = wheel_angles.px;
+    float angle_degrees = wheel_angles.degrees;
+
+    toggle_mouse_region_wheel_scrolled(angle_px, angle_degrees);
+}
+
+void RegionManager::toggle_mouse_region_wheel_scrolled(float angle_px, float angle_degrees)
+{
+    for(auto& region: d_regions)
+    {
+        if (region->effect().effect_type() == SI_TYPE_MOUSE_CURSOR)
+        {
+            region->raw_effect().attr("mouse_wheel_angle_px") = angle_px;
+            region->raw_effect().attr("mouse_wheel_angle_degrees") = angle_degrees;
+        }
+    }
 }
 
 void RegionManager::update()

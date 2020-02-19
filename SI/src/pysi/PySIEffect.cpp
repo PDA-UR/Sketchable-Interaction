@@ -19,7 +19,7 @@ void PySIEffect::init(const std::vector<glm::vec3>& contour, const std::vector<g
     d_aabb.reserve(4);
 }
 
-// has to be set to false from elsewhere
+// has to be set to false from elsewhere (happens in Region.cpp, where value is used
 void PySIEffect::notify_shape_changed()
 {
     d_has_shape_changed = true;
@@ -283,6 +283,8 @@ BOOST_PYTHON_MODULE(libPySI)
         .def_readwrite("aabb", &PySIEffect::d_aabb)
         .def_readwrite("has_shape_changed", &PySIEffect::d_has_shape_changed)
         .def_readwrite("has_data_changed", &PySIEffect::d_data_changed)
+        .def_readwrite("mouse_wheel_angle_px", &PySIEffect::mouse_wheel_angle_px)
+        .def_readwrite("mouse_wheel_angle_degrees", &PySIEffect::mouse_wheel_angle_degrees)
 
         .enable_pickling()
         ;

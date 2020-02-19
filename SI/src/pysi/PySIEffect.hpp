@@ -70,6 +70,10 @@ public:
     bool d_is_left_mouse_clicked = false;
     bool d_is_right_mouse_clicked = false;
     bool d_is_middle_mouse_clicked = false;
+
+    float mouse_wheel_angle_degrees = 0.0;
+    float mouse_wheel_angle_px = 0.0;
+
     void set_mouse_pressed_capability(int btn, bool active);
     bool has_mouse_pressed_capability(int btn);
 
