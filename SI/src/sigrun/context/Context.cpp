@@ -27,6 +27,7 @@ Context::Context()
     upim = std::unique_ptr<InputManager>(new InputManager);
     upcm = std::unique_ptr<Capability>(new Capability);
     uprcm = std::unique_ptr<CollisionManager>(new CollisionManager);
+    upfs = std::unique_ptr<FileSystem>(new FileSystem);
 }
 
 void Context::add_startup_regions(const std::unordered_map<std::string, std::unique_ptr<bp::object>>& plugins)

@@ -6,7 +6,7 @@
 
 namespace bp = boost::python;
 
-void PySIEffect::init(const std::vector<glm::vec3>& contour, const std::vector<glm::vec3>& aabb, const std::string& uuid)
+void PySIEffect::init(const std::vector<glm::vec3>& contour, const std::vector<glm::vec3>& aabb, const std::string& uuid, const bp::dict& kwargs)
 {
     d_contour = contour;
     d_aabb = aabb;
@@ -253,7 +253,7 @@ BOOST_PYTHON_MODULE(libPySI)
     create_map<MapExposureString2_String2FunctionMap_Map, std::map<std::string, std::map<std::string, bp::object>>>("String2_String2FunctionMap_Map");
 
     bp::class_<PySIEffect, boost::noncopyable>("PySIEffect", bp::init<>())
-        .def("__init__", bp::make_constructor(&PySIEffect::init, bp::default_call_policies(), (bp::arg("shape")=std::vector<glm::vec3>(), bp::arg("aabb")=std::vector<glm::vec3>(), bp::arg("uuid")=std::string())))
+        .def("__init__", bp::make_constructor(&PySIEffect::init, bp::default_call_policies(), (bp::arg("shape")=std::vector<glm::vec3>(), bp::arg("aabb")=std::vector<glm::vec3>(), bp::arg("uuid")=std::string(), bp::arg("kwargs")=bp::dict())))
         .def("add_data", &PySIEffect::__add_data__)
         .def("notify_shape_changed", &PySIEffect::notify_shape_changed)
 
@@ -301,6 +301,9 @@ BOOST_PYTHON_MODULE(libPySI)
         .value("SI_CANVAS", SI_TYPE_CANVAS)
         .value("SI_CURSOR", SI_TYPE_CURSOR)
         .value("SI_MOUSE_CURSOR", SI_TYPE_MOUSE_CURSOR)
+        .value("SI_DIRECTORY", SI_DIRECTORY)
+        .value("SI_TEXT_FILE", SI_TEXT_FILE)
+        .value("SI_IMAGE_FILE", SI_IMAGE_FILE)
         .value("SI_CUSTOM", SI_TYPE_CUSTOM)
 
         .export_values()

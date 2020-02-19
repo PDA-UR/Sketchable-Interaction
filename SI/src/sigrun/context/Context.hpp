@@ -13,6 +13,7 @@
 #include <sigrun/context/managers/LinkingManager.hpp>
 #include <sigrun/context/managers/InputManager.hpp>
 #include <sigrun/rendering/IRenderEngine.hpp>
+#include <sigrun/context/managers/helpers/input/FileSystem.hpp>
 
 class Context: public SIObject
 {
@@ -64,6 +65,7 @@ private:
     std::unique_ptr<LinkingManager> uplm;
     std::unique_ptr<InputManager> upim;
     std::unique_ptr<CollisionManager> uprcm;
+    std::unique_ptr<FileSystem> upfs;
 
 
     int s_width = 0;

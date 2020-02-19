@@ -10,7 +10,7 @@
 
 namespace bp = boost::python;
 
-Region::Region(const std::vector<glm::vec3> &contour, const bp::object& effect, int mask_width, int mask_height):
+Region::Region(const std::vector<glm::vec3> &contour, const bp::object& effect, int mask_width, int mask_height, const bp::dict& kwargs):
     uprt(std::make_unique<RegionTransform>()),
     d_is_transformed(false),
     d_link_events(20)
@@ -27,7 +27,7 @@ Region::Region(const std::vector<glm::vec3> &contour, const bp::object& effect, 
 
     HANDLE_PYTHON_CALL(
             d_effect = std::make_shared<bp::object>(bp::import("copy").attr("deepcopy")(effect));
-            d_effect->attr("__init__")(d_contour, d_aabb, std::string(_UUID_));
+            d_effect->attr("__init__")(d_contour, d_aabb, std::string(_UUID_), kwargs);
             d_py_effect = std::shared_ptr<PySIEffect>(new PySIEffect(bp::extract<PySIEffect>(*d_effect)));
     )
 

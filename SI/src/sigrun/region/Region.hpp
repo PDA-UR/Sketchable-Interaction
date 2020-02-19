@@ -25,7 +25,7 @@ Q_DECLARE_METATYPE (bp::tuple)
 class Region: public QObject, public SIObject
 {Q_OBJECT
 public:
-    Region(const std::vector<glm::vec3>& contour, const bp::object& effect, int width=0, int height=0);
+    Region(const std::vector<glm::vec3>& contour, const bp::object& effect, int width=0, int height=0, const bp::dict& kwargs=bp::dict());
     ~Region();
 
     bool is_transformed() const;

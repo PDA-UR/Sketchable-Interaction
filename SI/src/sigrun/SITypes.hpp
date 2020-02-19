@@ -6,6 +6,9 @@
 #define SI_TYPE_CANVAS 0
 #define SI_TYPE_CURSOR 1
 #define SI_TYPE_MOUSE_CURSOR 2
+#define SI_DIRECTORY 3
+#define SI_TEXT_FILE 4
+#define SI_IMAGE_FILE 5
 #define SI_TYPE_CUSTOM 9999
 
 

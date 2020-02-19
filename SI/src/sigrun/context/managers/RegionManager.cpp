@@ -126,10 +126,7 @@ void RegionManager::update_via_mouse_input()
 
     auto wheel_angles = Context::SIContext()->input_manager()->mouse_wheel_angles();
 
-    float angle_px = wheel_angles.px;
-    float angle_degrees = wheel_angles.degrees;
-
-    toggle_mouse_region_wheel_scrolled(angle_px, angle_degrees);
+    toggle_mouse_region_wheel_scrolled(wheel_angles.px, wheel_angles.degrees);
 }
 
 void RegionManager::toggle_mouse_region_wheel_scrolled(float angle_px, float angle_degrees)

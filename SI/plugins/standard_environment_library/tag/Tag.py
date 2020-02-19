@@ -2,7 +2,7 @@ from libPySI import PySIEffect, PySICapability
 
 
 class Tag(PySIEffect.PySIEffect):
-    def __init__(self, shape=PySIEffect.PointVector(), aabb=PySIEffect.PointVector(), uuid=""):
+    def __init__(self, shape=PySIEffect.PointVector(), aabb=PySIEffect.PointVector(), uuid="", kwargs={}):
         super(Tag, self).__init__()
         self.shape = shape
         self.aabb = aabb
@@ -32,9 +32,6 @@ class Tag(PySIEffect.PySIEffect):
 
     def on_move_enter_recv(self, cursor_id, link_attrib):
         self.link_relations.append([cursor_id, link_attrib, self._uuid, link_attrib])
-
-        # self.shape[25] = [0, 100]
-        # self.notify_shape_changed()
 
         return 0
 
