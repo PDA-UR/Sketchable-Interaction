@@ -15,9 +15,9 @@ RegionManager::~RegionManager()
 {
 }
 
-void RegionManager::add_region(const std::vector<glm::vec3> &contour, const bp::object& effect, int region_uuid)
+void RegionManager::add_region(const std::vector<glm::vec3> &contour, const bp::object &effect, int region_uuid, const bp::dict& kwargs)
 {
-    d_regions.push_back(std::shared_ptr<Region>(new Region(contour, effect)));
+    d_regions.push_back(std::shared_ptr<Region>(new Region(contour, effect, 0, 0, kwargs)));
 }
 
 std::vector<std::shared_ptr<Region>> &RegionManager::regions()

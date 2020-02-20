@@ -19,6 +19,11 @@ FileSystem::FileSystem()
 
 FileSystem::~FileSystem() = default;
 
+const std::string &FileSystem::cwd() const
+{
+    return d_cwd.string();
+}
+
 bool FileSystem::find_directory(const fs::path& start_path, const fs::path& dir_name, fs::path& dir_path)
 {
     const fs::recursive_directory_iterator end;

@@ -3,7 +3,7 @@
 #ifndef SITEST_FILESYSTEM_HPP
 #define SITEST_FILESYSTEM_HPP
 
-#include<boost/filesystem.hpp>
+#include <boost/filesystem.hpp>
 #include <sigrun/SIObject.hpp>
 
 #ifdef __linux__
@@ -47,7 +47,7 @@ public:
     FileSystem();
     ~FileSystem();
 
-
+    const std::string& cwd() const;
 
 private:
 bool find_directory(const fs::path& start_path, const fs::path& dir_name, fs::path& dir_path);
