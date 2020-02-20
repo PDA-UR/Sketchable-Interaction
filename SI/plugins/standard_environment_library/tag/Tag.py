@@ -13,10 +13,12 @@ class Tag(PySIEffect.PySIEffect):
         self.qml_path = "plugins/standard_environment_library/tag/Tag.qml"
         self.color = PySIEffect.Color(255, 0, 0, 255)
 
-        if len(self.aabb):
-            self.add_data("margin_left", self.aabb[0].x + (self.aabb[3].x - self.aabb[0].x) / 2, PySIEffect.DataType.FLOAT)
-            self.add_data("margin_top", self.aabb[0].y + (self.aabb[1].y - self.aabb[0].y) / 2, PySIEffect.DataType.FLOAT)
+        self.add_data("img_width", 75, PySIEffect.DataType.INT)
+        self.add_data("img_height", 75, PySIEffect.DataType.INT)
 
+        if len(self.aabb):
+            self.add_data("widget_width", self.aabb[3].x - self.aabb[0].x, PySIEffect.DataType.FLOAT)
+            self.add_data("widget_height", self.aabb[1].y - self.aabb[0].y, PySIEffect.DataType.FLOAT)
         self.add_data("img_path", "res/tag.png", PySIEffect.DataType.STRING)
 
         self.cap_emit = PySIEffect.String2_String2FunctionMap_Map()

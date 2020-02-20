@@ -8,7 +8,6 @@
 MainWindow::MainWindow(int width, int height):
     QMainWindow(),
     up_update_worker(UpdateWorker(120)),
-    up_qp(QPainter()),
     d_width(width),
     d_height(height)
 {SIREN
@@ -52,54 +51,11 @@ void MainWindow::loop(double delta, int fps)
             d_region_representations[region->uuid()]->update(region);
     }
 
-    update();
+//    update();
     Context::SIContext()->update();
 }
 
 void MainWindow::set_is_running(bool running)
 {
 
-}
-
-void MainWindow::draw_background(QPaintEvent* event)
-{
-    up_qp.setBrush(QColor(0, 0, 0));
-    up_qp.drawRect(event->rect());
-}
-
-void MainWindow::draw_region_representations(QPaintEvent* event)
-{
-    for(const auto& [key, val]: d_region_representations)
-    {
-        if(val->name() == "MouseCursor") // || val->name() == "stdCanvas")
-            continue;
-
-        up_qp.setBrush(val->color());
-        up_qp.fillPath(val->fill(), val->color());
-    }
-}
-
-void MainWindow::paintEvent(QPaintEvent* event)
-{
-    up_qp.begin(this);
-//    up_qp.setRenderHint(QPainter::Antialiasing);
-
-    draw_background(event);
-    draw_region_representations(event);
-
-    const auto& partial_regions = Context::SIContext()->region_manager()->partial_regions();
-
-    for(auto& [key, partial_region]: partial_regions)
-    {
-        QPolygonF partial_poly;
-
-        up_qp.setBrush(QColor(255, 255, 255));
-
-        for(auto& p: partial_region)
-            partial_poly << QPointF(p.x, p.y);
-
-        up_qp.drawPolyline(partial_poly);
-    }
-
-    up_qp.end();
 }

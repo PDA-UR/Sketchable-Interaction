@@ -6,24 +6,17 @@
 #include <QQmlContext>
 
 RegionRepresentation::RegionRepresentation(QWidget *parent, const std::shared_ptr<Region>& region):
-    d_r(region->color().r),
-    d_g(region->color().g),
-    d_b(region->color().b),
-    d_a(region->color().a),
-    d_color(QColor(d_r, d_g, d_g, d_a)),
+    d_color(QColor(region->color().r, region->color().g, region->color().b, region->color().a)),
     d_qml_path(region->qml_path()),
-    d_name(region->name()),
     d_view(std::make_unique<QQuickWidget>(parent)),
-    d_type(region->type()),
-    d_width(region->width()),
-    d_height(region->height())
+    d_type(region->type())
 {SIREN
-    connect(this, &RegionRepresentation::dataChanged, region.get(), &Region::REGION_DATA_CHANGED_SLOT);
+    d_region_connection = connect(this, &RegionRepresentation::dataChanged, region.get(), &Region::REGION_DATA_CHANGED_SLOT);
 
-    d_fill.moveTo(region->contour()[0].x, region->contour()[0].y);
+    d_fill.moveTo(region->contour()[0].x - region->aabb()[0].x, region->contour()[0].y - region->aabb()[0].y);
 
     for (int i = 1; i < region->contour().size(); ++i)
-        d_fill.lineTo(region->contour()[i].x, region->contour()[i].y);
+        d_fill.lineTo(region->contour()[i].x - region->aabb()[0].x, region->contour()[i].y - region->aabb()[0].y);
 
     d_view->engine()->rootContext()->setContextProperty("Region", this);
 
@@ -31,13 +24,24 @@ RegionRepresentation::RegionRepresentation(QWidget *parent, const std::shared_pt
         d_view->setSource(QUrl(QString(d_qml_path.c_str())));
 
     d_view->setGeometry(0, 0, Context::SIContext()->width(), Context::SIContext()->height());
-    d_view->setStyleSheet("background-color: #00000000;");
+    d_view->setParent(this);
     d_view->setClearColor(Qt::transparent);
-    d_view->setAttribute(Qt::WA_AlwaysStackOnTop);
-    d_view->show();
+    d_view->setAttribute(Qt::WA_AlwaysStackOnTop, true);
 
     if(region->effect().has_data_changed())
         Q_EMIT dataChanged(region->data());
+
+    setParent(parent);
+    setGeometry(region->aabb()[0].x, region->aabb()[0].y, region->aabb()[3].x - region->aabb()[0].x, region->aabb()[1].y - region->aabb()[0].y);
+    setAttribute(Qt::WA_AlwaysStackOnTop);
+
+    show();
+    d_view->show();
+}
+
+RegionRepresentation::~RegionRepresentation()
+{
+    QObject::disconnect(d_region_connection);
 }
 
 void RegionRepresentation::update(const std::shared_ptr<Region>& region)
@@ -50,25 +54,9 @@ void RegionRepresentation::perform_transform_update(const std::shared_ptr<Region
 {
     if(region->is_transformed())
     {
-        d_fill = QPainterPath();
-
         const glm::mat3x3 &transform = region->transform();
 
-        glm::vec3 p_ = glm::vec3(region->contour()[0].x, region->contour()[0].y, 1) * transform;
-        d_fill.moveTo(p_.x, p_.y);
-
-        for (int i = 1; i < region->contour().size(); ++i)
-        {
-            glm::vec3 p__ = glm::vec3(region->contour()[i].x, region->contour()[i].y, 1) * transform;
-            d_fill.lineTo(p__.x, p__.y);
-        }
-
-        QMatrix4x4 matrix(transform[0].x, transform[0].y, 0, transform[0].z,
-                          transform[1].x, transform[1].y, 0, transform[1].z,
-                          transform[2].x, transform[2].y, 1, 0,
-                          0, 0, 0, 1);
-
-        Q_EMIT transformChanged(matrix);
+        this->move(transform[0].z + region->aabb()[0].x, transform[1].z + region->aabb()[0].y);
     }
 }
 
@@ -78,17 +66,29 @@ void RegionRepresentation::perform_data_update(const std::shared_ptr<Region> &re
         Q_EMIT dataChanged(region->data());
 }
 
-const std::string& RegionRepresentation::name() const
+void RegionRepresentation::paintEvent(QPaintEvent *event)
 {
-    return d_name;
-}
+    up_qp.begin(this);
 
-const QColor &RegionRepresentation::color() const
-{
-    return d_color;
-}
+    up_qp.setBrush(d_color);
+    up_qp.fillPath(d_fill,d_color);
 
-const QPainterPath &RegionRepresentation::fill() const
-{
-    return d_fill;
+    if(d_type == SI_TYPE_CANVAS)
+    {
+        const auto& partial_regions = Context::SIContext()->region_manager()->partial_regions();
+
+        for(auto& [key, partial_region]: partial_regions)
+        {
+            QPolygonF partial_poly;
+
+            up_qp.setBrush(QColor(255, 255, 255));
+
+            for(auto& p: partial_region)
+                partial_poly << QPointF(p.x, p.y);
+
+            up_qp.drawPolyline(partial_poly);
+        }
+    }
+
+    up_qp.end();
 }
