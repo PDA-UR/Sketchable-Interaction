@@ -2,7 +2,7 @@ from libPySI import PySIEffect, PySICapability
 
 
 class Canvas(PySIEffect.PySIEffect):
-    def __init__(self, shape=PySIEffect.PointVector(), aabb=PySIEffect.PointVector(), uuid=""):
+    def __init__(self, shape=PySIEffect.PointVector(), aabb=PySIEffect.PointVector(), uuid="", kwargs={}):
         super(Canvas, self).__init__()
         self.shape = shape
         self.aabb = aabb

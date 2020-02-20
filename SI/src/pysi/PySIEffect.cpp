@@ -6,7 +6,7 @@
 
 namespace bp = boost::python;
 
-void PySIEffect::init(const std::vector<glm::vec3>& contour, const std::vector<glm::vec3>& aabb, const std::string& uuid)
+void PySIEffect::init(const std::vector<glm::vec3>& contour, const std::vector<glm::vec3>& aabb, const std::string& uuid, const bp::dict& kwargs)
 {
     d_contour = contour;
     d_aabb = aabb;
@@ -19,7 +19,7 @@ void PySIEffect::init(const std::vector<glm::vec3>& contour, const std::vector<g
     d_aabb.reserve(4);
 }
 
-// has to be set to false from elsewhere
+// has to be set to false from elsewhere (happens in Region.cpp, where value is used
 void PySIEffect::notify_shape_changed()
 {
     d_has_shape_changed = true;
@@ -253,7 +253,7 @@ BOOST_PYTHON_MODULE(libPySI)
     create_map<MapExposureString2_String2FunctionMap_Map, std::map<std::string, std::map<std::string, bp::object>>>("String2_String2FunctionMap_Map");
 
     bp::class_<PySIEffect, boost::noncopyable>("PySIEffect", bp::init<>())
-        .def("__init__", bp::make_constructor(&PySIEffect::init, bp::default_call_policies(), (bp::arg("shape")=std::vector<glm::vec3>(), bp::arg("aabb")=std::vector<glm::vec3>(), bp::arg("uuid")=std::string())))
+        .def("__init__", bp::make_constructor(&PySIEffect::init, bp::default_call_policies(), (bp::arg("shape")=std::vector<glm::vec3>(), bp::arg("aabb")=std::vector<glm::vec3>(), bp::arg("uuid")=std::string(), bp::arg("kwargs")=bp::dict())))
         .def("add_data", &PySIEffect::__add_data__)
         .def("notify_shape_changed", &PySIEffect::notify_shape_changed)
 
@@ -283,6 +283,8 @@ BOOST_PYTHON_MODULE(libPySI)
         .def_readwrite("aabb", &PySIEffect::d_aabb)
         .def_readwrite("has_shape_changed", &PySIEffect::d_has_shape_changed)
         .def_readwrite("has_data_changed", &PySIEffect::d_data_changed)
+        .def_readwrite("mouse_wheel_angle_px", &PySIEffect::mouse_wheel_angle_px)
+        .def_readwrite("mouse_wheel_angle_degrees", &PySIEffect::mouse_wheel_angle_degrees)
 
         .enable_pickling()
         ;
@@ -299,6 +301,9 @@ BOOST_PYTHON_MODULE(libPySI)
         .value("SI_CANVAS", SI_TYPE_CANVAS)
         .value("SI_CURSOR", SI_TYPE_CURSOR)
         .value("SI_MOUSE_CURSOR", SI_TYPE_MOUSE_CURSOR)
+        .value("SI_DIRECTORY", SI_TYPE_DIRECTORY)
+        .value("SI_TEXT_FILE", SI_TYPE_TEXT_FILE)
+        .value("SI_IMAGE_FILE", SI_TYPE_IMAGE_FILE)
         .value("SI_CUSTOM", SI_TYPE_CUSTOM)
 
         .export_values()

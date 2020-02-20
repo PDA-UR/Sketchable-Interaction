@@ -38,7 +38,7 @@ struct LinkRelation
 class PySIEffect
 {
 public:
-    void init(const std::vector<glm::vec3>& contour, const std::vector<glm::vec3>& aabb, const std::string& uuid);
+    void init(const std::vector<glm::vec3>& contour, const std::vector<glm::vec3>& aabb, const std::string& uuid, const bp::dict& kwargs);
     void __add_data__(const std::string& key, const bp::object& value, const int type);
     void notify_shape_changed();
 
@@ -70,6 +70,10 @@ public:
     bool d_is_left_mouse_clicked = false;
     bool d_is_right_mouse_clicked = false;
     bool d_is_middle_mouse_clicked = false;
+
+    float mouse_wheel_angle_degrees = 0.0;
+    float mouse_wheel_angle_px = 0.0;
+
     void set_mouse_pressed_capability(int btn, bool active);
     bool has_mouse_pressed_capability(int btn);
 

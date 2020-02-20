@@ -1,28 +1,47 @@
 from libPySI import PySIEffect, PySICapability
 
 
-class Tag(PySIEffect.PySIEffect):
+class Directory(PySIEffect.PySIEffect):
     def __init__(self, shape=PySIEffect.PointVector(), aabb=PySIEffect.PointVector(), uuid="", kwargs={}):
-        super(Tag, self).__init__()
+        super(Directory, self).__init__()
         self.shape = shape
         self.aabb = aabb
         self._uuid = uuid
-        self.name = "Tag"
-        self.region_type = PySIEffect.EffectType.SI_CUSTOM
+
+        self.name = "stdSIDir"
+        self.region_type = PySIEffect.EffectType.SI_DIRECTORY
         self.source = "libstdSI"
-        self.qml_path = "plugins/standard_environment_library/tag/Tag.qml"
-        self.color = PySIEffect.Color(255, 0, 0, 255)
+        self.qml_path = "plugins/standard_environment_library/dir/Directory.qml"
+        self.color = PySIEffect.Color(0, 0, 0, 0)
+        self.width = 65
+        self.height = 75
+
+        self.text_color ="#FFFFFFFF"
+        self.path = kwargs["cwd"] if len(kwargs.keys()) else ""
+
+        self.add_data("width", self.width, PySIEffect.DataType.INT)
+        self.add_data("height", self.height, PySIEffect.DataType.INT)
+        self.add_data("img_path", "res/dir.png", PySIEffect.DataType.STRING)
+        self.add_data("color", self.text_color, PySIEffect.DataType.STRING)
+        self.add_data("name", self.path, PySIEffect.DataType.STRING)
 
         self.cap_emit = PySIEffect.String2_String2FunctionMap_Map()
+
         self.cap_recv = PySIEffect.String2_String2FunctionMap_Map({
             "MOVE": {"on_enter": self.on_move_enter_recv, "on_continuous": self.on_move_continuous_recv, "on_leave": self.on_move_leave_recv}
         })
+
+        self.cap_link_emit = PySIEffect.String2FunctionMap()
 
         self.cap_link_recv = PySIEffect.String2_String2FunctionMap_Map({
             "__position__": {"__position__": self.set_position_from_position}
         })
 
-        self.link_relations = PySIEffect.LinkRelationVector()
+    # functions for collision events
+    # ...
+
+    # functions for linking events
+    # ...
 
     def set_position_from_position(self, rel_x, rel_y):
         self.x += rel_x
@@ -43,5 +62,3 @@ class Tag(PySIEffect.PySIEffect):
 
         if lr in self.link_relations:
             del self.link_relations[self.link_relations.index(lr)]
-
-        return 0

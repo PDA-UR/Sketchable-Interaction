@@ -2,6 +2,7 @@
 
 #include <QKeyEvent>
 #include <QMouseEvent>
+#include <QWheelEvent>
 #include <QApplication>
 
 #include "InputManager.hpp"
@@ -12,7 +13,8 @@ InputManager::~InputManager()
 
 InputManager::InputManager():
     d_mouse_coords(0),
-    d_previous_mouse_coords(0)
+    d_previous_mouse_coords(0),
+    d_mouse_wheel_angle_in_px(0)
 {SIGRUN
     d_external_objects.push_back(std::make_shared<ExternalObject>(ExternalObject::ExternalObjectType::MOUSE));
 }
@@ -38,6 +40,17 @@ void InputManager::update()
             }
         }
     }
+}
+
+const InputManager::MouseWheelAngles InputManager::mouse_wheel_angles()
+{
+    MouseWheelAngles mwa;
+    mwa.px = d_mouse_wheel_angle_in_px;
+    mwa.degrees = d_mouse_wheel_angle_in_px / 8; // QT5 documentation states that dividing by 8 yields angle in degrees ¯\_(ツ)_/¯
+
+    d_mouse_wheel_angle_in_px = 0.0;
+
+    return mwa;
 }
 
 void InputManager::press_key(unsigned int key_id)
@@ -193,6 +206,14 @@ bool InputManager::eventFilter(QObject *watched, QEvent *event)
                 release_mouse_button(SI_RIGHT_MOUSE_BUTTON);
                 break;
         }
+        return true;
+    }
+    else if(event->type() == QEvent::Wheel)
+    {
+        QWheelEvent* wheel_event = (QWheelEvent*) event;
+
+        d_mouse_wheel_angle_in_px = wheel_event->angleDelta().y();
+
         return true;
     }
 

@@ -99,8 +99,8 @@ set(SIGRunSRC
         SI/src/sigrun/context/managers/InputManager.hpp
         SI/src/sigrun/context/managers/helpers/input/ExternalObject.cpp
         SI/src/sigrun/context/managers/helpers/input/ExternalObject.hpp
-        SI/src/sigrun/context/managers/helpers/input/FilesSystem.cpp
-        SI/src/sigrun/context/managers/helpers/input/FilesSystem.hpp)
+        SI/src/sigrun/context/managers/helpers/input/FileSystem.cpp
+        SI/src/sigrun/context/managers/helpers/input/FileSystem.hpp)
 
 ADD_DEFINITIONS(-DQT_NO_KEYWORDS)
 
