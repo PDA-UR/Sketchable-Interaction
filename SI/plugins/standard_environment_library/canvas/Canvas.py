@@ -11,7 +11,7 @@ class Canvas(PySIEffect.PySIEffect):
         self.region_type = PySIEffect.EffectType.SI_CANVAS
         self.source = "libstdSI"
         self.qml_path = ""
-        self.color = PySIEffect.Color(0, 0, 255, 255)
+        self.color = PySIEffect.Color(0, 0, 255, 0)
         self.registered_regions = PySIEffect.StringVector()
 
         self.cap_emit = PySIEffect.String2_String2FunctionMap_Map()

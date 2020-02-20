@@ -185,6 +185,10 @@ void PySIEffect::__add_data__(const std::string &key, const bp::object &value, c
         case SI_DATA_TYPE_STRING:
             d_data[QString(key.c_str())] = QVariant(QString(bp::extract<char*>(value)));
         break;
+
+        case SI_DATA_TYPE_BOOL:
+            d_data[QString(key.c_str())] = QVariant(bp::extract<bool>(value));
+        break;
     }
 
     d_data_changed = true;
@@ -292,6 +296,7 @@ BOOST_PYTHON_MODULE(libPySI)
     bp::enum_<int>("DataType")
         .value("INT", SI_DATA_TYPE_INT)
         .value("FLOAT", SI_DATA_TYPE_FLOAT)
+        .value("BOOL", SI_DATA_TYPE_BOOL)
         .value("STRING", SI_DATA_TYPE_STRING)
 
         .export_values()

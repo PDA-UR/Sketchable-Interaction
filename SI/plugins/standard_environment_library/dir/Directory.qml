@@ -5,24 +5,20 @@ Item
 {
     id: container
 
-    width:100
-    height:100
-
-    property var tform: Qt.matrix4x4(1, 0, 0, 0,
-                                    0, 1, 0, 0,
-                                    0, 0, 1, 0,
-                                    0, 0, 0, 1)
-
-    transform: Matrix4x4 { matrix: tform }
+    visible: true
 
     Image {
         id: image
         anchors.left: parent.left
         anchors.top: parent.top
+
+        visible: true
     }
 
     Text {
         id: directoryname
+        visible: true
+
         fontSizeMode: Text.Fit
         minimumPixelSize: 16
         font.pixelSize: 72
@@ -35,22 +31,24 @@ Item
         anchors.leftMargin: -width * 0.25
 
         wrapMode: TextEdit.Wrap
-        text: ""
     }
 
     Connections {
         target: Region
-        onTransformChanged: {
-            container.tform = tform
-        }
 
         onDataChanged: {
-            image.width = data.width;
-            image.height = data.height;
+            container.visible = data.is_visible;
+
+            image.width = data.icon_width;
+            image.height = data.icon_height;
+            image.anchors.leftMargin = image.width / 2;
+
             image.source = data.img_path;
+            image.visible = data.is_icon_visible;
 
             directoryname.color = data.color;
             directoryname.text = data.name;
+            directoryname.visible = data.is_text_visible;
         }
     }
 }

@@ -103,6 +103,7 @@ void Context::add_directory_region(const std::unique_ptr<bp::object>& directory_
     std::vector<glm::vec3> dir_contour {glm::vec3(0, 0, 1), glm::vec3(0, height_directory, 1), glm::vec3(width_directory, height_directory, 1), glm::vec3(width_directory, 0, 1) };
 
     bp::dict kwargs;
+
     kwargs["cwd"] = cwd;
 
     uprm->add_region(dir_contour, *directory_effect, 0, kwargs);

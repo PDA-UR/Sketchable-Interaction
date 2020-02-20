@@ -13,17 +13,27 @@ class Directory(PySIEffect.PySIEffect):
         self.source = "libstdSI"
         self.qml_path = "plugins/standard_environment_library/dir/Directory.qml"
         self.color = PySIEffect.Color(0, 0, 0, 0)
-        self.width = 65
-        self.height = 75
+        self.icon_width = 65
+        self.icon_height = 75
+        self.text_height = 50
+        self.width = 65 * 2
+        self.height = 75 + self.text_height
+        self.is_visible = True
+        self.is_text_visible = True
+        self.is_icon_visible = True
 
         self.text_color ="#FFFFFFFF"
         self.path = kwargs["cwd"] if len(kwargs.keys()) else ""
 
-        self.add_data("width", self.width, PySIEffect.DataType.INT)
-        self.add_data("height", self.height, PySIEffect.DataType.INT)
+        self.add_data("icon_width", self.icon_width, PySIEffect.DataType.INT)
+        self.add_data("icon_height", self.icon_height, PySIEffect.DataType.INT)
+        self.add_data("text_height", self.text_height, PySIEffect.DataType.INT)
         self.add_data("img_path", "res/dir.png", PySIEffect.DataType.STRING)
         self.add_data("color", self.text_color, PySIEffect.DataType.STRING)
         self.add_data("name", self.path, PySIEffect.DataType.STRING)
+        self.add_data("is_visible", self.is_visible, PySIEffect.DataType.BOOL)
+        self.add_data("is_text_visible", self.is_text_visible, PySIEffect.DataType.BOOL)
+        self.add_data("is_icon_visible", self.is_icon_visible, PySIEffect.DataType.BOOL)
 
         self.cap_emit = PySIEffect.String2_String2FunctionMap_Map()
 

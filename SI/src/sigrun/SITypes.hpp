@@ -16,6 +16,7 @@
 #define SI_DATA_TYPE_INT 0
 #define SI_DATA_TYPE_FLOAT 1
 #define SI_DATA_TYPE_STRING 2
+#define SI_DATA_TYPE_BOOL 3
 
 
 #endif // SI_SIGRUN_SITypes
