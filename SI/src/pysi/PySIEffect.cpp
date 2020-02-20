@@ -6,11 +6,28 @@
 
 namespace bp = boost::python;
 
-void PySIEffect::init(const std::vector<glm::vec3>& contour, const std::vector<glm::vec3>& aabb, const std::string& uuid)
+void PySIEffect::init(const std::vector<glm::vec3>& contour, const std::vector<glm::vec3>& aabb, const std::string& uuid, const bp::dict& kwargs)
 {
     d_contour = contour;
     d_aabb = aabb;
     d_uuid = uuid;
+    d_has_shape_changed = false;
+
+    d_regions_marked_for_registration.reserve(10);
+    d_link_relations.reserve(100);
+    d_contour.reserve(64);
+    d_aabb.reserve(4);
+}
+
+// has to be set to false from elsewhere (happens in Region.cpp, where value is used
+void PySIEffect::notify_shape_changed()
+{
+    d_has_shape_changed = true;
+}
+
+bool PySIEffect::has_shape_changed()
+{
+    return d_has_shape_changed;
 }
 
 const int PySIEffect::x() const
@@ -168,6 +185,10 @@ void PySIEffect::__add_data__(const std::string &key, const bp::object &value, c
         case SI_DATA_TYPE_STRING:
             d_data[QString(key.c_str())] = QVariant(QString(bp::extract<char*>(value)));
         break;
+
+        case SI_DATA_TYPE_BOOL:
+            d_data[QString(key.c_str())] = QVariant(bp::extract<bool>(value));
+        break;
     }
 
     d_data_changed = true;
@@ -236,8 +257,9 @@ BOOST_PYTHON_MODULE(libPySI)
     create_map<MapExposureString2_String2FunctionMap_Map, std::map<std::string, std::map<std::string, bp::object>>>("String2_String2FunctionMap_Map");
 
     bp::class_<PySIEffect, boost::noncopyable>("PySIEffect", bp::init<>())
-        .def("__init__", bp::make_constructor(&PySIEffect::init, bp::default_call_policies(), (bp::arg("shape")=std::vector<glm::vec3>(), bp::arg("aabb")=std::vector<glm::vec3>(), bp::arg("uuid")=std::string())))
+        .def("__init__", bp::make_constructor(&PySIEffect::init, bp::default_call_policies(), (bp::arg("shape")=std::vector<glm::vec3>(), bp::arg("aabb")=std::vector<glm::vec3>(), bp::arg("uuid")=std::string(), bp::arg("kwargs")=bp::dict())))
         .def("add_data", &PySIEffect::__add_data__)
+        .def("notify_shape_changed", &PySIEffect::notify_shape_changed)
 
         .def_readwrite("__partial_regions__", &PySIEffect::d_partial_regions)
         .def_readwrite("cap_emit", &PySIEffect::d_cap_collision_emit)
@@ -263,6 +285,10 @@ BOOST_PYTHON_MODULE(libPySI)
         .def_readwrite("link_relations", &PySIEffect::d_link_relations)
         .def_readwrite("shape", &PySIEffect::d_contour)
         .def_readwrite("aabb", &PySIEffect::d_aabb)
+        .def_readwrite("has_shape_changed", &PySIEffect::d_has_shape_changed)
+        .def_readwrite("has_data_changed", &PySIEffect::d_data_changed)
+        .def_readwrite("mouse_wheel_angle_px", &PySIEffect::mouse_wheel_angle_px)
+        .def_readwrite("mouse_wheel_angle_degrees", &PySIEffect::mouse_wheel_angle_degrees)
 
         .enable_pickling()
         ;
@@ -270,14 +296,21 @@ BOOST_PYTHON_MODULE(libPySI)
     bp::enum_<int>("DataType")
         .value("INT", SI_DATA_TYPE_INT)
         .value("FLOAT", SI_DATA_TYPE_FLOAT)
+        .value("BOOL", SI_DATA_TYPE_BOOL)
         .value("STRING", SI_DATA_TYPE_STRING)
+
+        .export_values()
         ;
 
     bp::enum_<int>("EffectType")
         .value("SI_CANVAS", SI_TYPE_CANVAS)
         .value("SI_CURSOR", SI_TYPE_CURSOR)
         .value("SI_MOUSE_CURSOR", SI_TYPE_MOUSE_CURSOR)
+        .value("SI_DIRECTORY", SI_TYPE_DIRECTORY)
+        .value("SI_TEXT_FILE", SI_TYPE_TEXT_FILE)
+        .value("SI_IMAGE_FILE", SI_TYPE_IMAGE_FILE)
         .value("SI_CUSTOM", SI_TYPE_CUSTOM)
+
         .export_values()
         ;
 }

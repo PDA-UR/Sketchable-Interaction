@@ -18,7 +18,7 @@ public:
     RegionManager();
     ~RegionManager();
 
-    void add_region(const std::vector<glm::vec3>& contour, const bp::object& effect, int region_uuid);
+    void add_region(const std::vector<glm::vec3> &contour, const bp::object &effect, int region_uuid, const bp::dict& kwargs=bp::dict());
 
     std::vector<std::shared_ptr<Region>>& regions();
     std::map<std::string, std::vector<glm::vec3>>& partial_regions();
@@ -36,6 +36,7 @@ private:
     void activate_mouse_region_button_down(int mouse_btn);
     void deactivate_mouse_region_button_down(int mouse_btn);
 
+    void toggle_mouse_region_wheel_scrolled(float angle_px, float angle_degrees);
 
     friend class SIGRunRegionManagerTest;
 };

@@ -15,9 +15,9 @@ RegionManager::~RegionManager()
 {
 }
 
-void RegionManager::add_region(const std::vector<glm::vec3> &contour, const bp::object& effect, int region_uuid)
+void RegionManager::add_region(const std::vector<glm::vec3> &contour, const bp::object &effect, int region_uuid, const bp::dict& kwargs)
 {
-    d_regions.push_back(std::shared_ptr<Region>(new Region(contour, effect)));
+    d_regions.push_back(std::shared_ptr<Region>(new Region(contour, effect, 0, 0, kwargs)));
 }
 
 std::vector<std::shared_ptr<Region>> &RegionManager::regions()
@@ -123,6 +123,22 @@ void RegionManager::update_via_mouse_input()
         activate_mouse_region_button_down(SI_MIDDLE_MOUSE_BUTTON);
     else
         deactivate_mouse_region_button_down(SI_MIDDLE_MOUSE_BUTTON);
+
+    auto wheel_angles = Context::SIContext()->input_manager()->mouse_wheel_angles();
+
+    toggle_mouse_region_wheel_scrolled(wheel_angles.px, wheel_angles.degrees);
+}
+
+void RegionManager::toggle_mouse_region_wheel_scrolled(float angle_px, float angle_degrees)
+{
+    for(auto& region: d_regions)
+    {
+        if (region->effect().effect_type() == SI_TYPE_MOUSE_CURSOR)
+        {
+            region->raw_effect().attr("mouse_wheel_angle_px") = angle_px;
+            region->raw_effect().attr("mouse_wheel_angle_degrees") = angle_degrees;
+        }
+    }
 }
 
 void RegionManager::update()

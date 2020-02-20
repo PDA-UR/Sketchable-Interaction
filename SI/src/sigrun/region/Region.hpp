@@ -25,7 +25,7 @@ Q_DECLARE_METATYPE (bp::tuple)
 class Region: public QObject, public SIObject
 {Q_OBJECT
 public:
-    Region(const std::vector<glm::vec3>& contour, const bp::object& effect, int width=0, int height=0);
+    Region(const std::vector<glm::vec3>& contour, const bp::object& effect, int width=0, int height=0, const bp::dict& kwargs=bp::dict());
     ~Region();
 
     bool is_transformed() const;
@@ -54,6 +54,7 @@ public:
 
     Q_SIGNAL void LINK_SIGNAL(const std::string& uuid, const std::string& source_cap, const bp::tuple& args);
     Q_SLOT void LINK_SLOT(const std::string& uuid, const std::string& source_cap, const bp::tuple& args);
+    Q_SLOT void REGION_DATA_CHANGED_SLOT(const QMap<QString, QVariant>& data);
 
     void register_link_event(const std::string& uuid, const std::string& attribute);
     void register_link_event(const std::tuple<std::string, std::string>& link_event);
@@ -75,6 +76,7 @@ public:
 private:
     void process_canvas_specifics();
     void process_linking_relationships();
+    void process_contour_change();
 
     std::shared_ptr<PySIEffect> d_py_effect;
     std::shared_ptr<bp::object> d_effect;
@@ -86,8 +88,10 @@ private:
 
     std::unique_ptr<RegionMask> uprm;
     std::unique_ptr<RegionTransform> uprt;
-    std::string d_uuid;
     bool d_is_transformed;
+
+    int d_last_x;
+    int d_last_y;
 };
 
 

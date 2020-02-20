@@ -28,14 +28,15 @@
 \see d_height_aabb
 \see d_values
  */
-RegionMask::RegionMask(int canvas_width, int canvas_height, const std::vector<glm::vec3> &contour,
-                       const std::vector<glm::vec3> &aabb):
+RegionMask::RegionMask(int canvas_width, int canvas_height, const std::vector<glm::vec3> &contour, const std::vector<glm::vec3> &aabb):
     d_canvas_width(canvas_width),
     d_canvas_height(canvas_height),
     d_tlc_aabb_x(aabb[0].x),
     d_tlc_aabb_y(aabb[0].y),
     d_brc_aabb_x(aabb[2].x),
     d_brc_aabb_y(aabb[2].y),
+    d_move_x(0),
+    d_move_y(0),
     d_width_aabb(d_brc_aabb_x - d_tlc_aabb_x),
     d_height_aabb(d_brc_aabb_y - d_tlc_aabb_y),
     d_values(std::vector<bool>(d_width_aabb * d_height_aabb))
@@ -75,13 +76,12 @@ RegionMask::RegionMask(const RegionMask &rm):
         d_tlc_aabb_y(rm.d_tlc_aabb_y),
         d_brc_aabb_x(rm.d_brc_aabb_x),
         d_brc_aabb_y(rm.d_brc_aabb_y),
+        d_move_x(0),
+        d_move_y(0),
         d_width_aabb(rm.d_width_aabb),
         d_height_aabb(rm.d_height_aabb),
         d_values(rm.d_values)
-
-{
-
-}
+{}
 
 /**
 \brief default destructor
@@ -138,7 +138,7 @@ void RegionMask::set_bit(int i)
  */
 void RegionMask::set_bit(const glm::vec3& v)
 {
-    int index = d_width_aabb * ((int) v.y - d_tlc_aabb_y) + (int) v.x - d_tlc_aabb_x;
+    int index = d_width_aabb * ((int) v.y - (d_tlc_aabb_y + d_move_y)) + (int) v.x - (d_tlc_aabb_x + d_move_x);
 
     if(index > -1 && index < d_values.size())
         this->set_bit(index);
@@ -176,7 +176,7 @@ void RegionMask::clear_bit(int i)
 */
 void RegionMask::clear_bit(const glm::vec3 &v)
 {
-    int index = d_width_aabb * ((int) v.y - d_tlc_aabb_y) + (int) v.x - d_tlc_aabb_x;
+    int index = d_width_aabb * ((int) v.y - (d_tlc_aabb_y + d_move_y)) + (int) v.x - (d_tlc_aabb_x + d_move_x);
 
     if(index > -1 && index < d_values.size())
         this->clear_bit(index);
@@ -200,6 +200,16 @@ int RegionMask::width() const
 int RegionMask::height() const
 {
     return d_height_aabb;
+}
+
+void RegionMask::rebuild(const std::vector<glm::vec3> &contour, const std::vector<glm::vec3> &aabb)
+{
+    d_values.clear();
+    d_values.reserve(d_width_aabb * d_height_aabb);
+
+
+
+    scanlinefill(contour, aabb);
 }
 
 /**
@@ -239,7 +249,7 @@ bool RegionMask::operator[](int i) const
 */
 bool RegionMask::operator[](const glm::vec3 &v) const
 {
-    int index = d_width_aabb * ((int) v.y - d_tlc_aabb_y) + (int) v.x - d_tlc_aabb_x;
+    int index = d_width_aabb * ((int) v.y - (d_tlc_aabb_y + d_move_y)) + (int) v.x - (d_tlc_aabb_x + d_move_x);
 
     if(index > -1 && index < d_values.size())
         return d_values[index];
@@ -261,10 +271,8 @@ bool RegionMask::operator[](const glm::vec3 &v) const
 */
 void RegionMask::move(const glm::vec2& v)
 {
-    d_tlc_aabb_x += v.x;
-    d_tlc_aabb_y += v.y;
-    d_brc_aabb_x += v.x;
-    d_brc_aabb_y += v.y;
+    d_move_x += v.x;
+    d_move_y += v.y;
 }
 
 /**

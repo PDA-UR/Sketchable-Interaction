@@ -10,7 +10,7 @@
 
 namespace bp = boost::python;
 
-Region::Region(const std::vector<glm::vec3> &contour, const bp::object& effect, int mask_width, int mask_height):
+Region::Region(const std::vector<glm::vec3> &contour, const bp::object& effect, int mask_width, int mask_height, const bp::dict& kwargs):
     uprt(std::make_unique<RegionTransform>()),
     d_is_transformed(false),
     d_link_events(20)
@@ -22,9 +22,12 @@ Region::Region(const std::vector<glm::vec3> &contour, const bp::object& effect, 
 
     set_aabb();
 
+    d_last_x = 0;
+    d_last_y = 0;
+
     HANDLE_PYTHON_CALL(
             d_effect = std::make_shared<bp::object>(bp::import("copy").attr("deepcopy")(effect));
-            d_effect->attr("__init__")(d_contour, d_aabb, std::string(_UUID_));
+            d_effect->attr("__init__")(d_contour, d_aabb, std::string(_UUID_), kwargs);
             d_py_effect = std::shared_ptr<PySIEffect>(new PySIEffect(bp::extract<PySIEffect>(*d_effect)));
     )
 
@@ -43,20 +46,15 @@ void Region::move(int x, int y)
 {
     if(x != 0 || y != 0)
     {
-        int prev_x = d_aabb[0].x;
-        int prev_y = d_aabb[0].y;
-
-        glm::vec2 center(d_aabb[0].x + (d_aabb[3].x - d_aabb[0].x), d_aabb[0].y + (d_aabb[1].y - d_aabb[0].y));
+        glm::vec2 center(d_last_x + d_aabb[0].x + (d_aabb[3].x - d_aabb[0].x), d_last_y + d_aabb[0].y + (d_aabb[1].y - d_aabb[0].y));
 
         uprt->update(glm::vec2(x, y), 0, 1, center);
 
-        set_aabb();
+        int delta_x = x - d_last_x;
+        int delta_y = y - d_last_y;
 
-        int new_x = d_aabb[0].x;
-        int new_y = d_aabb[0].y;
-
-        int delta_x = new_x - prev_x;
-        int delta_y = new_y - prev_y;
+        d_last_x = x;
+        d_last_y = y;
 
         uprm->move(glm::vec2(delta_x, delta_y));
 
@@ -113,11 +111,8 @@ void Region::set_aabb()
     int y_min = std::numeric_limits<int>::max();
     int y_max = std::numeric_limits<int>::min();
 
-    for (auto &vertex : d_contour)
+    for (auto &v: d_contour)
     {
-        glm::vec3 v = vertex * transform();
-        v /= v.z;
-
         x_max = v.x > x_max ? v.x : x_max;
         y_max = v.y > y_max ? v.y : y_max;
         x_min = v.x < x_min ? v.x : x_min;
@@ -171,14 +166,15 @@ void Region::LINK_SLOT(const std::string& uuid, const std::string& source_cap, c
                 d_py_effect->attr_link_recv()[source_cap][key](*args);
 
                 if(d_py_effect->attr_link_emit().find(key) != d_py_effect->attr_link_emit().end())
-                {
-                    const bp::tuple& args2 = bp::extract<bp::tuple>(d_py_effect->attr_link_emit()[key]());
-
-                    Q_EMIT LINK_SIGNAL(uuid, key, args2);
-                }
+                    Q_EMIT LINK_SIGNAL(uuid, key, bp::extract<bp::tuple>(d_py_effect->attr_link_emit()[key]()));
             )
         }
     }
+}
+
+void Region::REGION_DATA_CHANGED_SLOT(const QMap<QString, QVariant>& data)
+{
+    d_effect->attr("has_data_changed") = false;
 }
 
 void Region::register_link_event(const std::string &uuid, const std::string &attribute)
@@ -225,11 +221,28 @@ void Region::update()
 {
     HANDLE_PYTHON_CALL(d_py_effect = std::shared_ptr<PySIEffect>(new PySIEffect(bp::extract<PySIEffect>(*d_effect)));)
 
-    // handle changes to contour here
+    process_contour_change();
+
     move(d_py_effect->x(), d_py_effect->y());
 
     process_canvas_specifics();
     process_linking_relationships();
+}
+
+void Region::process_contour_change()
+{
+    if(d_py_effect->has_shape_changed())
+    {
+        d_effect->attr("has_shape_changed") = false;
+
+        d_contour = d_py_effect->contour();
+
+        set_aabb();
+
+        d_effect->attr("aabb") = d_aabb;
+
+        uprm = std::make_unique<RegionMask>(Context::SIContext()->width(), Context::SIContext()->height(), d_contour, d_aabb);
+    }
 }
 
 void Region::process_canvas_specifics()

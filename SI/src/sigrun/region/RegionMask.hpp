@@ -53,6 +53,8 @@ public:
 
     void move(const glm::vec2& v);
 
+    void rebuild(const std::vector<glm::vec3>& contour, const std::vector<glm::vec3>& aabb);
+
     bool operator[](int i) const;
     bool operator[](const glm::vec3& v) const;
 
@@ -96,6 +98,9 @@ private:
         int containing the height of the AABB
     */
     int d_height_aabb;
+
+    int d_move_x;
+    int d_move_y;
 
     /**
         std::vector of bools containing the bit array used for testing for collisions

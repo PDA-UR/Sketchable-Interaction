@@ -78,8 +78,22 @@ CollisionManager::CollisionManager()
 
 bool CollisionManager::collides_with_aabb(const std::shared_ptr<Region> &a, const std::shared_ptr<Region> &b)
 {
-    auto& a_aabb = a->aabb();
-    auto& b_aabb = b->aabb();
+    std::vector<glm::vec3> a_aabb;
+    std::vector<glm::vec3> b_aabb;
+
+    for(auto& p: a->aabb())
+    {
+        auto p_ = p * a->transform();
+
+        a_aabb.push_back(p_ /= p_.z);
+    }
+
+    for(auto& p: b->aabb())
+    {
+        auto p_ = p * b->transform();
+
+        b_aabb.push_back(p_ /= p_.z);
+    }
 
     return a_aabb[0].x < b_aabb[3].x &&
            a_aabb[3].x > b_aabb[0].x &&
@@ -89,9 +103,27 @@ bool CollisionManager::collides_with_aabb(const std::shared_ptr<Region> &a, cons
 
 bool CollisionManager::is_aabb_enveloped(const std::shared_ptr<Region>& enveloper, const std::shared_ptr<Region>& enveloped)
 {
-    auto& a_aabb = enveloper->aabb();
-    auto& b_aabb = enveloped->aabb();
+    auto& _a_aabb = enveloper->aabb();
+    auto& _b_aabb = enveloped->aabb();
+    auto& a_transform = enveloper->transform();
+    auto& b_transform = enveloped->transform();
 
+    std::vector<glm::vec3> a_aabb;
+    std::vector<glm::vec3> b_aabb;
+
+    for(auto& p: _a_aabb)
+    {
+        auto p_ = p * a_transform;
+
+        a_aabb.push_back(p_ /= p_.z);
+    }
+
+    for(auto& p: _b_aabb)
+    {
+        auto p_ = p * b_transform;
+
+        b_aabb.push_back(p_ /= p_.z);
+    }
 
     // claculate areas of aabbs in px^2
     float area_a_aabb = (a_aabb[3].x - a_aabb[0].x) * (a_aabb[1].y - a_aabb[0].y);
@@ -164,8 +196,25 @@ bool CollisionManager::are_aabbs_equal(const std::shared_ptr<Region> &a, const s
 {
     bool are_aabb_same_size_and_spot = true;
 
-    for(int i = 0; i < a->aabb().size(); i++)
-        if(!(are_aabb_same_size_and_spot &= (a->aabb()[i] == b->aabb()[i])))
+    std::vector<glm::vec3> a_aabb;
+    std::vector<glm::vec3> b_aabb;
+
+    for(auto& p: a->aabb())
+    {
+        auto p_ = p * a->transform();
+
+        a_aabb.push_back(p_ /= p_.z);
+    }
+
+    for(auto& p: b->aabb())
+    {
+        auto p_ = p * b->transform();
+
+        b_aabb.push_back(p_ /= p_.z);
+    }
+
+    for(int i = 0; i < a_aabb.size(); i++)
+        if(!(are_aabb_same_size_and_spot &= (a_aabb[i] == b_aabb[i])))
             return false;
 
     return true;

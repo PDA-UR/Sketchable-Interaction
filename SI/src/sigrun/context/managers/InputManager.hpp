@@ -62,8 +62,16 @@ class InputManager: public QObject, public SIObject
 #define SI_KEY_CTRL_R Qt::Key_Control
 
 public:
+    struct MouseWheelAngles
+    {
+        float px;
+        float degrees;
+    };
+
     InputManager();
     ~InputManager();
+
+    bool eventFilter(QObject *watched, QEvent *event) override;
 
     void update();
 
@@ -80,6 +88,8 @@ public:
 
     ExternalObject* mouse_object();
 
+    const MouseWheelAngles mouse_wheel_angles();
+
 private:
     bool was_key_down(unsigned int key_id);
     bool was_mouse_down(unsigned int button_id);
@@ -95,9 +105,7 @@ private:
 
     std::vector<std::shared_ptr<ExternalObject>> d_external_objects;
 
-protected:
-public:
-    bool eventFilter(QObject *watched, QEvent *event) override;
+    float d_mouse_wheel_angle_in_px;
 };
 
 
