@@ -5,6 +5,8 @@ Item
 {
     id: container
 
+    visible: true
+
     width:100
     height:100
 
@@ -19,10 +21,13 @@ Item
         id: image
         anchors.left: parent.left
         anchors.top: parent.top
+        visible: true
     }
 
     Text {
         id: directoryname
+        visible: true
+
         fontSizeMode: Text.Fit
         minimumPixelSize: 16
         font.pixelSize: 72
@@ -35,7 +40,6 @@ Item
         anchors.leftMargin: -width * 0.25
 
         wrapMode: TextEdit.Wrap
-        text: ""
     }
 
     Connections {
@@ -45,12 +49,16 @@ Item
         }
 
         onDataChanged: {
+            container.visible = data.is_visible;
+
             image.width = data.width;
             image.height = data.height;
             image.source = data.img_path;
+            image.visible = data.is_icon_visible;
 
             directoryname.color = data.color;
             directoryname.text = data.name;
+            directoryname.visible = data.is_text_visible;
         }
     }
 }
