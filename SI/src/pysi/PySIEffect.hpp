@@ -12,6 +12,12 @@
 #include <sigrun/SITypes.hpp>
 #include <QVariant>
 #include <QMap>
+#include <sigrun/SIObject.hpp>
+
+#include <sigrun/log/Log.hpp>
+
+#define PYSI_DEBUG(what) Log::log("PySI", what, Log::LOG_LEVEL::DEBUG_LEVEL, "PySIEffect",__FILENAME__, __FUNCTION__, std::to_string(__LINE__))
+#define PYSI_INFO(what) Log::log("PySI", what, Log::LOG_LEVEL::INFO_LEVEL, "PySIEffect",__FILENAME__, __FUNCTION__, std::to_string(__LINE__))
 
 namespace bp = boost::python;
 
@@ -42,7 +48,8 @@ public:
     void __add_data__(const std::string& key, const bp::object& value, const int type);
     void notify_shape_changed();
 
-//    void __spawn_region__(const std::vector<glm::vec3>& contour, int type);
+    void __spawn_region__(const std::vector<glm::vec3>& contour, int type);
+    void signal_deletion();
 
     float d_x = 0;
     float d_y = 0;
@@ -79,6 +86,8 @@ public:
     void set_mouse_pressed_capability(int btn, bool active);
     bool has_mouse_pressed_capability(int btn);
 
+    bool d_flagged_for_deletion = false;
+    bool is_flagged_for_deletion();
 
     bool d_has_shape_changed = false;
     bool has_shape_changed();

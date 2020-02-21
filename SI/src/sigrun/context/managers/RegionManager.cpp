@@ -20,6 +20,11 @@ void RegionManager::add_region(const std::vector<glm::vec3> &contour, const bp::
     d_regions.push_back(std::shared_ptr<Region>(new Region(contour, effect, 0, 0, kwargs)));
 }
 
+void RegionManager::delete_region(const std::string &deletion_candidate_uuid)
+{
+
+}
+
 std::vector<std::shared_ptr<Region>> &RegionManager::regions()
 {
     return d_regions;
@@ -149,7 +154,18 @@ void RegionManager::update()
     // therefore newly created regions are effective from the next frame on
     int size = d_regions.size();
 
-    for(int i = 0; i < size; i++)
+    for(int i = size - 1; i > -1; --i)
+    {
+        if(d_regions[i]->effect().is_flagged_for_deletion())
+        {
+            Context::SIContext()->remove_all_source_linking_relations(d_regions[i]->uuid());
+            d_regions.erase(d_regions.begin() + i);
+            continue;
+        }
+
         d_regions[i]->update();
+    }
     //---------------------------------------------------------------------------
 }
+
+

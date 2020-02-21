@@ -40,6 +40,7 @@ public:
 
     void register_new_region(const std::vector<glm::vec3>& contour, const std::string& uuid);
     void update_linking_relations(const std::vector<LinkRelation>& relations, const std::string& source);
+    void remove_all_source_linking_relations(const std::string& source);
 
 private:
     static Context* self;
@@ -49,7 +50,6 @@ private:
     void add_canvas_region(const std::unordered_map<std::string, std::unique_ptr<bp::object>>& plugins);
     void add_cursor_regions(const std::unique_ptr<bp::object>& cursor_effect);
     void add_directory_region(const std::unique_ptr<bp::object>& effect);
-    void remove_all_source_linking_relations(const std::string& source);
     void remove_linking_relations(const std::vector<LinkRelation>& relations, const std::string& source);
     void create_linking_relations(const std::vector<LinkRelation>& relations, const std::string& source);
 
