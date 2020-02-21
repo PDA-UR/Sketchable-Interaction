@@ -21,9 +21,9 @@ void CollisionManager::collide(std::vector<std::shared_ptr<Region>> &regions)
             auto& b = regions[k];
             auto tuple = std::make_tuple(a->uuid(), b->uuid());
 
-            if(a->is_transformed() || b->is_transformed())
+            if(has_capabilities_in_common(a, b))
             {
-                if(has_capabilities_in_common(a, b))
+                if(a->is_transformed() || b->is_transformed())
                 {
                     if(collides_with_aabb(a, b))
                     {
@@ -49,19 +49,17 @@ void CollisionManager::collide(std::vector<std::shared_ptr<Region>> &regions)
                 else
                 {
                     if(d_collision_map.find(tuple) != d_collision_map.end())
-                    {
-                        handle_event_leave(a, b, tuple);
-                    }
+                        if(has_capabilities_in_common(a, b))
+                            handle_event_continuous(a, b);
+                        else
+                            handle_event_leave(a, b, tuple);
                 }
             }
             else
             {
                 if(d_collision_map.find(tuple) != d_collision_map.end())
                 {
-                    if(has_capabilities_in_common(a, b))
-                        handle_event_continuous(a, b);
-                    else
-                        handle_event_leave(a, b, tuple);
+                    handle_event_leave(a, b, tuple);
                 }
             }
         }
@@ -85,14 +83,14 @@ bool CollisionManager::collides_with_aabb(const std::shared_ptr<Region> &a, cons
     {
         auto p_ = p * a->transform();
 
-        a_aabb.push_back(p_ /= p_.z);
+        a_aabb.emplace_back(p_.x / p_.z, p_.y / p_.z, 1);
     }
 
     for(auto& p: b->aabb())
     {
         auto p_ = p * b->transform();
 
-        b_aabb.push_back(p_ /= p_.z);
+        b_aabb.emplace_back(p_.x / p_.z, p_.y / p_.z, 1);
     }
 
     return a_aabb[0].x < b_aabb[3].x &&
@@ -158,8 +156,8 @@ bool CollisionManager::collides_with_mask(const std::shared_ptr<Region> &a, cons
             if ((*a_mask)[p__])
                 return true;
         }
-
-    }else if(is_aabb_enveloped(b, a))
+    }
+    else
     {
         for (const glm::vec3 &p : a->contour())
         {

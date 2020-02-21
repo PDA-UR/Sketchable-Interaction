@@ -3,6 +3,7 @@
 #include "RegionRepresentation.hpp"
 #include <glm/glm.hpp>
 #include <QQmlEngine>
+#include <QLayout>
 #include <QQmlContext>
 
 RegionRepresentation::RegionRepresentation(QWidget *parent, const std::shared_ptr<Region>& region):
@@ -25,18 +26,16 @@ RegionRepresentation::RegionRepresentation(QWidget *parent, const std::shared_pt
 
     d_view->setGeometry(0, 0, Context::SIContext()->width(), Context::SIContext()->height());
     d_view->setParent(this);
-    d_view->setClearColor(Qt::transparent);
     d_view->setAttribute(Qt::WA_AlwaysStackOnTop, true);
+    d_view->setClearColor(Qt::transparent);
 
     if(region->effect().has_data_changed())
         Q_EMIT dataChanged(region->data());
 
     setParent(parent);
     setGeometry(region->aabb()[0].x, region->aabb()[0].y, region->aabb()[3].x - region->aabb()[0].x, region->aabb()[1].y - region->aabb()[0].y);
-    setAttribute(Qt::WA_AlwaysStackOnTop);
 
     show();
-    d_view->show();
 }
 
 RegionRepresentation::~RegionRepresentation()

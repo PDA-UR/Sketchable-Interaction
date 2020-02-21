@@ -24,6 +24,7 @@ class Directory(PySIEffect.PySIEffect):
 
         self.text_color ="#FFFFFFFF"
         self.path = kwargs["cwd"] if len(kwargs.keys()) else ""
+        self.children_paths = kwargs["children"] if len(kwargs.keys()) else ""
 
         self.add_data("icon_width", self.icon_width, PySIEffect.DataType.INT)
         self.add_data("icon_height", self.icon_height, PySIEffect.DataType.INT)
@@ -72,3 +73,7 @@ class Directory(PySIEffect.PySIEffect):
 
         if lr in self.link_relations:
             del self.link_relations[self.link_relations.index(lr)]
+
+        # for child in self.children_paths:
+        #     print(child)
+

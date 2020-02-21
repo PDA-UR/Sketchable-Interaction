@@ -44,7 +44,9 @@ Region::~Region()= default;
 
 void Region::move(int x, int y)
 {
-    if(x != 0 || y != 0)
+    d_is_transformed = false;
+
+    if(x != 0 && y != 0)
     {
         glm::vec2 center(d_last_x + d_aabb[0].x + (d_aabb[3].x - d_aabb[0].x), d_last_y + d_aabb[0].y + (d_aabb[1].y - d_aabb[0].y));
 
@@ -58,10 +60,8 @@ void Region::move(int x, int y)
 
         uprm->move(glm::vec2(delta_x, delta_y));
 
-        set_is_transformed(true);
+        d_is_transformed = true;
     }
-    else
-        set_is_transformed(false);
 }
 
 bool Region::is_transformed() const
@@ -288,16 +288,25 @@ int Region::handle_collision_event(const std::string &function_name, PySIEffect 
         {
             if (d_py_effect->cap_collision_recv().find(key) != d_py_effect->cap_collision_recv().end())
             {
-                const bp::object &t = colliding_effect.cap_collision_emit()[key][function_name](*d_effect);
-
-                if (t.is_none())
-                    return bp::extract<int>(d_py_effect->cap_collision_recv()[key][function_name]());
-                else
+                if(!colliding_effect.cap_collision_emit()[key][function_name].is_none())
                 {
-                    if (bp::extract<bp::tuple>(t).check())
-                    return bp::extract<int>(d_py_effect->cap_collision_recv()[key][function_name](*t));
+                    const bp::object &t = colliding_effect.cap_collision_emit()[key][function_name](*d_effect);
+
+                    if (t.is_none())
+                    {
+                        if(!d_py_effect->cap_collision_recv()[key][function_name].is_none())
+                            return bp::extract<int>(d_py_effect->cap_collision_recv()[key][function_name]());
+                    }
                     else
-                        return bp::extract<int>(d_py_effect->cap_collision_recv()[key][function_name](t));
+                    {
+                        if(!d_py_effect->cap_collision_recv()[key][function_name].is_none())
+                        {
+                            if (bp::extract<bp::tuple>(t).check())
+                                return bp::extract<int>(d_py_effect->cap_collision_recv()[key][function_name](*t));
+                            else
+                                return bp::extract<int>(d_py_effect->cap_collision_recv()[key][function_name](t));
+                        }
+                    }
                 }
             }
         }
