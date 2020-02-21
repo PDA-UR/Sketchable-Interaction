@@ -42,6 +42,8 @@ public:
     void __add_data__(const std::string& key, const bp::object& value, const int type);
     void notify_shape_changed();
 
+//    void __spawn_region__(const std::vector<glm::vec3>& contour, int type);
+
     float d_x = 0;
     float d_y = 0;
     int d_width = 0;

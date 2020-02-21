@@ -8,6 +8,7 @@
 #include <SI/SI.hpp>
 
 #include <QMainWindow>
+#include <QGraphicsAnchorLayout>
 #include <QObject>
 #include <QMetaMethod>
 #include <QPainter>

@@ -5,6 +5,7 @@
 
 #include <boost/filesystem.hpp>
 #include <sigrun/SIObject.hpp>
+#include <memory>
 
 #ifdef __linux__
 #include <pwd.h>
@@ -41,17 +42,40 @@ public:
 #endif // _WIN32
 };
 
+class FileSystemObject: public SIObject
+{
+public:
+    FileSystemObject(const fs::path& path, int type);
+    ~FileSystemObject();
+
+    const std::string& path();
+    const std::string& filename();
+    const std::string& extension();
+
+private:
+    int d_type;
+    fs::path d_path;
+};
+
 class FileSystem: public SIObject
 {
 public:
     FileSystem();
     ~FileSystem();
 
+    void set_cwd(const std::string& path);
     const std::string& cwd() const;
+    const std::vector<std::shared_ptr<FileSystemObject>>& cwd_contents();
+    const std::vector<std::string> cwd_contents_paths(const std::string& cwd);
 
 private:
-bool find_directory(const fs::path& start_path, const fs::path& dir_name, fs::path& dir_path);
+    void set_cwd(const fs::path& path);
+
+    bool find_directory(const fs::path& start_path, const fs::path& dir_name, fs::path& dir_path);
+
     fs::path d_cwd;
+
+    std::vector<std::shared_ptr<FileSystemObject>> d_cwd_contents;
 };
 
 

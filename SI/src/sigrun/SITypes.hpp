@@ -9,7 +9,11 @@
 #define SI_TYPE_DIRECTORY 3
 #define SI_TYPE_TEXT_FILE 4
 #define SI_TYPE_IMAGE_FILE 5
+#define SI_TYPE_UNKNOWN_FILE 6
+#define SI_TYPE_DELETION 7
 #define SI_TYPE_CUSTOM 9999
+
+
 
 
 

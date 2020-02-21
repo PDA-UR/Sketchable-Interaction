@@ -1,8 +1,10 @@
 import QtQuick 2.7
+import QtQuick.Controls 2.7
 
 Item
 {
     id: container
+
     visible: true
 
     Image {
@@ -15,6 +17,7 @@ Item
 
     Connections {
         target: Region
+
         onDataChanged: {
             image.width = data.img_width;
             image.height = data.img_height;
