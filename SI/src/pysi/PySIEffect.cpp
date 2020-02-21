@@ -309,6 +309,8 @@ BOOST_PYTHON_MODULE(libPySI)
         .value("SI_DIRECTORY", SI_TYPE_DIRECTORY)
         .value("SI_TEXT_FILE", SI_TYPE_TEXT_FILE)
         .value("SI_IMAGE_FILE", SI_TYPE_IMAGE_FILE)
+        .value("SI_UNKNOWN_FILE", SI_TYPE_UNKNOWN_FILE)
+        .value("SI_DELETION", SI_TYPE_DELETION)
         .value("SI_CUSTOM", SI_TYPE_CUSTOM)
 
         .export_values()

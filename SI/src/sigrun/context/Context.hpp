@@ -53,7 +53,7 @@ private:
     void remove_linking_relations(const std::vector<LinkRelation>& relations, const std::string& source);
     void create_linking_relations(const std::vector<LinkRelation>& relations, const std::string& source);
 
-    std::vector<bp::object> d_available_plugins;
+    std::map<std::string, bp::object> d_available_plugins;
     std::unordered_map<std::string, bp::object> d_selected_effects_by_id;
 
     std::map<std::string, std::vector<std::shared_ptr<ILink>>> d_links_in_ctx;
@@ -68,6 +68,7 @@ private:
     std::unique_ptr<CollisionManager> uprcm;
     std::unique_ptr<FileSystem> upfs;
 
+    std::string test_help = "Tag";
 
     int s_width = 0;
     int s_height = 0;

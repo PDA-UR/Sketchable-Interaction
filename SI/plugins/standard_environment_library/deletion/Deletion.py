@@ -1,17 +1,18 @@
 from libPySI import PySIEffect, PySICapability
 
 
-class Tag(PySIEffect.PySIEffect):
+class Deletion(PySIEffect.PySIEffect):
     def __init__(self, shape=PySIEffect.PointVector(), aabb=PySIEffect.PointVector(), uuid="", kwargs={}):
-        super(Tag, self).__init__()
+        super(Deletion, self).__init__()
         self.shape = shape
         self.aabb = aabb
         self._uuid = uuid
-        self.name = "Tag"
-        self.region_type = PySIEffect.EffectType.SI_CUSTOM
+        self.name = "Deletion"
+        self.region_type = PySIEffect.EffectType.SI_DELETION
         self.source = "libstdSI"
-        self.qml_path = "plugins/standard_environment_library/tag/Tag.qml"
-        self.color = PySIEffect.Color(255, 0, 0, 255)
+        self.qml_path = "plugins/standard_environment_library/deletion/Deletion.qml"
+        self.color = PySIEffect.Color(255, 255, 0, 255)
+
 
         self.add_data("img_width", 75, PySIEffect.DataType.INT)
         self.add_data("img_height", 75, PySIEffect.DataType.INT)
@@ -19,12 +20,15 @@ class Tag(PySIEffect.PySIEffect):
         if len(self.aabb):
             self.add_data("widget_width", self.aabb[3].x - self.aabb[0].x, PySIEffect.DataType.FLOAT)
             self.add_data("widget_height", self.aabb[1].y - self.aabb[0].y, PySIEffect.DataType.FLOAT)
-        self.add_data("img_path", "res/tag.png", PySIEffect.DataType.STRING)
+        self.add_data("img_path", "res/deletion.png", PySIEffect.DataType.STRING)
 
-        self.cap_emit = PySIEffect.String2_String2FunctionMap_Map()
+        self.cap_emit = PySIEffect.String2_String2FunctionMap_Map({
+            "DELETION": {"on_enter": self.on_deletion_enter_emit, "on_continuous": self.on_deletion_continuous_emit, "on_leave": self.on_deletion_leave_emit}
+        })
+
         self.cap_recv = PySIEffect.String2_String2FunctionMap_Map({
             "MOVE": {"on_enter": self.on_move_enter_recv, "on_continuous": self.on_move_continuous_recv, "on_leave": self.on_move_leave_recv},
-            "DELETION": {"on_enter": self.on_deletion_enter_recv, "on_continuous": self.on_deletion_continuous_recv, "on_leave": self.on_deletion_leave_recv}
+            # "DELETION": {"on_enter": self.on_deletion_enter_recv, "on_continuous": self.on_deletion_continuous_recv, "on_leave": self.on_deletion_leave_recv}
         })
 
         self.cap_link_recv = PySIEffect.String2_String2FunctionMap_Map({
@@ -55,14 +59,11 @@ class Tag(PySIEffect.PySIEffect):
 
         return 0
 
-    def on_deletion_enter_recv(self):
-        print("delete of", self.name, "enter")
-        return 0
+    def on_deletion_enter_emit(self, other):
+        print("emit delete of", self.name, "enter")
 
-    def on_deletion_continuous_recv(self):
-        print("delete of", self.name, "continuous")
-        return 0
+    def on_deletion_continuous_emit(self, other):
+        print("emit delete of", self.name, "continuous")
 
-    def on_deletion_leave_recv(self):
-        print("delete of", self.name, "leave")
-        return 0
+    def on_deletion_leave_emit(self, other):
+        print("emit delete of", self.name, "leave")

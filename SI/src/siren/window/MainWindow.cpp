@@ -7,7 +7,7 @@
 
 MainWindow::MainWindow(int width, int height):
     QMainWindow(),
-    up_update_worker(UpdateWorker(120)),
+    up_update_worker(UpdateWorker(60)),
     d_width(width),
     d_height(height)
 {SIREN
@@ -51,7 +51,6 @@ void MainWindow::loop(double delta, int fps)
             d_region_representations[region->uuid()]->update(region);
     }
 
-//    update();
     Context::SIContext()->update();
 }
 

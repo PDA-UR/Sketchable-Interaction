@@ -52,7 +52,11 @@ void Context::add_startup_regions(const std::unordered_map<std::string, std::uni
                         break;
 
                     default:
-                        d_available_plugins.push_back(*value);
+                    {
+                        const std::string& name = bp::extract<std::string>(value->attr("__class__").attr("__name__"));
+
+                        d_available_plugins[name] = *value;
+                    }
                         break;
                 }
             )
@@ -94,6 +98,7 @@ void Context::add_cursor_regions(const std::unique_ptr<bp::object>& cursor_effec
 void Context::add_directory_region(const std::unique_ptr<bp::object>& directory_effect)
 {
     const std::string& cwd = upfs->cwd();
+    const std::vector<std::string> children_paths = upfs->cwd_contents_paths(cwd);
 
     INFO("Creating Region for " + cwd);
 
@@ -105,6 +110,7 @@ void Context::add_directory_region(const std::unique_ptr<bp::object>& directory_
     bp::dict kwargs;
 
     kwargs["cwd"] = cwd;
+    kwargs["children"] = children_paths;
 
     uprm->add_region(dir_contour, *directory_effect, 0, kwargs);
 
@@ -139,9 +145,14 @@ void Context::begin(const std::unordered_map<std::string, std::unique_ptr<bp::ob
         {
             DEBUG("Test case with further effect type");
 
-            d_selected_effects_by_id[d_mouse_uuid] = d_available_plugins.back();
+            d_selected_effects_by_id[d_mouse_uuid] = d_available_plugins["Tag"];
             const std::string& selected = bp::extract<std::string>(d_selected_effects_by_id[d_mouse_uuid].attr("name"));
             DEBUG("Mouse Cursor: " + d_mouse_uuid + " set to " + selected);
+        }
+
+        for(auto& [key, value]: d_available_plugins)
+        {
+            DEBUG(key);
         }
 
         d_app.exec();
@@ -192,6 +203,18 @@ Context* Context::SIContext()
  */
 void Context::update()
 {
+    if(upim->is_key_pressed(SI_KEY_A))
+    {
+        if(test_help == "Tag")
+            test_help = "Deletion";
+        else if(test_help == "Deletion")
+            test_help = "Tag";
+
+        d_selected_effects_by_id[d_mouse_uuid] = d_available_plugins[test_help];
+        const std::string& selected = bp::extract<std::string>(d_selected_effects_by_id[d_mouse_uuid].attr("name"));
+        DEBUG("Mouse Cursor: " + d_mouse_uuid + " set to " + selected);
+    }
+
     upim->update();
     uprcm->collide(uprm->regions());
     uprm->update();

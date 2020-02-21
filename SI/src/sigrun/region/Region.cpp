@@ -44,7 +44,9 @@ Region::~Region()= default;
 
 void Region::move(int x, int y)
 {
-    if(x != 0 || y != 0)
+    d_is_transformed = false;
+
+    if(x != 0 && y != 0)
     {
         glm::vec2 center(d_last_x + d_aabb[0].x + (d_aabb[3].x - d_aabb[0].x), d_last_y + d_aabb[0].y + (d_aabb[1].y - d_aabb[0].y));
 
@@ -58,10 +60,8 @@ void Region::move(int x, int y)
 
         uprm->move(glm::vec2(delta_x, delta_y));
 
-        set_is_transformed(true);
+        d_is_transformed = true;
     }
-    else
-        set_is_transformed(false);
 }
 
 bool Region::is_transformed() const
