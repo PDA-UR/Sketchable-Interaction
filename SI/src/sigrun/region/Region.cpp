@@ -288,16 +288,25 @@ int Region::handle_collision_event(const std::string &function_name, PySIEffect 
         {
             if (d_py_effect->cap_collision_recv().find(key) != d_py_effect->cap_collision_recv().end())
             {
-                const bp::object &t = colliding_effect.cap_collision_emit()[key][function_name](*d_effect);
-
-                if (t.is_none())
-                    return bp::extract<int>(d_py_effect->cap_collision_recv()[key][function_name]());
-                else
+                if(!colliding_effect.cap_collision_emit()[key][function_name].is_none())
                 {
-                    if (bp::extract<bp::tuple>(t).check())
-                    return bp::extract<int>(d_py_effect->cap_collision_recv()[key][function_name](*t));
+                    const bp::object &t = colliding_effect.cap_collision_emit()[key][function_name](*d_effect);
+
+                    if (t.is_none())
+                    {
+                        if(!d_py_effect->cap_collision_recv()[key][function_name].is_none())
+                            return bp::extract<int>(d_py_effect->cap_collision_recv()[key][function_name]());
+                    }
                     else
-                        return bp::extract<int>(d_py_effect->cap_collision_recv()[key][function_name](t));
+                    {
+                        if(!d_py_effect->cap_collision_recv()[key][function_name].is_none())
+                        {
+                            if (bp::extract<bp::tuple>(t).check())
+                                return bp::extract<int>(d_py_effect->cap_collision_recv()[key][function_name](*t));
+                            else
+                                return bp::extract<int>(d_py_effect->cap_collision_recv()[key][function_name](t));
+                        }
+                    }
                 }
             }
         }

@@ -19,6 +19,7 @@ public:
     ~RegionManager();
 
     void add_region(const std::vector<glm::vec3> &contour, const bp::object &effect, int region_uuid, const bp::dict& kwargs=bp::dict());
+    void delete_region(const std::string& deletion_candidate_uuid);
 
     std::vector<std::shared_ptr<Region>>& regions();
     std::map<std::string, std::vector<glm::vec3>>& partial_regions();

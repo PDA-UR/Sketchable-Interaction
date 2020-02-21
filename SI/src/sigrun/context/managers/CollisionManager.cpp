@@ -29,9 +29,6 @@ void CollisionManager::collide(std::vector<std::shared_ptr<Region>> &regions)
                     {
                         if(are_aabbs_equal(a, b) || collides_with_mask(a, b))
                         {
-                            DEBUG("True: " + a->name() + ", " + b->name());
-                            DEBUG("True: " + std::to_string(are_aabbs_equal(a, b)) + ", " + std::to_string(collides_with_mask(a, b)));
-
                             if(d_collision_map.find(tuple) != d_collision_map.end())
                                 handle_event_continuous(a, b);
                             else
@@ -86,14 +83,14 @@ bool CollisionManager::collides_with_aabb(const std::shared_ptr<Region> &a, cons
     {
         auto p_ = p * a->transform();
 
-        a_aabb.push_back(p_ /= p_.z);
+        a_aabb.emplace_back(p_.x / p_.z, p_.y / p_.z, 1);
     }
 
     for(auto& p: b->aabb())
     {
         auto p_ = p * b->transform();
 
-        b_aabb.push_back(p_ /= p_.z);
+        b_aabb.emplace_back(p_.x / p_.z, p_.y / p_.z, 1);
     }
 
     return a_aabb[0].x < b_aabb[3].x &&

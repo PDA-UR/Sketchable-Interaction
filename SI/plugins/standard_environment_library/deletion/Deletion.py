@@ -12,7 +12,7 @@ class Deletion(PySIEffect.PySIEffect):
         self.source = "libstdSI"
         self.qml_path = "plugins/standard_environment_library/deletion/Deletion.qml"
         self.color = PySIEffect.Color(255, 255, 0, 255)
-
+        self.is_under_user_control = False
 
         self.add_data("img_width", 75, PySIEffect.DataType.INT)
         self.add_data("img_height", 75, PySIEffect.DataType.INT)
@@ -23,12 +23,12 @@ class Deletion(PySIEffect.PySIEffect):
         self.add_data("img_path", "res/deletion.png", PySIEffect.DataType.STRING)
 
         self.cap_emit = PySIEffect.String2_String2FunctionMap_Map({
-            "DELETION": {"on_enter": self.on_deletion_enter_emit, "on_continuous": self.on_deletion_continuous_emit, "on_leave": self.on_deletion_leave_emit}
+            "DELETION": {"on_enter": self.on_deletion_enter_emit, "on_continuous": None, "on_leave": None}
         })
 
         self.cap_recv = PySIEffect.String2_String2FunctionMap_Map({
             "MOVE": {"on_enter": self.on_move_enter_recv, "on_continuous": self.on_move_continuous_recv, "on_leave": self.on_move_leave_recv},
-            # "DELETION": {"on_enter": self.on_deletion_enter_recv, "on_continuous": self.on_deletion_continuous_recv, "on_leave": self.on_deletion_leave_recv}
+            "DELETION": {"on_enter": None, "on_continuous": None, "on_leave": None}
         })
 
         self.cap_link_recv = PySIEffect.String2_String2FunctionMap_Map({
@@ -45,6 +45,7 @@ class Deletion(PySIEffect.PySIEffect):
 
     def on_move_enter_recv(self, cursor_id, link_attrib):
         self.link_relations.append([cursor_id, link_attrib, self._uuid, link_attrib])
+        self.is_under_user_control = True
 
         return 0
 
@@ -57,13 +58,13 @@ class Deletion(PySIEffect.PySIEffect):
         if lr in self.link_relations:
             del self.link_relations[self.link_relations.index(lr)]
 
+        self.is_under_user_control = False
+
         return 0
 
     def on_deletion_enter_emit(self, other):
-        print("emit delete of", self.name, "enter")
-
-    def on_deletion_continuous_emit(self, other):
-        print("emit delete of", self.name, "continuous")
-
-    def on_deletion_leave_emit(self, other):
-        print("emit delete of", self.name, "leave")
+        if other.region_type is int(PySIEffect.EffectType.SI_DELETION):
+            if self.is_under_user_control:
+                other.signal_deletion()
+        else:
+            other.signal_deletion()

@@ -19,6 +19,17 @@ void PySIEffect::init(const std::vector<glm::vec3>& contour, const std::vector<g
     d_aabb.reserve(4);
 }
 
+void PySIEffect::signal_deletion()
+{
+    d_flagged_for_deletion = true;
+}
+
+bool PySIEffect::is_flagged_for_deletion()
+{
+    return d_flagged_for_deletion;
+}
+
+
 // has to be set to false from elsewhere (happens in Region.cpp, where value is used
 void PySIEffect::notify_shape_changed()
 {
@@ -260,6 +271,7 @@ BOOST_PYTHON_MODULE(libPySI)
         .def("__init__", bp::make_constructor(&PySIEffect::init, bp::default_call_policies(), (bp::arg("shape")=std::vector<glm::vec3>(), bp::arg("aabb")=std::vector<glm::vec3>(), bp::arg("uuid")=std::string(), bp::arg("kwargs")=bp::dict())))
         .def("add_data", &PySIEffect::__add_data__)
         .def("notify_shape_changed", &PySIEffect::notify_shape_changed)
+        .def("signal_deletion", &PySIEffect::signal_deletion)
 
         .def_readwrite("__partial_regions__", &PySIEffect::d_partial_regions)
         .def_readwrite("cap_emit", &PySIEffect::d_cap_collision_emit)

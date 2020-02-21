@@ -24,7 +24,7 @@ class Tag(PySIEffect.PySIEffect):
         self.cap_emit = PySIEffect.String2_String2FunctionMap_Map()
         self.cap_recv = PySIEffect.String2_String2FunctionMap_Map({
             "MOVE": {"on_enter": self.on_move_enter_recv, "on_continuous": self.on_move_continuous_recv, "on_leave": self.on_move_leave_recv},
-            "DELETION": {"on_enter": self.on_deletion_enter_recv, "on_continuous": self.on_deletion_continuous_recv, "on_leave": self.on_deletion_leave_recv}
+            "DELETION": {"on_enter": None, "on_continuous": None, "on_leave": None}
         })
 
         self.cap_link_recv = PySIEffect.String2_String2FunctionMap_Map({
@@ -56,13 +56,10 @@ class Tag(PySIEffect.PySIEffect):
         return 0
 
     def on_deletion_enter_recv(self):
-        print("delete of", self.name, "enter")
         return 0
 
     def on_deletion_continuous_recv(self):
-        print("delete of", self.name, "continuous")
         return 0
 
     def on_deletion_leave_recv(self):
-        print("delete of", self.name, "leave")
         return 0
