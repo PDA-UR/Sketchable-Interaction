@@ -41,6 +41,7 @@ public:
     void register_new_region(const std::vector<glm::vec3>& contour, const std::string& uuid);
     void update_linking_relations(const std::vector<LinkRelation>& relations, const std::string& source);
     void remove_all_source_linking_relations(const std::string& source);
+//    void show_folder_contents(const std::vector<std::string>& children_paths, int count_per_page, const std::string& uuid);
 
 private:
     static Context* self;

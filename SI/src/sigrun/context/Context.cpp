@@ -50,7 +50,22 @@ void Context::add_startup_regions(const std::unordered_map<std::string, std::uni
                     case SI_TYPE_MOUSE_CURSOR:
                         add_cursor_regions(value);
                         break;
+                    case SI_TYPE_BUTTON:
+                    {
+                        int btn_width = bp::extract<int>(value->attr("width"));
+                        int btn_height = bp::extract<int>(value->attr("height"));
 
+                        std::vector<glm::vec3> btn_contour{glm::vec3(0, 0, 1),
+                                                           glm::vec3(0, btn_height, 1),
+                                                           glm::vec3(btn_width, btn_height, 1),
+                                                           glm::vec3(btn_width, 0, 1)};
+                        bp::dict kwargs;
+
+                        uprm->add_region(btn_contour, *value, 0, kwargs);
+
+
+                    }
+                    break;
                     default:
                     {
                         const std::string& name = bp::extract<std::string>(value->attr("__class__").attr("__name__"));
@@ -323,3 +338,8 @@ void Context::create_linking_relations(const std::vector<LinkRelation> &relation
         }
     }
 }
+
+//void Context::show_folder_contents(const std::vector<std::string>& children_paths, int count_per_page, const std::string& uuid)
+//{
+//
+//}
