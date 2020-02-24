@@ -146,6 +146,20 @@ void RegionManager::toggle_mouse_region_wheel_scrolled(float angle_px, float ang
     }
 }
 
+bool RegionManager::update_region_deletions(int deletion_index)
+{
+    if(d_regions[deletion_index]->effect().is_flagged_for_deletion())
+    {
+        Context::SIContext()->remove_all_source_linking_relations(d_regions[deletion_index]->uuid());
+        d_regions.erase(d_regions.begin() + deletion_index);
+
+        return true;
+    }
+
+    return false;
+}
+
+
 void RegionManager::update()
 {
     update_via_mouse_input();
@@ -156,12 +170,8 @@ void RegionManager::update()
 
     for(int i = size - 1; i > -1; --i)
     {
-        if(d_regions[i]->effect().is_flagged_for_deletion())
-        {
-            Context::SIContext()->remove_all_source_linking_relations(d_regions[i]->uuid());
-            d_regions.erase(d_regions.begin() + i);
+        if(update_region_deletions(i))
             continue;
-        }
 
         d_regions[i]->update();
     }

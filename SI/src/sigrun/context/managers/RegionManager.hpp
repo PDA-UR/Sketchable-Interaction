@@ -34,6 +34,8 @@ private:
 
     void update_via_mouse_input();
 
+    bool update_region_deletions(int deletion_index);
+
     void activate_mouse_region_button_down(int mouse_btn);
     void deactivate_mouse_region_button_down(int mouse_btn);
 

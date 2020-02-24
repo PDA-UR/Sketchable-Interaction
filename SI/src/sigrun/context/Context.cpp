@@ -93,6 +93,8 @@ void Context::add_cursor_regions(const std::unique_ptr<bp::object>& cursor_effec
     uprm->add_region(mouse_contour, *cursor_effect, 0, bp::dict());
     uplm->add_link_to_object(uprm->regions().back(), ExternalObject::ExternalObjectType::MOUSE);
     d_mouse_uuid = uprm->regions().back()->uuid();
+
+    INFO("Plugin available for drawing");
 }
 
 void Context::add_directory_region(const std::unique_ptr<bp::object>& directory_effect)
@@ -138,8 +140,6 @@ void Context::begin(const std::unordered_map<std::string, std::unique_ptr<bp::ob
         d_ire->start(s_width, s_height);
 
         add_startup_regions(plugins);
-
-        INFO("Plugins available for drawing: " + std::to_string(d_available_plugins.size()));
 
         if(!d_available_plugins.empty())
         {
