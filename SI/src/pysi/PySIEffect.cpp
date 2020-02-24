@@ -3,6 +3,7 @@
 #include <sigrun/context/Capability.hpp>
 #include "pysi/stl_container_exposure/MapExposure.hpp"
 #include "pysi/stl_container_exposure/VectorExposure.hpp"
+#include <sigrun/context/Context.hpp>
 
 namespace bp = boost::python;
 
@@ -217,6 +218,11 @@ const bool PySIEffect::has_data_changed() const
     return d_data_changed;
 }
 
+void PySIEffect::__show_folder_contents__(const std::vector<std::string>& page_contents, const std::string& uuid)
+{
+//    Context::SIContext()->spawn_folder_contents_as_regions(page_contents, uuid);
+}
+
 BOOST_PYTHON_MODULE(libPySI)
 {
     bp::class_<Capability>("PySICapability")
@@ -272,6 +278,7 @@ BOOST_PYTHON_MODULE(libPySI)
         .def("add_data", &PySIEffect::__add_data__)
         .def("notify_shape_changed", &PySIEffect::notify_shape_changed)
         .def("signal_deletion", &PySIEffect::signal_deletion)
+        .def("show_folder_contents_page", &PySIEffect::__show_folder_contents__)
 
         .def_readwrite("__partial_regions__", &PySIEffect::d_partial_regions)
         .def_readwrite("cap_emit", &PySIEffect::d_cap_collision_emit)
@@ -323,6 +330,7 @@ BOOST_PYTHON_MODULE(libPySI)
         .value("SI_IMAGE_FILE", SI_TYPE_IMAGE_FILE)
         .value("SI_UNKNOWN_FILE", SI_TYPE_UNKNOWN_FILE)
         .value("SI_DELETION", SI_TYPE_DELETION)
+        .value("SI_BUTTON", SI_TYPE_BUTTON)
         .value("SI_CUSTOM", SI_TYPE_CUSTOM)
 
         .export_values()

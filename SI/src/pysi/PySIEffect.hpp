@@ -47,6 +47,7 @@ public:
     void init(const std::vector<glm::vec3>& contour, const std::vector<glm::vec3>& aabb, const std::string& uuid, const bp::dict& kwargs);
     void __add_data__(const std::string& key, const bp::object& value, const int type);
     void notify_shape_changed();
+    void __show_folder_contents__(const std::vector<std::string>& page_contents, const std::string& uuid);
 
     void __spawn_region__(const std::vector<glm::vec3>& contour, int type);
     void signal_deletion();
