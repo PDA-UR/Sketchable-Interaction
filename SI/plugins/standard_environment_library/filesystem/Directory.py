@@ -11,7 +11,7 @@ class Directory(PySIEffect.PySIEffect):
         self.name = "stdSIDir"
         self.region_type = PySIEffect.EffectType.SI_DIRECTORY
         self.source = "libstdSI"
-        self.qml_path = "plugins/standard_environment_library/dir/Directory.qml"
+        self.qml_path = "plugins/standard_environment_library/filesystem/Directory.qml"
         self.color = PySIEffect.Color(0, 0, 0, 0)
         self.icon_width = 65
         self.icon_height = 75

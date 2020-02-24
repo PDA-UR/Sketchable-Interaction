@@ -247,6 +247,6 @@ SI-Doc/targeted_users
 SI-Doc/si/html
 SI-Doc/si/latex
 
-SI/plugins/standard_environment_library/dir/__pycache__/
+SI/plugins/standard_environment_library/filesystem/__pycache__/
 
 SI/plugins/standard_environment_library/deletion/__pycache__/

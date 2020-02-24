@@ -12,6 +12,7 @@ class Tag(PySIEffect.PySIEffect):
         self.source = "libstdSI"
         self.qml_path = "plugins/standard_environment_library/tag/Tag.qml"
         self.color = PySIEffect.Color(255, 0, 0, 255)
+        self.is_under_user_control = False
 
         self.add_data("img_width", 75, PySIEffect.DataType.INT)
         self.add_data("img_height", 75, PySIEffect.DataType.INT)
@@ -41,6 +42,7 @@ class Tag(PySIEffect.PySIEffect):
 
     def on_move_enter_recv(self, cursor_id, link_attrib):
         self.link_relations.append([cursor_id, link_attrib, self._uuid, link_attrib])
+        self.is_under_user_control = True
 
         return 0
 
@@ -52,6 +54,8 @@ class Tag(PySIEffect.PySIEffect):
 
         if lr in self.link_relations:
             del self.link_relations[self.link_relations.index(lr)]
+
+        self.is_under_user_control = False
 
         return 0
 
