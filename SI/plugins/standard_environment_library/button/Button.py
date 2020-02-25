@@ -13,7 +13,7 @@ class Button(PySIEffect.PySIEffect):
         self.qml_path = "plugins/standard_environment_library/button/Button.qml"
         self.color = PySIEffect.Color(192, 192, 192, 255)
 
-        self.data = kwargs
+        self.value = kwargs["value"] if len(kwargs) else True
 
         self.is_triggered = False
 
@@ -51,13 +51,13 @@ class Button(PySIEffect.PySIEffect):
         return self.is_triggered
 
     def on_btn_press_enter_emit(self, other):
-        return self.is_triggered
+        return self.is_triggered, self.value
 
     def on_btn_press_continuous_emit(self, other):
-        return self.is_triggered
+        return self.is_triggered, self.value
 
     def on_btn_press_leave_emit(self, other):
-        return self.is_triggered
+        return self.is_triggered, self.value
 
     def on_click_enter_recv(self):
         self.is_triggered = True

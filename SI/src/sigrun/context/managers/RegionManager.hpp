@@ -9,6 +9,8 @@
 #include <sigrun/region/Region.hpp>
 #include <sigrun/context/managers/RegionManager.hpp>
 #include "../../SIObject.hpp"
+#include <cstdarg>
+#include <sigrun/context/managers/helpers/linking/Link.hpp>
 
 namespace bp = boost::python;
 
@@ -18,6 +20,7 @@ public:
     RegionManager();
     ~RegionManager();
 
+    void query_region_insertion(const std::vector<glm::vec3> &contour, const bp::object& effect, std::shared_ptr<Region>& parent, const bp::dict& kwargs=bp::dict(), const std::string& attrib_sender="", const std::string& attrib_recv="");
     void add_region(const std::vector<glm::vec3> &contour, const bp::object &effect, int region_uuid, const bp::dict& kwargs=bp::dict());
     void delete_region(const std::string& deletion_candidate_uuid);
 
@@ -42,6 +45,8 @@ private:
     void toggle_mouse_region_wheel_scrolled(float angle_px, float angle_degrees);
 
     friend class SIGRunRegionManagerTest;
+
+    std::vector<std::tuple<std::vector<glm::vec3>, bp::object, bp::dict, std::shared_ptr<Region>, std::string, std::string>> d_region_insertion_queries;
 };
 
 

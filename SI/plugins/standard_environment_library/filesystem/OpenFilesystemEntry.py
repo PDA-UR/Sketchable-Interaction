@@ -1,16 +1,18 @@
 from libPySI import PySIEffect, PySICapability
 
 
-class OpenFile(PySIEffect.PySIEffect):
+class OpenFilesystemEntry(PySIEffect.PySIEffect):
     def __init__(self, shape=PySIEffect.PointVector(), aabb=PySIEffect.PointVector(), uuid="", kwargs={}):
-        super(OpenFile, self).__init__()
+        super(OpenFilesystemEntry, self).__init__()
 
-        self.name = ""
+        self.name = "stdOFSE"
         self.region_type = PySIEffect.EffectType.SI_CUSTOM
-        self.source = ""
-        self.qml_path = ""
+        self.source = "libstdSI"
+        self.qml_path = "plugins/standard_environment_library/filesystem/OpenFilesystemEntry.qml"
 
-        self.cap_emit = PySIEffect.String2_String2FunctionMap_Map()
+        self.cap_emit = PySIEffect.String2_String2FunctionMap_Map({
+            "OPEN_ENTRY": {"on_enter": self.on_open_entry_enter_emit, "on_continuous": None, "on_leave": self.on_open_entry_enter_leave}
+        })
 
         self.cap_recv = PySIEffect.String2_String2FunctionMap_Map({
             "MOVE": {"on_enter": self.on_move_enter_recv, "on_continuous": self.on_move_continuous_recv,
@@ -42,3 +44,9 @@ class OpenFile(PySIEffect.PySIEffect):
 
         if lr in self.link_relations:
             del self.link_relations[self.link_relations.index(lr)]
+
+    def on_open_entry_enter_emit(self, other):
+        print("open")
+
+    def on_open_entry_enter_leave(self, other):
+        print("close")

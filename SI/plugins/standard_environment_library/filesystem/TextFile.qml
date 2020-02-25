@@ -1,3 +1,6 @@
+import QtQuick 2.7
+import QtQuick.Controls 2.7
+
 Item
 {
     id: container
@@ -34,18 +37,14 @@ Item
         target: Region
 
         onDataChanged: {
-            container.visible = data.is_visible;
-
             image.width = data.icon_width;
             image.height = data.icon_height;
             image.anchors.leftMargin = image.width / 2;
 
             image.source = data.img_path;
-            image.visible = data.is_icon_visible;
 
-            directoryname.color = data.color;
-            directoryname.text = data.name;
-            directoryname.visible = data.is_text_visible;
+            filename.color = data.color;
+            filename.text = data.name;
         }
     }
 }

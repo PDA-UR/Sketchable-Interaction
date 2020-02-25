@@ -50,7 +50,7 @@ Item
 
                 width: 400
                 fontSizeMode: Text.Fit
-                minimumPixelSize: 20
+                minimumPixelSize: 16
                 font.pixelSize: 72
                 color: "white"
                 anchors.top: parent.top
@@ -65,7 +65,7 @@ Item
 
                 fontSizeMode: Text.Fit
                 minimumPixelSize: 16
-                font.pixelSize: 72
+                font.pixelSize: 48
                 color: "white"
                 width: 150
                 anchors.top: openenddirectoryname.top
@@ -90,15 +90,17 @@ Item
             image.anchors.leftMargin = image.width / 2;
 
             image.source = data.img_path;
-            image.visible = data.is_icon_visible;
+
+            openedcontainer.visible = data.is_opened_visible
+            iconcontainer.visible = data.is_icon_visible
+
+            container.width = data.container_width
+            container.height = data.container_height
 
             icondirectoryname.color = data.color;
             icondirectoryname.text = data.name;
-            openenddirectoryname.text = data.name;
+            openenddirectoryname.text = data.fullname;
             opendirectorypagecount.text = data.page_name;
-            openenddirectoryname.color = data.color;
-            opendirectorypagecount.color = data.color;
-            icondirectoryname.visible = data.is_text_visible;
         }
     }
 }

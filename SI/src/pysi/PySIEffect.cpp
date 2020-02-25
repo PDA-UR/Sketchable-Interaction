@@ -220,7 +220,7 @@ const bool PySIEffect::has_data_changed() const
 
 void PySIEffect::__show_folder_contents__(const std::vector<std::string>& page_contents, const std::string& uuid)
 {
-//    Context::SIContext()->spawn_folder_contents_as_regions(page_contents, uuid);
+    Context::SIContext()->spawn_folder_contents_as_regions(page_contents, uuid);
 }
 
 BOOST_PYTHON_MODULE(libPySI)
