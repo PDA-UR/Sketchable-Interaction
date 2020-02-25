@@ -62,6 +62,7 @@ private:
 
     std::string d_mouse_uuid;
     std::string d_canvas_uuid;
+    std::string d_notification_uuid;
 
     std::unique_ptr<Capability> upcm;
     std::unique_ptr<RegionManager> uprm;

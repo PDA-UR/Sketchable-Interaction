@@ -331,6 +331,7 @@ BOOST_PYTHON_MODULE(libPySI)
         .value("SI_UNKNOWN_FILE", SI_TYPE_UNKNOWN_FILE)
         .value("SI_DELETION", SI_TYPE_DELETION)
         .value("SI_BUTTON", SI_TYPE_BUTTON)
+        .value("SI_NOTIFICATION", SI_TYPE_NOTIFICATION)
         .value("SI_CUSTOM", SI_TYPE_CUSTOM)
 
         .export_values()

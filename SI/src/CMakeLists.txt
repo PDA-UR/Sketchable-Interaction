@@ -88,8 +88,6 @@ set(SIGRunSRC
         SI/src/sigrun/concurrency/StoppableTask.hpp
         SI/src/sigrun/context/managers/LinkingManager.cpp
         SI/src/sigrun/context/managers/LinkingManager.hpp
-        SI/src/sigrun/concurrency/RenderWorker.cpp
-        SI/src/sigrun/concurrency/RenderWorker.hpp
         SI/src/sigrun/context/managers/helpers/linking/Link.cpp
         SI/src/sigrun/context/managers/helpers/linking/Link.hpp
         SI/src/sigrun/context/managers/helpers/linking/LinkingGraph.cpp
