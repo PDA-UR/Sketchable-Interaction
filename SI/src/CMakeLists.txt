@@ -53,7 +53,6 @@ target_precompile_headers(PySI
         )
 
 # SI RUNTIME LIBRARY
-
 set(SIGRunSRC
         SI/src/SIGRun.cpp
         SI/src/SIGRun.hpp

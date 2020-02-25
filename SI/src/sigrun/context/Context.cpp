@@ -38,38 +38,20 @@ void Context::add_startup_regions(const std::unordered_map<std::string, std::uni
     {
         if(!value->is_none())
         {
+            const std::string& name = bp::extract<std::string>(value->attr("__class__").attr("__name__"));
+            DEBUG(name);
+
             HANDLE_PYTHON_CALL(
                 switch (bp::extract<int>(value->attr("region_type")))
                 {
-                    case SI_TYPE_CANVAS:
-                    case SI_TYPE_TEXT_FILE:
-                    case SI_TYPE_IMAGE_FILE: break;
-                    case SI_TYPE_DIRECTORY:
-                        add_directory_region(value);
-                        break;
+                    case SI_TYPE_CANVAS: break;
                     case SI_TYPE_MOUSE_CURSOR:
                         add_cursor_regions(value);
                         break;
-                    case SI_TYPE_BUTTON:
-                    {
-                        int btn_width = bp::extract<int>(value->attr("width"));
-                        int btn_height = bp::extract<int>(value->attr("height"));
-
-                        std::vector<glm::vec3> btn_contour{glm::vec3(0, 0, 1),
-                                                           glm::vec3(0, btn_height, 1),
-                                                           glm::vec3(btn_width, btn_height, 1),
-                                                           glm::vec3(btn_width, 0, 1)};
-                        bp::dict kwargs;
-
-                        uprm->add_region(btn_contour, *value, 0, kwargs);
-
-
-                    }
-                    break;
+                    case SI_TYPE_DIRECTORY:
+                        add_directory_region(value);
                     default:
                     {
-                        const std::string& name = bp::extract<std::string>(value->attr("__class__").attr("__name__"));
-
                         d_available_plugins[name] = *value;
                     }
                         break;
@@ -165,11 +147,6 @@ void Context::begin(const std::unordered_map<std::string, std::unique_ptr<bp::ob
             DEBUG("Mouse Cursor: " + d_mouse_uuid + " set to " + selected);
         }
 
-        for(auto& [key, value]: d_available_plugins)
-        {
-            DEBUG(key);
-        }
-
         d_app.exec();
         INFO("QT5 Application terminated!");
     }
@@ -199,6 +176,11 @@ InputManager* Context::input_manager()
 CollisionManager *Context::collision_manager()
 {
     return uprcm.get();
+}
+
+LinkingManager* Context::linking_manager()
+{
+    return uplm.get();
 }
 
 Context* Context::SIContext()
@@ -257,7 +239,11 @@ void Context::disable(int what)
 
 void Context::register_new_region(const std::vector<glm::vec3>& contour, const std::string& uuid)
 {
-    uprm->add_region(contour, d_selected_effects_by_id[uuid], 0, bp::dict());
+    if(contour.size() > 20)
+    {
+        std::shared_ptr<Region> t(nullptr);
+        uprm->query_region_insertion(contour, d_selected_effects_by_id[uuid], t);
+    }
 }
 
 void Context::update_linking_relations(const std::vector<LinkRelation>& relations, const std::string& source)
@@ -339,7 +325,112 @@ void Context::create_linking_relations(const std::vector<LinkRelation> &relation
     }
 }
 
-//void Context::show_folder_contents(const std::vector<std::string>& children_paths, int count_per_page, const std::string& uuid)
-//{
-//
-//}
+void Context::spawn_folder_contents_as_regions(const std::vector<std::string>& children_paths, const std::string& uuid)
+{
+    for(auto& r: uprm->regions())
+    {
+        if (r->uuid() == uuid)
+        {
+            glm::vec3 tlc = r->aabb()[0] * r->transform();
+            glm::vec3 brc = r->aabb()[2] * r->transform();
+            tlc /= tlc.z;
+            brc /= brc.z;
+
+            int num_items = children_paths.size();
+
+            const int& dir_x = tlc.x;
+            const int& dir_y = tlc.y;
+            const int& dir_width = r->width();
+            const int& dir_height = r->height();
+
+            for(auto& [key, value]: d_available_plugins)
+            {
+                if (!value.is_none())
+                {
+                    switch (bp::extract<int>(value.attr("region_type")))
+                    {
+                        case SI_TYPE_BUTTON:
+                        {
+                            int btn_width = bp::extract<int>(value.attr("width"));
+                            int btn_height = bp::extract<int>(value.attr("height"));
+
+                            std::vector<glm::vec3> btn_contour{glm::vec3(brc.x - btn_width, brc.y - btn_height, 1),
+                                                               glm::vec3(brc.x - btn_width, brc.y, 1),
+                                                               glm::vec3(brc.x, brc.y, 1),
+                                                               glm::vec3(brc.x, brc.y - btn_height, 1)};
+                            bp::dict kwargs;
+                            kwargs["value"] = false;
+
+                            uprm->query_region_insertion(btn_contour, value, r, kwargs, std::string("__position__"),
+                                                         std::string(
+                                                                 "__position__")); // cannot link what does not exist though
+
+                            std::vector<glm::vec3> btn_contour2{glm::vec3(0, brc.y - btn_height, 1),
+                                                                glm::vec3(0, brc.y, 1),
+                                                                glm::vec3(btn_width, brc.y, 1),
+                                                                glm::vec3(btn_width, brc.y - btn_height, 1)};
+                            bp::dict kwargs2;
+                            kwargs2["value"] = true;
+
+                            uprm->query_region_insertion(btn_contour2, value, r, kwargs2, std::string("__position__"),std::string("__position__"));
+                        }
+                    }
+                }
+            }
+
+            int width_directory = 130;
+            int height_directory = 125;
+
+            int x_offset = 25;
+            int y_offset = 125;
+
+            int i = 0;
+            int y = -1;
+            int x = 1;
+
+            for(auto& child_path: children_paths)
+            {
+                if(!(i & 1))
+                {
+                    --x;
+                    ++y;
+                }
+                else
+                    ++x;
+
+                std::vector<glm::vec3> contour {glm::vec3(dir_x + x_offset + x * width_directory, dir_y + y_offset + y * height_directory, 1),
+                                                glm::vec3(dir_x + x_offset + x * width_directory, dir_y + y_offset + y * height_directory + height_directory + 35, 1),
+                                                glm::vec3(dir_x + dir_width + x * width_directory + width_directory, dir_y + y_offset + y * height_directory + height_directory + 35, 1),
+                                                glm::vec3(dir_x + dir_width + x * width_directory + width_directory, dir_y + y_offset + y * height_directory, 1) };
+
+                switch (upfs->entry_type(child_path))
+                {
+                    case SI_TYPE_DIRECTORY:
+                    {
+                        bp::object value = d_available_plugins["Directory"];
+
+                        bp::dict kwargs;
+                        kwargs["cwd"] = child_path;
+                        kwargs["children"] = upfs->cwd_contents_paths(child_path);
+
+                        uprm->query_region_insertion(contour, value, r, kwargs, std::string("__position__"), std::string("__position__"));
+                    }
+                    break;
+                    case SI_TYPE_IMAGE_FILE:
+                    case SI_TYPE_TEXT_FILE:
+                    case SI_TYPE_UNKNOWN_FILE:
+                    {
+                        bp::object value = d_available_plugins["TextFile"];
+
+                        bp::dict kwargs;
+                        kwargs["cwd"] = child_path;
+                        uprm->query_region_insertion(contour, value, r, kwargs, std::string("__position__"), std::string("__position__"));
+                    }
+                    break;
+                }
+
+                ++i;
+            }
+        }
+    }
+}

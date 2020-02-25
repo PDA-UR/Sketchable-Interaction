@@ -1,12 +1,14 @@
 from libPySI import PySIEffect, PySICapability
-import File
+
 
 class ImageFile(PySIEffect.PySIEffect):
     def __init__(self, shape=PySIEffect.PointVector(), aabb=PySIEffect.PointVector(), uuid="", kwargs={}):
         super(ImageFile, self).__init__()
-
+        self.shape = shape
+        self.aabb = aabb
+        self._uuid = uuid
         self.name = ""
-        self.region_type = PySIEffect.EffectType.SI_CUSTOM
+        self.region_type = PySIEffect.EffectType.SI_IMAGE_FILE
         self.source = ""
         self.qml_path = ""
 
