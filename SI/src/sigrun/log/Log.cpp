@@ -10,6 +10,7 @@ std::string Log::log_file_path = Log::PATH_DEFAULT;
 bool Log::__DEBUG__ = false;
 int Log::SHOW = -1;
 int Log::WHERE = 0;
+std::vector<std::string> Log::QUENCHED = std::vector<std::string>();
 
 /**
 \brief central logging function outputting log messages according to its params
@@ -45,6 +46,12 @@ void Log::log(const std::string& origin, const std::string &what, int level, con
 
     if (level & Log::SHOW)
     {
+        for(auto& s: QUENCHED)
+        {
+            if(type.find(s) != std::string::npos)
+                return;
+        }
+
         std::string message =
                 origin + "\t" + Log::time() + "\t" + Log::log_level(level) + " [" + type + "] " + what + ".\t" + file +
                 "\t" + func + "\t" + line;
@@ -157,4 +164,17 @@ std::string Log::time()
               << std::setfill('0') << std::setw(3) << milliseconds;
 
     return oss.str();
+}
+
+void Log::quench(const std::string& target)
+{
+    QUENCHED.push_back(target);
+}
+
+void Log::unquench(const std::string& target)
+{
+    auto it = std::find(QUENCHED.begin(), QUENCHED.end(), target);
+
+    if(it != QUENCHED.end())
+        QUENCHED.erase(it);
 }

@@ -12,7 +12,7 @@ class Directory(PySIEffect.PySIEffect):
         self.region_type = PySIEffect.EffectType.SI_DIRECTORY
         self.source = "libstdSI"
         self.qml_path = "plugins/standard_environment_library/filesystem/Directory.qml"
-        self.color = PySIEffect.Color(25, 0, 0, 0)
+        self.color = PySIEffect.Color(25, 0, 0, 255)
         self.icon_width = 65
         self.icon_height = 75
         self.text_height = 50
@@ -107,18 +107,20 @@ class Directory(PySIEffect.PySIEffect):
         return 0
 
     def on_move_enter_recv(self, cursor_id, link_attrib):
-        self.link_relations.append([cursor_id, link_attrib, self._uuid, link_attrib])
+        if cursor_id is not "" and link_attrib is not "":
+            self.link_relations.append([cursor_id, link_attrib, self._uuid, link_attrib])
 
         return 0
 
     def on_move_continuous_recv(self):
-        return 0
+           return 0
 
     def on_move_leave_recv(self, cursor_id, link_attrib):
-        lr = PySIEffect.LinkRelation(cursor_id, link_attrib, self._uuid, link_attrib)
+        if cursor_id is not "" and link_attrib is not "":
+            lr = PySIEffect.LinkRelation(cursor_id, link_attrib, self._uuid, link_attrib)
 
-        if lr in self.link_relations:
-            del self.link_relations[self.link_relations.index(lr)]
+            if lr in self.link_relations:
+                del self.link_relations[self.link_relations.index(lr)]
 
         return 0
 
@@ -126,8 +128,13 @@ class Directory(PySIEffect.PySIEffect):
         return 0
 
     def on_btn_press_continuous_recv(self, triggered, value):
-        if triggered and not self.last_triggered:
+        if triggered and not self.last_triggered and self.is_opened_visible:
             self.set_folder_contents_page(value)
+
+            # for child in self.children:
+            #     child.signal_deletion()
+
+            # self.show_folder_contents_page(self.browse_pages[self.current_page], self._uuid)
 
             self.add_data("page_name", str(self.current_page + 1) + " / " + str(len(self.browse_pages)), PySIEffect.DataType.STRING)
             self.last_triggered = True
@@ -153,7 +160,7 @@ class Directory(PySIEffect.PySIEffect):
             self.is_icon_visible = False
             self.is_opened_visible = True
 
-            self.color = PySIEffect.Color(255, 0, 0, 255)
+            self.color = PySIEffect.Color(10, 0, 0, 255)
             self.add_data("container_width", self.width, PySIEffect.DataType.INT)
             self.add_data("container_height", self.height, PySIEffect.DataType.INT)
             self.add_data("is_icon_visible", self.is_icon_visible, PySIEffect.DataType.BOOL)
@@ -179,7 +186,7 @@ class Directory(PySIEffect.PySIEffect):
 
             self.is_icon_visible = True
             self.is_opened_visible = False
-            self.color = PySIEffect.Color(10, 0, 0, 0)
+            self.color = PySIEffect.Color(25, 0, 0, 255)
             self.add_data("container_width", self.width, PySIEffect.DataType.INT)
             self.add_data("container_height", self.height, PySIEffect.DataType.INT)
             self.add_data("is_icon_visible", self.is_icon_visible, PySIEffect.DataType.BOOL)
