@@ -16,10 +16,12 @@ class TextFile(PySIEffect.PySIEffect):
         self.icon_width = 65
         self.icon_height = 75
         self.text_height = 50
-        self.color = PySIEffect.Color(0, 10, 0, 255)
+        self.color = PySIEffect.Color(0, 10, 0, 0)
         self.text_color = "#FFFFFFFF"
         self.path = kwargs["cwd"] if len(kwargs.keys()) else ""
+        self.is_child = bool(kwargs["is_child"]) if len(kwargs.keys()) else False
         self.filename = ""
+        self.is_open_entry_capability_blocked = False
 
         if self.path is not "":
             self.filename = self.path[self.path.rfind("/") + 1:]
@@ -35,7 +37,7 @@ class TextFile(PySIEffect.PySIEffect):
         self.cap_emit = PySIEffect.String2_String2FunctionMap_Map()
 
         self.cap_recv = PySIEffect.String2_String2FunctionMap_Map({
-
+            "OPEN_ENTRY": {"on_enter": self.on_open_entry_enter_recv, "on_continuous": None, "on_leave": self.on_open_entry_leave_recv}
         })
 
         self.cap_link_emit = PySIEffect.String2FunctionMap()
@@ -63,3 +65,11 @@ class TextFile(PySIEffect.PySIEffect):
 
         if lr in self.link_relations:
             del self.link_relations[self.link_relations.index(lr)]
+
+        return 0
+
+    def on_open_entry_enter_recv(self):
+        return 0
+
+    def on_open_entry_leave_recv(self):
+        return 0

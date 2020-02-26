@@ -155,7 +155,7 @@ bool RegionManager::update_region_deletions(int deletion_index)
 {
     if(d_regions[deletion_index]->effect().is_flagged_for_deletion())
     {
-        Context::SIContext()->remove_all_source_linking_relations(d_regions[deletion_index]->uuid());
+        Context::SIContext()->remove_all_partaking_linking_relations(d_regions[deletion_index]->uuid());
         d_regions.erase(d_regions.begin() + deletion_index);
 
         return true;
@@ -188,7 +188,11 @@ void RegionManager::update()
         auto region = d_regions.end() - d_region_insertion_queries.size() + i;
 
         if(std::get<3>(query).get())
+        {
+            std::get<3>(query)->raw_effect().attr("children").attr("append")((*region)->raw_effect());
+
             Context::SIContext()->linking_manager()->add_link(std::get<3>(query), std::get<4>(query), *region, std::get<5>(query), ILink::LINK_TYPE::UD);
+        }
     }
 
     d_region_insertion_queries.clear();

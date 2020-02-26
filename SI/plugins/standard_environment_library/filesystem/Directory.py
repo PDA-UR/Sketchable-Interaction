@@ -12,7 +12,7 @@ class Directory(PySIEffect.PySIEffect):
         self.region_type = PySIEffect.EffectType.SI_DIRECTORY
         self.source = "libstdSI"
         self.qml_path = "plugins/standard_environment_library/filesystem/Directory.qml"
-        self.color = PySIEffect.Color(10, 0, 0, 0)
+        self.color = PySIEffect.Color(25, 0, 0, 0)
         self.icon_width = 65
         self.icon_height = 75
         self.text_height = 50
@@ -24,6 +24,11 @@ class Directory(PySIEffect.PySIEffect):
         self.text_color ="#FFFFFFFF"
         self.path = kwargs["cwd"] if len(kwargs.keys()) else ""
         self.children_paths = list(kwargs["children"]) if len(kwargs.keys()) else []
+        self.is_child = bool(kwargs["is_child"]) if len(kwargs.keys()) else False
+        self.children = []
+
+        self.is_open_entry_capability_blocked = False
+
         self.children_paths.sort()
         self.current_page = 0
         self.width = self.icon_width * 2
@@ -65,7 +70,8 @@ class Directory(PySIEffect.PySIEffect):
 
         self.cap_recv = PySIEffect.String2_String2FunctionMap_Map({
             "MOVE": {"on_enter": self.on_move_enter_recv, "on_continuous": self.on_move_continuous_recv, "on_leave": self.on_move_leave_recv},
-            "BTN_PRESS": {"on_enter": self.on_btn_press_enter_recv, "on_continuous": self.on_btn_press_continuous_recv, "on_leave": self.on_btn_press_leave_recv}
+            "BTN_PRESS": {"on_enter": self.on_btn_press_enter_recv, "on_continuous": self.on_btn_press_continuous_recv, "on_leave": self.on_btn_press_leave_recv},
+            "OPEN_ENTRY": {"on_enter": self.on_open_entry_enter_recv, "on_continuous": None, "on_leave": self.on_open_entry_leave_recv}
         })
 
         self.cap_link_emit = PySIEffect.String2FunctionMap({
@@ -103,9 +109,6 @@ class Directory(PySIEffect.PySIEffect):
     def on_move_enter_recv(self, cursor_id, link_attrib):
         self.link_relations.append([cursor_id, link_attrib, self._uuid, link_attrib])
 
-        # self.show_folder_contents_page(self.browse_pages[0], self._uuid)
-        # self.add_data("page_name", str(self.current_page + 1) + " / " + str(len(self.browse_pages)), PySIEffect.DataType.STRING)
-
         return 0
 
     def on_move_continuous_recv(self):
@@ -117,6 +120,8 @@ class Directory(PySIEffect.PySIEffect):
         if lr in self.link_relations:
             del self.link_relations[self.link_relations.index(lr)]
 
+        return 0
+
     def on_btn_press_enter_recv(self, triggered, value):
         return 0
 
@@ -124,7 +129,6 @@ class Directory(PySIEffect.PySIEffect):
         if triggered and not self.last_triggered:
             self.set_folder_contents_page(value)
 
-            # self.show_folder_contents_page(self.browse_pages[self.current_page], self._uuid)
             self.add_data("page_name", str(self.current_page + 1) + " / " + str(len(self.browse_pages)), PySIEffect.DataType.STRING)
             self.last_triggered = True
         elif not triggered:
@@ -133,4 +137,56 @@ class Directory(PySIEffect.PySIEffect):
         return 0
 
     def on_btn_press_leave_recv(self, triggered, value):
+        return 0
+
+    def on_open_entry_enter_recv(self):
+        if not self.is_child and not self.is_open_entry_capability_blocked:
+            x = self.aabb[0].x
+            y = self.aabb[0].y
+
+            self.width = self.preview_width
+            self.height = self.preview_height
+
+            self.shape = PySIEffect.PointVector([[x, y], [x, y + self.height], [x + self.width, y + self.height], [x + self.width, y]])
+            self.notify_shape_changed(True)
+
+            self.is_icon_visible = False
+            self.is_opened_visible = True
+
+            self.color = PySIEffect.Color(255, 0, 0, 255)
+            self.add_data("container_width", self.width, PySIEffect.DataType.INT)
+            self.add_data("container_height", self.height, PySIEffect.DataType.INT)
+            self.add_data("is_icon_visible", self.is_icon_visible, PySIEffect.DataType.BOOL)
+            self.add_data("is_opened_visible", self.is_opened_visible, PySIEffect.DataType.BOOL)
+
+            self.show_folder_contents_page(self.browse_pages[self.current_page], self._uuid)
+
+            self.is_open_entry_capability_blocked = True
+
+        return 0
+
+    def on_open_entry_leave_recv(self):
+        if not self.is_child and self.is_open_entry_capability_blocked:
+
+            x = self.aabb[0].x
+            y = self.aabb[0].y
+
+            self.width = self.icon_width * 2
+            self.height = self.icon_height + self.text_height
+
+            self.shape = PySIEffect.PointVector([[x, y], [x, y + self.height], [x + self.width, y + self.height], [x + self.width, y]])
+            self.notify_shape_changed(True)
+
+            self.is_icon_visible = True
+            self.is_opened_visible = False
+            self.color = PySIEffect.Color(10, 0, 0, 0)
+            self.add_data("container_width", self.width, PySIEffect.DataType.INT)
+            self.add_data("container_height", self.height, PySIEffect.DataType.INT)
+            self.add_data("is_icon_visible", self.is_icon_visible, PySIEffect.DataType.BOOL)
+            self.add_data("is_opened_visible", self.is_opened_visible, PySIEffect.DataType.BOOL)
+            self.is_open_entry_capability_blocked = False
+
+            for child in self.children:
+                child.signal_deletion()
+
         return 0

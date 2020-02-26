@@ -121,9 +121,11 @@ void Region::set_aabb()
 
     glm::vec3 tlc(x_min, y_min, 1), blc(x_min, y_max, 1), brc(x_max, y_max, 1), trc(x_max, y_min, 1);
 
+    d_aabb.clear();
+
     d_aabb = std::vector<glm::vec3>
     {
-        tlc, blc, brc , trc
+        tlc, blc, brc, trc
     };
 }
 
@@ -231,16 +233,23 @@ void Region::update()
 
 void Region::process_contour_change()
 {
-    if(d_py_effect->has_shape_changed())
+    if(d_py_effect->has_shape_changed() & REQUIRES_NEW_SHAPE)
     {
-        d_effect->attr("has_shape_changed") = false;
+        d_contour.clear();
 
-        d_contour = d_py_effect->contour();
+        if(d_py_effect->has_shape_changed() & REQUIRES_RESAMPLE)
+            RegionResampler::resample(d_contour, d_py_effect->contour());
+        else
+            d_contour = d_py_effect->contour();
 
         set_aabb();
 
         d_effect->attr("aabb") = d_aabb;
+        d_effect->attr("shape") = d_contour;
+        d_effect->attr("has_shape_changed") = false;
+        d_effect->attr("require_resample") = false;
 
+//        uprt = std::make_unique<RegionTransform>();
         uprm = std::make_unique<RegionMask>(Context::SIContext()->width(), Context::SIContext()->height(), d_contour, d_aabb);
     }
 }
