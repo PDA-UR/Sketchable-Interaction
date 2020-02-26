@@ -90,6 +90,34 @@ public:
         return os;
     }
 
+    static std::string _print(const std::vector<LinkRelation>& v)
+    {
+        std::string os = "[";
+
+        for (int i = 0; i < v.size(); ++i)
+        {
+            os += _print(v[i]);
+
+            if (i != v.size() - 1)
+                os += ", ";
+        }
+
+        os += "]";
+
+        return os;
+    }
+
+    static std::string _print(const LinkRelation& lr)
+    {
+        std::string os = "(";
+
+        os += lr.sender + ", " + lr.sender_attrib + ", " + lr.recv + ", " + lr.recv_attrib;
+
+        os += "), ";
+
+        return os;
+    }
+
     static std::string _print(const std::vector<glm::vec3>& v)
     {
         std::string os;

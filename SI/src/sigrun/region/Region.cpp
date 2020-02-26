@@ -156,7 +156,7 @@ int Region::on_leave(PySIEffect& colliding_effect)
 
 void Region::LINK_SLOT(const std::string& uuid, const std::string& source_cap, const bp::tuple& args)
 {
-    auto event = std::make_tuple(uuid, source_cap);
+    std::tuple<std::string, std::string> event = std::make_tuple(uuid, source_cap);
 
     if(!is_link_event_registered(event))
     {
@@ -249,7 +249,7 @@ void Region::process_contour_change()
         d_effect->attr("has_shape_changed") = false;
         d_effect->attr("require_resample") = false;
 
-//        uprt = std::make_unique<RegionTransform>();
+        uprt = std::make_unique<RegionTransform>();
         uprm = std::make_unique<RegionMask>(Context::SIContext()->width(), Context::SIContext()->height(), d_contour, d_aabb);
     }
 }
@@ -266,7 +266,8 @@ void Region::process_canvas_specifics()
             {
                 Context::SIContext()->register_new_region(d_py_effect->partial_region_contours()[candidate], candidate);
 
-                HANDLE_PYTHON_CALL(bp::delitem(d_effect->attr("__partial_regions__"), bp::object(candidate));)
+                if(bp::len(d_effect->attr("__partial_regions__")))
+                    HANDLE_PYTHON_CALL(bp::delitem(d_effect->attr("__partial_regions__"), bp::object(candidate));)
             }
 
             HANDLE_PYTHON_CALL(d_effect->attr("registered_regions").attr("clear")();)

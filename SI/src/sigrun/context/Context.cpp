@@ -240,6 +240,24 @@ void Context::update()
     upim->update();
     uprcm->collide(uprm->regions());
     uprm->update();
+
+    for(auto& region: uprm->regions())
+    {
+        if(region->type() == SI_TYPE_MOUSE_CURSOR)
+        {
+            HANDLE_PYTHON_CALL(
+                const bp::object& o = bp::extract<bp::object>(region->raw_effect().attr("move_target"));
+
+                if(!o.is_none())
+                {
+                    const std::string& name = bp::extract<std::string>(o.attr("name"));
+//                    DEBUG(name);
+                }
+            )
+
+            break;
+        }
+    }
 }
 
 int Context::width()

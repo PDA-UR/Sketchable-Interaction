@@ -12,11 +12,11 @@ CollisionManager::~CollisionManager()
 
 void CollisionManager::collide(std::vector<std::shared_ptr<Region>> &regions)
 {
-    for(int i = 0; i < regions.size(); ++i)
+    for(int i = regions.size() - 1; i > -1; --i)
     {
         auto& a = regions[i];
 
-        for(int k = i + 1; k < regions.size(); ++k)
+        for(int k = i - 1; k > -1; --k)
         {
             auto& b = regions[k];
             auto tuple = std::make_tuple(a->uuid(), b->uuid());

@@ -121,7 +121,7 @@ void LinkingManager::remove_link(const std::shared_ptr<Region> &ra, const std::s
     {
         if(type == ILink::LINK_TYPE ::UD)
         {
-            INFO("Requested Deletion of UD Link...");
+            INFO("Requested Deletion of UD Link between " + ra->name() + " and " + rb->name());
             disconnect(ra.get(), &Region::LINK_SIGNAL, rb.get(), &Region::LINK_SLOT);
             d_linking_graph->remove_link(ra, aa, rb, ab, type);
             INFO("Requested Deletion of UD Link successful!");
