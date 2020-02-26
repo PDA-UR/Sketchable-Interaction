@@ -62,7 +62,21 @@ void RegionRepresentation::perform_transform_update(const std::shared_ptr<Region
 void RegionRepresentation::perform_data_update(const std::shared_ptr<Region> &region)
 {
     if (region->effect().has_data_changed())
+    {
+        const glm::mat3x3 &transform = region->transform();
+        setGeometry(region->aabb()[0].x, region->aabb()[0].y, region->aabb()[3].x - region->aabb()[0].x, region->aabb()[1].y - region->aabb()[0].y);
+
+        d_color = QColor(region->color().r, region->color().g, region->color().b, region->color().a);
+
+        d_fill = QPainterPath();
+
+        d_fill.moveTo(region->contour()[0].x - region->aabb()[0].x, region->contour()[0].y - region->aabb()[0].y);
+
+        for (int i = 1; i < region->contour().size(); ++i)
+            d_fill.lineTo(region->contour()[i].x - region->aabb()[0].x, region->contour()[i].y - region->aabb()[0].y);
+
         Q_EMIT dataChanged(region->data());
+    }
 }
 
 void RegionRepresentation::paintEvent(QPaintEvent *event)

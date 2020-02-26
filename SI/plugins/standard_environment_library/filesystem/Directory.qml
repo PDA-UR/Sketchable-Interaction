@@ -10,7 +10,7 @@ Item
     Item
     {
         id: iconcontainer
-        visible: false
+        visible: true
 
         Image {
             id: image
@@ -42,7 +42,7 @@ Item
     Item
         {
             id: openedcontainer
-            visible: true
+            visible: false
 
             Text {
                 id: openenddirectoryname
@@ -75,7 +75,7 @@ Item
                 anchors.leftMargin: width - width * 0.25
 
                 wrapMode: TextEdit.Wrap
-                text: "0000 / 0000"
+                text: "0 / 0"
             }
         }
 

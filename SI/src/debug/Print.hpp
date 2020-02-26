@@ -90,6 +90,25 @@ public:
         return os;
     }
 
+    static std::string _print(const std::vector<glm::vec3>& v)
+    {
+        std::string os;
+
+        os += "[";
+
+        for (int i = 0; i < v.size(); ++i)
+        {
+            os += _print(v[i]);
+
+            if (i != v.size() - 1)
+                os += ", ";
+        }
+
+        os += "]";
+
+        return os;
+    }
+
     template<typename T1, typename T2>
     static std::string _print(const std::map<T1, T2> &map)
     {
@@ -126,7 +145,7 @@ public:
 
     static std::string _print(const glm::vec3& p)
     {
-        return "(" + std::to_string(p.x) + ", " + std::to_string(p.y) + "),";
+        return "(" + std::to_string(p.x) + ", " + std::to_string(p.y) + ")";
     }
 
     template<class... Args>

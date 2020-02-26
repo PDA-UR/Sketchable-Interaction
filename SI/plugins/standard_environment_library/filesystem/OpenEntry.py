@@ -20,10 +20,10 @@ class OpenEntry(PySIEffect.PySIEffect):
         if len(self.aabb):
             self.add_data("widget_width", self.aabb[3].x - self.aabb[0].x, PySIEffect.DataType.FLOAT)
             self.add_data("widget_height", self.aabb[1].y - self.aabb[0].y, PySIEffect.DataType.FLOAT)
-        # self.add_data("img_path", "res/tag.png", PySIEffect.DataType.STRING)
+        self.add_data("img_path", "res/open_entry.png", PySIEffect.DataType.STRING)
 
         self.cap_emit = PySIEffect.String2_String2FunctionMap_Map({
-            "OPEN_ENTRY": {"on_enter": self.on_open_entry_enter_emit, "on_continuous": None, "on_leave": self.on_open_entry_enter_leave}
+            "OPEN_ENTRY": {"on_enter": self.on_open_entry_enter_emit, "on_continuous": None, "on_leave": self.on_open_entry_leave_emit}
         })
 
         self.cap_recv = PySIEffect.String2_String2FunctionMap_Map({
@@ -60,8 +60,10 @@ class OpenEntry(PySIEffect.PySIEffect):
         if lr in self.link_relations:
             del self.link_relations[self.link_relations.index(lr)]
 
-    def on_open_entry_enter_emit(self, other):
-        print("open")
+        return 0
 
-    def on_open_entry_enter_leave(self, other):
-        print("close")
+    def on_open_entry_enter_emit(self, other):
+        pass
+
+    def on_open_entry_leave_emit(self, other):
+        pass

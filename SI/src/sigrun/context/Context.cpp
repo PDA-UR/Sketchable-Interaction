@@ -124,6 +124,7 @@ void Context::add_directory_region(const std::unique_ptr<bp::object>& directory_
 
     kwargs["cwd"] = cwd;
     kwargs["children"] = children_paths;
+    kwargs["is_child"] = false;
 
     uprm->add_region(dir_contour, *directory_effect, 0, kwargs);
 
@@ -281,6 +282,25 @@ void Context::update_linking_relations(const std::vector<LinkRelation>& relation
     }
 }
 
+void Context::remove_all_partaking_linking_relations(const std::string &source)
+{
+    remove_all_source_linking_relations(source);
+
+    std::vector<int> indices;
+    indices.reserve(6);
+
+    int i = 0;
+    for(auto& link: uplm->links())
+    {
+        if(link->sender_a()->uuid() == source || link->receiver_b()->uuid() == source)
+            indices.push_back(i);
+
+        ++i;
+    }
+
+    uplm->remove_links_by_indices(indices);
+}
+
 void Context::remove_all_source_linking_relations(const std::string &source)
 {
     if(MAP_HAS_KEY(d_links_in_ctx, source))
@@ -436,6 +456,7 @@ void Context::spawn_folder_contents_as_regions(const std::vector<std::string>& c
                         bp::dict kwargs;
                         kwargs["cwd"] = child_path;
                         kwargs["children"] = upfs->cwd_contents_paths(child_path);
+                        kwargs["is_child"] = true;
 
                         uprm->query_region_insertion(contour, value, r, kwargs, std::string("__position__"), std::string("__position__"));
                     }
@@ -448,6 +469,7 @@ void Context::spawn_folder_contents_as_regions(const std::vector<std::string>& c
 
                         bp::dict kwargs;
                         kwargs["cwd"] = child_path;
+                        kwargs["is_child"] = true;
                         uprm->query_region_insertion(contour, value, r, kwargs, std::string("__position__"), std::string("__position__"));
                     }
                     break;
@@ -455,6 +477,8 @@ void Context::spawn_folder_contents_as_regions(const std::vector<std::string>& c
 
                 ++i;
             }
+
+            break;
         }
     }
 }

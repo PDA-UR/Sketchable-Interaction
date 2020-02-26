@@ -13,6 +13,7 @@ void PySIEffect::init(const std::vector<glm::vec3>& contour, const std::vector<g
     d_aabb = aabb;
     d_uuid = uuid;
     d_has_shape_changed = false;
+    d_require_resample = false;
 
     d_regions_marked_for_registration.reserve(10);
     d_link_relations.reserve(100);
@@ -32,14 +33,23 @@ bool PySIEffect::is_flagged_for_deletion()
 
 
 // has to be set to false from elsewhere (happens in Region.cpp, where value is used
-void PySIEffect::notify_shape_changed()
+void PySIEffect::notify_shape_changed(bool resample)
 {
     d_has_shape_changed = true;
+    d_require_resample = resample;
 }
 
-bool PySIEffect::has_shape_changed()
+int PySIEffect::has_shape_changed()
 {
-    return d_has_shape_changed;
+    int ret = 0;
+
+    if(d_has_shape_changed)
+        ret |= REQUIRES_NEW_SHAPE;
+
+    if(d_require_resample)
+        ret |= REQUIRES_RESAMPLE;
+
+    return ret;
 }
 
 const int PySIEffect::x() const
@@ -305,6 +315,7 @@ BOOST_PYTHON_MODULE(libPySI)
         .def_readwrite("shape", &PySIEffect::d_contour)
         .def_readwrite("aabb", &PySIEffect::d_aabb)
         .def_readwrite("has_shape_changed", &PySIEffect::d_has_shape_changed)
+        .def_readwrite("require_resample", &PySIEffect::d_require_resample)
         .def_readwrite("has_data_changed", &PySIEffect::d_data_changed)
         .def_readwrite("mouse_wheel_angle_px", &PySIEffect::mouse_wheel_angle_px)
         .def_readwrite("mouse_wheel_angle_degrees", &PySIEffect::mouse_wheel_angle_degrees)
