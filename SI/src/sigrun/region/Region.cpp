@@ -238,18 +238,20 @@ void Region::process_contour_change()
         d_contour.clear();
 
         if(d_py_effect->has_shape_changed() & REQUIRES_RESAMPLE)
+        {
             RegionResampler::resample(d_contour, d_py_effect->contour());
+            uprt = std::make_unique<RegionTransform>();
+        }
         else
             d_contour = d_py_effect->contour();
 
         set_aabb();
 
-        d_effect->attr("aabb") = d_aabb;
         d_effect->attr("shape") = d_contour;
+        d_effect->attr("aabb") = d_aabb;
         d_effect->attr("has_shape_changed") = false;
         d_effect->attr("require_resample") = false;
 
-        uprt = std::make_unique<RegionTransform>();
         uprm = std::make_unique<RegionMask>(Context::SIContext()->width(), Context::SIContext()->height(), d_contour, d_aabb);
     }
 }

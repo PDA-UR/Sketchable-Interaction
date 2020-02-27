@@ -44,8 +44,9 @@ class Deletion(PySIEffect.PySIEffect):
         return 0
 
     def on_move_enter_recv(self, cursor_id, link_attrib):
-        self.link_relations.append([cursor_id, link_attrib, self._uuid, link_attrib])
-        self.is_under_user_control = True
+        if not cursor_id is "" and not link_attrib is "":
+            self.link_relations.append([cursor_id, link_attrib, self._uuid, link_attrib])
+            self.is_under_user_control = True
 
         return 0
 
@@ -53,12 +54,12 @@ class Deletion(PySIEffect.PySIEffect):
         return 0
 
     def on_move_leave_recv(self, cursor_id, link_attrib):
-        lr = PySIEffect.LinkRelation(cursor_id, link_attrib, self._uuid, link_attrib)
+        if not cursor_id is "" and not link_attrib is "":
+            lr = PySIEffect.LinkRelation(cursor_id, link_attrib, self._uuid, link_attrib)
+            if lr in self.link_relations:
+                del self.link_relations[self.link_relations.index(lr)]
 
-        if lr in self.link_relations:
-            del self.link_relations[self.link_relations.index(lr)]
-
-        self.is_under_user_control = False
+            self.is_under_user_control = False
 
         return 0
 
@@ -70,4 +71,4 @@ class Deletion(PySIEffect.PySIEffect):
     def on_deletion_enter_continuous(self, other):
         if other.region_type is not int(PySIEffect.EffectType.SI_DELETION):
             if not other.is_under_user_control:
-                    other.signal_deletion()
+                other.signal_deletion()
