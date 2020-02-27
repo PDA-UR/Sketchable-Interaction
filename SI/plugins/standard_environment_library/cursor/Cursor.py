@@ -48,7 +48,6 @@ class MouseCursor(PySIEffect.PySIEffect):
     def set_position(self, x, y):
         self.last_x = self.x
         self.last_y = self.y
-
         self.x = x
         self.y = y
 
@@ -114,17 +113,13 @@ class MouseCursor(PySIEffect.PySIEffect):
                 del self.cap_emit["CLICK"]
                 if self.btn_taget is not None:
                     self.btn_taget.on_click_leave_recv(self.on_btn_press_leave_emit(self.btn_taget))
-                self.btn_taget = None
 
     def on_right_mouse_click(self, is_active):
         if self.right_mouse_clicked:
-            self.clicks += 1
-            print("here", self.clicks)
             if "MOVE" not in self.cap_emit.keys():
                 self.cap_emit["MOVE"] = {"on_enter": self.on_move_enter_emit, "on_continuous": self.on_move_continuous_emit, "on_leave": self.on_move_leave_emit}
         elif "MOVE" in self.cap_emit.keys():
             del self.cap_emit["MOVE"]
             if self.move_target is not None:
                 self.move_target.on_move_leave_recv(*self.on_move_leave_emit(self.move_target))
-            self.move_target = None
 
