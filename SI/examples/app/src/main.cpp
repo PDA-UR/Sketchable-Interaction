@@ -7,6 +7,8 @@ int main(int argc, char** argv)
     Log::SHOW = LOG_SHOW_ALL;
     Log::WHERE = LOG_CONSOLE;
 
+//    Log::quench("LINKINGMANAGER");
+    
     SIGRun s;
     RenderEngineQT5 re;
 

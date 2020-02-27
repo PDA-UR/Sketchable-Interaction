@@ -43,7 +43,7 @@ public:
     void update_linking_relations(const std::vector<LinkRelation>& relations, const std::string& source);
     void remove_all_source_linking_relations(const std::string& source);
     void remove_all_partaking_linking_relations(const std::string& source);
-    void spawn_folder_contents_as_regions(const std::vector<std::string>& children_paths, const std::string& uuid);
+    void spawn_folder_contents_as_regions(const std::vector<std::string>& children_paths, const std::string& uuid, const bool with_btns);
 
 private:
     static Context* self;
