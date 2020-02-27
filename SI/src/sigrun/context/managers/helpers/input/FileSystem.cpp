@@ -69,6 +69,25 @@ const std::vector<std::string> FileSystem::cwd_contents_paths(const std::string&
     return ret;
 }
 
+int FileSystem::entry_type(const std::string& _path)
+{
+    fs::path path(_path);
+
+    if (fs::exists(path) && fs::is_regular_file(path))
+    {
+        const std::string& ext = path.extension().string();
+
+        if(ext == ".png" || ext == ".jpeg" || ext == ".jpg")
+            return SI_TYPE_IMAGE_FILE;
+        else if(ext == ".txt" || ext == ".odt" || ext == ".md")
+            return SI_TYPE_TEXT_FILE;
+    }
+    else if (fs::exists(path) && fs::is_directory(path))
+        return SI_TYPE_DIRECTORY;
+
+    return SI_TYPE_UNKNOWN_FILE;
+}
+
 void FileSystem::set_cwd(const fs::path &path)
 {
     d_cwd_contents.clear();

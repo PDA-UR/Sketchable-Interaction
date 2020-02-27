@@ -7,11 +7,12 @@ class Tag(PySIEffect.PySIEffect):
         self.shape = shape
         self.aabb = aabb
         self._uuid = uuid
-        self.name = "Tag"
+        self.name = "stdTag"
         self.region_type = PySIEffect.EffectType.SI_CUSTOM
         self.source = "libstdSI"
         self.qml_path = "plugins/standard_environment_library/tag/Tag.qml"
         self.color = PySIEffect.Color(255, 0, 0, 255)
+        self.is_under_user_control = False
 
         self.add_data("img_width", 75, PySIEffect.DataType.INT)
         self.add_data("img_height", 75, PySIEffect.DataType.INT)
@@ -40,7 +41,9 @@ class Tag(PySIEffect.PySIEffect):
         return 0
 
     def on_move_enter_recv(self, cursor_id, link_attrib):
-        self.link_relations.append([cursor_id, link_attrib, self._uuid, link_attrib])
+        if not cursor_id is "" and not link_attrib is "":
+            self.link_relations.append([cursor_id, link_attrib, self._uuid, link_attrib])
+            self.is_under_user_control = True
 
         return 0
 
@@ -48,10 +51,13 @@ class Tag(PySIEffect.PySIEffect):
         return 0
 
     def on_move_leave_recv(self, cursor_id, link_attrib):
-        lr = PySIEffect.LinkRelation(cursor_id, link_attrib, self._uuid, link_attrib)
+        if not cursor_id is "" and not link_attrib is "":
+            lr = PySIEffect.LinkRelation(cursor_id, link_attrib, self._uuid, link_attrib)
 
-        if lr in self.link_relations:
-            del self.link_relations[self.link_relations.index(lr)]
+            if lr in self.link_relations:
+                del self.link_relations[self.link_relations.index(lr)]
+
+            self.is_under_user_control = False
 
         return 0
 

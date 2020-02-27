@@ -1,6 +1,5 @@
 
 
-#include <pysi/PySIEffect.hpp>
 #include "SIGRunRegionTest.hpp"
 
 #include <glm/glm.hpp>
@@ -8,7 +7,6 @@
 #include <boost/python.hpp>
 #include <sigrun/plugin/PluginCollector.hpp>
 #include <sigrun/plugin/Scripting.hpp>
-#include <sigrun/plugin/PythonInvoker.hpp>
 
 namespace bp = boost::python;
 

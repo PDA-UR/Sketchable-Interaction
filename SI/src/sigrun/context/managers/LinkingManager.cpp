@@ -105,13 +105,23 @@ void LinkingManager::add_link_to_object(std::shared_ptr<Region> &a, const Extern
     }
 }
 
+void LinkingManager::remove_links_by_indices(const std::vector<int>& indices)
+{
+    for(auto& i: indices)
+    {
+        auto& link = d_linking_graph->links()[i];
+
+        remove_link(link->sender_a(), link->attribute_a(), link->receiver_b(), link->attribute_b(), ILink::LINK_TYPE::UD);
+    }
+}
+
 void LinkingManager::remove_link(const std::shared_ptr<Region> &ra, const std::string& aa, const std::shared_ptr<Region> &rb, const std::string &ab, const ILink::LINK_TYPE& type)
 {
     if(is_linked(ra, aa, rb, ab, type))
     {
         if(type == ILink::LINK_TYPE ::UD)
         {
-            INFO("Requested Deletion of UD Link...");
+            INFO("Requested Deletion of UD Link between " + ra->name() + " and " + rb->name());
             disconnect(ra.get(), &Region::LINK_SIGNAL, rb.get(), &Region::LINK_SLOT);
             d_linking_graph->remove_link(ra, aa, rb, ab, type);
             INFO("Requested Deletion of UD Link successful!");

@@ -3,6 +3,7 @@
 #include <sigrun/context/Capability.hpp>
 #include "pysi/stl_container_exposure/MapExposure.hpp"
 #include "pysi/stl_container_exposure/VectorExposure.hpp"
+#include <sigrun/context/Context.hpp>
 
 namespace bp = boost::python;
 
@@ -12,6 +13,7 @@ void PySIEffect::init(const std::vector<glm::vec3>& contour, const std::vector<g
     d_aabb = aabb;
     d_uuid = uuid;
     d_has_shape_changed = false;
+    d_require_resample = false;
 
     d_regions_marked_for_registration.reserve(10);
     d_link_relations.reserve(100);
@@ -31,14 +33,23 @@ bool PySIEffect::is_flagged_for_deletion()
 
 
 // has to be set to false from elsewhere (happens in Region.cpp, where value is used
-void PySIEffect::notify_shape_changed()
+void PySIEffect::notify_shape_changed(bool resample)
 {
     d_has_shape_changed = true;
+    d_require_resample = resample;
 }
 
-bool PySIEffect::has_shape_changed()
+int PySIEffect::has_shape_changed()
 {
-    return d_has_shape_changed;
+    int ret = 0;
+
+    if(d_has_shape_changed)
+        ret |= REQUIRES_NEW_SHAPE;
+
+    if(d_require_resample)
+        ret |= REQUIRES_RESAMPLE;
+
+    return ret;
 }
 
 const int PySIEffect::x() const
@@ -217,6 +228,11 @@ const bool PySIEffect::has_data_changed() const
     return d_data_changed;
 }
 
+void PySIEffect::__show_folder_contents__(const std::vector<std::string>& page_contents, const std::string& uuid, const bool with_btns)
+{
+    Context::SIContext()->spawn_folder_contents_as_regions(page_contents, uuid, with_btns);
+}
+
 BOOST_PYTHON_MODULE(libPySI)
 {
     bp::class_<Capability>("PySICapability")
@@ -272,6 +288,7 @@ BOOST_PYTHON_MODULE(libPySI)
         .def("add_data", &PySIEffect::__add_data__)
         .def("notify_shape_changed", &PySIEffect::notify_shape_changed)
         .def("signal_deletion", &PySIEffect::signal_deletion)
+        .def("show_folder_contents_page", &PySIEffect::__show_folder_contents__)
 
         .def_readwrite("__partial_regions__", &PySIEffect::d_partial_regions)
         .def_readwrite("cap_emit", &PySIEffect::d_cap_collision_emit)
@@ -298,6 +315,7 @@ BOOST_PYTHON_MODULE(libPySI)
         .def_readwrite("shape", &PySIEffect::d_contour)
         .def_readwrite("aabb", &PySIEffect::d_aabb)
         .def_readwrite("has_shape_changed", &PySIEffect::d_has_shape_changed)
+        .def_readwrite("require_resample", &PySIEffect::d_require_resample)
         .def_readwrite("has_data_changed", &PySIEffect::d_data_changed)
         .def_readwrite("mouse_wheel_angle_px", &PySIEffect::mouse_wheel_angle_px)
         .def_readwrite("mouse_wheel_angle_degrees", &PySIEffect::mouse_wheel_angle_degrees)
@@ -323,6 +341,8 @@ BOOST_PYTHON_MODULE(libPySI)
         .value("SI_IMAGE_FILE", SI_TYPE_IMAGE_FILE)
         .value("SI_UNKNOWN_FILE", SI_TYPE_UNKNOWN_FILE)
         .value("SI_DELETION", SI_TYPE_DELETION)
+        .value("SI_BUTTON", SI_TYPE_BUTTON)
+        .value("SI_NOTIFICATION", SI_TYPE_NOTIFICATION)
         .value("SI_CUSTOM", SI_TYPE_CUSTOM)
 
         .export_values()

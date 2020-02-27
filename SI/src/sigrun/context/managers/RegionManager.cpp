@@ -8,11 +8,16 @@
 
 RegionManager::RegionManager()
 {SIGRUN
-
+    d_region_insertion_queries.reserve(15);
 }
 
 RegionManager::~RegionManager()
 {
+}
+
+void RegionManager::query_region_insertion(const std::vector<glm::vec3> &contour, const bp::object& effect, std::shared_ptr<Region>& parent, const bp::dict& kwargs, const std::string& attrib_sender, const std::string& attrib_recv)
+{
+    d_region_insertion_queries.emplace_back(contour, effect, kwargs, parent, attrib_sender, attrib_recv);
 }
 
 void RegionManager::add_region(const std::vector<glm::vec3> &contour, const bp::object &effect, int region_uuid, const bp::dict& kwargs)
@@ -146,26 +151,49 @@ void RegionManager::toggle_mouse_region_wheel_scrolled(float angle_px, float ang
     }
 }
 
+bool RegionManager::update_region_deletions(int deletion_index)
+{
+    if(d_regions[deletion_index]->effect().is_flagged_for_deletion())
+    {
+        Context::SIContext()->remove_all_partaking_linking_relations(d_regions[deletion_index]->uuid());
+        d_regions.erase(d_regions.begin() + deletion_index);
+
+        return true;
+    }
+
+    return false;
+}
+
+
 void RegionManager::update()
 {
     update_via_mouse_input();
 
-    // required to avoid invalidation of vector iterator when adding a new object
-    // therefore newly created regions are effective from the next frame on
     int size = d_regions.size();
 
     for(int i = size - 1; i > -1; --i)
     {
-        if(d_regions[i]->effect().is_flagged_for_deletion())
-        {
-            Context::SIContext()->remove_all_source_linking_relations(d_regions[i]->uuid());
-            d_regions.erase(d_regions.begin() + i);
+        if(update_region_deletions(i))
             continue;
-        }
 
         d_regions[i]->update();
     }
-    //---------------------------------------------------------------------------
+
+    for(auto& t: d_region_insertion_queries)
+        add_region(std::get<0>(t), std::get<1>(t), 0, std::get<2>(t));
+
+    for(int i = 0; i < d_region_insertion_queries.size(); ++i)
+    {
+        auto& query = d_region_insertion_queries[i];
+        auto region = d_regions.end() - d_region_insertion_queries.size() + i;
+
+        if(std::get<3>(query).get())
+        {
+            std::get<3>(query)->raw_effect().attr("children").attr("append")((*region)->raw_effect());
+
+            Context::SIContext()->linking_manager()->add_link(std::get<3>(query), std::get<4>(query), *region, std::get<5>(query), ILink::LINK_TYPE::UD);
+        }
+    }
+
+    d_region_insertion_queries.clear();
 }
-
-

@@ -121,9 +121,11 @@ void Region::set_aabb()
 
     glm::vec3 tlc(x_min, y_min, 1), blc(x_min, y_max, 1), brc(x_max, y_max, 1), trc(x_max, y_min, 1);
 
+    d_aabb.clear();
+
     d_aabb = std::vector<glm::vec3>
     {
-        tlc, blc, brc , trc
+        tlc, blc, brc, trc
     };
 }
 
@@ -154,7 +156,7 @@ int Region::on_leave(PySIEffect& colliding_effect)
 
 void Region::LINK_SLOT(const std::string& uuid, const std::string& source_cap, const bp::tuple& args)
 {
-    auto event = std::make_tuple(uuid, source_cap);
+    std::tuple<std::string, std::string> event = std::make_tuple(uuid, source_cap);
 
     if(!is_link_event_registered(event))
     {
@@ -223,6 +225,8 @@ void Region::update()
 
     process_contour_change();
 
+    HANDLE_PYTHON_CALL(d_py_effect = std::shared_ptr<PySIEffect>(new PySIEffect(bp::extract<PySIEffect>(*d_effect)));)
+
     move(d_py_effect->x(), d_py_effect->y());
 
     process_canvas_specifics();
@@ -231,15 +235,24 @@ void Region::update()
 
 void Region::process_contour_change()
 {
-    if(d_py_effect->has_shape_changed())
+    if(d_py_effect->has_shape_changed() & REQUIRES_NEW_SHAPE)
     {
-        d_effect->attr("has_shape_changed") = false;
+        d_contour.clear();
 
-        d_contour = d_py_effect->contour();
+        if(d_py_effect->has_shape_changed() & REQUIRES_RESAMPLE)
+        {
+            RegionResampler::resample(d_contour, d_py_effect->contour());
+            uprt = std::make_unique<RegionTransform>();
+        }
+        else
+            d_contour = d_py_effect->contour();
 
         set_aabb();
 
+        d_effect->attr("shape") = d_contour;
         d_effect->attr("aabb") = d_aabb;
+        d_effect->attr("has_shape_changed") = false;
+        d_effect->attr("require_resample") = false;
 
         uprm = std::make_unique<RegionMask>(Context::SIContext()->width(), Context::SIContext()->height(), d_contour, d_aabb);
     }
@@ -257,7 +270,8 @@ void Region::process_canvas_specifics()
             {
                 Context::SIContext()->register_new_region(d_py_effect->partial_region_contours()[candidate], candidate);
 
-                HANDLE_PYTHON_CALL(bp::delitem(d_effect->attr("__partial_regions__"), bp::object(candidate));)
+                if(bp::len(d_effect->attr("__partial_regions__")))
+                    HANDLE_PYTHON_CALL(bp::delitem(d_effect->attr("__partial_regions__"), bp::object(candidate));)
             }
 
             HANDLE_PYTHON_CALL(d_effect->attr("registered_regions").attr("clear")();)

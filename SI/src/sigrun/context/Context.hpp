@@ -30,6 +30,7 @@ public:
     RegionManager* region_manager();
     InputManager* input_manager();
     CollisionManager* collision_manager();
+    LinkingManager* linking_manager();
 
     void update();
     void enable(int what);
@@ -41,6 +42,8 @@ public:
     void register_new_region(const std::vector<glm::vec3>& contour, const std::string& uuid);
     void update_linking_relations(const std::vector<LinkRelation>& relations, const std::string& source);
     void remove_all_source_linking_relations(const std::string& source);
+    void remove_all_partaking_linking_relations(const std::string& source);
+    void spawn_folder_contents_as_regions(const std::vector<std::string>& children_paths, const std::string& uuid, const bool with_btns);
 
 private:
     static Context* self;
@@ -60,6 +63,7 @@ private:
 
     std::string d_mouse_uuid;
     std::string d_canvas_uuid;
+    std::string d_notification_uuid;
 
     std::unique_ptr<Capability> upcm;
     std::unique_ptr<RegionManager> uprm;

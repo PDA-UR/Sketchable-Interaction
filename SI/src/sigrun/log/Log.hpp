@@ -281,6 +281,11 @@ public:
 
     static std::string log_level(int log_level);
     static std::string time();
+
+    static void quench(const std::string& target);
+    static void unquench(const std::string& target);
+
+    static std::vector<std::string> QUENCHED;
 };
 
 

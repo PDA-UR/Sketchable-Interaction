@@ -12,11 +12,11 @@ CollisionManager::~CollisionManager()
 
 void CollisionManager::collide(std::vector<std::shared_ptr<Region>> &regions)
 {
-    for(int i = 0; i < regions.size(); ++i)
+    for(int i = regions.size() - 1; i > -1; --i)
     {
         auto& a = regions[i];
 
-        for(int k = i + 1; k < regions.size(); ++k)
+        for(int k = i - 1; k > -1; --k)
         {
             auto& b = regions[k];
             auto tuple = std::make_tuple(a->uuid(), b->uuid());
@@ -27,7 +27,7 @@ void CollisionManager::collide(std::vector<std::shared_ptr<Region>> &regions)
                 {
                     if(collides_with_aabb(a, b))
                     {
-                        if(are_aabbs_equal(a, b) || collides_with_mask(a, b))
+                        if(are_aabbs_equal(a, b) || is_aabb_enveloped(a, b) || is_aabb_enveloped(b, a) || collides_with_mask(a, b))
                         {
                             if(d_collision_map.find(tuple) != d_collision_map.end())
                                 handle_event_continuous(a, b);
@@ -68,10 +68,6 @@ void CollisionManager::collide(std::vector<std::shared_ptr<Region>> &regions)
 
 CollisionManager::CollisionManager()
 {SIGRUN
-    collides_with = [&](const std::shared_ptr<Region> &a, const std::shared_ptr<Region> &b)
-    {
-        return collides_with_mask(a, b);
-    };
 }
 
 bool CollisionManager::collides_with_aabb(const std::shared_ptr<Region> &a, const std::shared_ptr<Region> &b)
@@ -143,10 +139,15 @@ bool CollisionManager::is_aabb_enveloped(const std::shared_ptr<Region>& envelope
 
 bool CollisionManager::collides_with_mask(const std::shared_ptr<Region> &a, const std::shared_ptr<Region> &b)
 {
+    auto& a_aabb = a->aabb();
+    auto& b_aabb = b->aabb();
     auto& a_mask = a->mask();
     auto& b_mask = b->mask();
 
-    if(is_aabb_enveloped(a, b))
+    float area_a_aabb = (a_aabb[3].x - a_aabb[0].x) * (a_aabb[1].y - a_aabb[0].y);
+    float area_b_aabb = (b_aabb[3].x - b_aabb[0].x) * (b_aabb[1].y - b_aabb[0].y);
+
+    if(area_a_aabb > area_b_aabb)
     {
         for (const glm::vec3 &p : b->contour())
         {
