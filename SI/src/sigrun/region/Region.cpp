@@ -225,6 +225,8 @@ void Region::update()
 
     process_contour_change();
 
+    HANDLE_PYTHON_CALL(d_py_effect = std::shared_ptr<PySIEffect>(new PySIEffect(bp::extract<PySIEffect>(*d_effect)));)
+
     move(d_py_effect->x(), d_py_effect->y());
 
     process_canvas_specifics();
