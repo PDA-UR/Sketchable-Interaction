@@ -73,6 +73,9 @@ public:
     void update();
     const QMap<QString, QVariant>& data() const;
 
+    const int last_delta_x() const;
+    const int last_delta_y() const;
+
 private:
     void process_canvas_specifics();
     void process_linking_relationships();
@@ -92,6 +95,8 @@ private:
 
     int d_last_x;
     int d_last_y;
+    int d_last_delta_x;
+    int d_last_delta_y;
 };
 
 

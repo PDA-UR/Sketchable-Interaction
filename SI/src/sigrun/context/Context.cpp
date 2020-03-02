@@ -382,10 +382,10 @@ void Context::spawn_folder_contents_as_regions(const std::vector<std::string>& c
             int preview_width = bp::extract<int>(r->raw_effect().attr("preview_width"));
             int preview_height = bp::extract<int>(r->raw_effect().attr("preview_height"));
 
-            glm::vec3 tlc = r->aabb()[0] * r->transform();
+            glm::vec3 tlc = r->aabb()[0];
 
-            const int& dir_x = tlc.x;
-            const int& dir_y = tlc.y;
+            const int& dir_x = tlc.x + r->transform()[0].z;
+            const int& dir_y = tlc.y + r->transform()[1].z;
             const int& dir_width = bp::extract<int>(r->raw_effect().attr("icon_width")) * 2;
             const int& dir_height = bp::extract<int>(r->raw_effect().attr("icon_height")) + bp::extract<int>(r->raw_effect().attr("text_height"));
 
@@ -396,12 +396,11 @@ void Context::spawn_folder_contents_as_regions(const std::vector<std::string>& c
                 int btn_width = bp::extract<int>(value.attr("width"));
                 int btn_height = bp::extract<int>(value.attr("height"));
 
-
-
                 std::vector<glm::vec3> btn_contour{glm::vec3(dir_x + preview_width - btn_width, dir_y + preview_height - btn_height, 1),
                                                    glm::vec3(dir_x + preview_width - btn_width, dir_y + preview_height, 1),
                                                    glm::vec3(dir_x + preview_width, dir_y + preview_height, 1),
                                                    glm::vec3(dir_x + preview_width, dir_y + preview_height - btn_height, 1)};
+
                 bp::dict kwargs;
                 kwargs["value"] = false;
 

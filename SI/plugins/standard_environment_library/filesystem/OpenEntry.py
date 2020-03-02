@@ -23,7 +23,7 @@ class OpenEntry(PySIEffect.PySIEffect):
         self.add_data("img_path", "res/open_entry.png", PySIEffect.DataType.STRING)
 
         self.cap_emit = PySIEffect.String2_String2FunctionMap_Map({
-            "OPEN_ENTRY": {"on_enter": self.on_open_entry_enter_emit, "on_continuous": None, "on_leave": self.on_open_entry_leave_emit}
+            "OPEN_ENTRY": {"on_enter": self.on_open_entry_enter_emit, "on_continuous": self.on_open_entry_enter_emit, "on_leave": self.on_open_entry_enter_emit}
         })
 
         self.cap_recv = PySIEffect.String2_String2FunctionMap_Map({
@@ -65,7 +65,4 @@ class OpenEntry(PySIEffect.PySIEffect):
         return 0
 
     def on_open_entry_enter_emit(self, other):
-        pass
-
-    def on_open_entry_leave_emit(self, other):
         pass

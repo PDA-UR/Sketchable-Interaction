@@ -27,8 +27,11 @@ class Directory(PySIEffect.PySIEffect):
         self.is_child = bool(kwargs["is_child"]) if len(kwargs.keys()) else False
         self.children = []
         self.num_children_per_page = 6
+        self.is_under_user_control = False
 
         self.is_open_entry_capability_blocked = False
+
+        self.ignore_movement = False
 
         self.children_paths.sort()
         self.current_page = 0
@@ -72,7 +75,7 @@ class Directory(PySIEffect.PySIEffect):
         self.cap_recv = PySIEffect.String2_String2FunctionMap_Map({
             "MOVE": {"on_enter": self.on_move_enter_recv, "on_continuous": self.on_move_continuous_recv, "on_leave": self.on_move_leave_recv},
             "BTN_PRESS": {"on_enter": self.on_btn_press_enter_recv, "on_continuous": self.on_btn_press_continuous_recv, "on_leave": self.on_btn_press_leave_recv},
-            "OPEN_ENTRY": {"on_enter": self.on_open_entry_enter_recv, "on_continuous": None, "on_leave": self.on_open_entry_leave_recv}
+            "OPEN_ENTRY": {"on_enter": self.on_open_entry_enter_recv, "on_continuous": self.on_open_entry_continuous_recv, "on_leave": self.on_open_entry_leave_recv}
         })
 
         self.cap_link_emit = PySIEffect.String2FunctionMap({
@@ -106,6 +109,7 @@ class Directory(PySIEffect.PySIEffect):
 
         self.x += rel_x
         self.y += rel_y
+
         return 0
 
     def on_btn_trigger(self, sender, value):
@@ -121,6 +125,7 @@ class Directory(PySIEffect.PySIEffect):
 
     def on_move_enter_recv(self, cursor_id, link_attrib):
         if cursor_id is not "" and link_attrib is not "":
+            self.is_under_user_control = True
             self.link_relations.append([cursor_id, link_attrib, self._uuid, link_attrib])
 
         return 0
@@ -130,6 +135,8 @@ class Directory(PySIEffect.PySIEffect):
 
     def on_move_leave_recv(self, cursor_id, link_attrib):
         if cursor_id is not "" and link_attrib is not "":
+            self.is_under_user_control = False
+
             lr = PySIEffect.LinkRelation(cursor_id, link_attrib, self._uuid, link_attrib)
 
             if lr in self.link_relations:
@@ -139,6 +146,7 @@ class Directory(PySIEffect.PySIEffect):
     def on_btn_press_enter_recv(self, cursor_id, link_attrib):
         if cursor_id is not "" and link_attrib is not "":
             self.link_relations.append([cursor_id, link_attrib, self._uuid, "__triggered__"])
+
         return 0
 
     def on_btn_press_continuous_recv(self, cursor_id, link_attrib):
@@ -154,7 +162,10 @@ class Directory(PySIEffect.PySIEffect):
         return 0
 
     def on_open_entry_enter_recv(self):
-        if not self.is_child and not self.is_open_entry_capability_blocked:
+        return 0
+
+    def on_open_entry_continuous_recv(self):
+        if not self.is_child and not self.is_open_entry_capability_blocked and not self.is_under_user_control:
             x = self.aabb[0].x
             y = self.aabb[0].y
 
