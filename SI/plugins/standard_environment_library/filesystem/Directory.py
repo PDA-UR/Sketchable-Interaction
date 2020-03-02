@@ -66,7 +66,7 @@ class Directory(PySIEffect.PySIEffect):
         self.add_data("is_visible", self.is_visible, PySIEffect.DataType.BOOL)
         self.add_data("is_icon_visible", self.is_icon_visible, PySIEffect.DataType.BOOL)
         self.add_data("is_opened_visible", self.is_opened_visible, PySIEffect.DataType.BOOL)
-        self.add_data("page_name", "0 / 0", PySIEffect.DataType.STRING)
+        self.add_data("page_name", "1 / " + str(len(self.browse_pages)), PySIEffect.DataType.STRING)
 
         self.cap_emit = PySIEffect.String2_String2FunctionMap_Map({
 
@@ -191,7 +191,6 @@ class Directory(PySIEffect.PySIEffect):
 
     def on_open_entry_leave_recv(self):
         if not self.is_child and self.is_open_entry_capability_blocked:
-
             x = self.aabb[0].x
             y = self.aabb[0].y
 
