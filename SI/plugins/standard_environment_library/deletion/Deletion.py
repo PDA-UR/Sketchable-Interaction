@@ -23,7 +23,7 @@ class Deletion(PySIEffect.PySIEffect):
         self.add_data("img_path", "res/deletion.png", PySIEffect.DataType.STRING)
 
         self.cap_emit = PySIEffect.String2_String2FunctionMap_Map({
-            "DELETION": {"on_enter": self.on_deletion_enter_emit, "on_continuous": self.on_deletion_enter_continuous, "on_leave": self.on_deletion_enter_emit}
+            "DELETION": {"on_enter": self.on_deletion_enter_emit, "on_continuous": self.on_deletion_continuous_emit, "on_leave": self.on_deletion_enter_emit}
         })
 
         self.cap_recv = PySIEffect.String2_String2FunctionMap_Map({
@@ -68,7 +68,7 @@ class Deletion(PySIEffect.PySIEffect):
             if self.is_under_user_control:
                 other.signal_deletion()
 
-    def on_deletion_enter_continuous(self, other):
+    def on_deletion_continuous_emit(self, other):
         if other.region_type is not int(PySIEffect.EffectType.SI_DELETION):
             if not other.is_under_user_control:
                 other.signal_deletion()

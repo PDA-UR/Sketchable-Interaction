@@ -71,15 +71,12 @@ class Button(PySIEffect.PySIEffect):
         return "", ""
 
     def on_click_enter_recv(self):
-        self.is_triggered = True
-
         if "BTN_PRESS" not in self.cap_emit:
             self.cap_emit["BTN_PRESS"] = {"on_enter": self.on_btn_press_enter_emit, "on_continuous": self.on_btn_press_continuous_emit, "on_leave": self.on_btn_press_leave_emit}
 
         return 0
 
     def on_click_continuous_recv(self):
-        self.is_triggered = False
         return 0
 
     def on_click_leave_recv(self, _):

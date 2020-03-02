@@ -63,6 +63,8 @@ void RegionRepresentation::perform_data_update(const std::shared_ptr<Region> &re
 {
     if (region->effect().has_data_changed())
     {
+        Q_EMIT dataChanged(region->data());
+
         const glm::mat3x3 &transform = region->transform();
         setGeometry(region->aabb()[0].x, region->aabb()[0].y, region->aabb()[3].x - region->aabb()[0].x, region->aabb()[1].y - region->aabb()[0].y);
 
@@ -74,8 +76,6 @@ void RegionRepresentation::perform_data_update(const std::shared_ptr<Region> &re
 
         for (int i = 1; i < region->contour().size(); ++i)
             d_fill.lineTo(region->contour()[i].x - region->aabb()[0].x, region->contour()[i].y - region->aabb()[0].y);
-
-        Q_EMIT dataChanged(region->data());
     }
 }
 

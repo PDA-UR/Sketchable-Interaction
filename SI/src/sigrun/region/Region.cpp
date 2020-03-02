@@ -13,7 +13,11 @@ namespace bp = boost::python;
 Region::Region(const std::vector<glm::vec3> &contour, const bp::object& effect, int mask_width, int mask_height, const bp::dict& kwargs):
     uprt(std::make_unique<RegionTransform>()),
     d_is_transformed(false),
-    d_link_events(20)
+    d_link_events(20),
+    d_last_x(0),
+    d_last_y(0),
+    d_last_delta_x(0),
+    d_last_delta_y(0)
 {SIGRUN
     qRegisterMetaType<bp::object>("bp::object");
     qRegisterMetaType<bp::tuple>("bp::tuple");
@@ -21,9 +25,6 @@ Region::Region(const std::vector<glm::vec3> &contour, const bp::object& effect, 
     RegionResampler::resample(d_contour, contour);
 
     set_aabb();
-
-    d_last_x = 0;
-    d_last_y = 0;
 
     HANDLE_PYTHON_CALL(
             d_effect = std::make_shared<bp::object>(bp::import("copy").attr("deepcopy")(effect));
@@ -46,19 +47,21 @@ void Region::move(int x, int y)
 {
     d_is_transformed = false;
 
-    if(x != 0 && y != 0)
+    if(x != 0 || y != 0)
     {
         glm::vec2 center(d_last_x + d_aabb[0].x + (d_aabb[3].x - d_aabb[0].x), d_last_y + d_aabb[0].y + (d_aabb[1].y - d_aabb[0].y));
 
         uprt->update(glm::vec2(x, y), 0, 1, center);
 
-        int delta_x = x - d_last_x;
-        int delta_y = y - d_last_y;
+        d_last_delta_x = x - d_last_x;
+        d_last_delta_y = y - d_last_y;
+
+
 
         d_last_x = x;
         d_last_y = y;
 
-        uprm->move(glm::vec2(delta_x, delta_y));
+        uprm->move(glm::vec2(d_last_delta_x, d_last_delta_y));
 
         d_is_transformed = true;
     }
@@ -217,6 +220,16 @@ const int Region::width() const
 const int Region::height() const
 {
     return d_py_effect->height();
+}
+
+const int Region::last_delta_x() const
+{
+    return d_last_delta_x;
+}
+
+const int Region::last_delta_y() const
+{
+    return d_last_delta_y;
 }
 
 void Region::update()
