@@ -44,14 +44,35 @@ class Directory(Entry.Entry):
 
         # self.cap_emit[CAPABILITY] = {CAP: {...}}
 
-        self.cap_emit[""]
-
         self.cap_recv["BTN_PRESS"] = {"on_enter": self.on_btn_press_enter_recv, "on_continuous": self.on_btn_press_continuous_recv, "on_leave": self.on_btn_press_leave_recv}
         self.cap_recv["OPEN_ENTRY"] = {"on_enter": self.on_open_entry_enter_recv, "on_continuous": self.on_open_entry_continuous_recv, "on_leave": self.on_open_entry_leave_recv}
 
         self.cap_link_emit["__position__"] = self.position
-
         self.cap_link_recv["__trigger__"] = {"__triggered__": self.on_btn_trigger}
+
+        if not self.is_child:
+            self.cap_emit["PARENT"] = {"on_enter": self.on_child_enter_emit, "on_continuous": None, "on_leave": self.on_child_leave_emit}
+        else:
+            self.cap_recv["PARENT"] = {"on_enter": self.on_parent_enter_recv, "on_continuous": None, "on_leave": self.on_parent_leave_recv}
+
+    def on_child_enter_emit(self, child):
+        return self._uuid
+
+    def on_child_leave_emit(self, child):
+        return self._uuid
+
+    def on_parent_enter_recv(self, parent_id):
+        self.link_relations.append([parent_id, "__position__", self._uuid, "__position__"])
+
+        return 0
+
+    def on_parent_leave_recv(self, parent_id):
+        lr = PySIEffect.LinkRelation(parent_id, "__position__", self._uuid, "__position__")
+
+        if lr in self.link_relations:
+            del self.link_relations[self.link_relations.index(lr)]
+
+        return 0
 
     def set_folder_contents_page(self, value):
         self.btn_presses = self.btn_presses - 1 if value else self.btn_presses + 1

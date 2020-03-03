@@ -34,7 +34,8 @@ class Entry(PySIEffect.PySIEffect):
         self.cap_emit = PySIEffect.String2_String2FunctionMap_Map()
 
         self.cap_recv = PySIEffect.String2_String2FunctionMap_Map({
-            "MOVE": {"on_enter": self.on_move_enter_recv, "on_continuous": self.on_move_continuous_recv,
+            "MOVE": {"on_enter": self.on_move_enter_recv,
+                     "on_continuous": self.on_move_continuous_recv,
                      "on_leave": self.on_move_leave_recv}
         })
 
@@ -50,13 +51,13 @@ class Entry(PySIEffect.PySIEffect):
 
         self.x += rel_x
         self.y += rel_y
-
         return 0
 
     def on_move_enter_recv(self, cursor_id, link_attrib):
         if cursor_id is not "" and link_attrib is not "":
             self.link_relations.append([cursor_id, link_attrib, self._uuid, link_attrib])
             self.is_under_user_control = True
+
         return 0
 
     def on_move_continuous_recv(self):
