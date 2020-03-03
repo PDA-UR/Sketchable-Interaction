@@ -4,17 +4,15 @@
 #define SITEST_MAINWINDOW_HPP
 
 #include <memory>
-
 #include <SI/SI.hpp>
-
 #include <QMainWindow>
 #include <QGraphicsAnchorLayout>
 #include <QObject>
 #include <QMetaMethod>
 #include <QPainter>
-
 #include "../background/UpdateWorker.hpp"
 #include "../region/RegionRepresentation.hpp"
+
 class RegionRepresentation;
 class MainWindow: public SIObject, public QMainWindow
 {
