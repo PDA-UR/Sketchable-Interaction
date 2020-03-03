@@ -400,6 +400,11 @@ void Context::spawn_folder_contents_buttons_as_regions(std::shared_ptr<Region>& 
     uprm->query_region_insertion(btn_contour2, value, parent, kwargs2, std::string("__position__"),std::string("__position__"));
 }
 
+void Context::spawn_folder_contents_entry_as_region(const std::vector<glm::vec3>& contour, std::shared_ptr<Region>& parent, const std::string& effect_type, const bp::dict& kwargs)
+{
+    uprm->query_region_insertion(contour, d_available_plugins[effect_type], parent, kwargs, std::string("__position__"), std::string("__position__"));
+}
+
 void Context::spawn_folder_contents_entries_as_regions(std::shared_ptr<Region>& parent, const std::vector<std::string>& children_paths, int dir_x, int dir_y, int dir_width, int dir_height, int preview_width, int preview_height)
 {
     int x_offset = preview_width / 10;
@@ -425,33 +430,27 @@ void Context::spawn_folder_contents_entries_as_regions(std::shared_ptr<Region>& 
                                         glm::vec3(((x_offset + dir_width) * x) + (dir_x + x_offset + dir_width), ((y_offset2 + dir_height) * y) + (dir_y + y_offset + dir_height), 1),
                                         glm::vec3(((x_offset + dir_width) * x) + (dir_x + x_offset + dir_width), ((y_offset2 + dir_height) * y) + (dir_y + y_offset), 1)};
 
+        bp::dict kwargs;
+        std::string effect_type;
+
         switch (upfs->entry_type(child_path))
         {
             case SI_TYPE_DIRECTORY:
-            {
-                bp::object value = d_available_plugins["Directory"];
-
-                bp::dict kwargs;
                 kwargs["cwd"] = child_path;
                 kwargs["children"] = upfs->cwd_contents_paths(child_path);
                 kwargs["is_child"] = true;
-
-                uprm->query_region_insertion(contour, value, parent, kwargs, std::string("__position__"), std::string("__position__"));
-            }
+                effect_type = "Directory";
                 break;
+            case SI_TYPE_UNKNOWN_FILE:
             case SI_TYPE_IMAGE_FILE:
             case SI_TYPE_TEXT_FILE:
-            case SI_TYPE_UNKNOWN_FILE:
-            {
-                bp::object value = d_available_plugins["TextFile"];
-
-                bp::dict kwargs;
                 kwargs["cwd"] = child_path;
                 kwargs["is_child"] = true;
-                uprm->query_region_insertion(contour, value, parent, kwargs, std::string("__position__"), std::string("__position__"));
-            }
+                effect_type = "TextFile";
                 break;
         }
+
+        spawn_folder_contents_entry_as_region(contour, parent, effect_type, kwargs);
 
         ++i;
     }

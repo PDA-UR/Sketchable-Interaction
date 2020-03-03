@@ -20,7 +20,6 @@ RegionRepresentation::RegionRepresentation(QWidget *parent, const std::shared_pt
         d_fill.lineTo(region->contour()[i].x - region->aabb()[0].x, region->contour()[i].y - region->aabb()[0].y);
 
     d_view->engine()->rootContext()->setContextProperty("Region", this);
-    d_view->hide();
 
     if(!d_qml_path.empty())
         d_view->setSource(QUrl(QString(d_qml_path.c_str())));
@@ -38,7 +37,6 @@ RegionRepresentation::RegionRepresentation(QWidget *parent, const std::shared_pt
     setGeometry(region->aabb()[0].x, region->aabb()[0].y, region->aabb()[3].x - region->aabb()[0].x, region->aabb()[1].y - region->aabb()[0].y);
 
     show();
-    d_view->show();
 }
 
 RegionRepresentation::~RegionRepresentation()
@@ -71,7 +69,6 @@ void RegionRepresentation::perform_data_update(const std::shared_ptr<Region> &re
 {
     if (region->effect().has_data_changed())
     {
-
         const glm::mat3x3 &transform = region->transform();
 
         resize(region->aabb()[3].x - region->aabb()[0].x, region->aabb()[1].y - region->aabb()[0].y);
