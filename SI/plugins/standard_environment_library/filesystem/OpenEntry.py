@@ -20,7 +20,7 @@ class OpenEntry(PySIEffect.PySIEffect):
         if len(self.aabb):
             self.add_data("widget_width", self.aabb[3].x - self.aabb[0].x, PySIEffect.DataType.FLOAT)
             self.add_data("widget_height", self.aabb[1].y - self.aabb[0].y, PySIEffect.DataType.FLOAT)
-        self.add_data("img_path", "res/open_entry.png", PySIEffect.DataType.STRING)
+            self.add_data("img_path", "res/open_entry.png", PySIEffect.DataType.STRING)
 
         self.cap_emit = PySIEffect.String2_String2FunctionMap_Map({
             "OPEN_ENTRY": {"on_enter": self.on_open_entry_enter_emit, "on_continuous": self.on_open_entry_enter_emit, "on_leave": self.on_open_entry_enter_emit}

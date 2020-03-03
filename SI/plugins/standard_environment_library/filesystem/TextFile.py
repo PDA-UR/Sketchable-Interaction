@@ -16,7 +16,7 @@ class TextFile(PySIEffect.PySIEffect):
         self.icon_width = 65
         self.icon_height = 75
         self.text_height = 50
-        self.color = PySIEffect.Color(0, 10, 0, 0)
+        self.color = PySIEffect.Color(255, 10, 0, 255)
         self.text_color = "#FFFFFFFF"
         self.path = kwargs["cwd"] if len(kwargs.keys()) else ""
         self.is_child = bool(kwargs["is_child"]) if len(kwargs.keys()) else False

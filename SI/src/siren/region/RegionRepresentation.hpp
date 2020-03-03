@@ -20,6 +20,7 @@ public:
     ~RegionRepresentation();
 
     void update(const std::shared_ptr<Region>& region);
+    const int type() const;
 
     Q_SIGNAL void dataChanged(const QMap<QString, QVariant>& data);
 
@@ -33,9 +34,7 @@ private:
 
     QColor d_color;
     std::string d_qml_path;
-    std::string d_name;
     QPainterPath d_fill;
-    std::vector<glm::vec3> d_source_contour;
     std::unique_ptr<QQuickWidget> d_view;
     int d_type;
 

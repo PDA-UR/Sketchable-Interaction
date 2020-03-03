@@ -46,7 +46,7 @@ void MainWindow::loop(double delta, int fps)
     for(const auto& region: regions)
     {
         if(d_region_representations.find(region->uuid()) == d_region_representations.end())
-            d_region_representations.insert({region->uuid(), std::make_unique<RegionRepresentation>(this, region)});
+            d_region_representations[region->uuid()] = std::make_unique<RegionRepresentation>(this, region);
         else
             d_region_representations[region->uuid()]->update(region);
     }
