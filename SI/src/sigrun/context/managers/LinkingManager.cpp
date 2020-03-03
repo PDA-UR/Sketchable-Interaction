@@ -27,7 +27,7 @@ bool LinkingManager::add_link(const std::shared_ptr<Region> &ra, const std::stri
         {
             INFO("Requested linking relationship is already present!");
 
-            return true;
+            return false;
         }
 
         INFO("Requested linking relationship is not already present!");

@@ -191,7 +191,7 @@ void RegionManager::update()
         {
             std::get<3>(query)->raw_effect().attr("children").attr("append")(region->raw_effect());
 
-            Context::SIContext()->linking_manager()->add_link(std::get<3>(query), std::get<4>(query), region, std::get<5>(query), ILink::LINK_TYPE::UD);
+//            Context::SIContext()->linking_manager()->add_link(std::get<3>(query), std::get<4>(query), region, std::get<5>(query), ILink::LINK_TYPE::UD);
         }
     }
 
