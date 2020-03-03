@@ -9,7 +9,6 @@ class Deletion(PySIEffect.PySIEffect):
         self._uuid = uuid
         self.name = "stdDeletion"
         self.region_type = PySIEffect.EffectType.SI_DELETION
-        self.source = "libstdSI"
         self.qml_path = "plugins/standard_environment_library/deletion/Deletion.qml"
         self.color = PySIEffect.Color(255, 255, 0, 255)
         self.is_under_user_control = False
