@@ -42,37 +42,19 @@ class Directory(Entry.Entry):
         self.add_data("is_opened_visible", self.is_opened_visible, PySIEffect.DataType.BOOL)
         self.add_data("page_name", "1 / " + str(len(self.browse_pages)), PySIEffect.DataType.STRING)
 
-        # self.cap_emit[CAPABILITY] = {CAP: {...}}
+        if not self.is_child:
+            self.cap_emit["PARENT"] = {"on_enter": self.on_child_enter_emit, "on_continuous": None, "on_leave": self.on_child_leave_emit}
 
-        self.cap_recv["BTN_PRESS"] = {"on_enter": self.on_btn_press_enter_recv, "on_continuous": self.on_btn_press_continuous_recv, "on_leave": self.on_btn_press_leave_recv}
+        self.cap_recv["BTN"] = {"on_enter": self.on_btn_enter_recv, "on_continuous": self.on_btn_continuous_recv, "on_leave": self.on_btn_leave_recv}
         self.cap_recv["OPEN_ENTRY"] = {"on_enter": self.on_open_entry_enter_recv, "on_continuous": self.on_open_entry_continuous_recv, "on_leave": self.on_open_entry_leave_recv}
 
         self.cap_link_emit["__position__"] = self.position
-        self.cap_link_recv["__trigger__"] = {"__triggered__": self.on_btn_trigger}
-
-        if not self.is_child:
-            self.cap_emit["PARENT"] = {"on_enter": self.on_child_enter_emit, "on_continuous": None, "on_leave": self.on_child_leave_emit}
-        else:
-            self.cap_recv["PARENT"] = {"on_enter": self.on_parent_enter_recv, "on_continuous": None, "on_leave": self.on_parent_leave_recv}
 
     def on_child_enter_emit(self, child):
         return self._uuid
 
     def on_child_leave_emit(self, child):
         return self._uuid
-
-    def on_parent_enter_recv(self, parent_id):
-        self.link_relations.append([parent_id, "__position__", self._uuid, "__position__"])
-
-        return 0
-
-    def on_parent_leave_recv(self, parent_id):
-        lr = PySIEffect.LinkRelation(parent_id, "__position__", self._uuid, "__position__")
-
-        if lr in self.link_relations:
-            del self.link_relations[self.link_relations.index(lr)]
-
-        return 0
 
     def set_folder_contents_page(self, value):
         self.btn_presses = self.btn_presses - 1 if value else self.btn_presses + 1
@@ -95,22 +77,16 @@ class Directory(Entry.Entry):
 
         self.show_folder_contents_page(self.browse_pages[self.current_page], self._uuid, False)
 
-    def on_btn_press_enter_recv(self, cursor_id, link_attrib):
-        if cursor_id is not "" and link_attrib is not "":
-            self.link_relations.append([cursor_id, link_attrib, self._uuid, "__triggered__"])
+    def on_btn_enter_recv(self, cursor_id, link_attrib):
+        return 0
+
+    def on_btn_continuous_recv(self, cursor_id, value):
+        if cursor_id is not "" and value is not "":
+            self.on_btn_trigger(cursor_id, value)
 
         return 0
 
-    def on_btn_press_continuous_recv(self, cursor_id, link_attrib):
-        return 0
-
-    def on_btn_press_leave_recv(self, cursor_id, link_attrib):
-        if cursor_id is not "" and link_attrib is not "":
-            lr = PySIEffect.LinkRelation(cursor_id, link_attrib, self._uuid, "__triggered__")
-
-            if lr in self.link_relations:
-                del self.link_relations[self.link_relations.index(lr)]
-
+    def on_btn_leave_recv(self, cursor_id, link_attrib):
         return 0
 
     def on_open_entry_enter_recv(self):

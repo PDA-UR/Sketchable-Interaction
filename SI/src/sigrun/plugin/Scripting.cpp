@@ -1,11 +1,10 @@
 
 #include "Scripting.hpp"
-#include <iostream>
 #include <string>
-#include <iosfwd>
+#include <fstream>
+#include <streambuf>
 #include <boost/python.hpp>
 #include <debug/Print.hpp>
-#include "PythonInvoker.hpp"
 
 namespace bp = boost::python;
 
@@ -44,36 +43,14 @@ bp::object Scripting::si_plugin(std::string &module_name, std::string &path, std
 
 std::string Scripting::load_plugin_source(const char *source)
 {
-    char *buffer = nullptr;
-    long length;
+    std::ifstream file(source);
+    std::string ret;
 
-    FILE *f = fopen(source, "rb");
+    file.seekg(0, std::ios::end);
+    ret.reserve(file.tellg());
+    file.seekg(0, std::ios::beg);
 
-    if (f)
-    {
-        fseek(f, 0, SEEK_END);
-
-        length = ftell(f);
-
-        fseek(f, 0, SEEK_SET);
-
-        buffer = (char *) malloc(length);
-
-        if (buffer)
-        {
-            buffer[0] = '\0';
-
-            fread(buffer, 1, length, f);
-
-            buffer[length] = '\0';
-        }
-
-        fclose(f);
-    }
-
-    std::string ret(buffer);
-
-    free(buffer);
+    ret.assign(std::istreambuf_iterator<char>(file), std::istreambuf_iterator<char>());
 
     return ret;
 }
@@ -87,20 +64,21 @@ void Scripting::load_class_names(std::vector<std::string> &classes, const std::s
     std::string clazz = "class";
     std::string space = " ";
     std::string brace = "(";
+    std::string double_underscore = "__";
 
     while (size < source.size())
     {
-        size_t found = source.find(std::string("class"), size);
+        size_t found = source.find(clazz, size);
 
         if (found != std::string::npos)
         {
-            size_t found2 = source.find(std::string("("), found + 1);
+            size_t found2 = source.find(brace, found + 1);
 
             if (found2 != std::string::npos)
             {
                 std::string class_name = source.substr(found + clazz.size() + space.size(),found2 - (found + clazz.size() + space.size()));
 
-                if(class_name.substr(0, 2) != "__")
+                if(class_name.substr(0, 2) != double_underscore)
                     classes.push_back(class_name);
 
                 size += found2;

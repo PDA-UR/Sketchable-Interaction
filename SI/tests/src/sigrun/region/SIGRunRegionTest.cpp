@@ -130,7 +130,7 @@ TEST_F(SIGRunRegionTest, on_enter)
 
     PySIEffect te = bp::extract<PySIEffect>(*t);
 
-    ASSERT_FALSE(r.on_enter(te));
+    EXPECT_NO_FATAL_FAILURE(r.on_enter(te));
 }
 
 TEST_F(SIGRunRegionTest, on_continuous)
@@ -171,7 +171,7 @@ TEST_F(SIGRunRegionTest, on_continuous)
 
     PySIEffect te = bp::extract<PySIEffect>(*t);
 
-    ASSERT_FALSE(r.on_continuous(te));
+    EXPECT_NO_FATAL_FAILURE(r.on_continuous(te));
 }
 
 TEST_F(SIGRunRegionTest, on_leave)
@@ -212,5 +212,5 @@ TEST_F(SIGRunRegionTest, on_leave)
 
     PySIEffect te = bp::extract<PySIEffect>(*t);
 
-    ASSERT_FALSE(r.on_leave(te));
+    EXPECT_NO_FATAL_FAILURE(r.on_leave(te));
 }

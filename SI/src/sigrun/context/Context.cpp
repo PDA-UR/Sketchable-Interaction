@@ -364,7 +364,6 @@ void Context::create_linking_relations(const std::vector<LinkRelation> &relation
             if (uplm->add_link(uprm->regions()[index_sender], relation.sender_attrib, uprm->regions()[index_recv], relation.recv_attrib, ILink::LINK_TYPE::UD))
             {
                 d_links_in_ctx[source].push_back(std::make_shared<UnidirectionalLink>(uprm->regions()[index_sender], uprm->regions()[index_recv], relation.sender_attrib, relation.recv_attrib));
-
                 Q_EMIT uprm->regions()[index_sender]->LINK_SIGNAL(_UUID_, relation.sender_attrib, bp::extract<bp::tuple>(uprm->regions()[index_sender]->effect().attr_link_emit()[relation.sender_attrib]()));
             }
         }
@@ -415,13 +414,13 @@ void Context::spawn_folder_contents_entries_as_regions(std::shared_ptr<Region>& 
 
     for(auto& child_path: children_paths)
     {
-        if(!(i & 1))
+        if(i & 1)
+            ++x;
+        else
         {
             --x;
             ++y;
         }
-        else
-            ++x;
 
         std::vector<glm::vec3> contour {glm::vec3(((x_offset + dir_width) * x) + (dir_x + x_offset), ((y_offset2 + dir_height) * y) + (dir_y + y_offset), 1),
                                         glm::vec3(((x_offset + dir_width) * x) + (dir_x + x_offset), ((y_offset2 + dir_height) * y) + (dir_y + y_offset + dir_height), 1),
