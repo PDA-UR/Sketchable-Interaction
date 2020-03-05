@@ -112,10 +112,10 @@ class MouseCursor(PySIEffect.PySIEffect):
             if "CLICK" in self.cap_emit.keys():
                 del self.cap_emit["CLICK"]
                 if self.btn_taget is not None:
-                    self.btn_taget.on_click_leave_recv(self.on_btn_press_leave_emit(self.btn_taget))
+                    self.btn_taget.on_click_leave_recv()
 
     def on_right_mouse_click(self, is_active):
-        if self.right_mouse_clicked:
+        if is_active:
             if "MOVE" not in self.cap_emit.keys():
                 self.cap_emit["MOVE"] = {"on_enter": self.on_move_enter_emit, "on_continuous": self.on_move_continuous_emit, "on_leave": self.on_move_leave_emit}
         elif "MOVE" in self.cap_emit.keys():

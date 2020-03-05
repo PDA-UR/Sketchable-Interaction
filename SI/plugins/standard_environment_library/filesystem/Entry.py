@@ -34,10 +34,11 @@ class Entry(PySIEffect.PySIEffect):
         self.cap_emit = PySIEffect.String2_String2FunctionMap_Map()
 
         self.cap_recv = PySIEffect.String2_String2FunctionMap_Map({
-            "MOVE": {"on_enter": self.on_move_enter_recv,
-                     "on_continuous": self.on_move_continuous_recv,
-                     "on_leave": self.on_move_leave_recv}
+            "MOVE": {"on_enter": self.on_move_enter_recv, "on_continuous": self.on_move_continuous_recv, "on_leave": self.on_move_leave_recv}
         })
+
+        if self.is_child:
+            self.cap_recv["PARENT"] = {"on_enter": self.on_parent_enter_recv, "on_continuous": None, "on_leave": self.on_parent_leave_recv}
 
         self.cap_link_emit = PySIEffect.String2FunctionMap()
 
@@ -71,5 +72,18 @@ class Entry(PySIEffect.PySIEffect):
 
             if lr in self.link_relations:
                 del self.link_relations[self.link_relations.index(lr)]
+
+        return 0
+
+    def on_parent_enter_recv(self, parent_id):
+        self.link_relations.append([parent_id, "__position__", self._uuid, "__position__"])
+
+        return 0
+
+    def on_parent_leave_recv(self, parent_id):
+        lr = PySIEffect.LinkRelation(parent_id, "__position__", self._uuid, "__position__")
+
+        if lr in self.link_relations:
+            del self.link_relations[self.link_relations.index(lr)]
 
         return 0

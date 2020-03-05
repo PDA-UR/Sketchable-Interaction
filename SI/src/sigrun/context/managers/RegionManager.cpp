@@ -188,11 +188,7 @@ void RegionManager::update()
         auto& region = d_regions[d_regions.size() - d_region_insertion_queries.size() + i];
 
         if(std::get<3>(query).get())
-        {
             std::get<3>(query)->raw_effect().attr("children").attr("append")(region->raw_effect());
-
-//            Context::SIContext()->linking_manager()->add_link(std::get<3>(query), std::get<4>(query), region, std::get<5>(query), ILink::LINK_TYPE::UD);
-        }
     }
 
     d_region_insertion_queries.clear();

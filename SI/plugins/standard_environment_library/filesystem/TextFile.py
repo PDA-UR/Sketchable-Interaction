@@ -16,7 +16,6 @@ class TextFile(Entry.Entry):
         self.add_data("color", self.text_color, PySIEffect.DataType.STRING)
         self.add_data("name", self.filename, PySIEffect.DataType.STRING)
 
-        # self.cap_emit[CAPABILITY] = {...}
         self.cap_recv["OPEN_ENTRY"] = {"on_enter": self.on_open_entry_enter_recv, "on_continuous": None, "on_leave": self.on_open_entry_leave_recv}
 
         # self.cap_link_emit[CAPABILITY] = {...}

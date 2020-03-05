@@ -12,6 +12,9 @@ CollisionManager::~CollisionManager()
 
 void CollisionManager::collide(std::vector<std::shared_ptr<Region>> &regions)
 {
+    for(auto& [key, value]: d_collision_map)
+        value = false;
+
     for(int i = regions.size() - 1; i > -1; --i)
     {
         auto& a = regions[i];
@@ -30,39 +33,41 @@ void CollisionManager::collide(std::vector<std::shared_ptr<Region>> &regions)
                         if(are_aabbs_equal(a, b) || is_aabb_enveloped(a, b) || is_aabb_enveloped(b, a) || collides_with_mask(a, b))
                         {
                             if(d_collision_map.find(tuple) != d_collision_map.end())
-                                handle_event_continuous(a, b);
+                                handle_event_continuous(a, b, tuple);
                             else
                                 handle_event_enter(a, b, tuple);
                         }
                         else
-                        {
                             if(d_collision_map.find(tuple) != d_collision_map.end())
                                 handle_event_leave(a, b, tuple);
-                        }
                     }
                     else
-                    {
                         if(d_collision_map.find(tuple) != d_collision_map.end())
                             handle_event_leave(a, b, tuple);
-                    }
                 }
                 else
                 {
                     if(d_collision_map.find(tuple) != d_collision_map.end())
-                        if(has_capabilities_in_common(a, b))
-                            handle_event_continuous(a, b);
+                    {
+                        if (has_capabilities_in_common(a, b))
+                            handle_event_continuous(a, b, tuple);
                         else
                             handle_event_leave(a, b, tuple);
+                    }
                 }
             }
             else
-            {
                 if(d_collision_map.find(tuple) != d_collision_map.end())
-                {
                     handle_event_leave(a, b, tuple);
-                }
-            }
         }
+    }
+
+    for(auto it = d_collision_map.begin(); it != d_collision_map.end();)
+    {
+        if(it->second)
+            ++it;
+        else
+            it = d_collision_map.erase(it);
     }
 }
 
@@ -227,10 +232,12 @@ void CollisionManager::handle_event_leave(const std::shared_ptr<Region>& a, cons
     d_collision_map.erase(tuple);
 }
 
-void CollisionManager::handle_event_continuous(const std::shared_ptr<Region>& a, const std::shared_ptr<Region>& b)
+void CollisionManager::handle_event_continuous(const std::shared_ptr<Region>& a, const std::shared_ptr<Region>& b, const std::tuple<std::string, std::string>& tuple)
 {
     a->on_continuous(b->effect());
     b->on_continuous(a->effect());
+
+    d_collision_map[tuple] = true;
 }
 
 void CollisionManager::handle_event_enter(const std::shared_ptr<Region>& a, const std::shared_ptr<Region>& b, const std::tuple<std::string, std::string> &tuple)
