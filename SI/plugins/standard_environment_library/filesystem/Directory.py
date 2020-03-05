@@ -51,9 +51,16 @@ class Directory(Entry.Entry):
         self.cap_link_emit["__position__"] = self.position
 
     def on_child_enter_emit(self, child):
+        if child not in self.children:
+            self.children.append(child)
+            
         return self._uuid
 
     def on_child_leave_emit(self, child):
+        index = self.children.index(child)
+
+        del self.children[index]
+
         return self._uuid
 
     def set_folder_contents_page(self, value):

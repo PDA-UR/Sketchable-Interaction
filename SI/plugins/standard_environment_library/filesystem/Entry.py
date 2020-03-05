@@ -81,6 +81,11 @@ class Entry(PySIEffect.PySIEffect):
         return 0
 
     def on_parent_leave_recv(self, parent_id):
+        self.is_child = False
+
+        if self.region_type == int(PySIEffect.EffectType.SI_DIRECTORY):
+            self.cap_emit["PARENT"] = {"on_enter": self.on_child_enter_emit, "on_continuous": None, "on_leave": self.on_child_leave_emit}
+
         lr = PySIEffect.LinkRelation(parent_id, "__position__", self._uuid, "__position__")
 
         if lr in self.link_relations:
