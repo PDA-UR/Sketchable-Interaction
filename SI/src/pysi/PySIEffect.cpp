@@ -39,6 +39,11 @@ void PySIEffect::notify_shape_changed(bool resample)
     d_require_resample = resample;
 }
 
+void PySIEffect::__embed_file_standard_appliation_into_context__(const std::string& winid)
+{
+    PYSI_DEBUG(winid);
+}
+
 int PySIEffect::has_shape_changed()
 {
     int ret = 0;
@@ -289,6 +294,7 @@ BOOST_PYTHON_MODULE(libPySI)
         .def("notify_shape_changed", &PySIEffect::notify_shape_changed)
         .def("signal_deletion", &PySIEffect::signal_deletion)
         .def("show_folder_contents_page", &PySIEffect::__show_folder_contents__)
+        .def("embed_file_standard_appliation_into_context", &PySIEffect::__embed_file_standard_appliation_into_context__)
 
         .def_readwrite("__partial_regions__", &PySIEffect::d_partial_regions)
         .def_readwrite("cap_emit", &PySIEffect::d_cap_collision_emit)
