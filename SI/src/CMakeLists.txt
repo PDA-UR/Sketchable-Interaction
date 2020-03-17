@@ -38,6 +38,8 @@ target_precompile_headers(PySI
         PRIVATE
         <unordered_map>
         <vector>
+        <algorithm>
+        <numeric>
         <QVariant>
         <map>
         SI/src/pysi/stl_container_exposure/VectorExposure.hpp
@@ -108,6 +110,8 @@ target_precompile_headers(SIGeneralRuntime
         PRIVATE
         <unordered_map>
         <vector>
+        <algorithm>
+        <numeric>
         <string>
         <any>
         <queue>

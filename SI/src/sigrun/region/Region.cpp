@@ -165,13 +165,13 @@ void Region::LINK_SLOT(const std::string& uuid, const std::string& source_cap, c
     {
         register_link_event(event);
 
-        for(auto& [key, value]: d_py_effect->attr_link_recv()[source_cap])
+        for(auto& [self_cap, function]: d_py_effect->attr_link_recv()[source_cap])
         {
             HANDLE_PYTHON_CALL(
-                d_py_effect->attr_link_recv()[source_cap][key](*args);
+                    function(*args);
 
-                if(d_py_effect->attr_link_emit().find(key) != d_py_effect->attr_link_emit().end())
-                    Q_EMIT LINK_SIGNAL(uuid, key, bp::extract<bp::tuple>(d_py_effect->attr_link_emit()[key]()));
+                if(d_py_effect->attr_link_emit().find(self_cap) != d_py_effect->attr_link_emit().end())
+                    Q_EMIT LINK_SIGNAL(uuid, self_cap, bp::extract<bp::tuple>(d_py_effect->attr_link_emit()[self_cap]()));
             )
         }
     }
@@ -311,27 +311,27 @@ const glm::vec4 Region::color() const
 int Region::handle_collision_event(const std::string &function_name, PySIEffect &colliding_effect)
 {
     HANDLE_PYTHON_CALL(
-        for (auto&[key, value]: colliding_effect.cap_collision_emit())
+        for (auto&[capability, emission_function]: colliding_effect.cap_collision_emit())
         {
-            if (d_py_effect->cap_collision_recv().find(key) != d_py_effect->cap_collision_recv().end())
+            if (d_py_effect->cap_collision_recv().find(capability) != d_py_effect->cap_collision_recv().end())
             {
-                if(!value[function_name].is_none())
+                if(!emission_function[function_name].is_none())
                 {
-                    const bp::object &t = value[function_name](*d_effect);
+                    const bp::object &t = emission_function[function_name](*d_effect);
 
                     if (t.is_none())
                     {
-                        if(!d_py_effect->cap_collision_recv()[key][function_name].is_none())
-                            d_py_effect->cap_collision_recv()[key][function_name]();
+                        if(!d_py_effect->cap_collision_recv()[capability][function_name].is_none())
+                            d_py_effect->cap_collision_recv()[capability][function_name]();
                     }
                     else
                     {
-                        if(!d_py_effect->cap_collision_recv()[key][function_name].is_none())
+                        if(!d_py_effect->cap_collision_recv()[capability][function_name].is_none())
                         {
                             if (bp::extract<bp::tuple>(t).check())
-                                d_py_effect->cap_collision_recv()[key][function_name](*t);
+                                d_py_effect->cap_collision_recv()[capability][function_name](*t);
                             else
-                                d_py_effect->cap_collision_recv()[key][function_name](t);
+                                d_py_effect->cap_collision_recv()[capability][function_name](t);
                         }
                     }
                 }

@@ -53,7 +53,7 @@ class Directory(Entry.Entry):
     def on_child_enter_emit(self, child):
         if child not in self.children:
             self.children.append(child)
-            
+
         return self._uuid
 
     def on_child_leave_emit(self, child):

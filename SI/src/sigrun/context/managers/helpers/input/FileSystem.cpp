@@ -60,11 +60,12 @@ const std::vector<std::shared_ptr<FileSystemObject>> &FileSystem::cwd_contents()
 const std::vector<std::string> FileSystem::cwd_contents_paths(const std::string& cwd)
 {
     set_cwd(cwd);
-    std::vector<std::string> ret;
-    ret.reserve(d_cwd_contents.size());
+    std::vector<std::string> ret(d_cwd_contents.size());
 
-    for(auto& path: d_cwd_contents)
-        ret.push_back(path->path());
+    std::transform(d_cwd_contents.begin(), d_cwd_contents.end(), ret.begin(), [](auto& content) -> std::string
+    {
+        return content->path();
+    });
 
     return ret;
 }
