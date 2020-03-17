@@ -18,6 +18,8 @@ MainWindow::MainWindow(int width, int height):
 
     up_update_worker.start();
     INFO("Update Loop started...");
+
+    setWindowFlags(Qt::WindowStaysOnTopHint);
 }
 
 void MainWindow::loop(double delta, int fps)
@@ -28,18 +30,10 @@ void MainWindow::loop(double delta, int fps)
 
     for(const auto& [key, val]: d_region_representations)
     {
-        is_present = false;
-
-        for(const auto& region: regions)
+        if(std::find_if(regions.begin(), regions.end(), [&key](const auto& region)
         {
-            if(key == region->uuid())
-            {
-                is_present = true;
-                break;
-            }
-        }
-
-        if(!is_present)
+            return key == region->uuid();
+        }) == regions.end())
             d_region_representations.erase(key);
     }
 

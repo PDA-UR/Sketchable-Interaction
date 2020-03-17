@@ -7,6 +7,8 @@
 #include <tuple>
 #include <iostream>
 #include <map>
+#include <algorithm>
+#include <numeric>
 #include <sstream>
 #include <QString>
 #include <QVariant>
@@ -19,8 +21,7 @@ class Print : public std::ostringstream
 {
 public:
     template<typename TupleType, typename FunctionType>
-    static void for_each(TupleType &&, FunctionType,
-                         std::integral_constant<size_t, std::tuple_size<typename std::remove_reference<TupleType>::type>::value>)
+    static void for_each(TupleType &&, FunctionType, std::integral_constant<size_t, std::tuple_size<typename std::remove_reference<TupleType>::type>::value>)
     {}
 
     template<std::size_t I, typename TupleType, typename FunctionType, typename = typename std::enable_if<
@@ -48,104 +49,42 @@ public:
     template<typename T>
     static std::string _print(const std::vector<std::vector<T>> &v)
     {
-        std::string os;
-
-        os = "[";
-
-        for (int i = 0; i < v.size(); ++i)
+        return std::transform_reduce(v.begin(), v.end(), std::string("["), [](const std::string& a, const std::string& b)
         {
-            os += "[";
-            for (int k = 0; k < v[i].size(); k++)
-            {
-                os += v[i][k];
-
-                if (k != v.size() - 1)
-                    os += ", ";
-            }
-            os += "]";
-        }
-
-        os += "]";
-
-        return os;
+            return a + ", " + b;
+        }, [](const std::vector<T>& value)
+        {
+            return _print(value);
+        }) + "]";
     }
 
     template<typename T>
     static std::string _print(const std::vector<T>& v)
     {
-        std::string os;
-
-        os += "[";
-
-        for (int i = 0; i < v.size(); ++i)
+        return std::transform_reduce(v.begin(), v.end(), std::string("["), [](const std::string& a, const std::string& b)
         {
-            os += v[i];
-
-            if (i != v.size() - 1)
-                os += ", ";
-        }
-
-        os += "]";
-
-        return os;
-    }
-
-    static std::string _print(const std::vector<LinkRelation>& v)
-    {
-        std::string os = "[";
-
-        for (int i = 0; i < v.size(); ++i)
+            return a + ", " + b;
+        }, [](const T& value)
         {
-            os += _print(v[i]);
-
-            if (i != v.size() - 1)
-                os += ", ";
-        }
-
-        os += "]";
-
-        return os;
+           return _print(value);
+        });
     }
 
     static std::string _print(const LinkRelation& lr)
     {
-        std::string os = "(";
-
-        os += lr.sender + ", " + lr.sender_attrib + ", " + lr.recv + ", " + lr.recv_attrib;
-
-        os += "), ";
-
-        return os;
-    }
-
-    static std::string _print(const std::vector<glm::vec3>& v)
-    {
-        std::string os;
-
-        os += "[";
-
-        for (int i = 0; i < v.size(); ++i)
-        {
-            os += _print(v[i]);
-
-            if (i != v.size() - 1)
-                os += ", ";
-        }
-
-        os += "]";
-
-        return os;
+        return "(" + lr.sender + ", " + lr.sender_attrib + ", " + lr.recv + ", " + lr.recv_attrib + "), ";
     }
 
     template<typename T1, typename T2>
     static std::string _print(const std::map<T1, T2> &map)
     {
-        std::string os;
-
-        for (auto &it : map)
-            os += std::to_string(it.first) + std::string(" : ") + std::to_string(it.second) + std::string("\n");
-
-        return os;
+        return std::transform_reduce(map.begin(), map.end(), std::string("{"), [](const std::string& a, const std::string& b)
+        {
+            return a + ", " + b;
+        }, [](const std::pair<T1, T2>& pair)
+        {
+            return _print(pair.first) + ": " + _print(pair.second);
+        }) + "}";
     }
 
     static std::string _print(const QString& qs)
@@ -165,10 +104,40 @@ public:
             return _print(qv.value<QString>());
     }
 
-    template<typename T>
-    static T _print(const T& p)
+    template <typename T>
+    static T _print(T& p)
     {
         return p;
+    }
+
+    static std::string _print(int p)
+    {
+        return std::to_string(p);
+    }
+
+    static std::string _print(short p)
+    {
+        return std::to_string(p);
+    }
+
+    static std::string _print(long p)
+    {
+        return std::to_string(p);
+    }
+
+    static std::string _print(float p)
+    {
+        return std::to_string(p);
+    }
+
+    static std::string _print(double p)
+    {
+        return std::to_string(p);
+    }
+
+    static std::string _print(char p)
+    {
+        return std::to_string(p);
     }
 
     static std::string _print(const glm::vec3& p)
@@ -185,10 +154,8 @@ public:
         for_each(arguments, [&](const auto &x)
         {
             if(i > 0)
-            {
                 Print{} << ", ";
 
-            }
             Print{} << _print(x);
 
             ++i;

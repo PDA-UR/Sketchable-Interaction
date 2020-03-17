@@ -13,6 +13,8 @@ class TextFile(Entry.Entry):
         self.region_type = PySIEffect.EffectType.SI_TEXT_FILE
         self.qml_path = "plugins/standard_environment_library/filesystem/TextFile.qml"
 
+        # require here different set of vars for qml to handle application rendering?
+
         self.special_apps = {
             "soffice.bin": "libreoffice",
         }
@@ -31,16 +33,19 @@ class TextFile(Entry.Entry):
         self.add_data("color", self.text_color, PySIEffect.DataType.STRING)
         self.add_data("name", self.filename, PySIEffect.DataType.STRING)
 
-        self.cap_recv["OPEN_ENTRY"] = {"on_enter": self.on_open_entry_enter_recv, "on_continuous": None, "on_leave": self.on_open_entry_leave_recv}
+        self.cap_recv["OPEN_ENTRY"] = {"on_enter": self.on_open_entry_enter_recv, "on_continuous": self.on_open_entry_continuous_recv, "on_leave": self.on_open_entry_leave_recv}
 
     def on_open_entry_enter_recv(self):
-        if not self.is_child:
+        return 0
+
+    def on_open_entry_continuous_recv(self):
+        if not self.is_child and not self.is_open_entry_capability_blocked and not self.is_under_user_control:
             if self.process is None:
                 cmd = ofh.get_default(self.path).getExec()[0:-3].split(" ") + [self.path]
 
                 self.process = subprocess.Popen(cmd, stdout=subprocess.PIPE)
                 try:
-                    self.process.wait(1.5)
+                    self.process.wait(2)
                 except(Exception):
                     pass
 
@@ -68,29 +73,31 @@ class TextFile(Entry.Entry):
                         break
 
                 if self.process_winid != "":
-                    self.embed_file_standard_appliation_into_context(self.process_winid)
+                    self.embed_file_standard_appliation_into_context(int(self.process_winid, 0))
                 else:
                     error = "Could not determine Window ID of requested application {0} for file {1}!".format(app, self.path)
-
                     self.on_open_entry_leave_recv()
-
                     raise Exception(error)
+
+            self.is_open_entry_capability_blocked = True
 
         return 0
 
     def on_open_entry_leave_recv(self):
-        if self.process is not None:
+        if self.process is not None and self.is_open_entry_capability_blocked:
             if self.process_app_name in self.special_apps:
-                print(self.special_apps[self.process_name])
                 subprocess.Popen(["wmctrl", "-c", self.special_apps[self.process_name]])
             else:
                 self.process.terminate()
 
-            self.pid = 0
-            self.process_app_name = ""
-            self.process_name = ""
-            self.process_create_time = 0.0
-            self.process = None
-            self.process_winid = ""
+            self.destroy_embedded_window(int(self.process_winid, 0))
+
+        self.pid = 0
+        self.process_app_name = ""
+        self.process_name = ""
+        self.process_create_time = 0.0
+        self.process = None
+        self.process_winid = ""
+        self.is_open_entry_capability_blocked = False
 
         return 0

@@ -51,7 +51,8 @@ public:
     void __add_data__(const std::string& key, const bp::object& value, const int type);
     void notify_shape_changed(bool resample=false);
     void __show_folder_contents__(const std::vector<std::string>& page_contents, const std::string& uuid, const bool with_btns=false);
-    void __embed_file_standard_appliation_into_context__(const std::string& winid);
+    void __embed_file_standard_appliation_into_context__(const int winid);
+    void __destroy_embedded_file_standard_appliation_in_context__(const int winid);
     void __spawn_region__(const std::vector<glm::vec3>& contour, int type);
     void signal_deletion();
 

@@ -3,6 +3,7 @@
 #include <sigrun/log/Log.hpp>
 #include "Context.hpp"
 #include <QApplication>
+#include <QMainWindow>
 #include <sigrun/rendering/IRenderEngine.hpp>
 #include <boost/python.hpp>
 #include <pysi/PySIEffect.hpp>
@@ -476,5 +477,35 @@ void Context::spawn_folder_contents_as_regions(const std::vector<std::string>& c
 
             break;
         }
+    }
+}
+
+void Context::embed_winid(int winid)
+{
+    d_external_winid_to_embedded_app[winid]= QWidget::createWindowContainer(QWindow::fromWinId(winid));
+
+    QMainWindow* pMainWnd;
+
+    for(QWidget* pWidget : QApplication::topLevelWidgets())
+    {
+        pMainWnd = qobject_cast<QMainWindow*>(pWidget);
+        if (pMainWnd)
+            break;
+    }
+
+    if(pMainWnd)
+        d_external_winid_to_embedded_app[winid]->setParent(pMainWnd);
+
+    d_external_winid_to_embedded_app[winid]->show();
+}
+
+void Context::destroy_winid(int winid)
+{
+    if(MAP_HAS_KEY(d_external_winid_to_embedded_app, winid))
+    {
+        d_external_winid_to_embedded_app[winid]->close();
+        delete d_external_winid_to_embedded_app[winid];
+        d_external_winid_to_embedded_app.erase(winid);
+        INFO("DELETED window: " + std::to_string(winid));
     }
 }
