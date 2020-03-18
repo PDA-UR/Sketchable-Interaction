@@ -311,7 +311,7 @@ const glm::vec4 Region::color() const
 int Region::handle_collision_event(const std::string &function_name, PySIEffect &colliding_effect)
 {
     HANDLE_PYTHON_CALL(
-        for (auto&[capability, emission_function]: colliding_effect.cap_collision_emit())
+        for (auto& [capability, emission_function]: colliding_effect.cap_collision_emit())
         {
             if (d_py_effect->cap_collision_recv().find(capability) != d_py_effect->cap_collision_recv().end())
             {

@@ -2,6 +2,7 @@
 
 #include "LinkingGraph.hpp"
 #include <sigrun/util/UUID.hpp>
+#include <execution>
 
 LinkingGraph::LinkingGraph()
 {
@@ -18,7 +19,7 @@ void LinkingGraph::add_link(const std::shared_ptr<Region> &a, const std::string 
 {
     if(link_type == ILink::LINK_TYPE::UD)
     {
-        std::shared_ptr<ILink> pudl =  std::make_shared<UnidirectionalLink>(a, b, attr_a, attr_b);
+        std::shared_ptr<ILink> pudl = std::make_shared<UnidirectionalLink>(a, b, attr_a, attr_b);
 
         d_links.push_back(pudl);
     }
@@ -49,7 +50,7 @@ void LinkingGraph::remove_link(const std::shared_ptr<Region> &a, const std::stri
     {
         UnidirectionalLink udl(a, b, attr_a, attr_b);
 
-        auto it = std::find_if(d_links.begin(), d_links.end(),[&](auto& link)
+        auto it = std::find_if(std::execution::par_unseq, d_links.begin(), d_links.end(),[&](auto& link)
         {
             return (link->attribute_a() == udl.attribute_a() &&
                     link->attribute_b() == udl.attribute_b() &&
@@ -65,7 +66,7 @@ void LinkingGraph::remove_link(const std::shared_ptr<Region> &a, const std::stri
     {
         BidirectionalLink l(a, b, attr_a, attr_b);
 
-        auto it = std::find_if(d_links.begin(), d_links.end(),[&](auto& link)
+        auto it = std::find_if(std::execution::par_unseq, d_links.begin(), d_links.end(),[&](auto& link)
         {
             return ((link->attribute_a() == l.attribute_a() &&
                     link->attribute_b() == l.attribute_b() &&

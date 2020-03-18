@@ -32,7 +32,7 @@ set(PySISrc
 
 # SI PYTHON3 MODULE
 add_library(PySI MODULE ${PySISrc})
-target_link_libraries(PySI ${PYTHON_LIBRARIES} ${Boost_LIBRARIES} Qt5::Widgets)
+target_link_libraries(PySI ${PYTHON_LIBRARIES} ${Boost_LIBRARIES} Qt5::Widgets -ltbb)
 
 target_precompile_headers(PySI
         PUBLIC
@@ -41,6 +41,7 @@ target_precompile_headers(PySI
         <vector>
         <algorithm>
         <numeric>
+        <execution>
         <QVariant>
         <map>
         SI/src/pysi/stl_container_exposure/VectorExposure.hpp
@@ -113,6 +114,7 @@ target_precompile_headers(SIGeneralRuntime
         <vector>
         <algorithm>
         <numeric>
+        <execution>
         <string>
         <any>
         <queue>
@@ -142,7 +144,7 @@ target_precompile_headers(SIGeneralRuntime
         )
 
 set_target_properties(SIGeneralRuntime PROPERTIES AUTOMOC TRUE)
-target_link_libraries(SIGeneralRuntime ${PATH_LIB} -luuid ${PYTHON_LIBRARIES} ${Boost_LIBRARIES} Qt5::QuickWidgets Qt5::Quick Qt5::Core Qt5::Widgets Qt5::Qml)
+target_link_libraries(SIGeneralRuntime ${PATH_LIB} -luuid ${PYTHON_LIBRARIES} ${Boost_LIBRARIES} Qt5::QuickWidgets Qt5::Quick Qt5::Core Qt5::Widgets Qt5::Qml -ltbb)
 
 if (BUILD_DOCS)
     find_package(Doxygen)

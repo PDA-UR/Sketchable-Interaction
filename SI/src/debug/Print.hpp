@@ -2,23 +2,19 @@
 #ifndef SIGRUN_PRINT_HPP
 #define SIGRUN_PRINT_HPP
 
-
 #include <boost/python.hpp>
 #include <mutex>
 #include <tuple>
 #include <iostream>
 #include <map>
-
 #include <algorithm>
+#include <numeric>
+#include <execution>
 #include <sstream>
 #include <QString>
 #include <QVariant>
 #include <glm/glm.hpp>
 #include <pysi/PySIEffect.hpp>
-
-#ifndef WITHOUT_NUMERIC
-#include <numeric>
-#endif // WITHOUT_NUMERIC
 
 namespace bp = boost::python;
 
@@ -54,55 +50,25 @@ public:
     template<typename T>
     static std::string _print(const std::vector<std::vector<T>> &v)
     {
-#ifndef WITHOUT_NUMERIC
-        return std::transform_reduce(v.begin(), v.end(), std::string("["), [](const std::string& a, const std::string& b)
+        return std::transform_reduce(std::execution::par, v.begin(), v.end(), std::string("["), [](const std::string& a, const std::string& b)
         {
             return a + ", " + b;
         }, [](const std::vector<T>& value)
         {
             return _print(value);
         }) + "]";
-#else
-        Print::print();
-
-        std::vector<std::string> trans_strs(v.size());
-
-        std::transform(v.begin(), v.end(), trans_strs.begin(), [](const std::vector<T> & v2) -> std::string
-        {
-            return _print(v2);
-        });
-
-        return std::accumulate(trans_strs.begin(), trans_strs.end(), std::string("["), [](const std::string& a, const std::string& b)
-        {
-           return a + ", " + b;
-        }) + "]";
-#endif
     }
 
     template<typename T>
     static std::string _print(const std::vector<T>& v)
     {
-#ifndef WITHOUT_NUMERIC
-        return std::transform_reduce(v.begin(), v.end(), std::string("["), [](const std::string& a, const std::string& b)
+        return std::transform_reduce(std::execution::par, v.begin(), v.end(), std::string("["), [](const std::string& a, const std::string& b)
         {
             return a + ", " + b;
         }, [](const T& value)
         {
             return _print(value);
-        });
-#else
-        std::vector<std::string> trans_strs(v.size());
-
-        std::transform(v.begin(), v.end(), trans_strs.begin(), [](const T& v2) -> std::string
-        {
-            return _print(v2);
-        });
-
-        return std::accumulate(trans_strs.begin(), trans_strs.end(), std::string("["), [](const std::string& a, const std::string& b)
-        {
-            return a + ", " + b;
         }) + "]";
-#endif
     }
 
     static std::string _print(const LinkRelation& lr)
@@ -113,27 +79,13 @@ public:
     template<typename T1, typename T2>
     static std::string _print(const std::map<T1, T2> &map)
     {
-#ifndef WITHOUT_NUMERIC
-        return std::transform_reduce(map.begin(), map.end(), std::string("{"), [](const std::string& a, const std::string& b)
+        return std::transform_reduce(std::execution::par_unseq, map.begin(), map.end(), std::string("{"), [](const std::string& a, const std::string& b)
         {
             return a + ", " + b;
         }, [](const std::pair<T1, T2>& pair)
         {
             return _print(pair.first) + ": " + _print(pair.second);
         }) + "}";
-#else
-        std::vector<std::string> trans_strs(map.size());
-
-        std::transform(map.begin(), map.end(), trans_strs.begin(), [](const auto& v2) -> std::string
-        {
-            return _print(v2.first) + ": " + _print(v2.second);
-        });
-
-        return std::accumulate(trans_strs.begin(), trans_strs.end(), std::string("{"), [](const std::string& a, const std::string& b)
-        {
-            return a + ", " + b;
-        }) + "}";
-#endif
     }
 
     static std::string _print(const QString& qs)

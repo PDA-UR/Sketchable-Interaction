@@ -288,7 +288,7 @@ void Context::remove_all_partaking_linking_relations(const std::string &source)
     remove_all_source_linking_relations(source);
 
     std::vector<int> indices;
-    indices.reserve(6);
+    indices.reserve(uplm->links().size());
 
     int i = 0;
     for(auto& link: uplm->links())

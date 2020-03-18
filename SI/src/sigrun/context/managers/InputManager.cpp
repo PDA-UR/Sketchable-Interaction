@@ -4,6 +4,7 @@
 #include <QMouseEvent>
 #include <QWheelEvent>
 #include <QApplication>
+#include <execution>
 
 #include "InputManager.hpp"
 #include <sigrun/context/Context.hpp>
@@ -109,7 +110,7 @@ const glm::vec2 &InputManager::mouse_coords() const
 
 ExternalObject* InputManager::mouse_object()
 {
-    auto it = std::find_if(d_external_objects.begin(), d_external_objects.end(), [](auto& obj)
+    auto it = std::find_if(std::execution::par_unseq, d_external_objects.begin(), d_external_objects.end(), [](auto& obj)
     {
         return obj->type() == ExternalObject::ExternalObjectType::MOUSE;
     });
