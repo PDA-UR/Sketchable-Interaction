@@ -51,9 +51,11 @@ jobs:
         git add .version
         git commit -m "Update Version"
         
-    - name: Update C++-Compiler
+    - name: Update and Upgrade
       run: |
         if [[ "${{ github.event.head_commit.message }}" != *"[NO CI]"* ]]; then
+          sudo apt-get update && sudo apt-get upgrade
+          sudo apt-get install build-essential 
           sudo apt-get install -y g++-9
         fi
         
