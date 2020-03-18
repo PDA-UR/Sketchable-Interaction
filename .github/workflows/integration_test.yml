@@ -55,7 +55,7 @@ jobs:
       run: |
         sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-9 90
         
-    - name: Install Install Boost with components System, Python and Filesystem 
+    - name: Install Boost with components System, Python and Filesystem 
       run: |
         mkdir temp &&
         cd temp &&
@@ -72,19 +72,13 @@ jobs:
     - name: Install Dependencies
       run: |
         if [[ "${{ github.event.head_commit.message }}" != *"[NO CI]"* ]]; then
-          echo "Install tbb"
           sudo apt install libtbb-dev -qq > /dev/null
-          echo "Install QT5
           sudo apt-get update
           sudo apt-get --fix-missing install qtbase5-dev -qq > /dev/null
           sudo apt-get install qtdeclarative5-dev -qq > /dev/null
-          echo "Install GLM"
           sudo apt-get install libglm-dev -qq > /dev/null
-          echo "Install uuid"
           sudo apt-get install uuid-dev -qq > /dev/null
-          echo "Install PythonLibs"
           sudo apt-get install python3-dev -qq > /dev/null
-          echo "Installing dependencies done!"
         fi
         
     - name: Compile SI
