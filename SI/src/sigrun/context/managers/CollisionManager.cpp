@@ -2,6 +2,7 @@
 
 #include "CollisionManager.hpp"
 #include <sigrun/context/Context.hpp>
+#include <execution>
 
 namespace bp = boost::python;
 
@@ -65,14 +66,14 @@ bool CollisionManager::collides_with_aabb(const std::shared_ptr<Region> &a, cons
     std::vector<glm::vec3> a_aabb(a->aabb().size());
     std::vector<glm::vec3> b_aabb(b->aabb().size());
 
-    std::transform(a->aabb().begin(), a->aabb().end(), a_aabb.begin(), [&](const glm::vec3& p)
+    std::transform(std::execution::par, a->aabb().begin(), a->aabb().end(), a_aabb.begin(), [&](const glm::vec3& p)
     {
         auto p_ = p * a->transform();
 
         return p_ /= p_.z;
     });
 
-    std::transform(b->aabb().begin(), b->aabb().end(), b_aabb.begin(), [&](const glm::vec3& p)
+    std::transform(std::execution::par, b->aabb().begin(), b->aabb().end(), b_aabb.begin(), [&](const glm::vec3& p)
     {
         auto p_ = p * b->transform();
 
@@ -93,14 +94,14 @@ bool CollisionManager::is_aabb_enveloped(const std::shared_ptr<Region>& envelope
     std::vector<glm::vec3> a_aabb(_a_aabb.size());
     std::vector<glm::vec3> b_aabb(_b_aabb.size());
 
-    std::transform(_a_aabb.begin(), _a_aabb.end(), a_aabb.begin(), [&](const glm::vec3& p)
+    std::transform(std::execution::par, _a_aabb.begin(), _a_aabb.end(), a_aabb.begin(), [&](const glm::vec3& p)
     {
         auto p_ = p * enveloper->transform();
 
         return p_ /= p_.z;
     });
 
-    std::transform(_b_aabb.begin(), _b_aabb.end(), b_aabb.begin(), [&](const glm::vec3& p)
+    std::transform(std::execution::par, _b_aabb.begin(), _b_aabb.end(), b_aabb.begin(), [&](const glm::vec3& p)
     {
         auto p_ = p * enveloped->transform();
 
@@ -137,7 +138,7 @@ bool CollisionManager::collides_with_mask(const std::shared_ptr<Region> &a, cons
 
     if(area_a_aabb > area_b_aabb)
     {
-        return std::find_if(b->contour().begin(), b->contour().end(), [&](const glm::vec3& p)
+        return std::find_if(std::execution::par_unseq, b->contour().begin(), b->contour().end(), [&](const glm::vec3& p)
         {
             glm::vec3 p__ = p * b->transform();
             return (*a_mask)[p__ /= p__.z];
@@ -145,7 +146,7 @@ bool CollisionManager::collides_with_mask(const std::shared_ptr<Region> &a, cons
     }
     else
     {
-        return std::find_if(a->contour().begin(), a->contour().end(), [&](const glm::vec3& p)
+        return std::find_if(std::execution::par_unseq, a->contour().begin(), a->contour().end(), [&](const glm::vec3& p)
         {
             glm::vec3 p__ = p * a->transform();
             return (*a_mask)[p__ /= p__.z];
@@ -180,14 +181,14 @@ bool CollisionManager::are_aabbs_equal(const std::shared_ptr<Region> &a, const s
     std::vector<glm::vec3> a_aabb(a->aabb().size());
     std::vector<glm::vec3> b_aabb(b->aabb().size());
 
-    std::transform(a->aabb().begin(), a->aabb().end(), a_aabb.begin(), [&](const glm::vec3& p)
+    std::transform(std::execution::par, a->aabb().begin(), a->aabb().end(), a_aabb.begin(), [&](const glm::vec3& p)
     {
         auto p_ = p * a->transform();
 
         return p_ /= p_.z;
     });
 
-    std::transform(b->aabb().begin(), b->aabb().end(), b_aabb.begin(), [&](const glm::vec3& p)
+    std::transform(std::execution::par, b->aabb().begin(), b->aabb().end(), b_aabb.begin(), [&](const glm::vec3& p)
     {
         auto p_ = p * b->transform();
 

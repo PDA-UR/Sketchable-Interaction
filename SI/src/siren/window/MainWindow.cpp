@@ -4,6 +4,7 @@
 #include <SI/SI.hpp>
 #include <QPaintEvent>
 #include <QDebug>
+#include <execution>
 
 MainWindow::MainWindow(int width, int height):
     QMainWindow(),
@@ -30,7 +31,7 @@ void MainWindow::loop(double delta, int fps)
 
     for(const auto& [key, val]: d_region_representations)
     {
-        if(std::find_if(regions.begin(), regions.end(), [&key](const auto& region)
+        if(std::find_if(std::execution::par_unseq, regions.begin(), regions.end(), [&key](const auto& region)
         {
             return key == region->uuid();
         }) == regions.end())

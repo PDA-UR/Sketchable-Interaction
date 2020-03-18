@@ -1,6 +1,7 @@
 
 #include <sigrun/region/RegionTransform.hpp>
 #include "SIGRunRegionTransformTest.hpp"
+#include <execution>
 
 TEST_F(SIGRunRegionTransformTest, construction)
 {
@@ -99,7 +100,7 @@ TEST_F(SIGRunRegionTransformTest, transformation)
     RegionTransform rt;
     rt.update(glm::vec2(100, 0));
 
-    for(auto& p : contour)
+    for(auto& p: contour)
     {
         glm::vec3 q = p * rt.transform();
         q /= q.z;
@@ -111,7 +112,7 @@ TEST_F(SIGRunRegionTransformTest, transformation)
     rt = RegionTransform();
     rt.update(glm::vec2(0, 0), 0, 2);
 
-    for(auto& p : contour)
+    for(auto& p: contour)
     {
         glm::vec3 q = p * rt.transform();
         q /= q.z;
@@ -124,7 +125,7 @@ TEST_F(SIGRunRegionTransformTest, transformation)
     rt = RegionTransform();
     rt.update(glm::vec2(0, 0), 45, 1);
 
-    std::transform(contour.begin(), contour.end(), contour.begin(), [&rt](auto& p)
+    std::transform(std::execution::par, contour.begin(), contour.end(), contour.begin(), [&rt](auto& p)
     {
         p = p * rt.transform();
         return p /= p.z;
@@ -147,7 +148,7 @@ TEST_F(SIGRunRegionTransformTest, transformation_rotation_scale_center)
 
     glm::vec2 center(0, 0);
 
-    std::transform(contour.begin(), contour.end(), contour.begin(), [&center](const auto& p)
+    std::transform(std::execution::par, contour.begin(), contour.end(), contour.begin(), [&center](const auto& p)
     {
         center.x += p.x;
         center.y += p.y;
@@ -165,7 +166,7 @@ TEST_F(SIGRunRegionTransformTest, transformation_rotation_scale_center)
     RegionTransform rt;
     rt.update(glm::vec2(0, 0), 45, 1);
 
-    std::transform(contour.begin(), contour.end(), contour_transformed.begin(), [&](const auto& p)
+    std::transform(std::execution::par, contour.begin(), contour.end(), contour_transformed.begin(), [&](const auto& p)
     {
         glm::vec3 q(p.x - center.x, p.y - center.y, 1);
 
@@ -193,7 +194,7 @@ TEST_F(SIGRunRegionTransformTest, transformation_rotation_scale_center)
 
     contour_transformed.clear();
 
-    std::transform(contour.begin(), contour.end(), contour_transformed.begin(), [&](const auto& p)
+    std::transform(std::execution::par, contour.begin(), contour.end(), contour_transformed.begin(), [&](const auto& p)
     {
         glm::vec3 q(p.x - center.x, p.y - center.y, 1);
 

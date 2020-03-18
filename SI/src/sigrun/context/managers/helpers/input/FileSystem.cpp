@@ -1,6 +1,7 @@
 
 #include "FileSystem.hpp"
 #include <sigrun/log/Log.hpp>
+#include <execution>
 
 FileSystemObject::FileSystemObject(const fs::path &path, int type):
     d_path(path),
@@ -62,7 +63,7 @@ const std::vector<std::string> FileSystem::cwd_contents_paths(const std::string&
     set_cwd(cwd);
     std::vector<std::string> ret(d_cwd_contents.size());
 
-    std::transform(d_cwd_contents.begin(), d_cwd_contents.end(), ret.begin(), [](auto& content) -> std::string
+    std::transform(std::execution::par_unseq, d_cwd_contents.begin(), d_cwd_contents.end(), ret.begin(), [](auto& content) -> std::string
     {
         return content->path();
     });

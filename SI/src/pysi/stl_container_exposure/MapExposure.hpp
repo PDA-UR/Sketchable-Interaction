@@ -7,6 +7,7 @@
 #include <map>
 #include <algorithm>
 #include <numeric>
+#include <execution>
 #include <boost/make_shared.hpp>
 #include <boost/shared_ptr.hpp>
 #include <glm/glm.hpp>
@@ -132,12 +133,12 @@ public:
 
     static std::string repr(std::map<std::string, std::vector<glm::vec3>>& self)
     {
-        return std::transform_reduce(self.begin(), self.end(), std::string("{"), [](const std::string& a, const std::string& b)
+        return std::transform_reduce(std::execution::par_unseq, self.begin(), self.end(), std::string("{"), [](const std::string& a, const std::string& b)
         {
             return a + ", " + b;
         }, [](const std::pair<std::string, std::vector<glm::vec3>>& pair)
         {
-            return pair.first + ": [" + std::transform_reduce(pair.second.begin(), pair.second.end(), std::string(""), [](const std::string& a, const std::string& b)
+            return pair.first + ": [" + std::transform_reduce(std::execution::par, pair.second.begin(), pair.second.end(), std::string(""), [](const std::string& a, const std::string& b)
             {
                 return a + ", " + b;
             }, [](const glm::vec3& p)
@@ -175,7 +176,7 @@ public:
 
     static std::string repr(std::map<std::string, bp::object>& self)
     {
-        return std::transform_reduce(self.begin(), self.end(), std::string("{"), [&](const std::string& a, const std::string& b)
+        return std::transform_reduce(std::execution::par_unseq, self.begin(), self.end(), std::string("{"), [&](const std::string& a, const std::string& b)
         {
             return a + ", " + b;
         }, [&](const std::pair<std::string, bp::object>& pair)
@@ -234,12 +235,12 @@ public:
 
     static std::string repr(std::map<std::string, std::map<std::string, bp::object>>& self)
     {
-        return std::transform_reduce(self.begin(), self.end(), std::string("{"), [&](const std::string& a, const std::string& b)
+        return std::transform_reduce(std::execution::par_unseq, self.begin(), self.end(), std::string("{"), [&](const std::string& a, const std::string& b)
         {
             return a + ", " + b;
         }, [&](const std::pair<std::string, std::map<std::string, bp::object>>& outer_pair)
         {
-            return outer_pair.first + ": " + std::transform_reduce(outer_pair.second.begin(), outer_pair.second.end(), std::string("{"), [&](const std::string& a2, const std::string& b2)
+            return outer_pair.first + ": " + std::transform_reduce(std::execution::par_unseq, outer_pair.second.begin(), outer_pair.second.end(), std::string("{"), [&](const std::string& a2, const std::string& b2)
             {
                 return a2 + ", " + b2;
             }, [&](const std::pair<std::string, bp::object>& inner_pair)
