@@ -53,8 +53,9 @@ jobs:
         
     - name: Set C++ Compiler
       run: |
-        sudo apt-get install g++-9
+        sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-9 90
         sudo update-alternatives --set c++ /usr/bin/g++-9
+        sudo update-alternatives --set c++ /usr/bin/g++
 
     - name: Install Qt5
       run: |
