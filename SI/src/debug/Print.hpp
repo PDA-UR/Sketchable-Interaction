@@ -16,8 +16,6 @@
 #include <glm/glm.hpp>
 #include <pysi/PySIEffect.hpp>
 
-#define WITHOUT_NUMERIC
-
 #ifndef WITHOUT_NUMERIC
 #include <numeric>
 #endif // WITHOUT_NUMERIC
@@ -65,6 +63,8 @@ public:
             return _print(value);
         }) + "]";
 #else
+        Print::print();
+
         std::vector<std::string> trans_strs(v.size());
 
         std::transform(v.begin(), v.end(), trans_strs.begin(), [](const std::vector<T> & v2) -> std::string
