@@ -53,8 +53,10 @@ jobs:
         
     - name: Set C++ Compiler
       run: |
-        g++ --version
-        
+        sudo update-alternatives --remove-all g++
+        sudo apt-get install g++-9
+        sudo update-alternatives --set c++ /usr/bin/g++-9
+
     - name: Install Qt5
       run: |
         if [[ "${{ github.event.head_commit.message }}" != *"[NO CI]"* ]]; then
