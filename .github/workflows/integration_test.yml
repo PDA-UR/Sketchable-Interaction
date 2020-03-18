@@ -51,6 +51,10 @@ jobs:
         git add .version
         git commit -m "Update Version"
         
+    - name: Set C++ Compiler
+      run: |
+        g++ --version
+        
     - name: Install Qt5
       run: |
         if [[ "${{ github.event.head_commit.message }}" != *"[NO CI]"* ]]; then
