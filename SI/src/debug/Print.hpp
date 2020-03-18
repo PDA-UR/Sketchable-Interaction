@@ -16,6 +16,8 @@
 #include <glm/glm.hpp>
 #include <pysi/PySIEffect.hpp>
 
+#define WITHOUT_NUMERIC
+
 #ifndef WITHOUT_NUMERIC
 #include <numeric>
 #endif // WITHOUT_NUMERIC
