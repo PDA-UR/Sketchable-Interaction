@@ -68,7 +68,13 @@ jobs:
         sudo ./b2 --with-system --with-python --with-filesystem -j 8 -d0 install &&       
         cd ..
         cd ..
-
+        
+    - name: Install libtbb
+      run: |
+        if [[ "${{ github.event.head_commit.message }}" != *"[NO CI]"* ]]; then
+        
+        fi
+        
     - name: Install Dependencies
       run: |
         if [[ "${{ github.event.head_commit.message }}" != *"[NO CI]"* ]]; then
@@ -78,6 +84,11 @@ jobs:
           sudo apt-get install libglm-dev -qq > /dev/null
           sudo apt-get install uuid-dev -qq > /dev/null
           sudo apt-get install python3-dev -qq > /dev/null
+        fi
+        
+    - name: Install libtbb
+      run: |
+        if [[ "${{ github.event.head_commit.message }}" != *"[NO CI]"* ]]; then
           sudo apt install libtbb-dev -qq > /dev/null
         fi
         
