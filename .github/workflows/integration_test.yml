@@ -55,35 +55,22 @@ jobs:
       run: |
         sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-9 90
 
-    - name: Install Qt5
+    - name: Install Dependencies
       run: |
         if [[ "${{ github.event.head_commit.message }}" != *"[NO CI]"* ]]; then
+          echo "Install tbb"
+          sudo apt install libtbb-dev -qq > /dev/null
+          echo "Install QT5
           sudo apt-get update
           sudo apt-get --fix-missing install qtbase5-dev -qq > /dev/null
           sudo apt-get install qtdeclarative5-dev -qq > /dev/null
-        fi
-        
-    - name: Install GLM
-      run: |
-        if [[ "${{ github.event.head_commit.message }}" != *"[NO CI]"* ]]; then
+          echo "Install GLM"
           sudo apt-get install libglm-dev -qq > /dev/null
-        fi
-        
-    - name: Install uuid
-      run: |
-        if [[ "${{ github.event.head_commit.message }}" != *"[NO CI]"* ]]; then
+          echo "Install uuid"
           sudo apt-get install uuid-dev -qq > /dev/null
-        fi
-        
-    - name: Install PythonLibs
-      run: |
-        if [[ "${{ github.event.head_commit.message }}" != *"[NO CI]"* ]]; then
+          echo "Install PythonLibs"
           sudo apt-get install python3-dev -qq > /dev/null
-        fi
-        
-    - name: Install Boost with components System, Python and Filesystem
-      run: |
-        if [[ "${{ github.event.head_commit.message }}" != *"[NO CI]"* ]]; then
+          echo "Install Boost with components System, Python and Filesystem"
           mkdir temp
           cd temp
           wget https://dl.bintray.com/boostorg/release/1.69.0/source/boost_1_69_0.tar.gz
@@ -96,7 +83,7 @@ jobs:
           cd ..
           cd ..
         fi
-               
+        
     - name: Compile SI
       env:
         CC: gcc
