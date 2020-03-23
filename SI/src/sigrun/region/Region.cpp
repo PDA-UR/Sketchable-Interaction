@@ -13,7 +13,11 @@ namespace bp = boost::python;
 Region::Region(const std::vector<glm::vec3> &contour, const bp::object& effect, int mask_width, int mask_height, const bp::dict& kwargs):
     uprt(std::make_unique<RegionTransform>()),
     d_is_transformed(false),
-    d_link_events(20)
+    d_link_events(20),
+    d_last_x(0),
+    d_last_y(0),
+    d_last_delta_x(0),
+    d_last_delta_y(0)
 {SIGRUN
     qRegisterMetaType<bp::object>("bp::object");
     qRegisterMetaType<bp::tuple>("bp::tuple");
@@ -21,9 +25,6 @@ Region::Region(const std::vector<glm::vec3> &contour, const bp::object& effect, 
     RegionResampler::resample(d_contour, contour);
 
     set_aabb();
-
-    d_last_x = 0;
-    d_last_y = 0;
 
     HANDLE_PYTHON_CALL(
             d_effect = std::make_shared<bp::object>(bp::import("copy").attr("deepcopy")(effect));
@@ -46,19 +47,21 @@ void Region::move(int x, int y)
 {
     d_is_transformed = false;
 
-    if(x != 0 && y != 0)
+    if(x != 0 || y != 0)
     {
         glm::vec2 center(d_last_x + d_aabb[0].x + (d_aabb[3].x - d_aabb[0].x), d_last_y + d_aabb[0].y + (d_aabb[1].y - d_aabb[0].y));
 
         uprt->update(glm::vec2(x, y), 0, 1, center);
 
-        int delta_x = x - d_last_x;
-        int delta_y = y - d_last_y;
+        d_last_delta_x = x - d_last_x;
+        d_last_delta_y = y - d_last_y;
+
+
 
         d_last_x = x;
         d_last_y = y;
 
-        uprm->move(glm::vec2(delta_x, delta_y));
+        uprm->move(glm::vec2(d_last_delta_x, d_last_delta_y));
 
         d_is_transformed = true;
     }
@@ -162,13 +165,13 @@ void Region::LINK_SLOT(const std::string& uuid, const std::string& source_cap, c
     {
         register_link_event(event);
 
-        for(auto& [key, value]: d_py_effect->attr_link_recv()[source_cap])
+        for(auto& [self_cap, function]: d_py_effect->attr_link_recv()[source_cap])
         {
             HANDLE_PYTHON_CALL(
-                d_py_effect->attr_link_recv()[source_cap][key](*args);
+                    function(*args);
 
-                if(d_py_effect->attr_link_emit().find(key) != d_py_effect->attr_link_emit().end())
-                    Q_EMIT LINK_SIGNAL(uuid, key, bp::extract<bp::tuple>(d_py_effect->attr_link_emit()[key]()));
+                if(d_py_effect->attr_link_emit().find(self_cap) != d_py_effect->attr_link_emit().end())
+                    Q_EMIT LINK_SIGNAL(uuid, self_cap, bp::extract<bp::tuple>(d_py_effect->attr_link_emit()[self_cap]()));
             )
         }
     }
@@ -217,6 +220,16 @@ const int Region::width() const
 const int Region::height() const
 {
     return d_py_effect->height();
+}
+
+const int Region::last_delta_x() const
+{
+    return d_last_delta_x;
+}
+
+const int Region::last_delta_y() const
+{
+    return d_last_delta_y;
 }
 
 void Region::update()
@@ -298,27 +311,27 @@ const glm::vec4 Region::color() const
 int Region::handle_collision_event(const std::string &function_name, PySIEffect &colliding_effect)
 {
     HANDLE_PYTHON_CALL(
-        for (auto&[key, value]: colliding_effect.cap_collision_emit())
+        for (auto& [capability, emission_function]: colliding_effect.cap_collision_emit())
         {
-            if (d_py_effect->cap_collision_recv().find(key) != d_py_effect->cap_collision_recv().end())
+            if (d_py_effect->cap_collision_recv().find(capability) != d_py_effect->cap_collision_recv().end())
             {
-                if(!colliding_effect.cap_collision_emit()[key][function_name].is_none())
+                if(!emission_function[function_name].is_none())
                 {
-                    const bp::object &t = colliding_effect.cap_collision_emit()[key][function_name](*d_effect);
+                    const bp::object &t = emission_function[function_name](*d_effect);
 
                     if (t.is_none())
                     {
-                        if(!d_py_effect->cap_collision_recv()[key][function_name].is_none())
-                            return bp::extract<int>(d_py_effect->cap_collision_recv()[key][function_name]());
+                        if(!d_py_effect->cap_collision_recv()[capability][function_name].is_none())
+                            d_py_effect->cap_collision_recv()[capability][function_name]();
                     }
                     else
                     {
-                        if(!d_py_effect->cap_collision_recv()[key][function_name].is_none())
+                        if(!d_py_effect->cap_collision_recv()[capability][function_name].is_none())
                         {
                             if (bp::extract<bp::tuple>(t).check())
-                                return bp::extract<int>(d_py_effect->cap_collision_recv()[key][function_name](*t));
+                                d_py_effect->cap_collision_recv()[capability][function_name](*t);
                             else
-                                return bp::extract<int>(d_py_effect->cap_collision_recv()[key][function_name](t));
+                                d_py_effect->cap_collision_recv()[capability][function_name](t);
                         }
                     }
                 }

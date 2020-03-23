@@ -3,6 +3,7 @@
 #include <sigrun/log/Log.hpp>
 #include "Context.hpp"
 #include <QApplication>
+#include <QMainWindow>
 #include <sigrun/rendering/IRenderEngine.hpp>
 #include <boost/python.hpp>
 #include <pysi/PySIEffect.hpp>
@@ -287,7 +288,7 @@ void Context::remove_all_partaking_linking_relations(const std::string &source)
     remove_all_source_linking_relations(source);
 
     std::vector<int> indices;
-    indices.reserve(6);
+    indices.reserve(uplm->links().size());
 
     int i = 0;
     for(auto& link: uplm->links())
@@ -305,8 +306,8 @@ void Context::remove_all_source_linking_relations(const std::string &source)
 {
     if(MAP_HAS_KEY(d_links_in_ctx, source))
     {
-        for (int i = 0; i < d_links_in_ctx[source].size(); ++i)
-            uplm->remove_link(d_links_in_ctx[source][i]->sender_a(), d_links_in_ctx[source][i]->attribute_a(), d_links_in_ctx[source][i]->receiver_b(), d_links_in_ctx[source][i]->attribute_b(), ILink::LINK_TYPE::UD);
+        for(auto & i : d_links_in_ctx[source])
+            uplm->remove_link(i->sender_a(), i->attribute_a(), i->receiver_b(), i->attribute_b(), ILink::LINK_TYPE::UD);
 
         d_links_in_ctx.erase(source);
     }
@@ -341,35 +342,115 @@ void Context::remove_linking_relations(const std::vector<LinkRelation> &relation
 void Context::create_linking_relations(const std::vector<LinkRelation> &relations, const std::string &source)
 {
     if (!MAP_HAS_KEY(d_links_in_ctx, source))
-    {
         d_links_in_ctx[source] = std::vector<std::shared_ptr<ILink>>();
 
-        for (auto &relation: relations)
+    for (auto &relation: relations)
+    {
+        int index_sender = -1;
+        int index_recv = -1;
+
+        for (int i = 0; i < uprm->regions().size(); ++i)
         {
-            int index_sender = -1;
-            int index_recv = -1;
+            auto &region = uprm->regions()[i];
 
-            for (int i = 0; i < uprm->regions().size(); ++i)
+            if (region->uuid() == relation.sender)
+                index_sender = i;
+
+            if (region->uuid() == relation.recv)
+                index_recv = i;
+        }
+
+        if (index_sender != -1 && index_recv != -1)
+        {
+            if (uplm->add_link(uprm->regions()[index_sender], relation.sender_attrib, uprm->regions()[index_recv], relation.recv_attrib, ILink::LINK_TYPE::UD))
             {
-                auto &region = uprm->regions()[i];
-
-                if (region->uuid() == relation.sender)
-                    index_sender = i;
-
-                if (region->uuid() == relation.recv)
-                    index_recv = i;
-            }
-
-            if (index_sender != -1 && index_recv != -1)
-            {
-                if (uplm->add_link(uprm->regions()[index_sender], relation.sender_attrib, uprm->regions()[index_recv], relation.recv_attrib, ILink::LINK_TYPE::UD))
-                {
-                    d_links_in_ctx[source].push_back(std::make_shared<UnidirectionalLink>(uprm->regions()[index_sender], uprm->regions()[index_recv], relation.sender_attrib, relation.recv_attrib));
-
-                    Q_EMIT uprm->regions()[index_sender]->LINK_SIGNAL(_UUID_, relation.sender_attrib, bp::extract<bp::tuple>(uprm->regions()[index_sender]->effect().attr_link_emit()[relation.sender_attrib]()));
-                }
+                d_links_in_ctx[source].push_back(std::make_shared<UnidirectionalLink>(uprm->regions()[index_sender], uprm->regions()[index_recv], relation.sender_attrib, relation.recv_attrib));
+                Q_EMIT uprm->regions()[index_sender]->LINK_SIGNAL(_UUID_, relation.sender_attrib, bp::extract<bp::tuple>(uprm->regions()[index_sender]->effect().attr_link_emit()[relation.sender_attrib]()));
             }
         }
+    }
+}
+
+void Context::spawn_folder_contents_buttons_as_regions(std::shared_ptr<Region>& parent, int dir_x, int dir_y, int preview_width, int preview_height)
+{
+    bp::object value = d_available_plugins["Button"];
+
+    int btn_width = bp::extract<int>(value.attr("width"));
+    int btn_height = bp::extract<int>(value.attr("height"));
+
+    std::vector<glm::vec3> btn_contour{glm::vec3(dir_x + preview_width - btn_width, dir_y + preview_height - btn_height, 1),
+                                       glm::vec3(dir_x + preview_width - btn_width, dir_y + preview_height, 1),
+                                       glm::vec3(dir_x + preview_width, dir_y + preview_height, 1),
+                                       glm::vec3(dir_x + preview_width, dir_y + preview_height - btn_height, 1)};
+
+    bp::dict kwargs;
+    kwargs["value"] = false;
+
+    uprm->query_region_insertion(btn_contour, value, parent, kwargs, std::string("__position__"),std::string("__position__"));
+
+    std::vector<glm::vec3> btn_contour2{glm::vec3(dir_x, dir_y + preview_height - btn_height, 1),
+                                        glm::vec3(dir_x, dir_y + preview_height, 1),
+                                        glm::vec3(dir_x + btn_width, dir_y + preview_height, 1),
+                                        glm::vec3(dir_x + btn_width, dir_y + preview_height - btn_height, 1)};
+    bp::dict kwargs2;
+    kwargs2["value"] = true;
+
+    uprm->query_region_insertion(btn_contour2, value, parent, kwargs2, std::string("__position__"),std::string("__position__"));
+}
+
+void Context::spawn_folder_contents_entry_as_region(const std::vector<glm::vec3>& contour, std::shared_ptr<Region>& parent, const std::string& effect_type, const bp::dict& kwargs)
+{
+    uprm->query_region_insertion(contour, d_available_plugins[effect_type], parent, kwargs, std::string("__position__"), std::string("__position__"));
+}
+
+void Context::spawn_folder_contents_entries_as_regions(std::shared_ptr<Region>& parent, const std::vector<std::string>& children_paths, int dir_x, int dir_y, int dir_width, int dir_height, int preview_width, int preview_height)
+{
+    int x_offset = preview_width / 10;
+    int y_offset = preview_height / 6;
+    int y_offset2 = dir_height / 8;
+
+    unsigned i = 0;
+    int y = -1;
+    int x = 1;
+
+    for(auto& child_path: children_paths)
+    {
+        if(i & 1)
+            ++x;
+        else
+        {
+            --x;
+            ++y;
+        }
+
+        std::vector<glm::vec3> contour {glm::vec3(((x_offset + dir_width) * x) + (dir_x + x_offset), ((y_offset2 + dir_height) * y) + (dir_y + y_offset), 1),
+                                        glm::vec3(((x_offset + dir_width) * x) + (dir_x + x_offset), ((y_offset2 + dir_height) * y) + (dir_y + y_offset + dir_height), 1),
+                                        glm::vec3(((x_offset + dir_width) * x) + (dir_x + x_offset + dir_width), ((y_offset2 + dir_height) * y) + (dir_y + y_offset + dir_height), 1),
+                                        glm::vec3(((x_offset + dir_width) * x) + (dir_x + x_offset + dir_width), ((y_offset2 + dir_height) * y) + (dir_y + y_offset), 1)};
+
+        bp::dict kwargs;
+        std::string effect_type;
+
+        switch (upfs->entry_type(child_path))
+        {
+            case SI_TYPE_DIRECTORY:
+                kwargs["cwd"] = child_path;
+                kwargs["children"] = upfs->cwd_contents_paths(child_path);
+                kwargs["is_child"] = true;
+                effect_type = "Directory";
+                break;
+            case SI_TYPE_UNKNOWN_FILE:
+            case SI_TYPE_IMAGE_FILE:
+            case SI_TYPE_TEXT_FILE:
+                kwargs["cwd"] = child_path;
+                kwargs["is_child"] = true;
+                effect_type = "TextFile";
+                break;
+        }
+
+        spawn_folder_contents_entry_as_region(contour, parent, effect_type, kwargs);
+
+        ++i;
     }
 }
 
@@ -379,98 +460,52 @@ void Context::spawn_folder_contents_as_regions(const std::vector<std::string>& c
     {
         if (r->uuid() == uuid)
         {
-            int preview_width = bp::extract<int>(r->raw_effect().attr("preview_width"));
-            int preview_height = bp::extract<int>(r->raw_effect().attr("preview_height"));
+            const int preview_width = bp::extract<int>(r->raw_effect().attr("preview_width"));
+            const int preview_height = bp::extract<int>(r->raw_effect().attr("preview_height"));
 
-            glm::vec3 tlc = r->aabb()[0] * r->transform();
+            const glm::vec3& tlc = r->aabb()[0];
 
-            const int& dir_x = tlc.x;
-            const int& dir_y = tlc.y;
-            const int& dir_width = bp::extract<int>(r->raw_effect().attr("icon_width")) * 2;
-            const int& dir_height = bp::extract<int>(r->raw_effect().attr("icon_height")) + bp::extract<int>(r->raw_effect().attr("text_height"));
+            const int dir_x = tlc.x + r->transform()[0].z;
+            const int dir_y = tlc.y + r->transform()[1].z;
+            const int dir_width = bp::extract<int>(r->raw_effect().attr("icon_width")) * 2;
+            const int dir_height = bp::extract<int>(r->raw_effect().attr("icon_height")) + bp::extract<int>(r->raw_effect().attr("text_height"));
 
             if(with_btns)
-            {
-                bp::object value = d_available_plugins["Button"];
+                spawn_folder_contents_buttons_as_regions(r, dir_x, dir_y, preview_width, preview_height);
 
-                int btn_width = bp::extract<int>(value.attr("width"));
-                int btn_height = bp::extract<int>(value.attr("height"));
-
-
-
-                std::vector<glm::vec3> btn_contour{glm::vec3(dir_x + preview_width - btn_width, dir_y + preview_height - btn_height, 1),
-                                                   glm::vec3(dir_x + preview_width - btn_width, dir_y + preview_height, 1),
-                                                   glm::vec3(dir_x + preview_width, dir_y + preview_height, 1),
-                                                   glm::vec3(dir_x + preview_width, dir_y + preview_height - btn_height, 1)};
-                bp::dict kwargs;
-                kwargs["value"] = false;
-
-                uprm->query_region_insertion(btn_contour, value, r, kwargs, std::string("__position__"),std::string("__position__"));
-
-                std::vector<glm::vec3> btn_contour2{glm::vec3(dir_x, dir_y + preview_height - btn_height, 1),
-                                                    glm::vec3(dir_x, dir_y + preview_height, 1),
-                                                    glm::vec3(dir_x + btn_width, dir_y + preview_height, 1),
-                                                    glm::vec3(dir_x + btn_width, dir_y + preview_height - btn_height, 1)};
-                bp::dict kwargs2;
-                kwargs2["value"] = true;
-
-                uprm->query_region_insertion(btn_contour2, value, r, kwargs2, std::string("__position__"),std::string("__position__"));
-            }
-
-            int x_offset = 25;
-            int y_offset = 125;
-
-            int i = 0;
-            int y = -1;
-            int x = 1;
-
-            for(auto& child_path: children_paths)
-            {
-                if(!(i & 1))
-                {
-                    --x;
-                    ++y;
-                }
-                else
-                    ++x;
-
-                std::vector<glm::vec3> contour {glm::vec3(dir_x + x_offset + x * dir_width, dir_y + y_offset + y * dir_height, 1),
-                                                glm::vec3(dir_x + x_offset + x * dir_width, dir_y + y_offset + y * dir_height + dir_height + 35, 1),
-                                                glm::vec3(dir_x + dir_width + x * dir_width + dir_width, dir_y + y_offset + y * dir_height + dir_height + 35, 1),
-                                                glm::vec3(dir_x + dir_width + x * dir_width + dir_width, dir_y + y_offset + y * dir_height, 1) };
-
-                switch (upfs->entry_type(child_path))
-                {
-                    case SI_TYPE_DIRECTORY:
-                    {
-                        bp::object value = d_available_plugins["Directory"];
-
-                        bp::dict kwargs;
-                        kwargs["cwd"] = child_path;
-                        kwargs["children"] = upfs->cwd_contents_paths(child_path);
-                        kwargs["is_child"] = true;
-
-                        uprm->query_region_insertion(contour, value, r, kwargs, std::string("__position__"), std::string("__position__"));
-                    }
-                    break;
-                    case SI_TYPE_IMAGE_FILE:
-                    case SI_TYPE_TEXT_FILE:
-                    case SI_TYPE_UNKNOWN_FILE:
-                    {
-                        bp::object value = d_available_plugins["TextFile"];
-
-                        bp::dict kwargs;
-                        kwargs["cwd"] = child_path;
-                        kwargs["is_child"] = true;
-                        uprm->query_region_insertion(contour, value, r, kwargs, std::string("__position__"), std::string("__position__"));
-                    }
-                    break;
-                }
-
-                ++i;
-            }
+            spawn_folder_contents_entries_as_regions(r, children_paths, dir_x, dir_y, dir_width, dir_height, preview_width, preview_height);
 
             break;
         }
+    }
+}
+
+void Context::embed_winid(int winid)
+{
+    d_external_winid_to_embedded_app[winid]= QWidget::createWindowContainer(QWindow::fromWinId(winid));
+
+    QMainWindow* pMainWnd;
+
+    for(QWidget* pWidget : QApplication::topLevelWidgets())
+    {
+        pMainWnd = qobject_cast<QMainWindow*>(pWidget);
+        if (pMainWnd)
+            break;
+    }
+
+    if(pMainWnd)
+        d_external_winid_to_embedded_app[winid]->setParent(pMainWnd);
+
+    d_external_winid_to_embedded_app[winid]->show();
+}
+
+void Context::destroy_winid(int winid)
+{
+    if(MAP_HAS_KEY(d_external_winid_to_embedded_app, winid))
+    {
+        d_external_winid_to_embedded_app[winid]->close();
+        delete d_external_winid_to_embedded_app[winid];
+        d_external_winid_to_embedded_app.erase(winid);
+        INFO("DELETED window: " + std::to_string(winid));
     }
 }

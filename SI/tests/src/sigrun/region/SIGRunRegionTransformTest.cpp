@@ -1,6 +1,7 @@
 
 #include <sigrun/region/RegionTransform.hpp>
 #include "SIGRunRegionTransformTest.hpp"
+#include <execution>
 
 TEST_F(SIGRunRegionTransformTest, construction)
 {
@@ -99,7 +100,7 @@ TEST_F(SIGRunRegionTransformTest, transformation)
     RegionTransform rt;
     rt.update(glm::vec2(100, 0));
 
-    for(auto& p : contour)
+    for(auto& p: contour)
     {
         glm::vec3 q = p * rt.transform();
         q /= q.z;
@@ -111,7 +112,7 @@ TEST_F(SIGRunRegionTransformTest, transformation)
     rt = RegionTransform();
     rt.update(glm::vec2(0, 0), 0, 2);
 
-    for(auto& p : contour)
+    for(auto& p: contour)
     {
         glm::vec3 q = p * rt.transform();
         q /= q.z;
@@ -124,11 +125,11 @@ TEST_F(SIGRunRegionTransformTest, transformation)
     rt = RegionTransform();
     rt.update(glm::vec2(0, 0), 45, 1);
 
-    for(auto& p : contour)
+    std::transform(std::execution::par, contour.begin(), contour.end(), contour.begin(), [&rt](auto& p)
     {
         p = p * rt.transform();
-        p /= p.z;
-    }
+        return p /= p.z;
+    });
 
     ASSERT_NEAR(contour[0][0], 141.421345, 0.0001);
     ASSERT_NEAR(contour[0][1], 0, 0.0001);
@@ -143,15 +144,17 @@ TEST_F(SIGRunRegionTransformTest, transformation)
 TEST_F(SIGRunRegionTransformTest, transformation_rotation_scale_center)
 {
     std::vector<glm::vec3> contour {glm::vec3(100, 100, 1), glm::vec3(100, 600, 1), glm::vec3(600, 600, 1), glm::vec3(600, 100, 1)};
-    std::vector<glm::vec3> contour_transformed;
+    std::vector<glm::vec3> contour_transformed(contour.size());
 
     glm::vec2 center(0, 0);
 
-    for(auto& p : contour)
+    std::transform(std::execution::par, contour.begin(), contour.end(), contour.begin(), [&center](const auto& p)
     {
         center.x += p.x;
         center.y += p.y;
-    }
+
+        return p;
+    });
 
     center.x /= contour.size();
     center.y /= contour.size();
@@ -163,7 +166,7 @@ TEST_F(SIGRunRegionTransformTest, transformation_rotation_scale_center)
     RegionTransform rt;
     rt.update(glm::vec2(0, 0), 45, 1);
 
-    for(auto& p : contour)
+    std::transform(std::execution::par, contour.begin(), contour.end(), contour_transformed.begin(), [&](const auto& p)
     {
         glm::vec3 q(p.x - center.x, p.y - center.y, 1);
 
@@ -174,8 +177,8 @@ TEST_F(SIGRunRegionTransformTest, transformation_rotation_scale_center)
         q.x += center.x;
         q.y += center.y;
 
-        contour_transformed.push_back(q);
-    }
+        return q;
+    });
 
     ASSERT_NEAR(contour_transformed[0][0], -3.5533905, 0.0001);
     ASSERT_NEAR(contour_transformed[0][1], 350.0, 0.0001);
@@ -191,7 +194,7 @@ TEST_F(SIGRunRegionTransformTest, transformation_rotation_scale_center)
 
     contour_transformed.clear();
 
-    for(auto& p : contour)
+    std::transform(std::execution::par, contour.begin(), contour.end(), contour_transformed.begin(), [&](const auto& p)
     {
         glm::vec3 q(p.x - center.x, p.y - center.y, 1);
 
@@ -202,8 +205,8 @@ TEST_F(SIGRunRegionTransformTest, transformation_rotation_scale_center)
         q.x += center.x;
         q.y += center.y;
 
-        contour_transformed.push_back(q);
-    }
+        return q;
+    });
 
     ASSERT_NEAR(contour_transformed[0][0], -150.0, 0.0001);
     ASSERT_NEAR(contour_transformed[0][1], -150.0, 0.0001);

@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - integration
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -50,66 +51,53 @@ jobs:
         git add .version
         git commit -m "Update Version"
         
-    - name: Update C++-Compiler
+    - name: Set C++ Compiler
       run: |
-        if [[ "${{ github.event.head_commit.message }}" != *"[NO CI]"* ]]; then
-          sudo apt-get install -y g++-9
-        fi
+        sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-9 90
         
-    - name: Install Qt5
+    - name: Install Boost with components System, Python and Filesystem 
+      run: |
+        mkdir temp &&
+        cd temp &&
+        wget https://dl.bintray.com/boostorg/release/1.69.0/source/boost_1_69_0.tar.gz &&
+        tar xzf boost_1_69_0.tar.gz &&
+        cd boost_1_69_0 &&
+        sudo ln -s /usr/local/include/python3.7m /usr/local/include/python3.7 &&
+        sed -i "s@includes ?= \$(prefix)/include/python\$(version)@includes ?= \$(prefix)/include/python\$(version)m@" tools/build/src/tools/python.jam  &&
+        sudo ./bootstrap.sh --with-python=$(which python3) &&
+        sudo ./b2 --with-system --with-python --with-filesystem -j 8 -d0 install &&       
+        cd ..
+        cd ..
+ 
+    - name: Install Dependencies
       run: |
         if [[ "${{ github.event.head_commit.message }}" != *"[NO CI]"* ]]; then
           sudo apt-get update
           sudo apt-get --fix-missing install qtbase5-dev -qq > /dev/null
           sudo apt-get install qtdeclarative5-dev -qq > /dev/null
-        fi
-        
-    - name: Install GLM
-      run: |
-        if [[ "${{ github.event.head_commit.message }}" != *"[NO CI]"* ]]; then
           sudo apt-get install libglm-dev -qq > /dev/null
-        fi
-        
-    - name: Install uuid
-      run: |
-        if [[ "${{ github.event.head_commit.message }}" != *"[NO CI]"* ]]; then
           sudo apt-get install uuid-dev -qq > /dev/null
         fi
-        
-    - name: Install PythonLibs
+    - name: Install PythonLibs 3.7
+      run: |
+        sudo apt-get install python3.7-dev
+
+    - name: Install tbb
       run: |
         if [[ "${{ github.event.head_commit.message }}" != *"[NO CI]"* ]]; then
-          sudo apt-get install python3-dev -qq > /dev/null
-        fi
-        
-    - name: Install Boost with components System, Python and Filesystem
-      run: |
-        if [[ "${{ github.event.head_commit.message }}" != *"[NO CI]"* ]]; then
-          mkdir temp
-          cd temp
-          wget https://dl.bintray.com/boostorg/release/1.69.0/source/boost_1_69_0.tar.gz
-          tar xzf boost_1_69_0.tar.gz
-          cd boost_1_69_0 
-          sudo ln -s /usr/local/include/python3.7m /usr/local/include/python3.7
-          sed -i "s@includes ?= \$(prefix)/include/python\$(version)@includes ?= \$(prefix)/include/python\$(version)m@" tools/build/src/tools/python.jam
-          sudo ./bootstrap.sh --with-python=$(which python3)
-          sudo ./b2 --with-system --with-python --with-filesystem -j 8 -d0 install       
-          cd ..
-          cd ..
-        fi
-               
-    - name: configure
-      if: success()
-      run: |
-        if [[ "${{ github.event.head_commit.message }}" != *"[NO CI]"* ]]; then
-          cmake .
+          echo "deb http://cz.archive.ubuntu.com/ubuntu eoan main universe" | sudo tee -a  /etc/apt/sources.list
+          sudo apt-get update
+          sudo apt-get install libtbb-dev -qq > /dev/null
         fi
         
     - name: Compile SI
+      env:
+        CC: gcc
       if: success()
       run: |
         if [[ "${{ github.event.head_commit.message }}" != *"[NO CI]"* ]]; then
-          cmake --build /home/runner/work/Sketchable-Interaction/Sketchable-Interaction --target run_unit_tests -j 8
+          cmake . 
+          cmake --build  /home/runner/work/Sketchable-Interaction/Sketchable-Interaction --target run_unit_tests -j 8
         fi
         
     - name: Test SI

@@ -4,12 +4,12 @@
 #include <QMouseEvent>
 #include <QWheelEvent>
 #include <QApplication>
+#include <execution>
 
 #include "InputManager.hpp"
 #include <sigrun/context/Context.hpp>
 
-InputManager::~InputManager()
-= default;
+InputManager::~InputManager() = default;
 
 InputManager::InputManager():
     d_mouse_coords(0),
@@ -110,13 +110,12 @@ const glm::vec2 &InputManager::mouse_coords() const
 
 ExternalObject* InputManager::mouse_object()
 {
-    for(auto& obj: d_external_objects)
+    auto it = std::find_if(std::execution::par_unseq, d_external_objects.begin(), d_external_objects.end(), [](auto& obj)
     {
-        if(obj->type() == ExternalObject::ExternalObjectType::MOUSE)
-            return obj.get();
-    }
+        return obj->type() == ExternalObject::ExternalObjectType::MOUSE;
+    });
 
-    return nullptr;
+    return it != d_external_objects.end() ? it->get() : nullptr;
 }
 
 bool InputManager::eventFilter(QObject *watched, QEvent *event)

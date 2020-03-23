@@ -5,6 +5,8 @@
 
 #include <boost/python.hpp>
 #include <vector>
+#include <algorithm>
+#include <numeric>
 #include <debug/Print.hpp>
 #include <boost/make_shared.hpp>
 #include <boost/shared_ptr.hpp>
@@ -143,7 +145,7 @@ public:
      */
     static bool in(T const& self, V const& value)
     {
-        return std::find(self.begin(), self.end(), value) != self.end();
+        return VEC_CONTAINS(self, value);
     }
 
     /**
@@ -186,6 +188,7 @@ public:
     static boost::shared_ptr<std::vector<glm::vec3>> init(const bp::list& list=bp::list())
     {
         auto self = boost::make_shared<std::vector<glm::vec3>>();
+        self->reserve(bp::len(list));
 
         if(bp::len(list) > 0)
         {
@@ -247,19 +250,14 @@ public:
      */
     static const std::string repr(std::vector<glm::vec3>& self)
     {
-        std::string ret = "List of Points: [";
-
-        for(int i = 0; i < self.size(); ++i)
+        return std::transform_reduce(std::execution::par, self.begin(), self.end(), std::string("["), [](const std::string& a, const std::string& b)
         {
-            ret += ("[" + std::to_string(self[i].x) + ", " + std::to_string(self[i].y) + "]");
+            return a + ", " + b;
 
-            if(i != self.size() - 1)
-                ret += ", ";
-        }
-
-        ret += "]";
-
-        return ret;
+        }, [](const glm::vec3& p)
+        {
+            return "[" + std::to_string(p.x) + ", " + std::to_string(p.y) + "]";
+        });
     }
 
 private:
@@ -299,6 +297,7 @@ public:
     static boost::shared_ptr<std::vector<std::string>> init(const bp::list& list=bp::list())
     {
         auto self = boost::make_shared<std::vector<std::string>>();
+        self->reserve(bp::len(list));
 
         for(int i = 0; i < bp::len(list); ++i)
         {
@@ -347,19 +346,10 @@ public:
      */
     static const std::string repr(std::vector<std::string>& self)
     {
-        std::string ret = "List of strings: [";
-
-        for(int i = 0; i < self.size(); ++i)
+        return std::reduce(std::execution::par, self.begin(), self.end(),std::string(""), [&](const std::string& a, const std::string& b)
         {
-            ret += self[i];
-
-            if(i != self.size() - 1)
-                ret += ", ";
-        }
-
-        ret += "]";
-
-        return ret;
+            return a + ", " + b;
+        });
     }
 };
 
@@ -383,7 +373,7 @@ public:
     static boost::shared_ptr<std::vector<LinkRelation>> init(const bp::list& list=bp::list())
     {
         auto self = boost::make_shared<std::vector<LinkRelation>>();
-
+        self->reserve(bp::len(list));
 
         if(bp::len(list) > 0)
         {
@@ -452,19 +442,13 @@ public:
      */
     static const std::string repr(std::vector<LinkRelation>& self)
     {
-        std::string ret = "List of LinkRelations: [";
-
-        for(int i = 0; i < self.size(); ++i)
+        return std::transform_reduce(std::execution::par, self.begin(), self.end(), std::string(""), [&](const std::string& a, const std::string& b)
         {
-            ret += ("[" + self[i].sender + ", " + self[i].sender_attrib + ", " + self[i].recv + ", " + self[i].recv_attrib + "]");
-
-            if(i != self.size() - 1)
-                ret += ", ";
-        }
-
-        ret += "]";
-
-        return ret;
+           return a + ", " + b;
+        }, [&](const LinkRelation& lr)
+        {
+            return "[" + lr.sender + ", " + lr.sender_attrib + ", " + lr.recv + ", " + lr.recv_attrib + "]";
+        });
     }
 
 private:

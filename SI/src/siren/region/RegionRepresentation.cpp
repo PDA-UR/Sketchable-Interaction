@@ -26,7 +26,8 @@ RegionRepresentation::RegionRepresentation(QWidget *parent, const std::shared_pt
 
     d_view->setGeometry(0, 0, Context::SIContext()->width(), Context::SIContext()->height());
     d_view->setParent(this);
-    d_view->setAttribute(Qt::WA_AlwaysStackOnTop, true);
+    d_view->setAttribute(Qt::WA_AlwaysStackOnTop);
+    d_view->setAttribute(Qt::WA_NoSystemBackground);
     d_view->setClearColor(Qt::transparent);
 
     if(region->effect().has_data_changed())
@@ -41,6 +42,11 @@ RegionRepresentation::RegionRepresentation(QWidget *parent, const std::shared_pt
 RegionRepresentation::~RegionRepresentation()
 {
     QObject::disconnect(d_region_connection);
+}
+
+const int RegionRepresentation::type() const
+{
+    return d_type;
 }
 
 void RegionRepresentation::update(const std::shared_ptr<Region>& region)
@@ -64,7 +70,8 @@ void RegionRepresentation::perform_data_update(const std::shared_ptr<Region> &re
     if (region->effect().has_data_changed())
     {
         const glm::mat3x3 &transform = region->transform();
-        setGeometry(region->aabb()[0].x, region->aabb()[0].y, region->aabb()[3].x - region->aabb()[0].x, region->aabb()[1].y - region->aabb()[0].y);
+
+        resize(region->aabb()[3].x - region->aabb()[0].x, region->aabb()[1].y - region->aabb()[0].y);
 
         d_color = QColor(region->color().r, region->color().g, region->color().b, region->color().a);
 
@@ -74,9 +81,9 @@ void RegionRepresentation::perform_data_update(const std::shared_ptr<Region> &re
 
         for (int i = 1; i < region->contour().size(); ++i)
             d_fill.lineTo(region->contour()[i].x - region->aabb()[0].x, region->contour()[i].y - region->aabb()[0].y);
-
-        Q_EMIT dataChanged(region->data());
     }
+
+    Q_EMIT dataChanged(region->data());
 }
 
 void RegionRepresentation::paintEvent(QPaintEvent *event)

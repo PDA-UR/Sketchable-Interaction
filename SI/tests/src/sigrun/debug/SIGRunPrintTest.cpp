@@ -49,9 +49,7 @@ TEST_F(SIGRunPrintTest, map)
     std::map<int, int> map2;
 
     for(int i = 0; i < 5; i++)
-    {
         map2.insert(std::make_pair<int, int>(reinterpret_cast<int &&>(i), reinterpret_cast<int &&>(i)));
-    }
 
     EXPECT_NO_FATAL_FAILURE(Print::print(map2));
 }

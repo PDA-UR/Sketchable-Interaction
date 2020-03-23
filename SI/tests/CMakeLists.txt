@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.16)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
 
 project(SITest)
 
@@ -84,5 +85,5 @@ target_precompile_headers(run_unit_tests
 
 set_target_properties(run_unit_tests PROPERTIES AUTOMOC TRUE)
 
-target_link_libraries(run_unit_tests Qt5::Widgets Qt5::Test ${PYTHON_LIBRARIES} ${Boost_LIBRARIES} gtest gtest_main gmock gmock_main pthread -ldl -lutil SIGeneralRuntime)
+target_link_libraries(run_unit_tests Qt5::Widgets Qt5::Test ${PYTHON_LIBRARIES} ${Boost_LIBRARIES} gtest gtest_main gmock gmock_main pthread -ltbb -ldl -lutil SIGeneralRuntime)
 add_dependencies(run_unit_tests PySI SIGeneralRuntime)

@@ -3,6 +3,7 @@ project(SIEngine)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
 
 find_package(Qt5Widgets REQUIRED)
 
@@ -38,5 +39,5 @@ target_precompile_headers(SIRenderEngine
         )
 
 set_target_properties(SIRenderEngine PROPERTIES AUTOMOC TRUE)
-target_link_libraries(SIRenderEngine SIGeneralRuntime Qt5::QuickWidgets Qt5::Quick Qt5::Core Qt5::Widgets Qt5::Qml)
+target_link_libraries(SIRenderEngine SIGeneralRuntime Qt5::QuickWidgets Qt5::Quick Qt5::Core Qt5::Widgets Qt5::Qml -ltbb)
 add_dependencies(SIRenderEngine PySI SIGeneralRuntime)

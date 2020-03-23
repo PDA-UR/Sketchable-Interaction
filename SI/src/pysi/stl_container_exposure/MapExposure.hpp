@@ -5,6 +5,9 @@
 
 #include <boost/python.hpp>
 #include <map>
+#include <algorithm>
+#include <numeric>
+#include <execution>
 #include <boost/make_shared.hpp>
 #include <boost/shared_ptr.hpp>
 #include <glm/glm.hpp>
@@ -98,9 +101,9 @@ public:
     static int index(T const& x, K const& k)
     {
         int i = 0;
-
         for(typename T::const_iterator it = x.begin(); it != x.end(); ++it, ++i)
-            if( it->first == k ) return i;
+            if( it->first == k )
+                return i;
 
         return -1;
     }
@@ -130,21 +133,19 @@ public:
 
     static std::string repr(std::map<std::string, std::vector<glm::vec3>>& self)
     {
-        std::string ret = "{";
-
-        for(auto& [key, value]: self)
+        return std::transform_reduce(std::execution::par_unseq, self.begin(), self.end(), std::string("{"), [](const std::string& a, const std::string& b)
         {
-            ret += (key + "[");
-
-            for(auto& p: value)
-                ret += "(" + std::to_string(p.x) + ", " + std::to_string(p.y) + "), ";
-
-            ret += "]";
-        }
-
-        ret += "}";
-
-        return ret;
+            return a + ", " + b;
+        }, [](const std::pair<std::string, std::vector<glm::vec3>>& pair)
+        {
+            return pair.first + ": [" + std::transform_reduce(std::execution::par, pair.second.begin(), pair.second.end(), std::string(""), [](const std::string& a, const std::string& b)
+            {
+                return a + ", " + b;
+            }, [](const glm::vec3& p)
+            {
+                return "[" + std::to_string(p.x) + ", " + std::to_string(p.y) + "]";
+            }) + "]";
+        }) + "}";
     }
 
 private:
@@ -175,16 +176,19 @@ public:
 
     static std::string repr(std::map<std::string, bp::object>& self)
     {
-        std::string ret = "{";
-
-        for(auto& [key, value]: self)
+        return std::transform_reduce(std::execution::par_unseq, self.begin(), self.end(), std::string("{"), [&](const std::string& a, const std::string& b)
         {
-            ret += (key + ": " + "function, ");
-        }
-
-        ret += "}";
-
-        return ret;
+            return a + ", " + b;
+        }, [&](const std::pair<std::string, bp::object>& pair)
+        {
+            if(!pair.second.is_none())
+            {
+                const std::string& str = bp::extract<std::string>(pair.second.attr("__name__"));
+                return pair.first + ": " + "function: self." + str + ", ";
+            }
+            else
+                return pair.first + ": " + "function: None, ";
+        }) + "}";
     }
 
 private:
@@ -231,19 +235,25 @@ public:
 
     static std::string repr(std::map<std::string, std::map<std::string, bp::object>>& self)
     {
-        std::string ret = "{";
-
-        for(auto& [key, value]: self)
+        return std::transform_reduce(std::execution::par_unseq, self.begin(), self.end(), std::string("{"), [&](const std::string& a, const std::string& b)
         {
-            ret += key + ": {";
-
-            for(auto& [key2, value2]: value)
-                ret += key2 + ": " + "function},";
-        }
-
-        ret += "}";
-
-        return ret;
+            return a + ", " + b;
+        }, [&](const std::pair<std::string, std::map<std::string, bp::object>>& outer_pair)
+        {
+            return outer_pair.first + ": " + std::transform_reduce(std::execution::par_unseq, outer_pair.second.begin(), outer_pair.second.end(), std::string("{"), [&](const std::string& a2, const std::string& b2)
+            {
+                return a2 + ", " + b2;
+            }, [&](const std::pair<std::string, bp::object>& inner_pair)
+            {
+                if(!(inner_pair.second.is_none()))
+                {
+                    const std::string str = bp::extract<std::string>(inner_pair.second.attr("__name__"));
+                    return inner_pair.first + ": " + "function: self." + str + ", ";
+                }
+                else
+                    return inner_pair.first + ": " + "function: None, ";
+            }) + "}";
+        }) + "}";
     }
 
 private:

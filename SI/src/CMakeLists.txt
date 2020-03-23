@@ -3,8 +3,9 @@ project(SIEngine)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-
-find_package(PythonLibs 3 REQUIRED)
+set(CMAKE_CXX_EXTENSIONS OFF)
+set(Python_ADDITIONAL_VERSIONS 3.7)
+find_package(PythonLibs 3.7 REQUIRED)
 find_package(Python3 REQUIRED)
 find_package(Boost 1.69.0 COMPONENTS system python3.7 filesystem REQUIRED)
 find_package(glm REQUIRED)
@@ -31,13 +32,16 @@ set(PySISrc
 
 # SI PYTHON3 MODULE
 add_library(PySI MODULE ${PySISrc})
-target_link_libraries(PySI ${PYTHON_LIBRARIES} ${Boost_LIBRARIES} Qt5::Widgets)
+target_link_libraries(PySI ${PYTHON_LIBRARIES} ${Boost_LIBRARIES} Qt5::Widgets -ltbb)
 
 target_precompile_headers(PySI
         PUBLIC
         PRIVATE
         <unordered_map>
         <vector>
+        <algorithm>
+        <numeric>
+        <execution>
         <QVariant>
         <map>
         SI/src/pysi/stl_container_exposure/VectorExposure.hpp
@@ -108,6 +112,9 @@ target_precompile_headers(SIGeneralRuntime
         PRIVATE
         <unordered_map>
         <vector>
+        <algorithm>
+        <numeric>
+        <execution>
         <string>
         <any>
         <queue>
@@ -137,7 +144,7 @@ target_precompile_headers(SIGeneralRuntime
         )
 
 set_target_properties(SIGeneralRuntime PROPERTIES AUTOMOC TRUE)
-target_link_libraries(SIGeneralRuntime ${PATH_LIB} -luuid ${PYTHON_LIBRARIES} ${Boost_LIBRARIES} Qt5::QuickWidgets Qt5::Quick Qt5::Core Qt5::Widgets Qt5::Qml)
+target_link_libraries(SIGeneralRuntime ${PATH_LIB} -luuid ${PYTHON_LIBRARIES} ${Boost_LIBRARIES} Qt5::QuickWidgets Qt5::Quick Qt5::Core Qt5::Widgets Qt5::Qml -ltbb)
 
 if (BUILD_DOCS)
     find_package(Doxygen)

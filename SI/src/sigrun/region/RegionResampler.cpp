@@ -1,5 +1,7 @@
 
 
+#include <numeric>
+#include <execution>
 #include "RegionResampler.hpp"
 
 void RegionResampler::resample(std::vector<glm::vec3> &out, const std::vector<glm::vec3> &in, int step_count)

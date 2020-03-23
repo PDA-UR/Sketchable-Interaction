@@ -25,7 +25,7 @@ private:
     bool has_capabilities_in_common(const std::shared_ptr<Region>& a, const std::shared_ptr<Region>& b);
     bool are_aabbs_equal(const std::shared_ptr<Region>& a, const std::shared_ptr<Region>& b);
 
-    void handle_event_continuous(const std::shared_ptr<Region>& a, const std::shared_ptr<Region>& b);
+    void handle_event_continuous(const std::shared_ptr<Region>& a, const std::shared_ptr<Region>& b, const std::tuple<std::string, std::string>& tuple);
     void handle_event_leave(const std::shared_ptr<Region>& a, const std::shared_ptr<Region>& b, const std::tuple<std::string, std::string>& tuple);
     void handle_event_enter(const std::shared_ptr<Region>& a, const std::shared_ptr<Region>& b, const std::tuple<std::string, std::string>& tuple);
 

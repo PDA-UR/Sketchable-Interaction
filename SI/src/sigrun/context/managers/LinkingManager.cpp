@@ -21,13 +21,13 @@ bool LinkingManager::add_link(const std::shared_ptr<Region> &ra, const std::stri
 {
     if(type == ILink::LINK_TYPE::UD)
     {
-        INFO("Checking if requested linking relationship (" + aa + "|" + ab + "as " + "unidirectional link) is already present...");
+        INFO("Checking if requested linking relationship (" + ra->name() + ": " + aa + "|" + rb->name() + ": " + ab + "as " + "unidirectional link) is already present...");
 
         if(is_linked(ra, aa, rb, ab, type))
         {
             INFO("Requested linking relationship is already present!");
 
-            return true;
+            return false;
         }
 
         INFO("Requested linking relationship is not already present!");

@@ -7,6 +7,8 @@
 #include "Capability.hpp"
 #include <unordered_map>
 #include <memory>
+#include <QWindow>
+#include <QWidget>
 #include <boost/python.hpp>
 #include <sigrun/context/managers/RegionManager.hpp>
 #include <sigrun/context/managers/CollisionManager.hpp>
@@ -43,7 +45,14 @@ public:
     void update_linking_relations(const std::vector<LinkRelation>& relations, const std::string& source);
     void remove_all_source_linking_relations(const std::string& source);
     void remove_all_partaking_linking_relations(const std::string& source);
+
     void spawn_folder_contents_as_regions(const std::vector<std::string>& children_paths, const std::string& uuid, const bool with_btns);
+    void spawn_folder_contents_buttons_as_regions(std::shared_ptr<Region>& parent, int dir_x, int dir_y, int preview_width, int preview_height);
+    void spawn_folder_contents_entries_as_regions(std::shared_ptr<Region>& parent, const std::vector<std::string>& children_paths, int dir_x, int dir_y, int dir_width, int dir_height, int preview_width, int preview_height);
+    void spawn_folder_contents_entry_as_region(const std::vector<glm::vec3>& contour, std::shared_ptr<Region>& parent, const std::string& effect_type, const bp::dict& kwargs);
+
+    void embed_winid(int winid);
+    void destroy_winid(int winid);
 
 private:
     static Context* self;
@@ -71,6 +80,8 @@ private:
     std::unique_ptr<InputManager> upim;
     std::unique_ptr<CollisionManager> uprcm;
     std::unique_ptr<FileSystem> upfs;
+
+    std::unordered_map<int, QWidget*> d_external_winid_to_embedded_app;
 
     std::string test_help = "Tag";
 

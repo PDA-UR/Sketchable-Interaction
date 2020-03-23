@@ -252,3 +252,5 @@ SI/plugins/standard_environment_library/filesystem/__pycache__/
 SI/plugins/standard_environment_library/deletion/__pycache__/
 
 SI/plugins/standard_environment_library/button/__pycache__/
+
+SI/plugins/standard_environment_library/notification/__pycache__/
