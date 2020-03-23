@@ -4,7 +4,7 @@ project(SIEngine)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
-
+set(Python_ADDITIONAL_VERSIONS 3.7)
 find_package(PythonLibs 3.7 REQUIRED)
 find_package(Python3 REQUIRED)
 find_package(Boost 1.69.0 COMPONENTS system python3.7 filesystem REQUIRED)
