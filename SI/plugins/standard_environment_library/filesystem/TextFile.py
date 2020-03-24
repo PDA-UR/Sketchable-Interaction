@@ -2,6 +2,7 @@ from libPySI import PySIEffect, PySICapability
 import Entry
 import subprocess
 import psutil
+import time
 
 from SI.plugins.standard_environment_library.filesystem import __OpenEntryHelper as ofh
 
@@ -25,6 +26,9 @@ class TextFile(Entry.Entry):
         self.process_create_time = 0.0
         self.process = None
         self.process_winid = ""
+        self.process_fetch_winid_sleep_time_ms = 1 / 30
+        self.process_fetch_winid_timeout_ms = 500
+        self.process_fetch_winid_iterations = self.process_fetch_winid_timeout_ms / self.process_fetch_winid_sleep_time_ms / 1000
 
         self.add_data("icon_width", self.icon_width, PySIEffect.DataType.INT)
         self.add_data("icon_height", self.icon_height, PySIEffect.DataType.INT)
@@ -44,10 +48,6 @@ class TextFile(Entry.Entry):
                 cmd = ofh.get_default(self.path).getExec()[0:-3].split(" ") + [self.path]
 
                 self.process = subprocess.Popen(cmd, stdout=subprocess.PIPE)
-                try:
-                    self.process.wait(2)
-                except(Exception):
-                    pass
 
                 app = cmd[0] if cmd[0] != "libreoffice" else "soffice.bin"
                 l = [p.info for p in psutil.process_iter(attrs=['pid', 'name', 'create_time']) if app in p.info['name']][0]
@@ -57,34 +57,42 @@ class TextFile(Entry.Entry):
                 self.process_app_name = app
                 self.process_create_time = l["create_time"]
 
-                processes = subprocess.check_output(["wmctrl", "-lp"]).decode("utf-8").split("\n")
+                processes = []
+                for i in range(self.process_fetch_winid_iterations):
+                    try:
+                        processes = subprocess.check_output("wmctrl -lp | grep -i '" + self.filename + "'", shell=True).decode("utf-8").split("\n")
+                        if len(processes):
+                            print(i)
+                            break
+                    except:
+                        pass
 
-                for process in processes:
-                    if self.pid in process:
-                        temp = process.split(" ")
+                    time.sleep(self.process_fetch_winid_sleep_time_ms)
 
-                        for i in range(len(temp) - 1, -1, -1):
-                            if temp[i] == '':
-                                del temp[i]
+                if len(processes) > 0:
+                    temp = processes[0].split(" ")
 
-                        winid, pid = temp[:3][::2]
+                    for i in range(len(temp) - 1, -1, -1):
+                        if temp[i] == '':
+                            del temp[i]
 
-                        self.process_winid = winid if pid == self.pid else ""
-                        break
+                    winid, pid = temp[:3][::2]
 
-                if self.process_winid != "":
-                    self.embed_file_standard_appliation_into_context(int(self.process_winid, 0))
-                else:
-                    error = "Could not determine Window ID of requested application {0} for file {1}!".format(app, self.path)
-                    self.on_open_entry_leave_recv()
-                    raise Exception(error)
+                    self.process_winid = winid
+
+                    if self.process_winid != "":
+                        self.embed_file_standard_appliation_into_context(int(self.process_winid, 0))
+                    else:
+                        error = "Could not determine Window ID of requested application {0} for file {1}!".format(app, self.path)
+                        self.on_open_entry_leave_recv()
+                        raise Exception(error)
 
             self.is_open_entry_capability_blocked = True
 
         return 0
 
     def on_open_entry_leave_recv(self):
-        if self.process is not None and self.is_open_entry_capability_blocked:
+        if self.process is not None and self.is_open_entry_capability_blocked and self.process_winid is not "":
             if self.process_app_name in self.special_apps:
                 subprocess.Popen(["wmctrl", "-c", self.special_apps[self.process_name]])
             else:
@@ -92,7 +100,7 @@ class TextFile(Entry.Entry):
 
             self.destroy_embedded_window(int(self.process_winid, 0))
 
-        self.pid = 0
+        self.pid = ""
         self.process_app_name = ""
         self.process_name = ""
         self.process_create_time = 0.0
