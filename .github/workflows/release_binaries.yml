@@ -18,47 +18,53 @@ jobs:
       with:
         python-version: ${{ matrix.python-version }}
         
-    - name: Update C++-Compiler
-      run: sudo apt-get install -y g++-9
-      
-    - name: Install Qt5
+    - name: Set C++ Compiler
       run: |
-        sudo apt-get update
-        sudo apt-get install qtbase5-dev
-        sudo apt-get install qtdeclarative5-dev
+        sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-9 90
         
-    - name: Install GLM
+    - name: Install Boost with components System, Python and Filesystem 
       run: |
-        sudo apt-get install libglm-dev
-        
-    - name: Install uuid
-      run: |
-        sudo apt-get install uuid-dev
-    
-    - name: Install PythonLibs
-      run: |
-        sudo apt-get install python3-dev
-        
-    - name: Install Boost with components System, Python and Filesystem
-      run: |
-        mkdir temp
-        cd temp
-        wget https://dl.bintray.com/boostorg/release/1.69.0/source/boost_1_69_0.tar.gz
-        tar xzf boost_1_69_0.tar.gz
-        cd boost_1_69_0 
-        sudo ln -s /usr/local/include/python3.7m /usr/local/include/python3.7
-        sed -i "s@includes ?= \$(prefix)/include/python\$(version)@includes ?= \$(prefix)/include/python\$(version)m@" tools/build/src/tools/python.jam
-        sudo ./bootstrap.sh --with-python=$(which python3)
-        sudo ./b2 --with-system --with-python --with-filesystem -j 8 install
+        mkdir temp &&
+        cd temp &&
+        wget https://dl.bintray.com/boostorg/release/1.69.0/source/boost_1_69_0.tar.gz &&
+        tar xzf boost_1_69_0.tar.gz &&
+        cd boost_1_69_0 &&
+        sudo ln -s /usr/local/include/python3.7m /usr/local/include/python3.7 &&
+        sed -i "s@includes ?= \$(prefix)/include/python\$(version)@includes ?= \$(prefix)/include/python\$(version)m@" tools/build/src/tools/python.jam  &&
+        sudo ./bootstrap.sh --with-python=$(which python3) &&
+        sudo ./b2 --with-system --with-python --with-filesystem -j 8 -d0 install &&       
         cd ..
         cd ..
+ 
+    - name: Install Dependencies
+      run: |
+        if [[ "${{ github.event.head_commit.message }}" != *"[NO CI]"* ]]; then
+          sudo apt-get update
+          sudo apt-get --fix-missing install qtbase5-dev -qq > /dev/null
+          sudo apt-get install qtdeclarative5-dev -qq > /dev/null
+          sudo apt-get install libglm-dev -qq > /dev/null
+          sudo apt-get install uuid-dev -qq > /dev/null
+        fi
+    - name: Install PythonLibs 3.7
+      run: |
+        sudo apt-get install python3.7-dev
+    - name: Install tbb
+      run: |
+        if [[ "${{ github.event.head_commit.message }}" != *"[NO CI]"* ]]; then
+          echo "deb http://cz.archive.ubuntu.com/ubuntu eoan main universe" | sudo tee -a  /etc/apt/sources.list
+          sudo apt-get update
+          sudo apt-get install libtbb-dev -qq > /dev/null
+        fi
         
-    - name: configure
-      run: cmake .
-    
     - name: Compile SI
+      env:
+        CC: gcc
+      if: success()
       run: |
-        cmake --build /home/runner/work/Sketchable-Interaction/Sketchable-Interaction --target all -j 8
+        if [[ "${{ github.event.head_commit.message }}" != *"[NO CI]"* ]]; then
+          cmake . 
+          cmake --build  /home/runner/work/Sketchable-Interaction/Sketchable-Interaction --target all -j 8
+        fi
         
     - name: Create SI Archive
       run: 
@@ -96,6 +102,3 @@ jobs:
         asset_path: artifact/si.zip
         asset_name: si
         asset_content_type: application/zip
-      
-        
-  
