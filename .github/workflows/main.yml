@@ -1,0 +1,16 @@
+name: Forward to Integration
+
+on:
+  push:
+    branches:
+      - runtime-dev
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Push to integration branch
+        uses: ad-m/github-push-action@master
+        with:
+          branch: integration
+          github_token: ${{ secrets.GITHUB_TOKEN }}
