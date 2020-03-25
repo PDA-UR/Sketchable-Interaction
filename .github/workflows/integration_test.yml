@@ -81,7 +81,6 @@ jobs:
     - name: Install PythonLibs 3.7
       run: |
         sudo apt-get install python3.7-dev
-
     - name: Install tbb
       run: |
         if [[ "${{ github.event.head_commit.message }}" != *"[NO CI]"* ]]; then
