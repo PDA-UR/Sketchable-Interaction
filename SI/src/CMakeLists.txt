@@ -101,7 +101,9 @@ set(SIGRunSRC
         SI/src/sigrun/context/managers/helpers/input/ExternalObject.cpp
         SI/src/sigrun/context/managers/helpers/input/ExternalObject.hpp
         SI/src/sigrun/context/managers/helpers/input/FileSystem.cpp
-        SI/src/sigrun/context/managers/helpers/input/FileSystem.hpp)
+        SI/src/sigrun/context/managers/helpers/input/FileSystem.hpp
+        SI/src/sigrun/context/managers/ExternalApplicationManager.cpp
+        SI/src/sigrun/context/managers/ExternalApplicationManager.hpp)
 
 ADD_DEFINITIONS(-DQT_NO_KEYWORDS)
 
@@ -128,7 +130,11 @@ target_precompile_headers(SIGeneralRuntime
         <QInputEvent>
         <QMetaMethod>
         <QObject>
+        <QString>
         <QEvent>
+        <QProcess>
+        <QMainWindow>
+        <QWindow>
         <QKeyEvent>
         <QMouseEvent>
         SI/src/sigrun/util/Benchmark.hpp

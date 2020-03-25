@@ -4,14 +4,10 @@
 #include "Context.hpp"
 #include <QApplication>
 #include <QMainWindow>
-#include <QProcess>
 #include <sigrun/rendering/IRenderEngine.hpp>
 #include <boost/python.hpp>
 #include <pysi/PySIEffect.hpp>
 #include <sigrun/util/Util.hpp>
-#include <QMimeDatabase>
-#include <QMimeType>
-#include <QMimeData>
 
 namespace bp = boost::python;
 
@@ -33,6 +29,7 @@ Context::Context()
     upcm = std::unique_ptr<Capability>(new Capability);
     uprcm = std::unique_ptr<CollisionManager>(new CollisionManager);
     upfs = std::unique_ptr<FileSystem>(new FileSystem);
+    upeam = std::unique_ptr<ExternalApplicationManager>(new ExternalApplicationManager);
 }
 
 void Context::add_startup_regions(const std::unordered_map<std::string, std::unique_ptr<bp::object>>& plugins)
@@ -201,6 +198,11 @@ CollisionManager *Context::collision_manager()
 LinkingManager* Context::linking_manager()
 {
     return uplm.get();
+}
+
+ExternalApplicationManager* Context::external_application_manager()
+{
+    return upeam.get();
 }
 
 Context* Context::SIContext()
@@ -486,64 +488,10 @@ void Context::spawn_folder_contents_as_regions(const std::vector<std::string>& c
 
 void Context::launch_external_application_with_file(const std::string& uuid, const std::string& path)
 {
-    QProcess::startDetached("xdg-open", QStringList() << path.c_str(), QString(""));
-
-    QProcess p;
-    int i = 0;
-    std::string output = "";
-    QString cmd = "wmctrl -lp | grep -i \'" + QString(path.substr(path.find_last_of('/') + 1, std::string::npos).c_str()) + "\'";
-
-    do
-    {
-        usleep(16000);
-        p.start("bash", QStringList() << "-c" << cmd);
-        p.waitForFinished();
-        output = p.readAllStandardOutput().toStdString();
-    } while(++i < 60 && output.empty());
-
-    if(!output.empty())
-    {
-        const auto& l = QString(output.c_str()).split(' ', QString::SkipEmptyParts);
-        if(!l.empty())
-        {
-            uint64_t winid = 0;
-            std::stringstream ss;
-            ss << std::hex << l[0].toStdString();
-            ss >> winid;
-
-            if(winid != 0)
-            {
-                QMainWindow* pMainWnd;
-
-                for(QWidget* pWidget : QApplication::topLevelWidgets())
-                {
-                    pMainWnd = qobject_cast<QMainWindow*>(pWidget);
-                    if (pMainWnd)
-                        break;
-                }
-
-                if(pMainWnd)
-                {
-                    d_external_winid_to_embedded_app[uuid]= QWidget::createWindowContainer(QWindow::fromWinId(winid));
-                    d_external_winid_to_embedded_app[uuid]->setParent(pMainWnd);
-                    d_external_winid_to_embedded_app[uuid]->show();
-                }
-            }
-        }
-    }
-    else
-    {
-        ERROR("Timeout for finding winid of default app of " + path);
-    }
-
+    upeam->launch_standard_application(uuid, path);
 }
 
 void Context::terminate_external_application_with_file(const std::string& uuid)
 {
-    if(MAP_HAS_KEY(d_external_winid_to_embedded_app, uuid))
-    {
-        d_external_winid_to_embedded_app[uuid]->close();
-        delete d_external_winid_to_embedded_app[uuid];
-        d_external_winid_to_embedded_app.erase(uuid);
-    }
+    upeam->terminate_application(uuid);
 }
