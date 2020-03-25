@@ -66,21 +66,25 @@ jobs:
           cmake --build  /home/runner/work/Sketchable-Interaction/Sketchable-Interaction --target all -j 8
         fi
         
-    - name: Create SI Archive
-      run: 
-        mkdir artifact && 7z a -t7z artifact/si.zip libPySI.so libSIGeneralRuntime.so libSIRenderEngine.so si_test_application
-        
-    - name: Create Artifact
-      uses: actions/upload-artifact@v1
-      with:
-        name: si-binary-archives
-        path: artifact
-        
     - name: Versioning
       id: version
       run: |
         current=$(cat .version)
         echo "::set-env name=CURRENT_VERSION::$current"
+        
+    - name: Create SI Archive
+      run: |
+        mkdir artifact &&
+        cp -r /home/runner/work/Sketchable-Interaction/Sketchable-Interaction/SI/plugins . && 
+        zip artifact/si${{ env.CURRENT_VERSION }}.zip -j si_test_application libSIGeneralRuntime.so libSIRenderEngine.so libPySI.so && 
+        zip -ur artifact/si${{ env.CURRENT_VERSION }}.zip plugins && 
+        rm -rf plugins
+                
+    - name: Create Artifact
+      uses: actions/upload-artifact@v1
+      with:
+        name: si-binary-archives
+        path: artifact    
         
     - name: Create Release
       id: create_release
