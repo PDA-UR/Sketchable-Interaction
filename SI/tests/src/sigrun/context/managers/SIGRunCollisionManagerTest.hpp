@@ -23,8 +23,6 @@ public:
 
     }
 
-    Context ctx = Context();
-
     CollisionManager cm;
 
     bool cm_has_capabilities_in_common(const std::shared_ptr<Region>& a, const std::shared_ptr<Region>& b)

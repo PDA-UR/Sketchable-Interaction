@@ -14,6 +14,7 @@
 #include <sigrun/context/managers/CollisionManager.hpp>
 #include <sigrun/context/managers/LinkingManager.hpp>
 #include <sigrun/context/managers/InputManager.hpp>
+#include <sigrun/context/managers/ExternalApplicationManager.hpp>
 #include <sigrun/rendering/IRenderEngine.hpp>
 #include <sigrun/context/managers/helpers/input/FileSystem.hpp>
 
@@ -33,6 +34,7 @@ public:
     InputManager* input_manager();
     CollisionManager* collision_manager();
     LinkingManager* linking_manager();
+    ExternalApplicationManager* external_application_manager();
 
     void update();
     void enable(int what);
@@ -80,8 +82,8 @@ private:
     std::unique_ptr<InputManager> upim;
     std::unique_ptr<CollisionManager> uprcm;
     std::unique_ptr<FileSystem> upfs;
+    std::unique_ptr<ExternalApplicationManager> upeam;
 
-    std::unordered_map<std::string, QWidget*> d_external_winid_to_embedded_app;
 
     std::string test_help = "Tag";
 
