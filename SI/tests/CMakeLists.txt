@@ -62,8 +62,12 @@ set(SIUnitTestSrc
         SI/tests/src/sigrun/context/managers/SIGRunRegionManagerTest.hpp
         SI/tests/src/sigrun/context/managers/SIGRunLinkingManagerTest.cpp
         SI/tests/src/sigrun/context/managers/SIGRunLinkingManagerTest.hpp
+        SI/tests/src/sigrun/context/managers/SIGRunExternalApplicationManagerTest.cpp
+        SI/tests/src/sigrun/context/managers/SIGRunExternalApplicationManagerTest.hpp
         SI/tests/src/sigrun/util/SIGRunRingBufferTest.cpp
-        SI/tests/src/sigrun/util/SIGRunRingBufferTest.hpp)
+        SI/tests/src/sigrun/util/SIGRunRingBufferTest.hpp
+        SI/tests/src/sigrun/util/SIGRunUtilTest.cpp
+        SI/tests/src/sigrun/util/SIGRunUtilTest.hpp)
 
 ADD_DEFINITIONS(-DQT_NO_KEYWORDS)
 
@@ -77,6 +81,9 @@ target_precompile_headers(run_unit_tests
         <vector>
         <boost/python.hpp>
         <QApplication>
+        <QMainWindow>
+        <QWindow>
+        <QProcess>
         <QObject>
         <QSignalSpy>
         <gtest/gtest.h>

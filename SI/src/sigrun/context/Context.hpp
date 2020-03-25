@@ -14,6 +14,7 @@
 #include <sigrun/context/managers/CollisionManager.hpp>
 #include <sigrun/context/managers/LinkingManager.hpp>
 #include <sigrun/context/managers/InputManager.hpp>
+#include <sigrun/context/managers/ExternalApplicationManager.hpp>
 #include <sigrun/rendering/IRenderEngine.hpp>
 #include <sigrun/context/managers/helpers/input/FileSystem.hpp>
 
@@ -33,6 +34,7 @@ public:
     InputManager* input_manager();
     CollisionManager* collision_manager();
     LinkingManager* linking_manager();
+    ExternalApplicationManager* external_application_manager();
 
     void update();
     void enable(int what);
@@ -51,8 +53,8 @@ public:
     void spawn_folder_contents_entries_as_regions(std::shared_ptr<Region>& parent, const std::vector<std::string>& children_paths, int dir_x, int dir_y, int dir_width, int dir_height, int preview_width, int preview_height);
     void spawn_folder_contents_entry_as_region(const std::vector<glm::vec3>& contour, std::shared_ptr<Region>& parent, const std::string& effect_type, const bp::dict& kwargs);
 
-    void embed_winid(int winid);
-    void destroy_winid(int winid);
+    void launch_external_application_with_file(const std::string& uuid, const std::string& path);
+    void terminate_external_application_with_file(const std::string& uuid);
 
 private:
     static Context* self;
@@ -80,8 +82,8 @@ private:
     std::unique_ptr<InputManager> upim;
     std::unique_ptr<CollisionManager> uprcm;
     std::unique_ptr<FileSystem> upfs;
+    std::unique_ptr<ExternalApplicationManager> upeam;
 
-    std::unordered_map<int, QWidget*> d_external_winid_to_embedded_app;
 
     std::string test_help = "Tag";
 

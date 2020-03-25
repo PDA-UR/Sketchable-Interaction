@@ -29,6 +29,7 @@ Context::Context()
     upcm = std::unique_ptr<Capability>(new Capability);
     uprcm = std::unique_ptr<CollisionManager>(new CollisionManager);
     upfs = std::unique_ptr<FileSystem>(new FileSystem);
+    upeam = std::unique_ptr<ExternalApplicationManager>(new ExternalApplicationManager);
 }
 
 void Context::add_startup_regions(const std::unordered_map<std::string, std::unique_ptr<bp::object>>& plugins)
@@ -197,6 +198,11 @@ CollisionManager *Context::collision_manager()
 LinkingManager* Context::linking_manager()
 {
     return uplm.get();
+}
+
+ExternalApplicationManager* Context::external_application_manager()
+{
+    return upeam.get();
 }
 
 Context* Context::SIContext()
@@ -480,32 +486,12 @@ void Context::spawn_folder_contents_as_regions(const std::vector<std::string>& c
     }
 }
 
-void Context::embed_winid(int winid)
+void Context::launch_external_application_with_file(const std::string& uuid, const std::string& path)
 {
-    d_external_winid_to_embedded_app[winid]= QWidget::createWindowContainer(QWindow::fromWinId(winid));
-
-    QMainWindow* pMainWnd;
-
-    for(QWidget* pWidget : QApplication::topLevelWidgets())
-    {
-        pMainWnd = qobject_cast<QMainWindow*>(pWidget);
-        if (pMainWnd)
-            break;
-    }
-
-    if(pMainWnd)
-        d_external_winid_to_embedded_app[winid]->setParent(pMainWnd);
-
-    d_external_winid_to_embedded_app[winid]->show();
+    upeam->launch_standard_application(uuid, path);
 }
 
-void Context::destroy_winid(int winid)
+void Context::terminate_external_application_with_file(const std::string& uuid)
 {
-    if(MAP_HAS_KEY(d_external_winid_to_embedded_app, winid))
-    {
-        d_external_winid_to_embedded_app[winid]->close();
-        delete d_external_winid_to_embedded_app[winid];
-        d_external_winid_to_embedded_app.erase(winid);
-        INFO("DELETED window: " + std::to_string(winid));
-    }
+    upeam->terminate_application(uuid);
 }
