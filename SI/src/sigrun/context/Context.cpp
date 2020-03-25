@@ -4,10 +4,14 @@
 #include "Context.hpp"
 #include <QApplication>
 #include <QMainWindow>
+#include <QProcess>
 #include <sigrun/rendering/IRenderEngine.hpp>
 #include <boost/python.hpp>
 #include <pysi/PySIEffect.hpp>
 #include <sigrun/util/Util.hpp>
+#include <QMimeDatabase>
+#include <QMimeType>
+#include <QMimeData>
 
 namespace bp = boost::python;
 
@@ -480,32 +484,66 @@ void Context::spawn_folder_contents_as_regions(const std::vector<std::string>& c
     }
 }
 
-void Context::embed_winid(int winid)
+void Context::launch_external_application_with_file(const std::string& uuid, const std::string& path)
 {
-    d_external_winid_to_embedded_app[winid]= QWidget::createWindowContainer(QWindow::fromWinId(winid));
+    QProcess::startDetached("xdg-open", QStringList() << path.c_str(), QString(""));
 
-    QMainWindow* pMainWnd;
+    QProcess p;
+    int i = 0;
+    std::string output = "";
+    QString cmd = "wmctrl -lp | grep -i \'" + QString(path.substr(path.find_last_of('/') + 1, std::string::npos).c_str()) + "\'";
 
-    for(QWidget* pWidget : QApplication::topLevelWidgets())
+    do
     {
-        pMainWnd = qobject_cast<QMainWindow*>(pWidget);
-        if (pMainWnd)
-            break;
+        usleep(16000);
+        p.start("bash", QStringList() << "-c" << cmd);
+        p.waitForFinished();
+        output = p.readAllStandardOutput().toStdString();
+    } while(++i < 60 && output.empty());
+
+    if(!output.empty())
+    {
+        const auto& l = QString(output.c_str()).split(' ', QString::SkipEmptyParts);
+        if(!l.empty())
+        {
+            uint64_t winid = 0;
+            std::stringstream ss;
+            ss << std::hex << l[0].toStdString();
+            ss >> winid;
+
+            if(winid != 0)
+            {
+                QMainWindow* pMainWnd;
+
+                for(QWidget* pWidget : QApplication::topLevelWidgets())
+                {
+                    pMainWnd = qobject_cast<QMainWindow*>(pWidget);
+                    if (pMainWnd)
+                        break;
+                }
+
+                if(pMainWnd)
+                {
+                    d_external_winid_to_embedded_app[uuid]= QWidget::createWindowContainer(QWindow::fromWinId(winid));
+                    d_external_winid_to_embedded_app[uuid]->setParent(pMainWnd);
+                    d_external_winid_to_embedded_app[uuid]->show();
+                }
+            }
+        }
+    }
+    else
+    {
+        ERROR("Timeout for finding winid of default app of " + path);
     }
 
-    if(pMainWnd)
-        d_external_winid_to_embedded_app[winid]->setParent(pMainWnd);
-
-    d_external_winid_to_embedded_app[winid]->show();
 }
 
-void Context::destroy_winid(int winid)
+void Context::terminate_external_application_with_file(const std::string& uuid)
 {
-    if(MAP_HAS_KEY(d_external_winid_to_embedded_app, winid))
+    if(MAP_HAS_KEY(d_external_winid_to_embedded_app, uuid))
     {
-        d_external_winid_to_embedded_app[winid]->close();
-        delete d_external_winid_to_embedded_app[winid];
-        d_external_winid_to_embedded_app.erase(winid);
-        INFO("DELETED window: " + std::to_string(winid));
+        d_external_winid_to_embedded_app[uuid]->close();
+        delete d_external_winid_to_embedded_app[uuid];
+        d_external_winid_to_embedded_app.erase(uuid);
     }
 }
