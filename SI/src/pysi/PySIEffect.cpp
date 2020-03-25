@@ -39,14 +39,14 @@ void PySIEffect::notify_shape_changed(bool resample)
     d_require_resample = resample;
 }
 
-void PySIEffect::__embed_file_standard_appliation_into_context__(const int winid)
+void PySIEffect::__embed_file_standard_appliation_into_context__(const std::string& uuid, const std::string& path)
 {
-    Context::SIContext()->embed_winid(winid);
+    Context::SIContext()->launch_external_application_with_file(uuid, path);
 }
 
-void PySIEffect::__destroy_embedded_file_standard_appliation_in_context__(const int winid)
+void PySIEffect::__destroy_embedded_file_standard_appliation_in_context__(const std::string& uuid)
 {
-    Context::SIContext()->destroy_winid(winid);
+    Context::SIContext()->terminate_external_application_with_file(uuid);
 }
 
 int PySIEffect::has_shape_changed()
