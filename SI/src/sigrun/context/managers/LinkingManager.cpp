@@ -6,7 +6,7 @@
 
 LinkingManager::LinkingManager():
         d_linking_graph(std::make_unique<LinkingGraph>())
-{SIGRUN
+{
     qRegisterMetaType<std::string>("std::string");
 }
 

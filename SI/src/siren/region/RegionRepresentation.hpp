@@ -13,7 +13,7 @@
 #include <SI/SI.hpp>
 
 class RegionRepresentation: public QWidget, public SIObject
-{ Q_OBJECT
+{ Q_OBJECT SIREN
 
 public:
     RegionRepresentation(QWidget* parent, const std::shared_ptr<Region>& region);

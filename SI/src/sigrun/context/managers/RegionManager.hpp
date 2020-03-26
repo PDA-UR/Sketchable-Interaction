@@ -15,7 +15,7 @@
 namespace bp = boost::python;
 
 class RegionManager: public SIObject
-{
+{ SIGRUN
 public:
     RegionManager();
     ~RegionManager();

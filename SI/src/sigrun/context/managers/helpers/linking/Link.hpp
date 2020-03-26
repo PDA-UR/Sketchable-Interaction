@@ -14,7 +14,7 @@
 #include "../input/ExternalObject.hpp"
 
 class ILink: public SIObject
-{
+{ SIGRUN
 public:
     enum LINK_TYPE
     {

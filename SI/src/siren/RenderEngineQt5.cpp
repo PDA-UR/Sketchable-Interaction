@@ -4,9 +4,7 @@
 #include <QDesktopWidget>
 #include <QScreen>
 
-RenderEngineQT5::RenderEngineQT5()
-{ SIREN
-}
+RenderEngineQT5::RenderEngineQT5() = default;
 
 RenderEngineQT5::~RenderEngineQT5()
 {

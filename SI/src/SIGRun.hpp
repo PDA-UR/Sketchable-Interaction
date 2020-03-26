@@ -4,6 +4,7 @@
 
 #include <memory>
 #include "sigrun/Core.hpp"
+#include "sigrun/SIObject.hpp"
 
 
 /**
@@ -15,8 +16,8 @@
     An instance of this class is used to launch an SI environment.
 @see up_core
 */
-class SIGRun
-{
+class SIGRun: public SIObject
+{ SIGRUN
 public:
     SIGRun();
     ~SIGRun();

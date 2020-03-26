@@ -4,7 +4,7 @@
 
 ExternalObject::ExternalObject(ExternalObjectType type):
     d_type(type)
-{SIGRUN
+{
 
 }
 

@@ -12,7 +12,7 @@
 namespace bp = boost::python;
 
 class ExternalObject: public QObject, public SIObject
-{Q_OBJECT
+{Q_OBJECT SIGRUN
 public:
     enum ExternalObjectType
     {

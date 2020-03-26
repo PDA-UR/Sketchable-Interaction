@@ -9,7 +9,7 @@
 namespace bp = boost::python;
 
 Scripting::Scripting()
-{SIGRUN
+{
     PyImport_AppendInittab((char *) "libPySI", &PyInit_libPySI);
 
     Py_Initialize();

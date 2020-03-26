@@ -18,7 +18,7 @@ Region::Region(const std::vector<glm::vec3> &contour, const bp::object& effect, 
     d_last_y(0),
     d_last_delta_x(0),
     d_last_delta_y(0)
-{SIGRUN
+{
     qRegisterMetaType<bp::object>("bp::object");
     qRegisterMetaType<bp::tuple>("bp::tuple");
 

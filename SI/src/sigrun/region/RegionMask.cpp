@@ -40,7 +40,7 @@ RegionMask::RegionMask(int canvas_width, int canvas_height, const std::vector<gl
     d_width_aabb(d_brc_aabb_x - d_tlc_aabb_x),
     d_height_aabb(d_brc_aabb_y - d_tlc_aabb_y),
     d_values(std::vector<bool>(d_width_aabb * d_height_aabb))
-{SIGRUN
+{
     scanlinefill(contour, aabb);
 
 //    for(int i = 0; i < d_width_aabb; ++i)

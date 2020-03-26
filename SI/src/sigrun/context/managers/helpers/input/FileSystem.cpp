@@ -6,7 +6,7 @@
 FileSystemObject::FileSystemObject(const fs::path &path, int type):
     d_path(path),
     d_type(type)
-{SIGRUN
+{
 }
 
 FileSystemObject::~FileSystemObject() = default;
@@ -27,7 +27,7 @@ const std::string &FileSystemObject::extension()
 }
 
 FileSystem::FileSystem()
-{ SIGRUN
+{
     INFO("Acessing filesystem...");
 #ifdef __linux__
     set_cwd("/home/" + UserEnvironment::user_name() + "/Desktop");

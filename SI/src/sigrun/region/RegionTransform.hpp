@@ -5,6 +5,7 @@
 
 #include <glm/glm.hpp>
 #include <vector>
+#include <sigrun/SIObject.hpp>
 
 /**
 \brief quivalent to M_PI / 180.0
@@ -31,8 +32,8 @@
 \see d_transform
 \see d_angle
 */
-class RegionTransform
-{
+class RegionTransform: public SIObject
+{ SIGRUN
 public:
     RegionTransform();
     ~RegionTransform();

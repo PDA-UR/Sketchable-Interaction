@@ -15,7 +15,7 @@ InputManager::InputManager():
     d_mouse_coords(0),
     d_previous_mouse_coords(0),
     d_mouse_wheel_angle_in_px(0)
-{SIGRUN
+{
     d_external_objects.push_back(std::make_shared<ExternalObject>(ExternalObject::ExternalObjectType::MOUSE));
 }
 

@@ -11,7 +11,7 @@
 #include "helpers/input/ExternalObject.hpp"
 
 class InputManager: public QObject, public SIObject
-{Q_OBJECT
+{Q_OBJECT SIGRUN
 
 #define SI_LEFT_MOUSE_BUTTON 0
 #define SI_RIGHT_MOUSE_BUTTON 1

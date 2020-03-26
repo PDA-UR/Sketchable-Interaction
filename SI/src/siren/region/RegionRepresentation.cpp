@@ -11,7 +11,7 @@ RegionRepresentation::RegionRepresentation(QWidget *parent, const std::shared_pt
     d_qml_path(region->qml_path()),
     d_view(std::make_unique<QQuickWidget>(parent)),
     d_type(region->type())
-{SIREN
+{
     d_region_connection = connect(this, &RegionRepresentation::dataChanged, region.get(), &Region::REGION_DATA_CHANGED_SLOT);
 
     d_fill.moveTo(region->contour()[0].x - region->aabb()[0].x, region->contour()[0].y - region->aabb()[0].y);

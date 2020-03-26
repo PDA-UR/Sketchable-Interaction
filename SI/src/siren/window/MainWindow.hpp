@@ -13,9 +13,9 @@
 #include "../background/UpdateWorker.hpp"
 #include "../region/RegionRepresentation.hpp"
 
-class RegionRepresentation;
+//class RegionRepresentation;
 class MainWindow: public SIObject, public QMainWindow
-{
+{ SIREN
 public:
     MainWindow(int width, int height);
     MainWindow() = default;

@@ -3,9 +3,6 @@
 #ifndef SITEST_IRENDERENGINE_HPP
 #define SITEST_IRENDERENGINE_HPP
 
-
-#include <sigrun/concurrency/StoppableTask.hpp>
-
 #include <QObject>
 
 class IRenderEngine: public QObject

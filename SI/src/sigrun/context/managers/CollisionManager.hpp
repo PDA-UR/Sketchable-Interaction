@@ -11,7 +11,7 @@
 #include <sigrun/SIObject.hpp>
 
 class CollisionManager: public SIObject
-{
+{ SIGRUN
 public:
     ~CollisionManager();
     CollisionManager();

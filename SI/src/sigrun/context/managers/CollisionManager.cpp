@@ -57,9 +57,7 @@ void CollisionManager::collide(std::vector<std::shared_ptr<Region>> &regions)
         it->second ? ++it : d_collision_map.erase(it++);
 }
 
-CollisionManager::CollisionManager()
-{SIGRUN
-}
+CollisionManager::CollisionManager() = default;
 
 bool CollisionManager::collides_with_aabb(const std::shared_ptr<Region> &a, const std::shared_ptr<Region> &b)
 {

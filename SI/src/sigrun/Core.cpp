@@ -12,10 +12,7 @@
     Constructor which registers instance as an SIObject.
     Specify, which Logging capabilities are desired.
 */
-Core::Core()
-{SIGRUN
-
-}
+Core::Core() = default;
 
 /**
 \brief destructor

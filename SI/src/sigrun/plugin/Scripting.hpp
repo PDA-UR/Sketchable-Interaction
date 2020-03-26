@@ -12,7 +12,7 @@ namespace bp = boost::python;
 extern "C" PyObject* PyInit_libPySI(void);
 
 class Scripting: public SIObject
-{
+{ SIGRUN
 public:
     Scripting();
     ~Scripting();

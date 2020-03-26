@@ -7,13 +7,11 @@
 #include <sigrun/SIObject.hpp>
 
 class PluginCollector: public SIObject
-{
+{ SIGRUN
 public:
-    PluginCollector()
-    {SIOBJECT(SIGRUN)
-    }
-
+    PluginCollector() = default;
     ~PluginCollector() = default;
+
     void collect(const std::string &rel_path, std::vector<std::tuple<std::string, std::string>> &files);
 
 private:
