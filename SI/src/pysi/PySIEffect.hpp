@@ -24,14 +24,14 @@
 
 namespace bp = boost::python;
 
-struct LinkRelation
-{
+struct LinkRelation: public SIObject
+{ PYSI
+public:
     LinkRelation(const std::string& _sender, const std::string& _sender_attrib, const std::string& _recv, const std::string& _recv_attrib):
             sender(_sender),
             sender_attrib(_sender_attrib),
             recv(_recv),
-            recv_attrib(_recv_attrib)
-    {}
+            recv_attrib(_recv_attrib) {}
 
     const bool operator ==(const LinkRelation& other) const
     {
@@ -44,28 +44,27 @@ struct LinkRelation
     std::string recv_attrib;
 };
 
-class PySIEffect
-{
+class PySIEffect: public SIObject
+{ PYSI
 public:
     void init(const std::vector<glm::vec3>& contour, const std::vector<glm::vec3>& aabb, const std::string& uuid, const bp::dict& kwargs);
-    void __add_data__(const std::string& key, const bp::object& value, const int type);
+    void __add_data__(const std::string& key, const bp::object& value, const uint32_t type);
     void notify_shape_changed(bool resample=false);
     void __show_folder_contents__(const std::vector<std::string>& page_contents, const std::string& uuid, const bool with_btns=false);
     void __embed_file_standard_appliation_into_context__(const std::string& uuid, const std::string& path);
     void __destroy_embedded_file_standard_appliation_in_context__(const std::string& uuid);
-    void __spawn_region__(const std::vector<glm::vec3>& contour, int type);
     void signal_deletion();
 
     float d_x = 0;
     float d_y = 0;
-    int d_width = 0;
-    int d_height = 0;
-    int d_effect_type = SI_TYPE_CUSTOM;
-    const int x() const;
-    const int y() const;
-    const int width() const;
-    const int height() const;
-    const int effect_type() const;
+    uint32_t d_width = 0;
+    uint32_t d_height = 0;
+    uint32_t d_effect_type = SI_TYPE_CUSTOM;
+    const uint32_t x() const;
+    const uint32_t y() const;
+    const uint32_t width() const;
+    const uint32_t height() const;
+    const uint32_t effect_type() const;
 
     float d_scale = 1.0f;
     float d_angle_deg = 0.0;
@@ -88,14 +87,14 @@ public:
     float mouse_wheel_angle_degrees = 0.0;
     float mouse_wheel_angle_px = 0.0;
 
-    void set_mouse_pressed_capability(int btn, bool active);
-    bool has_mouse_pressed_capability(int btn);
+    void set_mouse_pressed_capability(uint32_t btn, bool active);
+    bool has_mouse_pressed_capability(uint32_t btn);
 
     bool d_flagged_for_deletion = false;
     bool is_flagged_for_deletion();
 
     bool d_has_shape_changed = false;
-    int has_shape_changed();
+    uint32_t has_shape_changed();
 
     const bool has_data_changed() const;
 

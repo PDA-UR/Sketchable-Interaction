@@ -13,15 +13,14 @@ std::string Capability::__test2__ = "TEST2";
 Capability::Capability():
     d_consecutive_capability_id(0),
     d_num_capabilities(0)
-{SIGRUN
-}
+{}
 
 Capability::~Capability()
 {
 
 }
 
-const std::map<std::string, int> &Capability::capabilities() const
+const std::map<std::string, uint64_t> &Capability::capabilities() const
 {
     return d_capabilities;
 }
@@ -63,12 +62,12 @@ void Capability::remove_capability(const std::string &name)
     }
 }
 
-int Capability::num_capabilities() const
+uint32_t Capability::num_capabilities() const
 {
     return d_num_capabilities;
 }
 
-int Capability::consecutive_capability_id() const
+uint64_t Capability::consecutive_capability_id() const
 {
     return d_consecutive_capability_id;
 }

@@ -18,7 +18,7 @@ Q_DECLARE_METATYPE (std::string)
 
 
 class LinkingManager: public QObject, public SIObject
-{ Q_OBJECT
+{ Q_OBJECT SIGRUN
 public:
     LinkingManager();
     ~LinkingManager();
@@ -30,14 +30,14 @@ public:
     bool is_linked(const std::shared_ptr<Region>& ra, const std::string& aa, const std::shared_ptr<Region>& rb, const std::string& ab, const ILink::LINK_TYPE& type);
     void emit_link_event(std::shared_ptr<Region> &a, const std::string &attr_a);
 
-    void remove_links_by_indices(const std::vector<int>& indices);
+    void remove_links_by_indices(const std::vector<uint32_t>& indices);
 
     void add_link_to_object(std::shared_ptr<Region>& a, const ExternalObject::ExternalObjectType& type);
 
     const std::vector<std::shared_ptr<ILink>>& links() const;
 
     const std::unique_ptr<LinkingGraph>& linking_graph() const;
-    const int num_links() const;
+    const uint64_t num_links() const;
 
 private:
     std::unordered_map<std::shared_ptr<ILink>, bool> d_links;

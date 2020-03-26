@@ -6,6 +6,7 @@
 #include <boost/filesystem.hpp>
 #include <sigrun/SIObject.hpp>
 #include <memory>
+#include <sigrun/SITypes.hpp>
 
 #ifdef __linux__
 #include <pwd.h>
@@ -18,8 +19,8 @@
 
 namespace fs = boost::filesystem;
 
-class UserEnvironment
-{
+class UserEnvironment: public SIObject
+{ SIGRUN
 public:
 
 #ifdef __linux__
@@ -43,9 +44,9 @@ public:
 };
 
 class FileSystemObject: public SIObject
-{
+{ SIGRUN
 public:
-    FileSystemObject(const fs::path& path, int type);
+    FileSystemObject(const fs::path& path, uint32_t type);
     ~FileSystemObject();
 
     const std::string& path();
@@ -53,12 +54,12 @@ public:
     const std::string& extension();
 
 private:
-    int d_type;
+    uint32_t d_type;
     fs::path d_path;
 };
 
 class FileSystem: public SIObject
-{
+{ SIGRUN
 public:
     FileSystem();
     ~FileSystem();
@@ -68,7 +69,7 @@ public:
     const std::vector<std::shared_ptr<FileSystemObject>>& cwd_contents();
     const std::vector<std::string> cwd_contents_paths(const std::string& cwd);
 
-    int entry_type(const std::string& path);
+    uint32_t entry_type(const std::string& path);
 
 private:
     void set_cwd(const fs::path& path);

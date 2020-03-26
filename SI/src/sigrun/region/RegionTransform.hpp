@@ -5,6 +5,7 @@
 
 #include <glm/glm.hpp>
 #include <vector>
+#include <sigrun/SIObject.hpp>
 
 /**
 \brief quivalent to M_PI / 180.0
@@ -31,15 +32,15 @@
 \see d_transform
 \see d_angle
 */
-class RegionTransform
-{
+class RegionTransform: public SIObject
+{ SIGRUN
 public:
     RegionTransform();
     ~RegionTransform();
 
-    void update(const glm::vec2& translation=glm::vec2(0, 0), float angle=0, float scale=1, const glm::vec2& rotation_origin=glm::vec2(0, 0));
+    void update(const glm::vec2& translation=glm::vec2(0, 0), float angle=0.0, float scale=1.0, const glm::vec2& rotation_origin=glm::vec2(0, 0));
     const glm::mat3x3& transform();
-    const glm::vec3& operator[](int index);
+    const glm::vec3& operator[](uint32_t index);
 
 private:
     /**

@@ -251,12 +251,12 @@ public:
         \details
             This integer variable regulates which log messages are outputted, according to their tags.
     */
-    static int SHOW;
+    static int16_t SHOW;
 
     /**
 
     */
-    static int WHERE;
+    static uint16_t WHERE;
 
     /**
         \brief the flag which is required to be set to true if the logging system is required to be used.
@@ -266,20 +266,20 @@ public:
     static bool __DEBUG__;
 
     template <typename T>
-    static void log(const std::string& origin, const T& what, int level, const std::string& type, const std::string& file="", const std::string& func="", const std::string& line="")
+    static void log(const std::string& origin, const T& what, uint16_t level, const std::string& type, const std::string& file="", const std::string& func="", const std::string& line="")
     {
         log(origin, std::to_string(what), level, type, file, func, line);
     }
 
-    static void log(const std::string& origin, const char* what, int level, const std::string& type, const std::string& file="", const std::string& func="", const std::string& line="")
+    static void log(const std::string& origin, const char* what, uint16_t level, const std::string& type, const std::string& file="", const std::string& func="", const std::string& line="")
     {
         log(origin, std::string(what), level, type, file, func, line);
     }
 
-    static void log(const std::string& origin, const std::string& what, int level, const std::string& type, const std::string& file="", const std::string& func="", const std::string& line="");
+    static void log(const std::string& origin, const std::string& what, uint16_t level, const std::string& type, const std::string& file="", const std::string& func="", const std::string& line="");
     static void set_log_file_path(const std::string& path);
 
-    static std::string log_level(int log_level);
+    static std::string log_level(uint16_t log_level);
     static std::string time();
 
     static void quench(const std::string& target);

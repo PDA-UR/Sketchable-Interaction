@@ -12,10 +12,10 @@
 #include <QApplication>
 
 #define DEFAULT_PROCESS_WINID_FETCH_SLEEP_TIME_MS (1.0 / 60.0)
-#define DEFAULT_PROCESS_WINID_FETCH_TIMEOUT_MS 500.0
+#define DEFAULT_PROCESS_WINID_FETCH_TIMEOUT_MS 1000.0
 
 class ExternalApplicationManager: public SIObject
-{
+{ SIGRUN
 public:
     ExternalApplicationManager(double process_winid_fetch_sleep_time_ms=DEFAULT_PROCESS_WINID_FETCH_SLEEP_TIME_MS, double process_winid_fetch_timeout_ms=DEFAULT_PROCESS_WINID_FETCH_TIMEOUT_MS);
     ~ExternalApplicationManager();

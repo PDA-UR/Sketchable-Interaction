@@ -71,11 +71,6 @@ public:
         }) + "]";
     }
 
-    static std::string _print(const LinkRelation& lr)
-    {
-        return "(" + lr.sender + ", " + lr.sender_attrib + ", " + lr.recv + ", " + lr.recv_attrib + "), ";
-    }
-
     template<typename T1, typename T2>
     static std::string _print(const std::map<T1, T2> &map)
     {
@@ -111,17 +106,32 @@ public:
         return p;
     }
 
-    static std::string _print(int p)
+    static std::string _print(int32_t p)
     {
         return std::to_string(p);
     }
 
-    static std::string _print(short p)
+    static std::string _print(int16_t p)
     {
         return std::to_string(p);
     }
 
-    static std::string _print(long p)
+    static std::string _print(int64_t p)
+    {
+        return std::to_string(p);
+    }
+
+    static std::string _print(uint32_t p)
+    {
+        return std::to_string(p);
+    }
+
+    static std::string _print(uint16_t p)
+    {
+        return std::to_string(p);
+    }
+
+    static std::string _print(uint64_t p)
     {
         return std::to_string(p);
     }
@@ -141,6 +151,16 @@ public:
         return std::to_string(p);
     }
 
+    static std::string _print(int8_t p)
+    {
+        return std::to_string(p);
+    }
+
+    static std::string _print(uint8_t p)
+    {
+        return std::to_string(p);
+    }
+
     static std::string _print(const glm::vec3& p)
     {
         return "(" + std::to_string(p.x) + ", " + std::to_string(p.y) + ")";
@@ -149,7 +169,7 @@ public:
     template<class... Args>
     static void print(Args &&... args)
     {
-        int i = 0;
+        uint32_t i = 0;
         auto arguments = std::make_tuple(std::forward<Args>(args)...);
 
         for_each(arguments, [&](const auto &x)

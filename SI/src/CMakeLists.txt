@@ -32,7 +32,10 @@ set(PySISrc
 
 # SI PYTHON3 MODULE
 add_library(PySI MODULE ${PySISrc})
-target_link_libraries(PySI ${PYTHON_LIBRARIES} ${Boost_LIBRARIES} Qt5::Widgets -ltbb)
+target_link_libraries(PySI
+        ${PYTHON_LIBRARIES} 
+        ${Boost_LIBRARIES}
+        Qt5::Widgets -ltbb)
 
 target_precompile_headers(PySI
         PUBLIC
@@ -88,8 +91,6 @@ set(SIGRunSRC
         SI/src/sigrun/region/RegionResampler.cpp
         SI/src/sigrun/region/RegionResampler.hpp
         SI/src/sigrun/rendering/IRenderEngine.hpp
-        SI/src/sigrun/concurrency/StoppableTask.cpp
-        SI/src/sigrun/concurrency/StoppableTask.hpp
         SI/src/sigrun/context/managers/LinkingManager.cpp
         SI/src/sigrun/context/managers/LinkingManager.hpp
         SI/src/sigrun/context/managers/helpers/linking/Link.cpp
@@ -150,7 +151,17 @@ target_precompile_headers(SIGeneralRuntime
         )
 
 set_target_properties(SIGeneralRuntime PROPERTIES AUTOMOC TRUE)
-target_link_libraries(SIGeneralRuntime ${PATH_LIB} -luuid ${PYTHON_LIBRARIES} ${Boost_LIBRARIES} Qt5::QuickWidgets Qt5::Quick Qt5::Core Qt5::Widgets Qt5::Qml -ltbb)
+target_link_libraries(SIGeneralRuntime
+        ${PATH_LIB}
+        -luuid
+        ${PYTHON_LIBRARIES}
+        ${Boost_LIBRARIES}
+        Qt5::QuickWidgets
+        Qt5::Quick
+        Qt5::Core
+        Qt5::Widgets
+        Qt5::Qml
+        -ltbb)
 
 if (BUILD_DOCS)
     find_package(Doxygen)

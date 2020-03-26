@@ -11,7 +11,7 @@
 #include "helpers/input/ExternalObject.hpp"
 
 class InputManager: public QObject, public SIObject
-{Q_OBJECT
+{Q_OBJECT SIGRUN
 
 #define SI_LEFT_MOUSE_BUTTON 0
 #define SI_RIGHT_MOUSE_BUTTON 1
@@ -75,14 +75,14 @@ public:
 
     void update();
 
-    void press_key(unsigned int key_id);
-    void release_key(unsigned int key_id);
-    void press_mouse_button(unsigned int button_id);
-    void release_mouse_button(unsigned int button_id);
-    bool is_key_down(unsigned int key_id);
-    bool is_key_pressed(unsigned int key_id);
-    bool is_mouse_down(unsigned int button_id);
-    bool is_mouse_pressed(unsigned int button_id);
+    void press_key(uint32_t key_id);
+    void release_key(uint32_t key_id);
+    void press_mouse_button(uint32_t button_id);
+    void release_mouse_button(uint32_t button_id);
+    bool is_key_down(uint32_t key_id);
+    bool is_key_pressed(uint32_t key_id);
+    bool is_mouse_down(uint32_t button_id);
+    bool is_mouse_pressed(uint32_t button_id);
 
     const glm::vec2& mouse_coords() const;
 
@@ -91,14 +91,14 @@ public:
     const MouseWheelAngles mouse_wheel_angles();
 
 private:
-    bool was_key_down(unsigned int key_id);
-    bool was_mouse_down(unsigned int button_id);
+    bool was_key_down(uint32_t key_id);
+    bool was_mouse_down(uint32_t button_id);
 
-    std::unordered_map<unsigned int, bool> d_key_map;
-    std::unordered_map<unsigned int, bool> d_previous_key_map;
+    std::unordered_map<uint32_t, bool> d_key_map;
+    std::unordered_map<uint32_t, bool> d_previous_key_map;
 
-    std::unordered_map<unsigned int, bool> d_button_map;
-    std::unordered_map<unsigned int, bool> d_previous_button_map;
+    std::unordered_map<uint32_t, bool> d_button_map;
+    std::unordered_map<uint32_t, bool> d_previous_button_map;
 
     glm::vec2 d_mouse_coords;
     glm::vec2 d_previous_mouse_coords;

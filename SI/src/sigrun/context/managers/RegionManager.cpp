@@ -7,7 +7,7 @@
 #include <sigrun/plugin/PythonInvoker.hpp>
 
 RegionManager::RegionManager()
-{SIGRUN
+{
     d_region_insertion_queries.reserve(15);
 }
 
@@ -20,7 +20,7 @@ void RegionManager::query_region_insertion(const std::vector<glm::vec3> &contour
     d_region_insertion_queries.emplace_back(contour, effect, kwargs, parent, attrib_sender, attrib_recv);
 }
 
-void RegionManager::add_region(const std::vector<glm::vec3> &contour, const bp::object &effect, int region_uuid, const bp::dict& kwargs)
+void RegionManager::add_region(const std::vector<glm::vec3> &contour, const bp::object &effect, uint32_t region_uuid, const bp::dict& kwargs)
 {
     d_regions.push_back(std::shared_ptr<Region>(new Region(contour, effect, 0, 0, kwargs)));
 }
@@ -35,7 +35,7 @@ std::vector<std::shared_ptr<Region>> &RegionManager::regions()
     return d_regions;
 }
 
-void RegionManager::activate_mouse_region_button_down(int mouse_btn)
+void RegionManager::activate_mouse_region_button_down(uint32_t mouse_btn)
 {
     HANDLE_PYTHON_CALL (
         for(auto& region: d_regions)
@@ -71,7 +71,7 @@ void RegionManager::activate_mouse_region_button_down(int mouse_btn)
     )
 }
 
-void RegionManager::deactivate_mouse_region_button_down(int mouse_btn)
+void RegionManager::deactivate_mouse_region_button_down(uint32_t mouse_btn)
 {
     HANDLE_PYTHON_CALL (
         for(auto& region: d_regions)
@@ -151,7 +151,7 @@ void RegionManager::toggle_mouse_region_wheel_scrolled(float angle_px, float ang
     }
 }
 
-bool RegionManager::update_region_deletions(int deletion_index)
+bool RegionManager::update_region_deletions(uint32_t deletion_index)
 {
     if(d_regions[deletion_index]->effect().is_flagged_for_deletion())
     {
@@ -169,9 +169,9 @@ void RegionManager::update()
 {
     update_via_mouse_input();
 
-    int size = d_regions.size();
+    uint64_t size = d_regions.size();
 
-    for(int i = size - 1; i > -1; --i)
+    for(int32_t i = size - 1; i > -1; --i)
     {
         if(update_region_deletions(i))
             continue;
@@ -182,7 +182,7 @@ void RegionManager::update()
     for(auto& t: d_region_insertion_queries)
         add_region(std::get<0>(t), std::get<1>(t), 0, std::get<2>(t));
 
-    for(int i = 0; i < d_region_insertion_queries.size(); ++i)
+    for(uint64_t i = 0; i < d_region_insertion_queries.size(); ++i)
     {
         auto& query = d_region_insertion_queries[i];
         auto& region = d_regions[d_regions.size() - d_region_insertion_queries.size() + i];

@@ -13,14 +13,14 @@
 #include <SI/SI.hpp>
 
 class RegionRepresentation: public QWidget, public SIObject
-{ Q_OBJECT
+{ Q_OBJECT SIREN
 
 public:
     RegionRepresentation(QWidget* parent, const std::shared_ptr<Region>& region);
     ~RegionRepresentation();
 
     void update(const std::shared_ptr<Region>& region);
-    const int type() const;
+    const uint32_t type() const;
 
     Q_SIGNAL void dataChanged(const QMap<QString, QVariant>& data);
 
@@ -36,7 +36,7 @@ private:
     std::string d_qml_path;
     QPainterPath d_fill;
     std::unique_ptr<QQuickWidget> d_view;
-    int d_type;
+    uint32_t d_type;
 
     QMetaObject::Connection d_region_connection;
 };

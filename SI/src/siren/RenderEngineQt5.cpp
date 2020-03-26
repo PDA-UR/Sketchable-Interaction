@@ -4,9 +4,7 @@
 #include <QDesktopWidget>
 #include <QScreen>
 
-RenderEngineQT5::RenderEngineQT5()
-{ SIREN
-}
+RenderEngineQT5::RenderEngineQT5() = default;
 
 RenderEngineQT5::~RenderEngineQT5()
 {
@@ -15,7 +13,7 @@ RenderEngineQT5::~RenderEngineQT5()
     INFO("Rendering Engine terminated!");
 }
 
-void RenderEngineQT5::start(int& width, int& height)
+void RenderEngineQT5::start(uint32_t& width, uint32_t& height)
 {
     width = QApplication::primaryScreen()->geometry().width();
     height = QApplication::primaryScreen()->geometry().height();

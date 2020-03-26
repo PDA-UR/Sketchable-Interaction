@@ -28,7 +28,7 @@
 \see d_height_aabb
 \see d_values
  */
-RegionMask::RegionMask(int canvas_width, int canvas_height, const std::vector<glm::vec3> &contour, const std::vector<glm::vec3> &aabb):
+RegionMask::RegionMask(uint32_t canvas_width, uint32_t canvas_height, const std::vector<glm::vec3> &contour, const std::vector<glm::vec3> &aabb):
     d_canvas_width(canvas_width),
     d_canvas_height(canvas_height),
     d_tlc_aabb_x(aabb[0].x),
@@ -40,7 +40,7 @@ RegionMask::RegionMask(int canvas_width, int canvas_height, const std::vector<gl
     d_width_aabb(d_brc_aabb_x - d_tlc_aabb_x),
     d_height_aabb(d_brc_aabb_y - d_tlc_aabb_y),
     d_values(std::vector<bool>(d_width_aabb * d_height_aabb))
-{SIGRUN
+{
     scanlinefill(contour, aabb);
 
 //    for(int i = 0; i < d_width_aabb; ++i)
@@ -101,7 +101,7 @@ RegionMask::~RegionMask()
 
 \see d_values
 */
-int RegionMask::size() const
+uint32_t RegionMask::size() const
 {
     return d_values.size();
 }
@@ -115,7 +115,7 @@ int RegionMask::size() const
 
 \see d_values
 */
-void RegionMask::set_bit(int i)
+void RegionMask::set_bit(int32_t i)
 {
     if(i > -1 && i < d_values.size())
         d_values[i] = true;
@@ -138,7 +138,7 @@ void RegionMask::set_bit(int i)
  */
 void RegionMask::set_bit(const glm::vec3& v)
 {
-    int index = d_width_aabb * ((int) v.y - (d_tlc_aabb_y + d_move_y)) + (int) v.x - (d_tlc_aabb_x + d_move_x);
+    int32_t index = d_width_aabb * ((int32_t) v.y - (d_tlc_aabb_y + d_move_y)) + (int32_t) v.x - (d_tlc_aabb_x + d_move_x);
 
     if(index > -1 && index < d_values.size())
         this->set_bit(index);
@@ -153,7 +153,7 @@ void RegionMask::set_bit(const glm::vec3& v)
 
 \see d_values
 */
-void RegionMask::clear_bit(int i)
+void RegionMask::clear_bit(int32_t i)
 {
     if(i > -1 && i < d_values.size())
         d_values[i] = false;
@@ -176,7 +176,7 @@ void RegionMask::clear_bit(int i)
 */
 void RegionMask::clear_bit(const glm::vec3 &v)
 {
-    int index = d_width_aabb * ((int) v.y - (d_tlc_aabb_y + d_move_y)) + (int) v.x - (d_tlc_aabb_x + d_move_x);
+    int32_t index = d_width_aabb * ((int32_t) v.y - (d_tlc_aabb_y + d_move_y)) + (int32_t) v.x - (d_tlc_aabb_x + d_move_x);
 
     if(index > -1 && index < d_values.size())
         this->clear_bit(index);
@@ -187,7 +187,7 @@ void RegionMask::clear_bit(const glm::vec3 &v)
 
 \see d_width_aabb
 */
-int RegionMask::width() const
+uint32_t RegionMask::width() const
 {
     return d_width_aabb;
 }
@@ -197,7 +197,7 @@ int RegionMask::width() const
 
 \see d_height_aabb
 */
-int RegionMask::height() const
+uint32_t RegionMask::height() const
 {
     return d_height_aabb;
 }
@@ -221,7 +221,7 @@ void RegionMask::rebuild(const std::vector<glm::vec3> &contour, const std::vecto
 
 \see d_values
 */
-bool RegionMask::operator[](int i) const
+bool RegionMask::operator[](int32_t i) const
 {
     if(i > -1 && i < d_values.size())
         return d_values[i];
@@ -290,7 +290,7 @@ void RegionMask::scanlinefill(const std::vector<glm::vec3>& contour, const std::
     static glm::vec2 min, max;
     unsigned int polysize = contour.size();
 
-    int gap = 1;
+    constexpr uint8_t gap = 1;
     double y;
 
     min.x = d_tlc_aabb_x;
@@ -337,7 +337,7 @@ void RegionMask::scanlinefill(const std::vector<glm::vec3>& contour, const std::
     {
         scan_hits.clear();
 
-        int jump = 1;
+        bool jump = true;
         glm::vec2 fp(contour[0].x, contour[0].y);
 
         for (size_t i = 0; i < polysize - 1; i++)
@@ -358,25 +358,17 @@ void RegionMask::scanlinefill(const std::vector<glm::vec3>& contour, const std::
                 {
                     fp.x = contour[i + 2].x;
                     fp.y = contour[i + 2].y;
-                    jump = 1;
+                    jump = true;
                     i++;
                 }
             }
             else
-                jump = 0;
+                jump = false;
 
             // test to see if this segment makes the scan-cut.
             if ((pa.y > pb.y && y < pa.y && y > pb.y) || (pa.y < pb.y && y > pa.y && y < pb.y))
             {
-                glm::vec2 intersect;
-
-                intersect.y = y;
-
-                if (pa.x == pb.x)
-                    intersect.x = pa.x;
-                else
-                    intersect.x = (pb.x - pa.x) / (pb.y - pa.y) * (y - pa.y) + pa.x;
-
+                glm::vec2 intersect(pa.x == pb.x ? pa.x : (pb.x - pa.x) / (pb.y - pa.y) * (y - pa.y) + pa.x, y);
                 scan_hits.push_back(intersect);
             }
         }
@@ -388,8 +380,8 @@ void RegionMask::scanlinefill(const std::vector<glm::vec3>& contour, const std::
         });
 
         // generate the line segments.
-        for (int i = 0, l = scan_hits.size() - 1; i < l; i += 2)
-            for(int x = scan_hits[i].x; x < scan_hits[i + 1].x; x++)
+        for (int32_t i = 0, l = scan_hits.size() - 1; i < l; i += 2)
+            for(int32_t x = scan_hits[i].x; x < scan_hits[i + 1].x; x++)
                 this->set_bit(glm::vec3(x, y, 1));
 
         y += gap;

@@ -7,10 +7,10 @@
 #include <vector>
 #include <algorithm>
 #include <numeric>
-#include <debug/Print.hpp>
 #include <boost/make_shared.hpp>
 #include <boost/shared_ptr.hpp>
 #include <glm/glm.hpp>
+#include <pysi/PySIEffect.hpp>
 
 namespace bp = boost::python;
 
@@ -48,7 +48,7 @@ public:
      *
      * @return a reference to the value in self at the given index
      */
-    static V& get(T& self, int index)
+    static V& get(T& self, uint32_t index)
     {
         if(index < 0)
             index += self.size();
@@ -97,7 +97,7 @@ public:
      * @param index the index of the value to be changed
      * @param value the new value to be set at the given index in self
      */
-    static void set(T& self, int index, V const& value)
+    static void set(T& self, uint32_t index, V const& value)
     {
         if(index < 0)
             index += self.size();
@@ -114,7 +114,7 @@ public:
      * @param self the STL vector of type T with values of type V to have a value deleted
      * @param index the index of the value to be deleted in self
      */
-    static void del(T& self, int index)
+    static void del(T& self, uint32_t index)
     {
         if(index < 0)
             index += self.size();
@@ -225,7 +225,7 @@ public:
     * @param index the index of the value to be changed
     * @param list the list containing point coordinates to be applied to the point at the given index
     */
-    static void set(std::vector<glm::vec3>& self, int index, const bp::list& list)
+    static void set(std::vector<glm::vec3>& self, uint32_t index, const bp::list& list)
     {
         if(index < 0)
             index += self.size();
@@ -263,7 +263,7 @@ public:
 private:
     static void apply_lists_of_lists(boost::shared_ptr<std::vector<glm::vec3>>& self, const bp::list& list)
     {
-        for(int i = 0; i < bp::len(list); ++i)
+        for(uint32_t i = 0; i < bp::len(list); ++i)
         {
             const bp::list& l = bp::extract<bp::list>(list[i]);
             apply_list(self, l);
@@ -299,7 +299,7 @@ public:
         auto self = boost::make_shared<std::vector<std::string>>();
         self->reserve(bp::len(list));
 
-        for(int i = 0; i < bp::len(list); ++i)
+        for(uint32_t i = 0; i < bp::len(list); ++i)
         {
             const std::string& s = bp::extract<std::string>(list[i]);
             self->emplace_back(s);
@@ -326,7 +326,7 @@ public:
     * @param index the index of the value in self to be changed
     * @param s the std::string to be applied at the given index
     */
-    static void set(std::vector<std::string>& self, int index, const std::string& s)
+    static void set(std::vector<std::string>& self, uint32_t index, const std::string& s)
     {
         if(index < 0)
             index += self.size();
@@ -412,7 +412,7 @@ public:
     * @param index the index of the value to be changed
     * @param list the list containing LinkRelation to be applied at the given index
     */
-    static void set(std::vector<LinkRelation>& self, int index, const bp::list& list)
+    static void set(std::vector<LinkRelation>& self, uint32_t index, const bp::list& list)
     {
         if(index < 0)
             index += self.size();
@@ -454,7 +454,7 @@ public:
 private:
     static void apply_lists_of_lists(boost::shared_ptr<std::vector<LinkRelation>>& self, const bp::list& list)
     {
-        for(int i = 0; i < bp::len(list); ++i)
+        for(uint32_t i = 0; i < bp::len(list); ++i)
         {
             const bp::list& l = bp::extract<bp::list>(list[i]);
             apply_list(self, l);

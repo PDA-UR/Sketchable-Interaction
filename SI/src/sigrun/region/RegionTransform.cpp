@@ -101,7 +101,7 @@ const glm::mat3x3& RegionTransform::transform()
 
 \see d_transform
 */
-const glm::vec3& RegionTransform::operator[](int index)
+const glm::vec3& RegionTransform::operator[](uint32_t index)
 {
     return d_transform[index];
 }

@@ -3,10 +3,10 @@
 #include <sigrun/log/Log.hpp>
 #include <execution>
 
-FileSystemObject::FileSystemObject(const fs::path &path, int type):
+FileSystemObject::FileSystemObject(const fs::path &path, uint32_t type):
     d_path(path),
     d_type(type)
-{SIGRUN
+{
 }
 
 FileSystemObject::~FileSystemObject() = default;
@@ -27,7 +27,7 @@ const std::string &FileSystemObject::extension()
 }
 
 FileSystem::FileSystem()
-{ SIGRUN
+{
     INFO("Acessing filesystem...");
 #ifdef __linux__
     set_cwd("/home/" + UserEnvironment::user_name() + "/Desktop");
@@ -71,7 +71,7 @@ const std::vector<std::string> FileSystem::cwd_contents_paths(const std::string&
     return ret;
 }
 
-int FileSystem::entry_type(const std::string& _path)
+uint32_t FileSystem::entry_type(const std::string& _path)
 {
     fs::path path(_path);
 
@@ -107,7 +107,7 @@ void FileSystem::set_cwd(const fs::path &path)
             {
                 const std::string& ext = entry.path().extension().string();
 
-                int type = SI_TYPE_UNKNOWN_FILE;
+                uint32_t type = SI_TYPE_UNKNOWN_FILE;
 
                 if(ext == ".png" || ext == ".jpeg" || ext == ".jpg")
                     type = SI_TYPE_IMAGE_FILE;

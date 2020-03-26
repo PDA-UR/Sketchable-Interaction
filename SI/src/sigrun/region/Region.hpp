@@ -23,9 +23,9 @@ Q_DECLARE_METATYPE (bp::tuple)
 
 
 class Region: public QObject, public SIObject
-{Q_OBJECT
+{ Q_OBJECT SIGRUN
 public:
-    Region(const std::vector<glm::vec3>& contour, const bp::object& effect, int width=0, int height=0, const bp::dict& kwargs=bp::dict());
+    Region(const std::vector<glm::vec3>& contour, const bp::object& effect, uint32_t width=0, uint32_t height=0, const bp::dict& kwargs=bp::dict());
     ~Region();
 
     bool is_transformed() const;
@@ -44,13 +44,13 @@ public:
 
     const std::string& qml_path() const;
 
-    void move(int x, int y);
+    void move(int32_t x, int32_t y);
 
     const glm::mat3x3& transform() const;
 
-    int on_enter(PySIEffect& other);
-    int on_continuous(PySIEffect& other);
-    int on_leave(PySIEffect& other);
+    uint8_t on_enter(PySIEffect& other);
+    uint8_t on_continuous(PySIEffect& other);
+    uint8_t on_leave(PySIEffect& other);
 
     Q_SIGNAL void LINK_SIGNAL(const std::string& uuid, const std::string& source_cap, const bp::tuple& args);
     Q_SLOT void LINK_SLOT(const std::string& uuid, const std::string& source_cap, const bp::tuple& args);
@@ -64,17 +64,17 @@ public:
 
     const std::string& name() const;
     const glm::vec4 color() const;
-    const int type() const;
-    const int width() const;
-    const int height() const;
+    const uint16_t type() const;
+    const uint32_t width() const;
+    const uint32_t height() const;
 
-    int handle_collision_event(const std::string& function_name, PySIEffect& colliding_effect);
+    uint8_t handle_collision_event(const std::string& function_name, PySIEffect& colliding_effect);
 
     void update();
     const QMap<QString, QVariant>& data() const;
 
-    const int last_delta_x() const;
-    const int last_delta_y() const;
+    const int32_t last_delta_x() const;
+    const int32_t last_delta_y() const;
 
 private:
     void process_canvas_specifics();
@@ -93,10 +93,10 @@ private:
     std::unique_ptr<RegionTransform> uprt;
     bool d_is_transformed;
 
-    int d_last_x;
-    int d_last_y;
-    int d_last_delta_x;
-    int d_last_delta_y;
+    int32_t d_last_x;
+    int32_t d_last_y;
+    int32_t d_last_delta_x;
+    int32_t d_last_delta_y;
 };
 
 

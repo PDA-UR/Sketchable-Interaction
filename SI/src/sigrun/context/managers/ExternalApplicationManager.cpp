@@ -2,12 +2,13 @@
 
 #include "ExternalApplicationManager.hpp"
 #include <QProcess>
+#include <sigrun/log/Log.hpp>
 
 ExternalApplicationManager::ExternalApplicationManager(double process_winid_fetch_sleep_time_ms, double process_winid_fetch_timeout_ms):
     d_process_winid_fetch_sleep_time_ms(process_winid_fetch_sleep_time_ms),
     d_process_winid_fetch_timeout_ms(process_winid_fetch_timeout_ms),
     d_process_winid_fetch_iterations(process_winid_fetch_timeout_ms / process_winid_fetch_sleep_time_ms / 1000)
-{SIGRUN
+{
 
 }
 
@@ -103,20 +104,18 @@ void ExternalApplicationManager::process_wmctrl_command_output(const QString &in
             QMainWindow* pMainWnd = retrieve_current_main_window();
 
             if(pMainWnd)
-                register_new_application_container(pMainWnd, uuid, winid);
             {
-                ERROR("Unable to find a main window as parent for the default app of " + file_path);
+                register_new_application_container(pMainWnd, uuid, winid);
+                pMainWnd = nullptr;
             }
+            else
+                ERROR("Unable to find a main window as parent for the default app of " + file_path);
         }
         else
-        {
             ERROR("Unable to find winid of default app of " + file_path);
-        }
     }
     else
-    {
         ERROR("Timeout for finding winid of default app of " + file_path);
-    }
 }
 
 void ExternalApplicationManager::register_new_application_container(QMainWindow *parent, const std::string &source_uuid, uint64_t winid)

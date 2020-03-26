@@ -7,10 +7,10 @@
 #include <sigrun/SIObject.hpp>
 
 class SIGRunLinkingManagerTest: public ::testing::Test, public SIObject
-{
+{ SITEST
 public:
     virtual void SetUp()
-    {SIOBJECT(SITEST)
+    {
 
     }
 

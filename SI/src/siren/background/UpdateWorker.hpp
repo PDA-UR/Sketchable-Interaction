@@ -4,13 +4,14 @@
 #define SITEST_UPDATEWORKER_HPP
 
 #include <QObject>
+#include <SI/SI.hpp>
 #include <QTimer>
 #include <QElapsedTimer>
 
-class UpdateWorker: public QObject
-{ Q_OBJECT
+class UpdateWorker: public QObject, public SIObject
+{ Q_OBJECT SIREN
 public:
-    explicit UpdateWorker(int target_fps=60);
+    explicit UpdateWorker(uint32_t target_fps=60);
     ~UpdateWorker();
 
     void start();
@@ -19,10 +20,10 @@ public:
     void resume();
 
     bool is_running();
-    int fps() const;
+    uint32_t fps() const;
 
     Q_SIGNAL void running_changed();
-    Q_SIGNAL void updated(double delta, int fps);
+    Q_SIGNAL void updated(double delta, uint32_t fps);
     Q_SIGNAL void finished();
 
 protected:
@@ -31,7 +32,7 @@ private:
     void set_running(bool running);
 
     bool d_is_running;
-    int d_fps;
+    uint32_t d_fps;
     QTimer* d_timer;
     QElapsedTimer* d_elapsed_timer;
     double d_remainder;

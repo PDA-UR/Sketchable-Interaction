@@ -27,7 +27,7 @@ namespace bp = boost::python;
     Therefore, the friend keyword is used to internally expose the class.
 */
 class Core: public SIObject
-{
+{ SIGRUN
 public:
     ~Core();
 
@@ -42,7 +42,6 @@ protected:
     friend class SIGRun;
     friend class SIGRunTest;
     friend class SIGRunCoreTest;
-
 
 protected:
 };

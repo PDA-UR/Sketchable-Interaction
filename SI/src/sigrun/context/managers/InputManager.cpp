@@ -15,7 +15,7 @@ InputManager::InputManager():
     d_mouse_coords(0),
     d_previous_mouse_coords(0),
     d_mouse_wheel_angle_in_px(0)
-{SIGRUN
+{
     d_external_objects.push_back(std::make_shared<ExternalObject>(ExternalObject::ExternalObjectType::MOUSE));
 }
 
@@ -53,52 +53,52 @@ const InputManager::MouseWheelAngles InputManager::mouse_wheel_angles()
     return mwa;
 }
 
-void InputManager::press_key(unsigned int key_id)
+void InputManager::press_key(uint32_t key_id)
 {
     d_key_map[key_id] = true;
 }
 
-void InputManager::release_key(unsigned int key_id)
+void InputManager::release_key(uint32_t key_id)
 {
     d_key_map[key_id] = false;
 }
 
-void InputManager::press_mouse_button(unsigned int button_id)
+void InputManager::press_mouse_button(uint32_t button_id)
 {
     d_button_map[button_id] = true;
 }
 
-void InputManager::release_mouse_button(unsigned int button_id)
+void InputManager::release_mouse_button(uint32_t button_id)
 {
     d_button_map[button_id] = false;
 }
 
-bool InputManager::is_key_down(unsigned int key_id)
+bool InputManager::is_key_down(uint32_t key_id)
 {
     return d_key_map.find(key_id) != d_key_map.end() ? d_key_map[key_id] : false;
 }
 
-bool InputManager::is_key_pressed(unsigned int key_id)
+bool InputManager::is_key_pressed(uint32_t key_id)
 {
     return is_key_down(key_id) && !was_key_down(key_id);
 }
 
-bool InputManager::is_mouse_down(unsigned int button_id)
+bool InputManager::is_mouse_down(uint32_t button_id)
 {
     return d_button_map.find(button_id) != d_button_map.end() ? d_button_map[button_id] : false;
 }
 
-bool InputManager::is_mouse_pressed(unsigned int button_id)
+bool InputManager::is_mouse_pressed(uint32_t button_id)
 {
     return is_mouse_down(button_id) && !was_mouse_down(button_id);
 }
 
-bool InputManager::was_key_down(unsigned int key_id)
+bool InputManager::was_key_down(uint32_t key_id)
 {
     return d_previous_key_map.find(key_id) != d_previous_key_map.end() ? d_previous_key_map[key_id] : false;
 }
 
-bool InputManager::was_mouse_down(unsigned int button_id)
+bool InputManager::was_mouse_down(uint32_t button_id)
 {
     return d_previous_button_map.find(button_id) != d_previous_button_map.end() ? d_previous_button_map[button_id] : false;
 }
@@ -158,8 +158,8 @@ bool InputManager::eventFilter(QObject *watched, QEvent *event)
     {
         QMouseEvent* mouse_event = (QMouseEvent*) event;
 
-        int x = mouse_event->x();
-        int y = mouse_event->y();
+        uint32_t x = mouse_event->x();
+        uint32_t y = mouse_event->y();
 
         d_mouse_coords.x = x;
         d_mouse_coords.y = y;

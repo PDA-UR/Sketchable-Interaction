@@ -2,9 +2,9 @@
 
 #include "ExternalObject.hpp"
 
-ExternalObject::ExternalObject(ExternalObjectType type):
+ExternalObject::ExternalObject(const ExternalObjectType& type):
     d_type(type)
-{SIGRUN
+{
 
 }
 
