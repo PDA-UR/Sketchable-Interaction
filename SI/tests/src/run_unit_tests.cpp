@@ -11,9 +11,9 @@ int main(int argc, char** argv)
     ::testing::InitGoogleTest(&argc, argv);
     ::testing::InitGoogleMock(&argc, argv);
 
-    int ret = 0;
+    uint32_t ret = 0;
 
-    for(int i = 0; i < NUM_TEST_ITERATIONS; ++i)
+    for(uint32_t i = 0; i < NUM_TEST_ITERATIONS; ++i)
         ret &= RUN_ALL_TESTS();
 
     return ret;

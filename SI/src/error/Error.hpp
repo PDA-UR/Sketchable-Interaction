@@ -27,7 +27,7 @@
     {ERROR_IO, "Bei Input/Output ist ein Fehler aufgetreten."}\
 }
 
-int LANGUAGE = 0;
+uint64_t LANGUAGE = 0;
 
 std::map<int, std::map<int, std::string>> ERRORS
 {

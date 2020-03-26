@@ -58,12 +58,12 @@ public:
         return !d_size;
     }
 
-    [[nodiscard]] int size() const
+    [[nodiscard]] uint32_t size() const
     {
         return d_size;
     }
 
-    [[nodiscard]] int max_size() const
+    [[nodiscard]] uint32_t max_size() const
     {
         return d_max_size;
     }
@@ -80,10 +80,10 @@ public:
 
 private:
     std::vector<T> d_buffer;
-    int d_read_index;
-    int d_write_index;
-    int d_max_size;
-    int d_size;
+    uint32_t d_read_index;
+    uint32_t d_write_index;
+    uint32_t d_max_size;
+    uint32_t d_size;
 };
 
 

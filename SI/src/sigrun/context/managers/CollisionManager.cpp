@@ -16,11 +16,11 @@ void CollisionManager::collide(std::vector<std::shared_ptr<Region>> &regions)
     for(auto& [key, value]: d_collision_map)
         value = false;
 
-    for(int i = regions.size() - 1; i > -1; --i)
+    for(int32_t i = regions.size() - 1; i > -1; --i)
     {
         auto& a = regions[i];
 
-        for(int k = i - 1; k > -1; --k)
+        for(int32_t k = i - 1; k > -1; --k)
         {
             auto& b = regions[k];
             auto tuple = std::make_tuple(a->uuid(), b->uuid());
@@ -193,7 +193,7 @@ bool CollisionManager::are_aabbs_equal(const std::shared_ptr<Region> &a, const s
         return p_ /= p_.z;
     });
 
-    for(int i = 0; i < a_aabb.size(); i++)
+    for(uint32_t i = 0; i < a_aabb.size(); i++)
         if(!(are_aabb_same_size_and_spot &= (a_aabb[i] == b_aabb[i])))
             return false;
 

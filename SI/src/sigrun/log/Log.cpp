@@ -8,8 +8,8 @@ std::ofstream Log::log_file;
 const std::string Log::PATH_DEFAULT = "log/silog.txt";
 std::string Log::log_file_path = Log::PATH_DEFAULT;
 bool Log::__DEBUG__ = false;
-int Log::SHOW = -1;
-int Log::WHERE = 0;
+int16_t Log::SHOW = -1;
+uint16_t Log::WHERE = 0;
 std::vector<std::string> Log::QUENCHED = std::vector<std::string>();
 
 /**
@@ -36,7 +36,7 @@ std::vector<std::string> Log::QUENCHED = std::vector<std::string>();
 
 @see SIObject
 */
-void Log::log(const std::string& origin, const std::string &what, int level, const std::string& type, const std::string& file,
+void Log::log(const std::string& origin, const std::string &what, uint16_t level, const std::string& type, const std::string& file,
               const std::string& func, const std::string& line)
 {
     Log::SHOW |= Log::SHOW_TYPE::UNDEFINED | Log::SHOW_TYPE::ERROR;
@@ -115,7 +115,7 @@ void Log::set_log_file_path(const std::string &path)
 
 @return a std::string which contains a human readable version of the desired tag
 */
-std::string Log::log_level(int log_level)
+std::string Log::log_level(uint16_t log_level)
 {
     switch (log_level)
     {

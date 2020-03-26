@@ -45,7 +45,7 @@ TEST_F(SIGRunExternalApplicationManagerTest, set_process_winid_fetch_sleep_time_
 
     EXPECT_NO_FATAL_FAILURE(eam.set_process_winid_fetch_sleep_time_ms(1.0 / 30));
 
-    ASSERT_EQ(15, eam.process_winid_fetch_iterations());
+    ASSERT_EQ(30, eam.process_winid_fetch_iterations());
 }
 
 TEST_F(SIGRunExternalApplicationManagerTest, set_process_winid_fetch_timeout_ms)
@@ -74,5 +74,5 @@ TEST_F(SIGRunExternalApplicationManagerTest, process_winid_fetch_iterations)
 {
     ExternalApplicationManager eam;
 
-    ASSERT_EQ(30, eam.process_winid_fetch_iterations());
+    ASSERT_EQ(60, eam.process_winid_fetch_iterations());
 }

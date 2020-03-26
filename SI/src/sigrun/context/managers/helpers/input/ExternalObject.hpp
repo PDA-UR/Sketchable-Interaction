@@ -21,7 +21,7 @@ public:
         TANGIBLE = 2
     };
 
-    explicit ExternalObject(ExternalObjectType type);
+    explicit ExternalObject(const ExternalObjectType& type);
     ~ExternalObject();
 
     const ExternalObjectType& type() const;

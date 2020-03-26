@@ -2,7 +2,7 @@
 #include "UpdateWorker.hpp"
 #include <QApplication>
 
-UpdateWorker::UpdateWorker(int target_fps): d_is_running(false), d_fps(target_fps), d_remainder(0.0), d_simulated_time(0.0)
+UpdateWorker::UpdateWorker(uint32_t target_fps): d_is_running(false), d_fps(target_fps), d_remainder(0.0), d_simulated_time(0.0)
 {
     d_timer = new QTimer(this);
     d_elapsed_timer = new QElapsedTimer();
@@ -64,7 +64,7 @@ bool UpdateWorker::is_running()
     return d_is_running;
 }
 
-int UpdateWorker::fps() const
+uint32_t UpdateWorker::fps() const
 {
     return d_fps;
 }

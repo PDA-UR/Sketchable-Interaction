@@ -57,7 +57,7 @@ std::string Scripting::load_plugin_source(const char *source)
 
 void Scripting::load_class_names(std::vector<std::string> &classes, const std::string &path)
 {
-    int size = 0;
+    uint64_t size = 0;
 
     std::string source = load_plugin_source(path.c_str());
 
@@ -106,6 +106,5 @@ bp::object Scripting::import(const std::string &module, const std::string &path)
 
 std::ostream &operator<<(std::ostream &os, const Scripting &scripting)
 {
-    return os << "Scripting Object: Globals: " << bp::extract<std::string>(bp::str(scripting.d_globals))()
-              << " Main: " << bp::extract<std::string>(bp::str(scripting.d_main))();
+    return os << "Scripting Object: Globals: " << bp::extract<std::string>(bp::str(scripting.d_globals))() << " Main: " << bp::extract<std::string>(bp::str(scripting.d_main))();
 }

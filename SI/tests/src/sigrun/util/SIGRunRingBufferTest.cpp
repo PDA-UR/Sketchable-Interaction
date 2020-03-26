@@ -10,21 +10,21 @@ TEST_F(SIGRunRingBufferTest, construction)
 
 TEST_F(SIGRunRingBufferTest, size)
 {
-    RingBuffer<int> b(10);
+    RingBuffer<uint8_t> b(10);
 
     ASSERT_EQ(b.size(), 0);
 }
 
 TEST_F(SIGRunRingBufferTest, max_size)
 {
-    RingBuffer<int> b(10);
+    RingBuffer<uint8_t> b(10);
 
     ASSERT_EQ(b.max_size(), 10);
 }
 
 TEST_F(SIGRunRingBufferTest, push_back)
 {
-    RingBuffer<int> b(10);
+    RingBuffer<uint8_t> b(10);
 
     b.push_back(1);
 
@@ -84,7 +84,7 @@ TEST_F(SIGRunRingBufferTest, push_back)
 
 TEST_F(SIGRunRingBufferTest, push_back_operator_overload_with_shift_op)
 {
-    RingBuffer<int> b(10);
+    RingBuffer<uint8_t> b(10);
 
     b << 1;
 
@@ -144,7 +144,7 @@ TEST_F(SIGRunRingBufferTest, push_back_operator_overload_with_shift_op)
 
 TEST_F(SIGRunRingBufferTest, get)
 {
-    RingBuffer<int> b(10);
+    RingBuffer<uint8_t> b(10);
 
     b.push_back(1);
 
@@ -217,7 +217,7 @@ TEST_F(SIGRunRingBufferTest, get)
 
 TEST_F(SIGRunRingBufferTest, find)
 {
-    RingBuffer<int> b(10);
+    RingBuffer<uint8_t> b(10);
 
     b.push_back(12);
     b.push_back(14);
@@ -232,7 +232,7 @@ TEST_F(SIGRunRingBufferTest, find)
 
 TEST_F(SIGRunRingBufferTest, find_operator_overload_with_and_op)
 {
-    RingBuffer<int> b(10);
+    RingBuffer<uint8_t> b(10);
 
     b.push_back(12);
     b.push_back(14);
@@ -249,7 +249,7 @@ TEST_F(SIGRunRingBufferTest, find_operator_overload_with_and_op)
 
 TEST_F(SIGRunRingBufferTest, clear)
 {
-    RingBuffer<int> b(10);
+    RingBuffer<uint8_t> b(10);
 
     b.push_back(12);
     b.push_back(14);
@@ -275,7 +275,7 @@ TEST_F(SIGRunRingBufferTest, clear)
 
 TEST_F(SIGRunRingBufferTest, empty)
 {
-    RingBuffer<int> b(10);
+    RingBuffer<uint8_t> b(10);
 
     ASSERT_TRUE(b.empty());
 

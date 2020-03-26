@@ -2,7 +2,6 @@
 #include <glm/glm.hpp>
 #include <vector>
 #include <sigrun/region/RegionMask.hpp>
-#include <debug/Print.hpp>
 
 #include "SIGRunRegionMaskTest.hpp"
 

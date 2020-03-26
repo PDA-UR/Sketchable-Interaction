@@ -105,9 +105,9 @@ void LinkingManager::add_link_to_object(std::shared_ptr<Region> &a, const Extern
     }
 }
 
-void LinkingManager::remove_links_by_indices(const std::vector<int>& indices)
+void LinkingManager::remove_links_by_indices(const std::vector<uint32_t>& indices)
 {
-    for(auto& i: indices)
+    for(const uint32_t& i: indices)
     {
         auto& link = d_linking_graph->links()[i];
 
@@ -157,9 +157,7 @@ const std::unique_ptr<LinkingGraph> &LinkingManager::linking_graph() const
     return d_linking_graph;
 }
 
-const int LinkingManager::num_links() const
+const uint64_t LinkingManager::num_links() const
 {
-    int num_bd_links = 0;
-    int num_ud_links = 0;
-    return 0;
+    return d_linking_graph->links().size();
 }

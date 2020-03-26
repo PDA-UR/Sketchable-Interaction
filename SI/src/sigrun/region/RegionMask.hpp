@@ -36,71 +36,71 @@
 class RegionMask: public SIObject
 { SIGRUN
 public:
-    RegionMask(int canvas_width, int canvas_height, const std::vector<glm::vec3>& contour, const std::vector<glm::vec3>& aabb);
+    RegionMask(uint32_t canvas_width, uint32_t canvas_height, const std::vector<glm::vec3>& contour, const std::vector<glm::vec3>& aabb);
     RegionMask(const RegionMask& rm);
     ~RegionMask();
 
-    int size() const;
+    uint32_t size() const;
 
-    void set_bit(int i);
+    void set_bit(int32_t i);
     void set_bit(const glm::vec3& v);
 
-    void clear_bit(int i);
+    void clear_bit(int32_t i);
     void clear_bit(const glm::vec3& v);
 
-    int width() const;
-    int height() const;
+    uint32_t width() const;
+    uint32_t height() const;
 
     void move(const glm::vec2& v);
 
     void rebuild(const std::vector<glm::vec3>& contour, const std::vector<glm::vec3>& aabb);
 
-    bool operator[](int i) const;
+    bool operator[](int32_t i) const;
     bool operator[](const glm::vec3& v) const;
 
 private:
     /**
         int containing the width of the canvas
     */
-    int d_canvas_width;
+    uint32_t d_canvas_width;
 
     /**
         int containing the height of the canvas
     */
-    int d_canvas_height;
+    uint32_t d_canvas_height;
 
     /**
         int containing the x coordinate of the top left corner of the parent AABB
     */
-    int d_tlc_aabb_x;
+    int32_t d_tlc_aabb_x;
 
     /**
         int containing the y coordinate of the top left corner of the parent AABB
     */
-    int d_tlc_aabb_y;
+    int32_t d_tlc_aabb_y;
 
     /**
         int containing the x coordinate of the bottom right corner of the parent AABB
     */
-    int d_brc_aabb_x;
+    int32_t d_brc_aabb_x;
 
     /**
          int containing the y coordinate of the bottom right corner of the parent AABB
      */
-    int d_brc_aabb_y;
+    int32_t d_brc_aabb_y;
 
     /**
         int containing the width of the AABB
     */
-    int d_width_aabb;
+    uint32_t d_width_aabb;
 
     /**
         int containing the height of the AABB
     */
-    int d_height_aabb;
+    uint32_t d_height_aabb;
 
-    int d_move_x;
-    int d_move_y;
+    int32_t d_move_x;
+    int32_t d_move_y;
 
     /**
         std::vector of bools containing the bit array used for testing for collisions

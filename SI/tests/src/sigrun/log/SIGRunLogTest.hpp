@@ -8,10 +8,10 @@
 
 
 class SIGRunLogTest: public ::testing::Test, public SIObject
-{
+{ SITEST
 public:
     virtual void SetUp()
-    {SIOBJECT(SITEST)
+    {
 
     }
 

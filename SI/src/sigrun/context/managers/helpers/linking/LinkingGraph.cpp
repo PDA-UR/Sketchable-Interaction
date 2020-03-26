@@ -14,8 +14,7 @@ LinkingGraph::~LinkingGraph()
 
 }
 
-void LinkingGraph::add_link(const std::shared_ptr<Region> &a, const std::string &attr_a, const std::shared_ptr<Region> &b,
-                            const std::string &attr_b, const ILink::LINK_TYPE &link_type)
+void LinkingGraph::add_link(const std::shared_ptr<Region> &a, const std::string &attr_a, const std::shared_ptr<Region> &b, const std::string &attr_b, const ILink::LINK_TYPE &link_type)
 {
     if(link_type == ILink::LINK_TYPE::UD)
     {
@@ -41,8 +40,7 @@ void LinkingGraph::remove_link(int index)
 
 }
 
-void LinkingGraph::remove_link(const std::shared_ptr<Region> &a, const std::string &attr_a, const std::shared_ptr<Region> &b,
-                               const std::string &attr_b, const ILink::LINK_TYPE &link_type)
+void LinkingGraph::remove_link(const std::shared_ptr<Region> &a, const std::string &attr_a, const std::shared_ptr<Region> &b, const std::string &attr_b, const ILink::LINK_TYPE &link_type)
 {
 
 

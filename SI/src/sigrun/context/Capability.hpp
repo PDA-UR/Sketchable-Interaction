@@ -18,22 +18,22 @@ public:
     Capability();
     ~Capability();
 
-    const std::map<std::string, int>& capabilities() const;
+    const std::map<std::string, uint64_t>& capabilities() const;
 
     void add_capabilities(const bp::object& o);
     void add_capability(const std::string& name);
     void remove_capability(const std::string& name);
 
-    int num_capabilities() const;
-    int consecutive_capability_id() const;
+    uint32_t num_capabilities() const;
+    uint64_t consecutive_capability_id() const;
 
     static std::string __test1__;
     static std::string __test2__;
 
 private:
-    std::map<std::string, int> d_capabilities;
-    unsigned int d_num_capabilities;
-    unsigned int d_consecutive_capability_id;
+    std::map<std::string, uint64_t> d_capabilities;
+    uint32_t d_num_capabilities;
+    uint64_t d_consecutive_capability_id;
 };
 
 

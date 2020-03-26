@@ -42,8 +42,3 @@ TEST_F(SIGRunPluginCollectorTest, collect)
 
     EXPECT_TRUE(found_l0 && found_l1 && found_l2);
 }
-
-TEST_F(SIGRunPluginCollectorTest, meta_type)
-{
-    ASSERT_EQ(PluginCollector().meta_type(), "PLUGINCOLLECTOR");
-}
