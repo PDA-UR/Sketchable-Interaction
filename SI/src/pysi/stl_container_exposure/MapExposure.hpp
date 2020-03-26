@@ -11,6 +11,7 @@
 #include <boost/make_shared.hpp>
 #include <boost/shared_ptr.hpp>
 #include <glm/glm.hpp>
+#include <pysi/PySIEffect.hpp>
 
 namespace bp = boost::python;
 

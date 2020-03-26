@@ -7,7 +7,7 @@
 #include <sigrun/plugin/PythonInvoker.hpp>
 
 RegionManager::RegionManager()
-{SIGRUN
+{
     d_region_insertion_queries.reserve(15);
 }
 

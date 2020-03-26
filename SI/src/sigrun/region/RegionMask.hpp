@@ -34,7 +34,7 @@
     \n
 */
 class RegionMask: public SIObject
-{
+{ SIGRUN
 public:
     RegionMask(int canvas_width, int canvas_height, const std::vector<glm::vec3>& contour, const std::vector<glm::vec3>& aabb);
     RegionMask(const RegionMask& rm);

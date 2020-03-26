@@ -19,7 +19,7 @@
 #include <sigrun/context/managers/helpers/input/FileSystem.hpp>
 
 class Context: public SIObject
-{
+{ SIGRUN
 
 public:
     static Context* SIContext();

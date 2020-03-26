@@ -8,9 +8,10 @@
 #include <string>
 #include <sigrun/region/Region.hpp>
 #include "Link.hpp"
+#include <sigrun/SIObject.hpp>
 
-class LinkingGraph
-{
+class LinkingGraph: public SIObject
+{ SIGRUN
 public:
     LinkingGraph();
     ~LinkingGraph();

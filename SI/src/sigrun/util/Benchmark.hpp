@@ -9,11 +9,12 @@
 #define SI_BENCHMARK(...) { BenchmarkTimer timer; __VA_ARGS__ }
 
 class BenchmarkTimer: public SIObject
-{
+{ SIGRUN
+
 public:
     BenchmarkTimer():
         d_start_point(std::chrono::high_resolution_clock::now())
-    {SIGRUN
+    {
     }
 
     ~BenchmarkTimer()

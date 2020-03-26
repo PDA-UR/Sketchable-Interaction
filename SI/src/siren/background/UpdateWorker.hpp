@@ -4,11 +4,12 @@
 #define SITEST_UPDATEWORKER_HPP
 
 #include <QObject>
+#include <SI/SI.hpp>
 #include <QTimer>
 #include <QElapsedTimer>
 
-class UpdateWorker: public QObject
-{ Q_OBJECT
+class UpdateWorker: public QObject, public SIObject
+{ Q_OBJECT SIREN
 public:
     explicit UpdateWorker(int target_fps=60);
     ~UpdateWorker();

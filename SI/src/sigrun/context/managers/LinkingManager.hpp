@@ -18,7 +18,7 @@ Q_DECLARE_METATYPE (std::string)
 
 
 class LinkingManager: public QObject, public SIObject
-{ Q_OBJECT
+{ Q_OBJECT SIGRUN
 public:
     LinkingManager();
     ~LinkingManager();

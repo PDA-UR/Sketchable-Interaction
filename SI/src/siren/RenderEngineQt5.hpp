@@ -9,7 +9,7 @@
 #include <siren/window/MainWindow.hpp>
 
 class RenderEngineQT5: public IRenderEngine, public SIObject
-{Q_OBJECT
+{Q_OBJECT SIREN
 public:
     RenderEngineQT5();
     ~RenderEngineQT5();

@@ -13,8 +13,7 @@ std::string Capability::__test2__ = "TEST2";
 Capability::Capability():
     d_consecutive_capability_id(0),
     d_num_capabilities(0)
-{SIGRUN
-}
+{}
 
 Capability::~Capability()
 {

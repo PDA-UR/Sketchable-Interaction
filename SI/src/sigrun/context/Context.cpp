@@ -20,7 +20,7 @@ Context::~Context()
 }
 
 Context::Context()
-{SIGRUN
+{
     self = this;
 
     uprm = std::unique_ptr<RegionManager>(new RegionManager);

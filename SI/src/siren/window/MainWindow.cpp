@@ -11,7 +11,7 @@ MainWindow::MainWindow(int width, int height):
     up_update_worker(UpdateWorker(60)),
     d_width(width),
     d_height(height)
-{SIREN
+{
     INFO("Starting Update Loop...");
 
     connect(&up_update_worker, &UpdateWorker::updated, this, &MainWindow::loop);

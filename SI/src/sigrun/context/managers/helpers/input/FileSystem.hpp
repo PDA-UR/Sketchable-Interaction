@@ -18,8 +18,8 @@
 
 namespace fs = boost::filesystem;
 
-class UserEnvironment
-{
+class UserEnvironment: public SIObject
+{ SIGRUN
 public:
 
 #ifdef __linux__
@@ -43,7 +43,7 @@ public:
 };
 
 class FileSystemObject: public SIObject
-{
+{ SIGRUN
 public:
     FileSystemObject(const fs::path& path, int type);
     ~FileSystemObject();
@@ -58,7 +58,7 @@ private:
 };
 
 class FileSystem: public SIObject
-{
+{ SIGRUN
 public:
     FileSystem();
     ~FileSystem();

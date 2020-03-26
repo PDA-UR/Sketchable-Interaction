@@ -8,9 +8,12 @@
 #include <map>
 #include <memory>
 #include <sigrun/SIObject.hpp>
+#include <boost/python.hpp>
 
-class Capability: SIObject
-{
+namespace bp = boost::python;
+
+class Capability: public SIObject
+{ SIGRUN
 public:
     Capability();
     ~Capability();

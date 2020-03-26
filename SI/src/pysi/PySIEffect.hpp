@@ -24,14 +24,14 @@
 
 namespace bp = boost::python;
 
-struct LinkRelation
-{
+struct LinkRelation: public SIObject
+{ PYSI
+public:
     LinkRelation(const std::string& _sender, const std::string& _sender_attrib, const std::string& _recv, const std::string& _recv_attrib):
             sender(_sender),
             sender_attrib(_sender_attrib),
             recv(_recv),
-            recv_attrib(_recv_attrib)
-    {}
+            recv_attrib(_recv_attrib) {}
 
     const bool operator ==(const LinkRelation& other) const
     {
@@ -44,8 +44,8 @@ struct LinkRelation
     std::string recv_attrib;
 };
 
-class PySIEffect
-{
+class PySIEffect: public SIObject
+{ PYSI
 public:
     void init(const std::vector<glm::vec3>& contour, const std::vector<glm::vec3>& aabb, const std::string& uuid, const bp::dict& kwargs);
     void __add_data__(const std::string& key, const bp::object& value, const int type);

@@ -71,11 +71,6 @@ public:
         }) + "]";
     }
 
-    static std::string _print(const LinkRelation& lr)
-    {
-        return "(" + lr.sender + ", " + lr.sender_attrib + ", " + lr.recv + ", " + lr.recv_attrib + "), ";
-    }
-
     template<typename T1, typename T2>
     static std::string _print(const std::map<T1, T2> &map)
     {
