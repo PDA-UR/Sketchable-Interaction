@@ -6,7 +6,7 @@
 #include <QDebug>
 #include <execution>
 
-MainWindow::MainWindow(int width, int height):
+MainWindow::MainWindow(uint32_t width, uint32_t height):
     QMainWindow(),
     up_update_worker(UpdateWorker(60)),
     d_width(width),
@@ -23,11 +23,9 @@ MainWindow::MainWindow(int width, int height):
     setWindowFlags(Qt::WindowStaysOnTopHint);
 }
 
-void MainWindow::loop(double delta, int fps)
+void MainWindow::loop(double delta, uint32_t fps)
 {
     const auto& regions = Context::SIContext()->region_manager()->regions();
-
-    bool is_present = false;
 
     for(const auto& [key, val]: d_region_representations)
     {

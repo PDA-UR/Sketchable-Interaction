@@ -16,7 +16,7 @@ RegionRepresentation::RegionRepresentation(QWidget *parent, const std::shared_pt
 
     d_fill.moveTo(region->contour()[0].x - region->aabb()[0].x, region->contour()[0].y - region->aabb()[0].y);
 
-    for (int i = 1; i < region->contour().size(); ++i)
+    for (uint32_t i = 1; i < region->contour().size(); ++i)
         d_fill.lineTo(region->contour()[i].x - region->aabb()[0].x, region->contour()[i].y - region->aabb()[0].y);
 
     d_view->engine()->rootContext()->setContextProperty("Region", this);
@@ -44,7 +44,7 @@ RegionRepresentation::~RegionRepresentation()
     QObject::disconnect(d_region_connection);
 }
 
-const int RegionRepresentation::type() const
+const uint32_t RegionRepresentation::type() const
 {
     return d_type;
 }
@@ -79,7 +79,7 @@ void RegionRepresentation::perform_data_update(const std::shared_ptr<Region> &re
 
         d_fill.moveTo(region->contour()[0].x - region->aabb()[0].x, region->contour()[0].y - region->aabb()[0].y);
 
-        for (int i = 1; i < region->contour().size(); ++i)
+        for (uint32_t i = 1; i < region->contour().size(); ++i)
             d_fill.lineTo(region->contour()[i].x - region->aabb()[0].x, region->contour()[i].y - region->aabb()[0].y);
     }
 

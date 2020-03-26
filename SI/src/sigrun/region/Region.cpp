@@ -10,7 +10,7 @@
 
 namespace bp = boost::python;
 
-Region::Region(const std::vector<glm::vec3> &contour, const bp::object& effect, int mask_width, int mask_height, const bp::dict& kwargs):
+Region::Region(const std::vector<glm::vec3> &contour, const bp::object& effect, uint32_t mask_width, uint32_t mask_height, const bp::dict& kwargs):
     uprt(std::make_unique<RegionTransform>()),
     d_is_transformed(false),
     d_link_events(20),
@@ -43,7 +43,7 @@ Region::Region(const std::vector<glm::vec3> &contour, const bp::object& effect, 
 
 Region::~Region()= default;
 
-void Region::move(int x, int y)
+void Region::move(int32_t x, int32_t y)
 {
     d_is_transformed = false;
 
@@ -55,8 +55,6 @@ void Region::move(int x, int y)
 
         d_last_delta_x = x - d_last_x;
         d_last_delta_y = y - d_last_y;
-
-
 
         d_last_x = x;
         d_last_y = y;
@@ -109,10 +107,10 @@ const std::vector<glm::vec3>& Region::contour()
 
 void Region::set_aabb()
 {
-    int x_min = std::numeric_limits<int>::max();
-    int x_max = std::numeric_limits<int>::min();
-    int y_min = std::numeric_limits<int>::max();
-    int y_max = std::numeric_limits<int>::min();
+    int32_t x_min = std::numeric_limits<int32_t>::max();
+    int32_t x_max = std::numeric_limits<int32_t>::min();
+    int32_t y_min = std::numeric_limits<int32_t>::max();
+    int32_t y_max = std::numeric_limits<int32_t>::min();
 
     for (auto &v: d_contour)
     {
@@ -142,17 +140,17 @@ const glm::mat3x3& Region::transform() const
     return uprt->transform();
 }
 
-int Region::on_enter(PySIEffect& colliding_effect)
+uint8_t Region::on_enter(PySIEffect& colliding_effect)
 {
     return handle_collision_event("on_enter", colliding_effect);
 }
 
-int Region::on_continuous(PySIEffect& colliding_effect)
+uint8_t Region::on_continuous(PySIEffect& colliding_effect)
 {
     return handle_collision_event("on_continuous", colliding_effect);
 }
 
-int Region::on_leave(PySIEffect& colliding_effect)
+uint8_t Region::on_leave(PySIEffect& colliding_effect)
 {
     return handle_collision_event("on_leave", colliding_effect);
 }
@@ -207,27 +205,27 @@ const std::string &Region::name() const
     return d_py_effect->name();
 }
 
-const int Region::type() const
+const uint16_t Region::type() const
 {
     return d_py_effect->effect_type();
 }
 
-const int Region::width() const
+const uint32_t Region::width() const
 {
     return d_py_effect->width();
 }
 
-const int Region::height() const
+const uint32_t Region::height() const
 {
     return d_py_effect->height();
 }
 
-const int Region::last_delta_x() const
+const int32_t Region::last_delta_x() const
 {
     return d_last_delta_x;
 }
 
-const int Region::last_delta_y() const
+const int32_t Region::last_delta_y() const
 {
     return d_last_delta_y;
 }
@@ -308,7 +306,7 @@ const glm::vec4 Region::color() const
     return d_py_effect->color();
 }
 
-int Region::handle_collision_event(const std::string &function_name, PySIEffect &colliding_effect)
+uint8_t Region::handle_collision_event(const std::string &function_name, PySIEffect &colliding_effect)
 {
     HANDLE_PYTHON_CALL(
         for (auto& [capability, emission_function]: colliding_effect.cap_collision_emit())

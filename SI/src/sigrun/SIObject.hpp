@@ -40,6 +40,7 @@ public:\
 #define SIGRUN SIOBJECT(SIGRUN);
 #define SIREN SIOBJECT(SIREN);
 #define PYSI SIOBJECT(PYSI);
+#define SITEST SIOBJECT(SITEST);
 
 /**
 \class SIObject

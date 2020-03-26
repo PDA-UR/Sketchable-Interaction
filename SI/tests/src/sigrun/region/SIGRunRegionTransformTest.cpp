@@ -12,9 +12,9 @@ TEST_F(SIGRunRegionTransformTest, initialize_identity)
 {
     RegionTransform rt;
 
-    for(int i = 0; i < 3; ++i)
+    for(uint8_t i = 0; i < 3; ++i)
     {
-        for (int k = 0; k < 3; ++k)
+        for (uint8_t k = 0; k < 3; ++k)
         {
             bool value = rt.transform()[i][k];
 
@@ -29,9 +29,9 @@ TEST_F(SIGRunRegionTransformTest, initialize_identity)
 TEST_F(SIGRunRegionTransformTest, indexing_operator)
 {
     RegionTransform rt;
-    for(int i = 0; i < 3; ++i)
+    for(uint8_t i = 0; i < 3; ++i)
     {
-        for (int k = 0; k < 3; ++k)
+        for (uint8_t k = 0; k < 3; ++k)
         {
             bool value = rt[i][k];
 
@@ -49,9 +49,9 @@ TEST_F(SIGRunRegionTransformTest, translation)
 
     rt.update(glm::vec2(100, 100));
 
-    for(int i = 0; i < 3; ++i)
+    for(uint8_t i = 0; i < 3; ++i)
     {
-        for (int k = 0; k < 3; ++k)
+        for (uint8_t k = 0; k < 3; ++k)
         {
             bool value = rt[i][k];
 
@@ -74,8 +74,8 @@ TEST_F(SIGRunRegionTransformTest, rotation)
 
     rt.update(glm::vec2(0, 0), 90);
 
-    for(int i = 0; i < 3; ++i)
-        for (int k = 0; k < 3; ++k)
+    for(uint8_t i = 0; i < 3; ++i)
+        for (uint8_t k = 0; k < 3; ++k)
             if(i == k && k != 2)
                 ASSERT_TRUE(std::abs(rt[i][k]) < 0.0000001);
 }
@@ -86,8 +86,8 @@ TEST_F(SIGRunRegionTransformTest, scale)
 
     rt.update(glm::vec2(0, 0), 0, 2);
 
-    for(int i = 0; i < 3; ++i)
-        for (int k = 0; k < 3; ++k)
+    for(uint8_t i = 0; i < 3; ++i)
+        for (uint8_t k = 0; k < 3; ++k)
             if (i == k && k != 2)
                 ASSERT_TRUE(rt[i][k] == 2.0);
 }

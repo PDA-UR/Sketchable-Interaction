@@ -160,7 +160,7 @@ public:
         auto self = boost::make_shared<std::map<std::string, bp::object>>();
 
         const bp::list keys = bp::extract<bp::list>(dict.keys());
-        for(int i = 0; i < bp::len(keys); ++i)
+        for(uint32_t i = 0; i < bp::len(keys); ++i)
         {
             const std::string key = bp::extract<std::string>(keys[i]);
 
@@ -203,14 +203,14 @@ public:
         auto self = boost::make_shared<std::map<std::string, std::map<std::string, bp::object>>>();
 
         const bp::list outer_keys = bp::extract<bp::list>(dict.keys());
-        for(int i = 0; i < bp::len(outer_keys); ++i)
+        for(uint32_t i = 0; i < bp::len(outer_keys); ++i)
         {
             const bp::dict& inner_dict = bp::extract<bp::dict>(dict[outer_keys[i]]);
             const bp::list& inner_keys = bp::extract<bp::list>(inner_dict.keys());
 
             const std::string outer_key = bp::extract<std::string>(outer_keys[i]);
 
-            for(int k = 0; k < bp::len(inner_keys); ++k)
+            for(uint32_t k = 0; k < bp::len(inner_keys); ++k)
             {
                 const std::string inner_key = bp::extract<std::string>(inner_keys[k]);
 
@@ -225,7 +225,7 @@ public:
     {
         const bp::list keys = bp::extract<bp::list>(dict.keys());
 
-        for(int i = 0; i < bp::len(keys); ++i)
+        for(uint32_t i = 0; i < bp::len(keys); ++i)
         {
             const std::string& k = bp::extract<std::string>(keys[i]);
             const bp::object& v = dict[keys[i]];

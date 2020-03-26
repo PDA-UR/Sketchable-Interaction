@@ -16,7 +16,7 @@ void RegionResampler::resample(std::vector<glm::vec3> &out, const std::vector<gl
 
         out.push_back(points[0]);
 
-        for (int i = 1; i < points.size(); i++)
+        for (uint32_t i = 1; i < points.size(); i++)
         {
 
             auto& p0 = points[i - 1];
@@ -52,7 +52,7 @@ float RegionResampler::total_length(const std::vector<glm::vec3> &vertices)
         glm::vec3 p0 = vertices[0];
         float length = 0.0f;
 
-        for (int i = 1; i < vertices.size(); i++)
+        for (uint32_t i = 1; i < vertices.size(); i++)
         {
             length += distance(p0, vertices[i]);
             p0 = vertices[i];

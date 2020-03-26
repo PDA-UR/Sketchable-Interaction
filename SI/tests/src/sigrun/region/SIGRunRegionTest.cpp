@@ -61,7 +61,7 @@ TEST_F(SIGRunRegionTest, aabb)
 
     ASSERT_EQ(contour.size(), r.aabb().size());
 
-    for(int i = 0; i < contour.size(); ++i)
+    for(uint32_t i = 0; i < contour.size(); ++i)
         ASSERT_EQ(contour[i], r.aabb()[i]);
 }
 

@@ -37,11 +37,11 @@ public:
     ExternalApplicationManager* external_application_manager();
 
     void update();
-    void enable(int what);
-    void disable(int what);
+    void enable(uint32_t what);
+    void disable(uint32_t what);
 
-    int width();
-    int height();
+    uint32_t width();
+    uint32_t height();
 
     void register_new_region(const std::vector<glm::vec3>& contour, const std::string& uuid);
     void update_linking_relations(const std::vector<LinkRelation>& relations, const std::string& source);
@@ -49,8 +49,8 @@ public:
     void remove_all_partaking_linking_relations(const std::string& source);
 
     void spawn_folder_contents_as_regions(const std::vector<std::string>& children_paths, const std::string& uuid, const bool with_btns);
-    void spawn_folder_contents_buttons_as_regions(std::shared_ptr<Region>& parent, int dir_x, int dir_y, int preview_width, int preview_height);
-    void spawn_folder_contents_entries_as_regions(std::shared_ptr<Region>& parent, const std::vector<std::string>& children_paths, int dir_x, int dir_y, int dir_width, int dir_height, int preview_width, int preview_height);
+    void spawn_folder_contents_buttons_as_regions(std::shared_ptr<Region>& parent, uint32_t dir_x, uint32_t dir_y, uint32_t preview_width, uint32_t preview_height);
+    void spawn_folder_contents_entries_as_regions(std::shared_ptr<Region>& parent, const std::vector<std::string>& children_paths, uint32_t dir_x, uint32_t dir_y, uint32_t dir_width, uint32_t dir_height, uint32_t preview_width, uint32_t preview_height);
     void spawn_folder_contents_entry_as_region(const std::vector<glm::vec3>& contour, std::shared_ptr<Region>& parent, const std::string& effect_type, const bp::dict& kwargs);
 
     void launch_external_application_with_file(const std::string& uuid, const std::string& path);
@@ -84,11 +84,10 @@ private:
     std::unique_ptr<FileSystem> upfs;
     std::unique_ptr<ExternalApplicationManager> upeam;
 
-
     std::string test_help = "Tag";
 
-    int s_width = 0;
-    int s_height = 0;
+    uint32_t s_width = 0;
+    uint32_t s_height = 0;
 
     IRenderEngine* d_ire;
 

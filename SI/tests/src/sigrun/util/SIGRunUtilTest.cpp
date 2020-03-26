@@ -30,7 +30,7 @@ TEST_F(SIGRunUtilTest, TO_DEGREES)
 
 TEST_F(SIGRunUtilTest, VEC_CONTAINS)
 {
-    std::vector<int> test {0, 1, 2, 4, 8, 16};
+    std::vector<uint8_t> test {0, 1, 2, 4, 8, 16};
 
     ASSERT_TRUE(VEC_CONTAINS(test, 0));
     ASSERT_TRUE(VEC_CONTAINS(test, 1));
@@ -52,7 +52,7 @@ TEST_F(SIGRunUtilTest, VEC_CONTAINS)
 
 TEST_F(SIGRunUtilTest, MAP_HAS_KEY)
 {
-    std::map<int, int> test
+    std::map<uint8_t, uint8_t> test
     {
         {0, 0},
         {1, 1},

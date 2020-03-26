@@ -49,9 +49,9 @@ void PySIEffect::__destroy_embedded_file_standard_appliation_in_context__(const 
     Context::SIContext()->terminate_external_application_with_file(uuid);
 }
 
-int PySIEffect::has_shape_changed()
+uint32_t PySIEffect::has_shape_changed()
 {
-    int ret = 0;
+    uint32_t ret = 0;
 
     if(d_has_shape_changed)
         ret |= REQUIRES_NEW_SHAPE;
@@ -62,12 +62,12 @@ int PySIEffect::has_shape_changed()
     return ret;
 }
 
-const int PySIEffect::x() const
+const uint32_t PySIEffect::x() const
 {
     return d_x;
 }
 
-const int PySIEffect::y() const
+const uint32_t PySIEffect::y() const
 {
     return d_y;
 }
@@ -112,12 +112,12 @@ const std::string& PySIEffect::source() const
     return d_source;
 }
 
-const int PySIEffect::effect_type() const
+const uint32_t PySIEffect::effect_type() const
 {
     return d_effect_type;
 }
 
-bool PySIEffect::has_mouse_pressed_capability(int btn)
+bool PySIEffect::has_mouse_pressed_capability(uint32_t btn)
 {
     switch (btn)
     {
@@ -132,7 +132,7 @@ bool PySIEffect::has_mouse_pressed_capability(int btn)
     }
 }
 
-void PySIEffect::set_mouse_pressed_capability(int btn, bool active)
+void PySIEffect::set_mouse_pressed_capability(uint32_t btn, bool active)
 {
     switch (btn)
     {
@@ -165,12 +165,12 @@ std::map<std::string, std::vector<glm::vec3>>& PySIEffect::partial_region_contou
     return d_partial_regions;
 }
 
-const int PySIEffect::width() const
+const uint32_t PySIEffect::width() const
 {
     return d_width;
 }
 
-const int PySIEffect::height() const
+const uint32_t PySIEffect::height() const
 {
     return d_height;
 }
@@ -200,7 +200,7 @@ std::vector<glm::vec3> &PySIEffect::aabb()
     return d_aabb;
 }
 
-void PySIEffect::__add_data__(const std::string &key, const bp::object &value, const int type)
+void PySIEffect::__add_data__(const std::string &key, const bp::object &value, const uint32_t type)
 {
     QVariant qv;
 
@@ -335,7 +335,7 @@ BOOST_PYTHON_MODULE(libPySI)
         .enable_pickling()
         ;
 
-    bp::enum_<int>("DataType")
+    bp::enum_<uint32_t>("DataType")
         .value("INT", SI_DATA_TYPE_INT)
         .value("FLOAT", SI_DATA_TYPE_FLOAT)
         .value("BOOL", SI_DATA_TYPE_BOOL)
@@ -344,7 +344,7 @@ BOOST_PYTHON_MODULE(libPySI)
         .export_values()
         ;
 
-    bp::enum_<int>("EffectType")
+    bp::enum_<uint32_t>("EffectType")
         .value("SI_CANVAS", SI_TYPE_CANVAS)
         .value("SI_CURSOR", SI_TYPE_CURSOR)
         .value("SI_MOUSE_CURSOR", SI_TYPE_MOUSE_CURSOR)

@@ -2,6 +2,7 @@
 
 #include "ExternalApplicationManager.hpp"
 #include <QProcess>
+#include <sigrun/log/Log.hpp>
 
 ExternalApplicationManager::ExternalApplicationManager(double process_winid_fetch_sleep_time_ms, double process_winid_fetch_timeout_ms):
     d_process_winid_fetch_sleep_time_ms(process_winid_fetch_sleep_time_ms),

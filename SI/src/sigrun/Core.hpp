@@ -43,7 +43,6 @@ protected:
     friend class SIGRunTest;
     friend class SIGRunCoreTest;
 
-
 protected:
 };
 #endif //SI_SIGRUN_CORE_HPP
