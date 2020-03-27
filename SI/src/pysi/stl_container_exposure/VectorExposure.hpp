@@ -346,10 +346,10 @@ public:
      */
     static const std::string repr(std::vector<std::string>& self)
     {
-        return std::reduce(std::execution::par, self.begin(), self.end(),std::string(""), [&](const std::string& a, const std::string& b)
+        return std::reduce(std::execution::par, self.begin(), self.end(),std::string("["), [&](const std::string& a, const std::string& b)
         {
             return a + ", " + b;
-        });
+        }) + "]";
     }
 };
 
@@ -442,13 +442,13 @@ public:
      */
     static const std::string repr(std::vector<LinkRelation>& self)
     {
-        return std::transform_reduce(std::execution::par, self.begin(), self.end(), std::string(""), [&](const std::string& a, const std::string& b)
+        return std::transform_reduce(std::execution::par, self.begin(), self.end(), std::string("["), [&](const std::string& a, const std::string& b)
         {
            return a + ", " + b;
         }, [&](const LinkRelation& lr)
         {
             return "[" + lr.sender + ", " + lr.sender_attrib + ", " + lr.recv + ", " + lr.recv_attrib + "]";
-        });
+        }) + "]";
     }
 
 private:

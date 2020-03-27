@@ -13,7 +13,6 @@
 #include <QVariant>
 #include <QMap>
 #include <sigrun/SIObject.hpp>
-
 #include <sigrun/log/Log.hpp>
 
 #define PYSI_DEBUG(what) Log::log("PySI", what, Log::LOG_LEVEL::DEBUG_LEVEL, "PySIEffect",__FILENAME__, __FUNCTION__, std::to_string(__LINE__))
