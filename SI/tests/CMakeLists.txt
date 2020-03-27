@@ -67,7 +67,16 @@ set(SIUnitTestSrc
         SI/tests/src/sigrun/util/SIGRunRingBufferTest.cpp
         SI/tests/src/sigrun/util/SIGRunRingBufferTest.hpp
         SI/tests/src/sigrun/util/SIGRunUtilTest.cpp
-        SI/tests/src/sigrun/util/SIGRunUtilTest.hpp)
+        SI/tests/src/sigrun/util/SIGRunUtilTest.hpp
+        SI/tests/src/pysi/stl_container_exposure/PySIVectorExposureTest.cpp
+        SI/tests/src/pysi/stl_container_exposure/PySIVectorExposureTest.hpp
+        SI/tests/src/pysi/stl_container_exposure/PySIMapExposureTest.cpp
+        SI/tests/src/pysi/stl_container_exposure/PySIMapExposureTest.hpp
+        SI/tests/src/pysi/PySIPySIEffectTest.cpp
+        SI/tests/src/pysi/PySIPySIEffectTest.hpp
+        SI/tests/src/sigrun/util/SIGRunUtilTest.hpp
+
+        )
 
 ADD_DEFINITIONS(-DQT_NO_KEYWORDS)
 
