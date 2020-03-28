@@ -4,7 +4,6 @@
 #include <fstream>
 #include <streambuf>
 #include <boost/python.hpp>
-#include <debug/Print.hpp>
 
 namespace bp = boost::python;
 
@@ -24,6 +23,7 @@ Scripting::Scripting()
 
     d_main = bp::import("__main__");
     d_globals = d_main.attr("__dict__");
+    d_globals["__builtins__"] = bp::import("builtins");
 }
 
 Scripting::~Scripting()

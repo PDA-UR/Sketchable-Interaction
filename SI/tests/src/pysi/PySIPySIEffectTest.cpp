@@ -1,49 +1,30 @@
 
 
 #include "PySIPySIEffectTest.hpp"
-#include <pysi/PySIEffect.hpp>
+#include <QProcess>
+#include <boost/python.hpp>
+#include <sigrun/plugin/Scripting.hpp>
+#include <sigrun/plugin/PythonInvoker.hpp>
+#include <sigrun/plugin/PluginCollector.hpp>
+#include <debug/Print.hpp>
 
-TEST_F(PySIPySIEffectTest, LinkRelation_creation)
+TEST_F(PySIPySIEffectTest, PySIEffect_Python_Side)
 {
+    Scripting script;
 
-}
+    std::string module = "PySIPySIEffectTest";
+    std::string path = "src/pysi/PySIPySIEffectTest.py";
+    std::string clazz = "PySIPySIEffectTest";
 
-TEST_F(PySIPySIEffectTest, LinkRelation_operator_round_brackets)
-{
+    HANDLE_PYTHON_CALL(
+        bp::object o = script.si_plugin(module, path, clazz);
+        bool python_test_success =  bp::extract<bool>(o.attr("start")());
 
+        ASSERT_TRUE(python_test_success);
+    )
 }
 
 TEST_F(PySIPySIEffectTest, init)
-{
-
-}
-
-TEST_F(PySIPySIEffectTest, __add_data__)
-{
-
-}
-
-TEST_F(PySIPySIEffectTest, notify_shape_changed)
-{
-
-}
-
-TEST_F(PySIPySIEffectTest, __show_folder_contents__)
-{
-
-}
-
-TEST_F(PySIPySIEffectTest, __embed_file_standard_appliation_into_context__)
-{
-
-}
-
-TEST_F(PySIPySIEffectTest, __destroy_embedded_file_standard_appliation_in_context__)
-{
-
-}
-
-TEST_F(PySIPySIEffectTest, signal_deletion)
 {
 
 }

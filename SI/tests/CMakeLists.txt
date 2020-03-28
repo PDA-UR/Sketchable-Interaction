@@ -12,9 +12,6 @@ find_package(Boost 1.69.0 COMPONENTS system python3.7 REQUIRED)
 
 include_directories(${Boost_INCLUDE_DIRS})
 include_directories(${PYTHON_INCLUDE_DIRS})
-include_directories(${SDL2_INCLUDE_DIR})
-include_directories(${GLEW_INCLUDE_DIRS})
-include_directories(${OPENGL_INCLUDE_DIRS})
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/SI/src)
 
 find_package(Qt5Widgets REQUIRED)
