@@ -4,9 +4,15 @@
 #define SITEST_PYSIPYSIEFFECTTEST_HPP
 
 #include <gtest/gtest.h>
+#include <gmock/gmock.h>
+#include <sigrun/util/UUID.hpp>
+#include <sigrun/util/Util.hpp>
 
-class PySIPySIEffectTest: public ::testing::Test
-{
+#include <pysi/PySIEffect.hpp>
+#include <sigrun/SIObject.hpp>
+
+class PySIPySIEffectTest: public ::testing::Test, public SIObject
+{ SITEST
 public:
     virtual void SetUp() {
 
