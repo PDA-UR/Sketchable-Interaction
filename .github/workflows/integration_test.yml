@@ -55,7 +55,7 @@ jobs:
       run: |
         sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-9 90
         
-    - name: Cache valgrind
+    - name: Cache Boost
       uses: actions/cache@v1.0.3
       id: cache-boost
       with:
