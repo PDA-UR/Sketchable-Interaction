@@ -59,7 +59,7 @@ jobs:
       run: |
         mkdir temp &&
         cd temp &&
-        wget https://dl.bintray.com/boostorg/release/1.69.0/source/boost_1_69_0.tar.gz &&
+        wget https://sourceforge.net/projects/boost/files/boost/1.69.0/boost_1_69_0.tar.gz/download &&
         tar xzf boost_1_69_0.tar.gz &&
         cd boost_1_69_0 &&
         sudo ln -s /usr/local/include/python3.7m /usr/local/include/python3.7 &&
