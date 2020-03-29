@@ -55,8 +55,15 @@ jobs:
       run: |
         sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-9 90
       
-        
+    - name: Cache Local Libraries
+      id: cache-locals
+      uses: actions/cache@v1
+      with:
+        path: /usr/local/lib
+        key: ${{ runner.os }}-locals
+
     - name: Install Boost with components System, Python and Filesystem 
+      if: steps.cache-locals.outputs.cache-hit != 'true'
       run: |
         mkdir temp &&
         cd temp &&
