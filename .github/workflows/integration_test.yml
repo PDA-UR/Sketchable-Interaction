@@ -116,6 +116,7 @@ jobs:
           
           echo ${test_output}
           
+          
           if [[ ${test_output} == *"FAILED TESTS"* ]]; then
             exit 1
           fi
