@@ -76,7 +76,10 @@ jobs:
       run: |
         mkdir artifact &&
         cp -r /home/runner/work/Sketchable-Interaction/Sketchable-Interaction/SI/plugins . && 
-        zip artifact/si${{ env.CURRENT_VERSION }}.zip -j si_test_application libSIGeneralRuntime.so libSIRenderEngine.so libPySI.so && 
+        cp -r /usr/local/lib/libboost_filesystem.so.1.69.0 . && 
+        cp -r /usr/local/lib/libboost_python37.so.1.69.0 . && 
+        cp -r /usr/local/lib/libboost_system.so.1.69.0 . && 
+        zip artifact/si${{ env.CURRENT_VERSION }}.zip -j si_test_application libSIGeneralRuntime.so libSIRenderEngine.so libPySI.so libboost_filesystem.so.1.69.0 libboost_python37.so.1.69.0 libboost_system.so.1.69.0 && 
         zip -ur artifact/si${{ env.CURRENT_VERSION }}.zip plugins && 
         rm -rf plugins
                 
