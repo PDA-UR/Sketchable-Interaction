@@ -6,7 +6,6 @@
 #include <sigrun/plugin/Scripting.hpp>
 #include <sigrun/plugin/PythonInvoker.hpp>
 #include <sigrun/plugin/PluginCollector.hpp>
-#include <debug/Print.hpp>
 
 TEST_F(PySIPySIEffectTest, PySIEffect_Python_Side)
 {

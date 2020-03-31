@@ -25,11 +25,6 @@ void RegionManager::add_region(const std::vector<glm::vec3> &contour, const bp::
     d_regions.push_back(std::shared_ptr<Region>(new Region(contour, effect, 0, 0, kwargs)));
 }
 
-void RegionManager::delete_region(const std::string &deletion_candidate_uuid)
-{
-
-}
-
 std::vector<std::shared_ptr<Region>> &RegionManager::regions()
 {
     return d_regions;
@@ -164,7 +159,6 @@ bool RegionManager::update_region_deletions(uint32_t deletion_index)
     return false;
 }
 
-
 void RegionManager::update()
 {
     update_via_mouse_input();
@@ -193,3 +187,14 @@ void RegionManager::update()
 
     d_region_insertion_queries.clear();
 }
+
+void RegionManager::flag_for_deletion(const std::string& target_region_uuid)
+{
+    auto it = std::find_if(d_regions.begin(), d_regions.end(), [&target_region_uuid](auto& region)
+    {
+       return region->uuid() == target_region_uuid;
+    });
+
+    it->get()->raw_effect().attr("signal_deletion")();
+}
+

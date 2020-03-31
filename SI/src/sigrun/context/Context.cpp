@@ -104,8 +104,10 @@ void Context::add_cursor_regions(const std::unique_ptr<bp::object>& cursor_effec
 
     std::vector<glm::vec3> mouse_contour {glm::vec3(0, 0, 1), glm::vec3(0, height_mouse_cursor, 1), glm::vec3(width_mouse_cursor, height_mouse_cursor, 1), glm::vec3(width_mouse_cursor, 0, 1) };
     uprm->add_region(mouse_contour, *cursor_effect, 0, bp::dict());
-    uplm->add_link_to_object(uprm->regions().back(), ExternalObject::ExternalObjectType::MOUSE);
     d_mouse_uuid = uprm->regions().back()->uuid();
+
+    upim->external_objects()[d_mouse_uuid] = std::make_shared<ExternalObject>(ExternalObject::ExternalObjectType::MOUSE);
+    uplm->add_link_to_object(uprm->regions().back(), ExternalObject::ExternalObjectType::MOUSE);
 
     INFO("Plugin available for drawing");
 }
@@ -488,10 +490,21 @@ void Context::spawn_folder_contents_as_regions(const std::vector<std::string>& c
 
 void Context::launch_external_application_with_file(const std::string& uuid, const std::string& path)
 {
-    upeam->launch_standard_application(uuid, path);
+    std::vector<glm::vec3> contour
+    {
+        glm::vec3(1, 1, 1),
+        glm::vec3(1, 1 + s_height * 0.3, 1),
+        glm::vec3(1 + s_width * 0.3, 1 + s_height * 0.3, 1),
+        glm::vec3(1 + s_width * 0.3, 1, 1)
+    };
+
+    bp::dict kwargs;
+
+    uprm->add_region(contour, d_available_plugins["Container"], 0, kwargs);
+    upeam->launch_standard_application(uuid, path, uprm->regions().back());
 }
 
 void Context::terminate_external_application_with_file(const std::string& uuid)
 {
-    upeam->terminate_application(uuid);
+//    upeam->terminate_application(uuid);
 }
