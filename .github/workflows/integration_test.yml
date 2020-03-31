@@ -54,13 +54,21 @@ jobs:
     - name: Set C++ Compiler
       run: |
         sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-9 90
-        
+      
+    #- name: Cache Local Libraries
+    #  id: cache-locals
+    #  uses: actions/cache@v1
+    #  with:
+    #    path: /usr/local/lib
+    #    key: ${{ runner.os }}-locals
+
     - name: Install Boost with components System, Python and Filesystem 
+      #if: steps.cache-locals.outputs.cache-hit != 'true'
       run: |
         mkdir temp &&
         cd temp &&
-        wget https://dl.bintray.com/boostorg/release/1.69.0/source/boost_1_69_0.tar.gz &&
-        tar xzf boost_1_69_0.tar.gz &&
+        wget https://sourceforge.net/projects/boost/files/boost/1.69.0/boost_1_69_0.tar.gz/download &&
+        tar xzf download &&
         cd boost_1_69_0 &&
         sudo ln -s /usr/local/include/python3.7m /usr/local/include/python3.7 &&
         sed -i "s@includes ?= \$(prefix)/include/python\$(version)@includes ?= \$(prefix)/include/python\$(version)m@" tools/build/src/tools/python.jam  &&
@@ -68,7 +76,7 @@ jobs:
         sudo ./b2 --with-system --with-python --with-filesystem -j 8 -d0 install &&       
         cd ..
         cd ..
- 
+        
     - name: Install Dependencies
       run: |
         if [[ "${{ github.event.head_commit.message }}" != *"[NO CI]"* ]]; then
@@ -107,6 +115,7 @@ jobs:
           test_output="$(./../../run_unit_tests)"
           
           echo ${test_output}
+          
           
           if [[ ${test_output} == *"FAILED TESTS"* ]]; then
             exit 1

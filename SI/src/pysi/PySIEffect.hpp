@@ -8,12 +8,10 @@
 #include <sigrun/util/Util.hpp>
 #include <map>
 #include <glm/glm.hpp>
-#include <debug/Print.hpp>
 #include <sigrun/SITypes.hpp>
 #include <QVariant>
 #include <QMap>
 #include <sigrun/SIObject.hpp>
-
 #include <sigrun/log/Log.hpp>
 
 #define PYSI_DEBUG(what) Log::log("PySI", what, Log::LOG_LEVEL::DEBUG_LEVEL, "PySIEffect",__FILENAME__, __FUNCTION__, std::to_string(__LINE__))

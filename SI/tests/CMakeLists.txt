@@ -12,9 +12,6 @@ find_package(Boost 1.69.0 COMPONENTS system python3.7 REQUIRED)
 
 include_directories(${Boost_INCLUDE_DIRS})
 include_directories(${PYTHON_INCLUDE_DIRS})
-include_directories(${SDL2_INCLUDE_DIR})
-include_directories(${GLEW_INCLUDE_DIRS})
-include_directories(${OPENGL_INCLUDE_DIRS})
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/SI/src)
 
 find_package(Qt5Widgets REQUIRED)
@@ -67,7 +64,16 @@ set(SIUnitTestSrc
         SI/tests/src/sigrun/util/SIGRunRingBufferTest.cpp
         SI/tests/src/sigrun/util/SIGRunRingBufferTest.hpp
         SI/tests/src/sigrun/util/SIGRunUtilTest.cpp
-        SI/tests/src/sigrun/util/SIGRunUtilTest.hpp)
+        SI/tests/src/sigrun/util/SIGRunUtilTest.hpp
+        SI/tests/src/pysi/stl_container_exposure/PySIVectorExposureTest.cpp
+        SI/tests/src/pysi/stl_container_exposure/PySIVectorExposureTest.hpp
+        SI/tests/src/pysi/stl_container_exposure/PySIMapExposureTest.cpp
+        SI/tests/src/pysi/stl_container_exposure/PySIMapExposureTest.hpp
+        SI/tests/src/pysi/PySIPySIEffectTest.cpp
+        SI/tests/src/pysi/PySIPySIEffectTest.hpp
+        SI/tests/src/sigrun/util/SIGRunUtilTest.hpp
+
+        )
 
 ADD_DEFINITIONS(-DQT_NO_KEYWORDS)
 

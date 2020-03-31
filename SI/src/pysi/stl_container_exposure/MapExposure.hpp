@@ -99,7 +99,7 @@ public:
         return t;
     }
 
-    static int index(T const& x, K const& k)
+    static int32_t index(T const& x, K const& k)
     {
         int i = 0;
         for(typename T::const_iterator it = x.begin(); it != x.end(); ++it, ++i)
