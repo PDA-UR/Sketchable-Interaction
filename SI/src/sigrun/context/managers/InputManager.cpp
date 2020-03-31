@@ -16,7 +16,7 @@ InputManager::InputManager():
     d_previous_mouse_coords(0),
     d_mouse_wheel_angle_in_px(0)
 {
-    d_external_objects.push_back(std::make_shared<ExternalObject>(ExternalObject::ExternalObjectType::MOUSE));
+
 }
 
 void InputManager::update()
@@ -27,7 +27,7 @@ void InputManager::update()
     for(auto& [key, value]: d_button_map)
         d_previous_button_map[key] = value;
 
-    for(auto& obj: d_external_objects)
+    for(auto& [key, obj]: deo)
     {
         switch(obj->type())
         {
@@ -106,16 +106,6 @@ bool InputManager::was_mouse_down(uint32_t button_id)
 const glm::vec2 &InputManager::mouse_coords() const
 {
     return d_mouse_coords;
-}
-
-ExternalObject* InputManager::mouse_object()
-{
-    auto it = std::find_if(std::execution::par_unseq, d_external_objects.begin(), d_external_objects.end(), [](auto& obj)
-    {
-        return obj->type() == ExternalObject::ExternalObjectType::MOUSE;
-    });
-
-    return it != d_external_objects.end() ? it->get() : nullptr;
 }
 
 bool InputManager::eventFilter(QObject *watched, QEvent *event)
@@ -217,4 +207,19 @@ bool InputManager::eventFilter(QObject *watched, QEvent *event)
     }
 
     return QObject::eventFilter(watched, event);
+}
+
+std::unordered_map<std::string, std::shared_ptr<ExternalObject>>& InputManager::external_objects()
+{
+    return deo;
+}
+
+void InputManager::register_external_application(std::shared_ptr<Region> &reg, QWidget *window, uint64_t pid)
+{
+    deo[reg->uuid()] = std::make_shared<ExternalObject>(ExternalObject::ExternalObjectType::APPLICATION);
+    deo[reg->uuid()]->EmbeddedObject.external_application = window;
+
+    Context::SIContext()->linking_manager()->add_link_to_object(reg, ExternalObject::ExternalObjectType::APPLICATION);
+
+    // check if pid exists?
 }

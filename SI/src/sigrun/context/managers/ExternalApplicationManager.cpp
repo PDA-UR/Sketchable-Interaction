@@ -2,7 +2,9 @@
 
 #include "ExternalApplicationManager.hpp"
 #include <QProcess>
+#include <QObject>
 #include <sigrun/log/Log.hpp>
+#include <sigrun/context/Context.hpp>
 
 ExternalApplicationManager::ExternalApplicationManager(double process_winid_fetch_sleep_time_ms, double process_winid_fetch_timeout_ms):
     d_process_winid_fetch_sleep_time_ms(process_winid_fetch_sleep_time_ms),
@@ -14,31 +16,26 @@ ExternalApplicationManager::ExternalApplicationManager(double process_winid_fetc
 
 ExternalApplicationManager::~ExternalApplicationManager() = default;
 
-void ExternalApplicationManager::launch_application(const std::string &uuid, const std::string &file_path, const std::string &application_name)
+void ExternalApplicationManager::launch_application(const std::string &uuid, const std::string &file_path, std::shared_ptr<Region>& reg, const std::string &application_name)
 {
     if(application_name.empty())
-        launch_standard_application(uuid, file_path);
+        launch_standard_application(uuid, file_path, reg);
     else
     {
         WARN("SIGRun requires implementation of arbitrary invocation of external applications!");
     }
 }
 
-void ExternalApplicationManager::launch_standard_application(const std::string &uuid, const std::string &file_path)
+void ExternalApplicationManager::launch_standard_application(const std::string &uuid, const std::string &file_path, std::shared_ptr<Region>& reg)
 {
-    QProcess::startDetached("xdg-open", QStringList() << file_path.c_str(), QString(""));
-
-    process_wmctrl_command_output(generate_wmctrl_command_output(generate_wmctrl_command(file_path)), uuid, file_path);
+    qint64 pid = 0;
+    QProcess::startDetached("xdg-open", QStringList() << file_path.c_str(), QString(""), &pid);
+    process_wmctrl_command_output(generate_wmctrl_command_output(generate_wmctrl_command(file_path)), uuid, file_path, reg, pid);
 }
 
 void ExternalApplicationManager::terminate_application(const std::string &uuid)
 {
-    if(MAP_HAS_KEY(d_file_uuid_to_embedded_app, uuid))
-    {
-        d_file_uuid_to_embedded_app[uuid]->close();
-        delete d_file_uuid_to_embedded_app[uuid];
-        d_file_uuid_to_embedded_app.erase(uuid);
-    }
+    INFO("TERMINATE REQUESTED! UNIMPLEMENTED");
 }
 
 void ExternalApplicationManager::set_process_winid_fetch_sleep_time_ms(double time)
@@ -93,7 +90,7 @@ QString ExternalApplicationManager::generate_wmctrl_command_output(const QString
     return output;
 }
 
-void ExternalApplicationManager::process_wmctrl_command_output(const QString &input, const std::string& uuid, const std::string& file_path)
+void ExternalApplicationManager::process_wmctrl_command_output(const QString &input, const std::string& uuid, const std::string& file_path, std::shared_ptr<Region>& reg, uint64_t pid)
 {
     if(!input.isEmpty())
     {
@@ -104,10 +101,7 @@ void ExternalApplicationManager::process_wmctrl_command_output(const QString &in
             QMainWindow* pMainWnd = retrieve_current_main_window();
 
             if(pMainWnd)
-            {
-                register_new_application_container(pMainWnd, uuid, winid);
-                pMainWnd = nullptr;
-            }
+                register_new_application_container(pMainWnd, uuid, winid, reg, pid);
             else
                 ERROR("Unable to find a main window as parent for the default app of " + file_path);
         }
@@ -118,11 +112,15 @@ void ExternalApplicationManager::process_wmctrl_command_output(const QString &in
         ERROR("Timeout for finding winid of default app of " + file_path);
 }
 
-void ExternalApplicationManager::register_new_application_container(QMainWindow *parent, const std::string &source_uuid, uint64_t winid)
+void ExternalApplicationManager::register_new_application_container(QMainWindow *parent, const std::string &source_uuid, uint64_t winid, std::shared_ptr<Region>& reg, uint64_t pid)
 {
-    d_file_uuid_to_embedded_app[source_uuid]= QWidget::createWindowContainer(QWindow::fromWinId(winid));
-    d_file_uuid_to_embedded_app[source_uuid]->setParent(parent);
-    d_file_uuid_to_embedded_app[source_uuid]->show();
+    QWidget* window = QWidget::createWindowContainer(QWindow::fromWinId(winid));
+    window->setParent(parent);
+    window->setGeometry(20, 20, Context::SIContext()->width() * 0.3 - 40, Context::SIContext()->height() * 0.3 - 40);
+    window->setAttribute(Qt::WA_DeleteOnClose);
+    window->show();
+
+    Context::SIContext()->input_manager()->register_external_application(reg, window, pid);
 }
 
 QMainWindow* ExternalApplicationManager::retrieve_current_main_window()
@@ -132,6 +130,7 @@ QMainWindow* ExternalApplicationManager::retrieve_current_main_window()
     for(QWidget* pWidget : QApplication::topLevelWidgets())
     {
         pMainWnd = qobject_cast<QMainWindow*>(pWidget);
+
         if (pMainWnd)
             return pMainWnd;
     }

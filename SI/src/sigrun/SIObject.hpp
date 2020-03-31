@@ -1,10 +1,8 @@
 
-
 #ifndef SITEST_SIOBJECT_HPP
 #define SITEST_SIOBJECT_HPP
 
 #include <string>
-
 
 /**
 \brief macro for registering another class as SIObject
@@ -22,6 +20,7 @@ private:\
     const std::string __s__() \
     {\
         std::string s = std::string(__PRETTY_FUNCTION__).substr(0, strchr(__PRETTY_FUNCTION__, ':') - __PRETTY_FUNCTION__);\
+        s = s.substr(s.find_last_of(' ') + 1, std::string::npos);\
         std::transform(s.begin(), s.end(), s.begin(), ::toupper);\
         return s;\
     }\

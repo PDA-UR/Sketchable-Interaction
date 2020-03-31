@@ -97,11 +97,12 @@ void LinkingManager::add_link_to_object(std::shared_ptr<Region> &a, const Extern
     switch(type)
     {
         case ExternalObject::ExternalObjectType::MOUSE:
-        {
-            // needs is_linked, remove_link, etc. upgrades
-            d_linking_graph->add_link_to_external_object(UnidirectionalLink(type, a, "__position__", "__position__"));
-            bool success = connect(Context::SIContext()->input_manager()->mouse_object(), &ExternalObject::LINK_SIGNAL, a.get(), &Region::LINK_SLOT, Qt::UniqueConnection);
-        }
+            connect(Context::SIContext()->input_manager()->external_objects()[a->uuid()].get(), &ExternalObject::LINK_SIGNAL, a.get(), &Region::LINK_SLOT, Qt::UniqueConnection);
+        break;
+
+        case ExternalObject::ExternalObjectType::APPLICATION:
+            connect(a.get(), &Region::LINK_SIGNAL, Context::SIContext()->input_manager()->external_objects()[a->uuid()].get(), &ExternalObject::LINK_SLOT, Qt::UniqueConnection);
+        break;
     }
 }
 

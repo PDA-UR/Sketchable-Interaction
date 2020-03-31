@@ -22,7 +22,6 @@ public:
 
     void query_region_insertion(const std::vector<glm::vec3> &contour, const bp::object& effect, std::shared_ptr<Region>& parent, const bp::dict& kwargs=bp::dict(), const std::string& attrib_sender="", const std::string& attrib_recv="");
     void add_region(const std::vector<glm::vec3> &contour, const bp::object &effect, uint32_t region_uuid, const bp::dict& kwargs=bp::dict());
-    void delete_region(const std::string& deletion_candidate_uuid);
 
     std::vector<std::shared_ptr<Region>>& regions();
     std::map<std::string, std::vector<glm::vec3>>& partial_regions();
@@ -30,6 +29,8 @@ public:
     void set_partial_regions(std::map<std::string, std::vector<glm::vec3>>& partials);
 
     void update();
+
+    void flag_for_deletion(const std::string& target_region_uuid);
 
 private:
     std::vector<std::shared_ptr<Region>> d_regions;
