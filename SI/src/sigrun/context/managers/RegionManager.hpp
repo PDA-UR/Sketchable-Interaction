@@ -30,15 +30,14 @@ public:
 
     void update();
 
-    void flag_for_deletion(const std::string& target_region_uuid);
-
 private:
     std::vector<std::shared_ptr<Region>> d_regions;
     std::map<std::string, std::vector<glm::vec3>> d_partial_regions;
 
-    void update_via_mouse_input();
-
-    bool update_region_deletions(uint32_t deletion_index);
+    void update_mouse_inputs();
+    void update_region_insertions();
+    void update_regions();
+    void update_region_deletions();
 
     void activate_mouse_region_button_down(uint32_t mouse_btn);
     void deactivate_mouse_region_button_down(uint32_t mouse_btn);

@@ -5,6 +5,9 @@
 #include <sigrun/context/Context.hpp>
 #include <pysi/PySIEffect.hpp>
 #include <sigrun/plugin/PythonInvoker.hpp>
+#include <memory>
+#include <algorithm>
+#include <execution>
 
 RegionManager::RegionManager()
 {
@@ -22,7 +25,7 @@ void RegionManager::query_region_insertion(const std::vector<glm::vec3> &contour
 
 void RegionManager::add_region(const std::vector<glm::vec3> &contour, const bp::object &effect, uint32_t region_uuid, const bp::dict& kwargs)
 {
-    d_regions.push_back(std::shared_ptr<Region>(new Region(contour, effect, 0, 0, kwargs)));
+    d_regions.push_back(std::make_shared<Region>(contour, effect, 0, 0, kwargs));
 }
 
 std::vector<std::shared_ptr<Region>> &RegionManager::regions()
@@ -32,74 +35,74 @@ std::vector<std::shared_ptr<Region>> &RegionManager::regions()
 
 void RegionManager::activate_mouse_region_button_down(uint32_t mouse_btn)
 {
-    HANDLE_PYTHON_CALL (
-        for(auto& region: d_regions)
+    std::transform(std::execution::par_unseq, d_regions.begin(), d_regions.end(), d_regions.begin(), [mouse_btn](auto& region)
+    {
+        if(region->effect().effect_type() == SI_TYPE_MOUSE_CURSOR && !region->effect().has_mouse_pressed_capability(mouse_btn))
         {
-            if(region->effect().effect_type() == SI_TYPE_MOUSE_CURSOR && !region->effect().has_mouse_pressed_capability(mouse_btn))
+            region->effect().set_mouse_pressed_capability(mouse_btn, true);
+
+            switch(mouse_btn)
             {
-                region->effect().set_mouse_pressed_capability(mouse_btn, true);
-
-                switch(mouse_btn)
+                case 0:
                 {
-                    case 0:
-                    {
-                        region->raw_effect().attr("left_mouse_clicked") = true;
-                        region->raw_effect().attr("on_left_mouse_click")(true);
-                        break;
-                    }
-                    case 1:
-                    {
-                        region->raw_effect().attr("right_mouse_clicked") = true;
-                        region->raw_effect().attr("on_right_mouse_click")(true);
-                        break;
-                    }
+                    region->raw_effect().attr("left_mouse_clicked") = true;
+                    region->raw_effect().attr("on_left_mouse_click")(true);
+                    break;
+                }
+                case 1:
+                {
+                    region->raw_effect().attr("right_mouse_clicked") = true;
+                    region->raw_effect().attr("on_right_mouse_click")(true);
+                    break;
+                }
 
-                    case 2:
-                    {
-                        region->raw_effect().attr("middle_mouse_clicked") = true;
-                        region->raw_effect().attr("on_middle_mouse_click")(true);
-                        break;
-                    }
+                case 2:
+                {
+                    region->raw_effect().attr("middle_mouse_clicked") = true;
+                    region->raw_effect().attr("on_middle_mouse_click")(true);
+                    break;
                 }
             }
         }
-    )
+
+        return region;
+    });
 }
 
 void RegionManager::deactivate_mouse_region_button_down(uint32_t mouse_btn)
 {
-    HANDLE_PYTHON_CALL (
-        for(auto& region: d_regions)
+    std::transform(std::execution::par_unseq, d_regions.begin(), d_regions.end(), d_regions.begin(), [mouse_btn](auto& region)
+    {
+        if(region->effect().effect_type() == SI_TYPE_MOUSE_CURSOR && region->effect().has_mouse_pressed_capability(mouse_btn))
         {
-            if(region->effect().effect_type() == SI_TYPE_MOUSE_CURSOR && region->effect().has_mouse_pressed_capability(mouse_btn))
+            region->effect().set_mouse_pressed_capability(mouse_btn, false);
+
+            switch(mouse_btn)
             {
-                region->effect().set_mouse_pressed_capability(mouse_btn, false);
-
-                switch(mouse_btn)
+                case 0:
                 {
-                    case 0:
-                    {
-                        region->raw_effect().attr("left_mouse_clicked") = false;
-                        region->raw_effect().attr("on_left_mouse_click")(false);
-                        break;
-                    }
-                    case 1:
-                    {
-                        region->raw_effect().attr("right_mouse_clicked") = false;
-                        region->raw_effect().attr("on_right_mouse_click")(false);
-                        break;
-                    }
+                    region->raw_effect().attr("left_mouse_clicked") = false;
+                    region->raw_effect().attr("on_left_mouse_click")(false);
+                    break;
+                }
+                case 1:
+                {
+                    region->raw_effect().attr("right_mouse_clicked") = false;
+                    region->raw_effect().attr("on_right_mouse_click")(false);
+                    break;
+                }
 
-                    case 2:
-                    {
-                        region->raw_effect().attr("middle_mouse_clicked") = false;
-                        region->raw_effect().attr("on_middle_mouse_click")(false);
-                        break;
-                    }
+                case 2:
+                {
+                    region->raw_effect().attr("middle_mouse_clicked") = false;
+                    region->raw_effect().attr("on_middle_mouse_click")(false);
+                    break;
                 }
             }
         }
-    )
+
+        return region;
+    });
 }
 
 void RegionManager::set_partial_regions(std::map<std::string, std::vector<glm::vec3>>& partials)
@@ -112,7 +115,7 @@ std::map<std::string, std::vector<glm::vec3>> &RegionManager::partial_regions()
     return d_partial_regions;
 }
 
-void RegionManager::update_via_mouse_input()
+void RegionManager::update_mouse_inputs()
 {
     if(Context::SIContext()->input_manager()->is_mouse_down(SI_LEFT_MOUSE_BUTTON))
         activate_mouse_region_button_down(SI_LEFT_MOUSE_BUTTON);
@@ -136,65 +139,60 @@ void RegionManager::update_via_mouse_input()
 
 void RegionManager::toggle_mouse_region_wheel_scrolled(float angle_px, float angle_degrees)
 {
-    for(auto& region: d_regions)
+    std::transform(std::execution::par_unseq, d_regions.begin(), d_regions.end(), d_regions.begin(), [angle_px, angle_degrees](auto& region)
     {
         if (region->effect().effect_type() == SI_TYPE_MOUSE_CURSOR)
         {
             region->raw_effect().attr("mouse_wheel_angle_px") = angle_px;
             region->raw_effect().attr("mouse_wheel_angle_degrees") = angle_degrees;
         }
-    }
+
+        return region;
+    });
 }
 
-bool RegionManager::update_region_deletions(uint32_t deletion_index)
+void RegionManager::update_region_deletions()
 {
-    if(d_regions[deletion_index]->effect().is_flagged_for_deletion())
+    d_regions.erase(std::remove_if(d_regions.begin(), d_regions.end(), [&](auto& region) -> bool
     {
-        Context::SIContext()->remove_all_partaking_linking_relations(d_regions[deletion_index]->uuid());
-        d_regions.erase(d_regions.begin() + deletion_index);
+        if(!region->effect().is_flagged_for_deletion())
+            return false;
+
+        Context::SIContext()->remove_all_partaking_linking_relations(region->uuid());
 
         return true;
-    }
-
-    return false;
+    }), d_regions.end());
 }
 
-void RegionManager::update()
+void RegionManager::update_region_insertions()
 {
-    update_via_mouse_input();
-
-    uint64_t size = d_regions.size();
-
-    for(int32_t i = size - 1; i > -1; --i)
+    std::transform(d_region_insertion_queries.begin(), d_region_insertion_queries.end(), std::back_inserter(d_regions), [](const auto& query) -> std::shared_ptr<Region>
     {
-        if(update_region_deletions(i))
-            continue;
-
-        d_regions[i]->update();
-    }
-
-    for(auto& t: d_region_insertion_queries)
-        add_region(std::get<0>(t), std::get<1>(t), 0, std::get<2>(t));
-
-    for(uint64_t i = 0; i < d_region_insertion_queries.size(); ++i)
-    {
-        auto& query = d_region_insertion_queries[i];
-        auto& region = d_regions[d_regions.size() - d_region_insertion_queries.size() + i];
+        auto region = std::make_shared<Region>(std::get<0>(query), std::get<1>(query), 0, 0, std::get<2>(query));
 
         if(std::get<3>(query).get())
             std::get<3>(query)->raw_effect().attr("children").attr("append")(region->raw_effect());
-    }
+
+        return region;
+    });
 
     d_region_insertion_queries.clear();
 }
 
-void RegionManager::flag_for_deletion(const std::string& target_region_uuid)
+void RegionManager::update_regions()
 {
-    auto it = std::find_if(d_regions.begin(), d_regions.end(), [&target_region_uuid](auto& region)
+    std::transform(d_regions.rbegin(), d_regions.rend(), d_regions.rbegin(), [](auto& region) -> std::shared_ptr<Region>
     {
-       return region->uuid() == target_region_uuid;
+        region->update();
+        return region;
     });
+}
 
-    it->get()->raw_effect().attr("signal_deletion")();
+void RegionManager::update()
+{
+    update_mouse_inputs();
+    update_region_deletions();
+    update_region_insertions();
+    update_regions();
 }
 
