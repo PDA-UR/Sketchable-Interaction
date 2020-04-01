@@ -54,7 +54,7 @@ void InputManager::update()
                     });
 
                     if(it2 != regions.end())
-                        it2->get()->effect().signal_deletion();
+                        it2->get()->raw_effect().attr("signal_deletion")();
 
                     it->second->embedded_object.external_application.window = nullptr;
 
