@@ -8,6 +8,7 @@
 
 #include "InputManager.hpp"
 #include <sigrun/context/Context.hpp>
+#include <csignal>
 
 InputManager::~InputManager() = default;
 
@@ -27,18 +28,45 @@ void InputManager::update()
     for(auto& [key, value]: d_button_map)
         d_previous_button_map[key] = value;
 
-    for(auto& [key, obj]: deo)
+    for(auto it = deo.begin(); it != deo.end();)
     {
-        switch(obj->type())
+        switch(it->second->type())
         {
             case ExternalObject::ExternalObjectType::MOUSE:
             {
                 bp::tuple args = bp::make_tuple(d_mouse_coords.x, d_mouse_coords.y);
 
-                Q_EMIT obj->LINK_SIGNAL(_UUID_, "__position__", args);
-                break;
+                Q_EMIT it->second->LINK_SIGNAL(_UUID_, "__position__", args);
             }
+            break;
+
+            case ExternalObject::ExternalObjectType::APPLICATION:
+            {
+                if(kill(it->second->embedded_object.external_application.pid, 0) < 0)
+                {
+                    it->second->embedded_object.external_application.window->close();
+
+                    auto& regions = Context::SIContext()->region_manager()->regions();
+
+                    auto it2 = std::find_if(regions.begin(), regions.end(), [&](auto& region)
+                    {
+                       return region->uuid() == it->first;
+                    });
+
+                    if(it2 != regions.end())
+                        it2->get()->effect().signal_deletion();
+
+                    it->second->embedded_object.external_application.window = nullptr;
+
+                    it = deo.erase(it);
+
+                    continue;
+                }
+            }
+            break;
         }
+
+        ++it;
     }
 }
 
@@ -214,12 +242,23 @@ std::unordered_map<std::string, std::shared_ptr<ExternalObject>>& InputManager::
     return deo;
 }
 
-void InputManager::register_external_application(std::shared_ptr<Region> &reg, QWidget *window, uint64_t pid)
+void InputManager::register_external_application(const std::string& file_uuid, std::shared_ptr<Region> &container, QWidget *window, uint64_t pid)
 {
-    deo[reg->uuid()] = std::make_shared<ExternalObject>(ExternalObject::ExternalObjectType::APPLICATION);
-    deo[reg->uuid()]->EmbeddedObject.external_application = window;
+    deo[container->uuid()] = std::make_shared<ExternalObject>(ExternalObject::ExternalObjectType::APPLICATION);
+    deo[container->uuid()]->embedded_object.external_application.window = window;
+    deo[container->uuid()]->embedded_object.external_application.pid = pid;
+    deo[container->uuid()]->embedded_object.external_application.file_uuid = strdup(file_uuid.c_str());
 
-    Context::SIContext()->linking_manager()->add_link_to_object(reg, ExternalObject::ExternalObjectType::APPLICATION);
+    Context::SIContext()->linking_manager()->add_link_to_object(container, ExternalObject::ExternalObjectType::APPLICATION);
+}
 
-    // check if pid exists?
+void InputManager::unregister_external_application(const std::string& file_uuid)
+{
+    auto it = std::find_if(deo.begin(), deo.end(), [&file_uuid](const auto& pair) -> bool
+    {
+        return std::get<1>(pair)->type() == ExternalObject::APPLICATION && std::get<1>(pair)->embedded_object.external_application.file_uuid == file_uuid;
+    });
+
+    if(it != deo.end())
+        kill(deo[it->first]->embedded_object.external_application.pid, SIGTERM);
 }

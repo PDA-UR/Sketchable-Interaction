@@ -24,9 +24,18 @@ public:
 
     union
     {
-        int mouse;
-        QWidget* external_application;
-    } EmbeddedObject;
+        struct
+        {
+
+        } mouse;
+
+        struct
+        {
+            QWidget* window;
+            uint64_t pid;
+            const char* file_uuid;
+        } external_application;
+    } embedded_object;
 
     explicit ExternalObject(const ExternalObjectType& type);
     ~ExternalObject();
