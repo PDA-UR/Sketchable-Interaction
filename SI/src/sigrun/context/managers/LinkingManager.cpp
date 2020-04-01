@@ -3,6 +3,8 @@
 #include "LinkingManager.hpp"
 #include <sigrun/log/Log.hpp>
 #include <sigrun/context/Context.hpp>
+#include <execution>
+#include <algorithm>
 
 LinkingManager::LinkingManager():
         d_linking_graph(std::make_unique<LinkingGraph>())
@@ -106,14 +108,13 @@ void LinkingManager::add_link_to_object(std::shared_ptr<Region> &a, const Extern
     }
 }
 
-void LinkingManager::remove_links_by_indices(const std::vector<uint32_t>& indices)
+void LinkingManager::remove_links_by_indices(std::vector<uint32_t>& indices)
 {
-    for(const uint32_t& i: indices)
+    std::transform(std::execution::par_unseq, indices.begin(), indices.end(), indices.begin(), [&](uint32_t i)
     {
-        auto& link = d_linking_graph->links()[i];
-
-        remove_link(link->sender_a(), link->attribute_a(), link->receiver_b(), link->attribute_b(), ILink::LINK_TYPE::UD);
-    }
+        remove_link(d_linking_graph->links()[i]->sender_a(), d_linking_graph->links()[i]->attribute_a(), d_linking_graph->links()[i]->receiver_b(), d_linking_graph->links()[i]->attribute_b(), ILink::LINK_TYPE::UD);
+        return i;
+    });
 }
 
 void LinkingManager::remove_link(const std::shared_ptr<Region> &ra, const std::string& aa, const std::shared_ptr<Region> &rb, const std::string &ab, const ILink::LINK_TYPE& type)

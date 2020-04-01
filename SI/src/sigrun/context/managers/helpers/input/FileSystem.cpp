@@ -127,15 +127,14 @@ void FileSystem::set_cwd(const fs::path &path)
 bool FileSystem::find_directory(const fs::path& start_path, const fs::path& dir_name, fs::path& dir_path)
 {
     const fs::recursive_directory_iterator end;
-    const auto it = std::find_if(fs::recursive_directory_iterator(start_path), end,
-    [&dir_name](const fs::directory_entry& e)
+    const auto it = std::find_if(fs::recursive_directory_iterator(start_path), end, [&dir_name](const fs::directory_entry& e)
     {
         return e.path().filename() == dir_name;
     });
 
     if (it == end)
         return false;
-    else
-        dir_path = it->path();
-        return true;
+
+    dir_path = it->path();
+    return true;
 }

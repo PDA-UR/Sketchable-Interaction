@@ -5,6 +5,8 @@
 #include "Core.hpp"
 #include "sigrun/plugin/Scripting.hpp"
 #include "sigrun/plugin/PluginCollector.hpp"
+#include <algorithm>
+#include <execution>
 
 /**
 \brief constructor
@@ -85,7 +87,7 @@ void Core::retrieve_available_plugins(std::unordered_map<std::string, std::uniqu
 
     PluginCollector().collect("/" + plugin_path, files);
 
-    for(auto& file: files)
+    std::transform(files.begin(), files.end(), files.begin(), [&script, &plugin_path, &plugins](auto& file)
     {
         std::vector<std::string> classes;
 
@@ -97,7 +99,13 @@ void Core::retrieve_available_plugins(std::unordered_map<std::string, std::uniqu
 
         script.load_class_names(classes, rpath);
 
-        for (auto &ref : classes)
-            plugins[ref] = std::make_unique<bp::object>(script.si_plugin(module_name, rpath, ref));
-    }
+        std::transform(classes.begin(), classes.end(), classes.begin(), [&script, &module_name, &rpath, &plugins](auto& clazz)
+        {
+            plugins[clazz] = std::make_unique<bp::object>(script.si_plugin(module_name, rpath, clazz));
+
+            return clazz;
+        });
+
+       return file;
+    });
 }
