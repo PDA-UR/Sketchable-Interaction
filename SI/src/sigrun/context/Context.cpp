@@ -506,5 +506,5 @@ void Context::launch_external_application_with_file(const std::string& uuid, con
 
 void Context::terminate_external_application_with_file(const std::string& uuid)
 {
-//    upeam->terminate_application(uuid);
+    upeam->terminate_application(uuid);
 }

@@ -31,8 +31,8 @@ void ExternalObject::LINK_SLOT(const std::string& uuid, const std::string& sourc
                 const uint32_t&  x = (uint32_t) bp::extract<float>(args[0]);
                 const uint32_t&  y = (uint32_t) bp::extract<float>(args[1]);
 
-                if(EmbeddedObject.external_application)
-                    EmbeddedObject.external_application->move(20 + x,  20 + y);
+                if(embedded_object.external_application.window)
+                    embedded_object.external_application.window->move(20 + x,  20 + y);
                 else
                     ERROR("NO EMBEDDED OBJECT");
             }
