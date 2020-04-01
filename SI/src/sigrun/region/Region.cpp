@@ -166,7 +166,7 @@ void Region::LINK_SLOT(const std::string& uuid, const std::string& source_cap, c
         for(auto& [self_cap, function]: d_py_effect->attr_link_recv()[source_cap])
         {
             HANDLE_PYTHON_CALL(
-                    function(*args);
+                function(*args);
 
                 if(d_py_effect->attr_link_emit().find(self_cap) != d_py_effect->attr_link_emit().end())
                     Q_EMIT LINK_SIGNAL(uuid, self_cap, bp::extract<bp::tuple>(d_py_effect->attr_link_emit()[self_cap]()));

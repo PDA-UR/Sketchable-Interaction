@@ -134,24 +134,17 @@ bool CollisionManager::collides_with_mask(const std::shared_ptr<Region> &a, cons
     float area_a_aabb = (a_aabb[3].x - a_aabb[0].x) * (a_aabb[1].y - a_aabb[0].y);
     float area_b_aabb = (b_aabb[3].x - b_aabb[0].x) * (b_aabb[1].y - b_aabb[0].y);
 
-    if(area_a_aabb > area_b_aabb)
-    {
-        return std::find_if(std::execution::par_unseq, b->contour().begin(), b->contour().end(), [&](const glm::vec3& p)
-        {
-            glm::vec3 p__ = p * b->transform();
-            return (*a_mask)[p__ /= p__.z];
-        }) != b->contour().end();
-    }
-    else
-    {
-        return std::find_if(std::execution::par_unseq, a->contour().begin(), a->contour().end(), [&](const glm::vec3& p)
-        {
-            glm::vec3 p__ = p * a->transform();
-            return (*a_mask)[p__ /= p__.z];
-        }) != a->contour().end();
-    }
-
-    return false;
+    return area_a_aabb > area_b_aabb ?  std::find_if(std::execution::par_unseq, b->contour().begin(), b->contour().end(), [&](const glm::vec3& p)
+                                        {
+                                            glm::vec3 p__ = p * b->transform();
+                                            return (*a_mask)[p__ /= p__.z];
+                                        }) != b->contour().end()
+                                        :
+                                        std::find_if(std::execution::par_unseq, a->contour().begin(), a->contour().end(), [&](const glm::vec3& p)
+                                        {
+                                            glm::vec3 p__ = p * a->transform();
+                                            return (*a_mask)[p__ /= p__.z];
+                                        }) != a->contour().end();
 }
 
 bool CollisionManager::has_capabilities_in_common(const std::shared_ptr<Region>& a, const std::shared_ptr<Region>& b)
@@ -193,11 +186,7 @@ bool CollisionManager::are_aabbs_equal(const std::shared_ptr<Region> &a, const s
         return p_ /= p_.z;
     });
 
-    for(uint32_t i = 0; i < a_aabb.size(); i++)
-        if(!(are_aabb_same_size_and_spot &= (a_aabb[i] == b_aabb[i])))
-            return false;
-
-    return true;
+    return std::equal(a_aabb.begin(), a_aabb.end(), b_aabb.begin());
 }
 
 void CollisionManager::handle_event_leave(const std::shared_ptr<Region>& a, const std::shared_ptr<Region>& b, const std::tuple<std::string, std::string> &tuple)
