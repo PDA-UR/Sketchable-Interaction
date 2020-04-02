@@ -93,6 +93,7 @@ private:
 
     friend class Core;
     friend class SIGRunCollisionManagerTest;
+    friend class SIGRunLinkingManagerTest;
 };
 
 

@@ -9,8 +9,12 @@
 #include "InputManager.hpp"
 #include <sigrun/context/Context.hpp>
 #include <csignal>
+#include <cstdlib>
 
-InputManager::~InputManager() = default;
+InputManager::~InputManager()
+{
+
+}
 
 InputManager::InputManager():
     d_mouse_coords(0),
@@ -36,13 +40,14 @@ void InputManager::update()
             {
                 bp::tuple args = bp::make_tuple(d_mouse_coords.x, d_mouse_coords.y);
 
-                Q_EMIT it->second->LINK_SIGNAL(_UUID_, "__position__", args);
+                Q_EMIT it->second->LINK_SIGNAL(_UUID_,  "","__position__", args);
             }
             break;
 
             case ExternalObject::ExternalObjectType::APPLICATION:
             {
-                if(kill(it->second->embedded_object.external_application.pid, 0) < 0)
+                if(kill(it->second->embedded_object.external_application.pid, 0) < 0
+                || !it->second->embedded_object.external_application.window->isVisible())
                 {
                     it->second->embedded_object.external_application.window->close();
 
@@ -56,11 +61,23 @@ void InputManager::update()
                     if(it2 != regions.end())
                         it2->get()->raw_effect().attr("signal_deletion")();
 
+                    delete it->second->embedded_object.external_application.window;
                     it->second->embedded_object.external_application.window = nullptr;
+                    free(it->second->embedded_object.external_application.file_uuid);
+                    it->second->embedded_object.external_application.file_uuid = nullptr;
 
                     it = deo.erase(it);
 
                     continue;
+                }
+                else
+                {
+                    DEBUG("HERE");
+
+                    QWidget* current = it->second->embedded_object.external_application.window;
+                    bp::tuple args = bp::make_tuple(current->x(), current->y(), current->width(), current->height());
+
+                    Q_EMIT it->second->LINK_SIGNAL(_UUID_,  std::to_string(it->second->embedded_object.external_application.pid), "__geometry__", args);
                 }
             }
             break;
@@ -244,6 +261,9 @@ std::unordered_map<std::string, std::shared_ptr<ExternalObject>>& InputManager::
 
 void InputManager::register_external_application(const std::string& file_uuid, std::shared_ptr<Region> &container, QWidget *window, uint64_t pid)
 {
+    // create container here based on given window
+    // use same mechanic as mouse cursor for linking i.e. the external window -> region: __geometry__
+
     deo[container->uuid()] = std::make_shared<ExternalObject>(ExternalObject::ExternalObjectType::APPLICATION);
     deo[container->uuid()]->embedded_object.external_application.window = window;
     deo[container->uuid()]->embedded_object.external_application.pid = pid;

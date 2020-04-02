@@ -12,6 +12,8 @@ class Button(PySIEffect.PySIEffect):
         self.source = "libStdSI"
         self.qml_path = "plugins/standard_environment_library/button/Button.qml"
         self.color = PySIEffect.Color(192, 192, 192, 0)
+        self.delta_x = 0
+        self.delta_y = 0
 
         self.value = kwargs["value"] if len(kwargs) else True
 
@@ -48,6 +50,9 @@ class Button(PySIEffect.PySIEffect):
     def set_position_from_position(self, rel_x, rel_y):
         self.x += rel_x
         self.y += rel_y
+
+        self.delta_x = rel_x
+        self.delta_y = rel_y
 
         return 0
 

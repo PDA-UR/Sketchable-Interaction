@@ -93,15 +93,25 @@ void ExternalApplicationManager::process_wmctrl_command_output(const QString &in
 {
     if(!input.isEmpty())
     {
-        uint64_t winid = HEX_STRING_TO_UINT64(input.split(' ', QString::SkipEmptyParts)[0].toStdString());
-        uint64_t _pid = std::stoul(input.split(' ', QString::SkipEmptyParts)[2].toStdString());
+        const auto& vec = input.split(' ', QString::SkipEmptyParts).toVector().toStdVector();
+
+        QString window_name = QString(std::transform_reduce(std::execution::par_unseq, vec.begin() + 4, vec.end(), std::string(""), [](const std::string& a, const std::string& b)
+        {
+            return a + " " + b;
+        }, [](auto& qstr)
+        {
+            return qstr.toStdString();
+        }).c_str());
+
+        uint64_t winid = HEX_STRING_TO_UINT64(vec[0].toStdString());
+        uint64_t _pid = std::stoul(vec[2].toStdString());
 
         if(winid)
         {
             QMainWindow* pMainWnd = retrieve_current_main_window();
 
             if(pMainWnd)
-                register_new_application_container(pMainWnd, file_region_uuid, winid, container, _pid);
+                register_new_application_container(pMainWnd, file_region_uuid, winid, container, _pid, window_name);
             else
                 ERROR("Unable to find a main window as parent for the default app of " + file_path);
         }
@@ -112,12 +122,14 @@ void ExternalApplicationManager::process_wmctrl_command_output(const QString &in
         ERROR("Timeout for finding winid of default app of " + file_path);
 }
 
-void ExternalApplicationManager::register_new_application_container(QMainWindow *parent, const std::string &file_region_uuid, uint64_t winid, std::shared_ptr<Region>& container, uint64_t pid)
+void ExternalApplicationManager::register_new_application_container(QMainWindow *parent, const std::string &file_region_uuid, uint64_t winid, std::shared_ptr<Region>& container, uint64_t pid, const QString& window_name)
 {
     QWidget* window = QWidget::createWindowContainer(QWindow::fromWinId(winid));
     window->setParent(parent);
     window->setGeometry(20, 20, Context::SIContext()->width() * 0.3 - 40, Context::SIContext()->height() * 0.3 - 40);
-    window->setAttribute(Qt::WA_DeleteOnClose);
+    window->setWindowFlags(Qt::WindowStaysOnTopHint);
+    window->setWindowFlags(Qt::ForeignWindow);
+    window->setWindowTitle("(SI)" + window_name);
     window->show();
 
     Context::SIContext()->input_manager()->register_external_application(file_region_uuid, container, window, pid);
@@ -127,7 +139,7 @@ QMainWindow* ExternalApplicationManager::retrieve_current_main_window()
 {
     QMainWindow* pMainWnd;
 
-    for(QWidget* pWidget : QApplication::topLevelWidgets())
+    for(QWidget* pWidget: QApplication::topLevelWidgets())
     {
         pMainWnd = qobject_cast<QMainWindow*>(pWidget);
 

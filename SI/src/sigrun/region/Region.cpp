@@ -155,9 +155,9 @@ uint8_t Region::on_leave(PySIEffect& colliding_effect)
     return handle_collision_event("on_leave", colliding_effect);
 }
 
-void Region::LINK_SLOT(const std::string& uuid, const std::string& source_cap, const bp::tuple& args)
+void Region::LINK_SLOT(const std::string& uuid_event, const std::string& uuid_sender, const std::string& source_cap, const bp::tuple& args)
 {
-    std::tuple<std::string, std::string> event = std::make_tuple(uuid, source_cap);
+    std::tuple<std::string, std::string> event = std::make_tuple(uuid_event, source_cap);
 
     if(!is_link_event_registered(event))
     {
@@ -166,10 +166,25 @@ void Region::LINK_SLOT(const std::string& uuid, const std::string& source_cap, c
         for(auto& [self_cap, function]: d_py_effect->attr_link_recv()[source_cap])
         {
             HANDLE_PYTHON_CALL(
-                function(*args);
+                // bug: only all functions are triggered for source_cap instead of the actually linked dest_cap
 
-                if(d_py_effect->attr_link_emit().find(self_cap) != d_py_effect->attr_link_emit().end())
-                    Q_EMIT LINK_SIGNAL(uuid, self_cap, bp::extract<bp::tuple>(d_py_effect->attr_link_emit()[self_cap]()));
+                if(uuid_sender.empty())
+                {
+                    function(*args);
+
+                    if(d_py_effect->attr_link_emit().find(self_cap) != d_py_effect->attr_link_emit().end())
+                        Q_EMIT LINK_SIGNAL(uuid_event, this->uuid(), self_cap, bp::extract<bp::tuple>(d_py_effect->attr_link_emit()[self_cap]()));
+                }
+                else
+                {
+                    if(Context::SIContext()->linking_manager()->is_linked(uuid_sender, source_cap, this->uuid(), self_cap, ILink::UD))
+                    {
+                        function(*args);
+
+                        if(d_py_effect->attr_link_emit().find(self_cap) != d_py_effect->attr_link_emit().end())
+                            Q_EMIT LINK_SIGNAL(uuid_event, this->uuid(), self_cap, bp::extract<bp::tuple>(d_py_effect->attr_link_emit()[self_cap]()));
+                    }
+                }
             )
         }
     }

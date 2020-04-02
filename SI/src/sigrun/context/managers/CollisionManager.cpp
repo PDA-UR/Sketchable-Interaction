@@ -42,10 +42,8 @@ void CollisionManager::collide(std::vector<std::shared_ptr<Region>> &regions)
                             handle_event_leave(a, b, tuple);
                 }
                 else
-                {
                     if(d_collision_map.find(tuple) != d_collision_map.end())
                         has_capabilities_in_common(a, b) ? handle_event_continuous(a, b, tuple) : handle_event_leave(a, b, tuple);
-                }
             }
             else
                 if(d_collision_map.find(tuple) != d_collision_map.end())

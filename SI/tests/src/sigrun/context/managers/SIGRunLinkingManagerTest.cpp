@@ -8,6 +8,7 @@
 #include <sigrun/plugin/PluginCollector.hpp>
 #include <QtTest/QSignalSpy>
 #include <sigrun/util/UUID.hpp>
+#include <sigrun/context/Context.hpp>
 
 TEST_F(SIGRunLinkingManagerTest, construction)
 {

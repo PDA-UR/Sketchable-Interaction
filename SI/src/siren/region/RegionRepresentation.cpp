@@ -1,5 +1,4 @@
 
-#include <debug/Print.hpp>
 #include "RegionRepresentation.hpp"
 #include <glm/glm.hpp>
 #include <QQmlEngine>

@@ -1,7 +1,6 @@
 
 
 #include "MainWindow.hpp"
-#include <SI/SI.hpp>
 #include <QPaintEvent>
 #include <QDebug>
 #include <execution>
@@ -20,7 +19,8 @@ MainWindow::MainWindow(uint32_t width, uint32_t height):
     up_update_worker.start();
     INFO("Update Loop started...");
 
-    setWindowFlags(Qt::WindowStaysOnTopHint);
+    setWindowFlags(Qt::WindowStaysOnBottomHint);
+    setWindowTitle("SI");
 }
 
 void MainWindow::loop(double delta, uint32_t fps)
