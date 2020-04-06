@@ -72,12 +72,11 @@ void InputManager::update()
                 }
                 else
                 {
-                    DEBUG("HERE");
-
                     QWidget* current = it->second->embedded_object.external_application.window;
-                    bp::tuple args = bp::make_tuple(current->x(), current->y(), current->width(), current->height());
 
-                    Q_EMIT it->second->LINK_SIGNAL(_UUID_,  std::to_string(it->second->embedded_object.external_application.pid), "__geometry__", args);
+                    bp::tuple args = bp::make_tuple(current->x() - Context::SIContext()->main_window()->x(), current->y(), current->width(), current->height());
+                    current->setProperty("is_resizing", QVariant(false));
+                    Q_EMIT it->second->LINK_SIGNAL(_UUID_, "", "__geometry__", args);
                 }
             }
             break;
@@ -259,10 +258,27 @@ std::unordered_map<std::string, std::shared_ptr<ExternalObject>>& InputManager::
     return deo;
 }
 
-void InputManager::register_external_application(const std::string& file_uuid, std::shared_ptr<Region> &container, QWidget *window, uint64_t pid)
+void InputManager::register_external_application(const std::string& file_uuid, std::shared_ptr<Region> &c, QWidget *window, uint64_t pid)
 {
-    // create container here based on given window
-    // use same mechanic as mouse cursor for linking i.e. the external window -> region: __geometry__
+    uint32_t x = window->x() - Context::SIContext()->main_window()->x();
+    uint32_t y = window->y();
+    uint32_t width = window->width();
+    uint32_t height = window->height();
+
+    std::vector<glm::vec3> contour
+    {
+        glm::vec3(x, y, 1),
+        glm::vec3(x, y + height, 1),
+        glm::vec3(x + width, y + height, 1),
+        glm::vec3(x + width, y, 1)
+    };
+
+    bp::dict kwargs;
+    kwargs["pid"] = pid;
+
+    Context::SIContext()->region_manager()->add_region(contour, Context::SIContext()->plugin_by_name("Container"), 0);
+
+    auto& container = Context::SIContext()->region_manager()->regions().back();
 
     deo[container->uuid()] = std::make_shared<ExternalObject>(ExternalObject::ExternalObjectType::APPLICATION);
     deo[container->uuid()]->embedded_object.external_application.window = window;

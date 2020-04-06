@@ -5,7 +5,7 @@
 
 #include <string>
 #include <vector>
-#include <QObject>
+#include <QWidget>
 #include <sigrun/SIObject.hpp>
 #include <boost/python.hpp>
 
@@ -43,7 +43,6 @@ public:
     const ExternalObjectType& type() const;
 
     Q_SIGNAL void LINK_SIGNAL(const std::string& uuid_event, const std::string& uuid_sender, const std::string& source_cap, const bp::tuple& args);
-    Q_SLOT void LINK_SLOT(const std::string& uuid, const std::string& uuid_sender, const std::string& source_cap, const bp::tuple& args);
 
 private:
     ExternalObjectType d_type;

@@ -151,6 +151,20 @@ void Context::begin(const std::unordered_map<std::string, std::unique_ptr<bp::ob
 
         d_ire->start(s_width, s_height);
 
+        for(QWidget* pWidget: QApplication::topLevelWidgets())
+        {
+            d_main_window = qobject_cast<QMainWindow *>(pWidget);
+
+            if (d_main_window)
+                break;
+        }
+
+        if(!d_main_window)
+        {
+            ERROR("Main Window could not be created!");
+            exit(69);
+        }
+
         add_startup_regions(plugins);
 
         if(!d_available_plugins.empty())
@@ -206,6 +220,11 @@ ExternalApplicationManager* Context::external_application_manager()
 Context* Context::SIContext()
 {
     return self;
+}
+
+QMainWindow* Context::main_window() const
+{
+    return d_main_window;
 }
 
 /*
@@ -499,8 +518,6 @@ void Context::launch_external_application_with_file(const std::string& uuid, con
         glm::vec3(1 + s_width * 0.3, 1, 1)
     };
 
-//    uprm->add_region(contour, d_available_plugins["Container"], 0, kwargs);
-
     std::shared_ptr<Region> __empty__ = std::make_shared<Region>(contour, d_available_plugins["Container"]);
 
     upeam->launch_standard_application(uuid, path, __empty__);
@@ -509,4 +526,17 @@ void Context::launch_external_application_with_file(const std::string& uuid, con
 void Context::terminate_external_application_with_file(const std::string& uuid)
 {
     upeam->terminate_application(uuid);
+}
+
+const std::map<std::string, bp::object>& Context::available_plugins() const
+{
+    return d_available_plugins;
+}
+
+const bp::object& Context::plugin_by_name(const std::string& name)
+{
+    if(MAP_HAS_KEY(d_available_plugins, name))
+        return d_available_plugins[name];
+
+    return bp::object();
 }

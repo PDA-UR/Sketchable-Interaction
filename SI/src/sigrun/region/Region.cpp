@@ -32,7 +32,7 @@ Region::Region(const std::vector<glm::vec3> &contour, const bp::object& effect, 
             d_py_effect = std::shared_ptr<PySIEffect>(new PySIEffect(bp::extract<PySIEffect>(*d_effect)));
     )
 
-    if(mask_width == 0 && mask_height == 0)
+    if(!mask_width && !mask_height)
     {
         mask_width = Context::SIContext()->width();
         mask_height = Context::SIContext()->height();
@@ -45,11 +45,9 @@ Region::~Region()= default;
 
 void Region::move(int32_t x, int32_t y)
 {
-    d_is_transformed = false;
-
-    if(x != 0 || y != 0)
+    if(x != d_last_x || y != d_last_y)
     {
-        glm::vec2 center(d_last_x + d_aabb[0].x + (d_aabb[3].x - d_aabb[0].x), d_last_y + d_aabb[0].y + (d_aabb[1].y - d_aabb[0].y));
+        glm::vec2 center(d_last_x + (d_aabb[0].x + (d_aabb[3].x - d_aabb[0].x)) / 2, d_last_y + (d_aabb[0].y + (d_aabb[1].y - d_aabb[0].y)) / 2);
 
         uprt->update(glm::vec2(x, y), 0, 1, center);
 
@@ -166,7 +164,7 @@ void Region::LINK_SLOT(const std::string& uuid_event, const std::string& uuid_se
         for(auto& [self_cap, function]: d_py_effect->attr_link_recv()[source_cap])
         {
             HANDLE_PYTHON_CALL(
-                // bug: only all functions are triggered for source_cap instead of the actually linked dest_cap
+                // rework linking management so external object links are also stored and tracked
 
                 if(uuid_sender.empty())
                 {
@@ -247,6 +245,8 @@ const int32_t Region::last_delta_y() const
 
 void Region::update()
 {
+    d_is_transformed = false;
+
     HANDLE_PYTHON_CALL(d_py_effect = std::shared_ptr<PySIEffect>(new PySIEffect(bp::extract<PySIEffect>(*d_effect)));)
 
     process_contour_change();
@@ -266,10 +266,7 @@ void Region::process_contour_change()
         d_contour.clear();
 
         if(d_py_effect->has_shape_changed() & REQUIRES_RESAMPLE)
-        {
             RegionResampler::resample(d_contour, d_py_effect->contour());
-            uprt = std::make_unique<RegionTransform>();
-        }
         else
             d_contour = d_py_effect->contour();
 
@@ -281,6 +278,8 @@ void Region::process_contour_change()
         d_effect->attr("require_resample") = false;
 
         uprm = std::make_unique<RegionMask>(Context::SIContext()->width(), Context::SIContext()->height(), d_contour, d_aabb);
+
+        d_is_transformed = true;
     }
 }
 

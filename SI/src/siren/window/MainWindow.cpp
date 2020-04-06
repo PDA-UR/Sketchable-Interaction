@@ -25,7 +25,7 @@ MainWindow::MainWindow(uint32_t width, uint32_t height):
 
 void MainWindow::loop(double delta, uint32_t fps)
 {
-    const auto& regions = Context::SIContext()->region_manager()->regions();
+    auto& regions = Context::SIContext()->region_manager()->regions();
 
     for(const auto& [key, val]: d_region_representations)
     {
@@ -36,13 +36,15 @@ void MainWindow::loop(double delta, uint32_t fps)
             d_region_representations.erase(key);
     }
 
-    for(const auto& region: regions)
+    std::transform(std::execution::seq, regions.begin(), regions.end(), regions.begin(), [&](auto& region)
     {
         if(d_region_representations.find(region->uuid()) == d_region_representations.end())
             d_region_representations[region->uuid()] = std::make_unique<RegionRepresentation>(this, region);
         else
             d_region_representations[region->uuid()]->update(region);
-    }
+
+        return region;
+    });
 
     Context::SIContext()->update();
 }

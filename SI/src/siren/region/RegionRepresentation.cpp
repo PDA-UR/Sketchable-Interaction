@@ -58,9 +58,10 @@ void RegionRepresentation::perform_transform_update(const std::shared_ptr<Region
 {
     if(region->is_transformed())
     {
-        const glm::mat3x3 &transform = region->transform();
-
-        this->move(transform[0].z + region->aabb()[0].x, transform[1].z + region->aabb()[0].y);
+        if(region->type() == SI_TYPE_EXTERNAL_APPLICATION_CONTAINER)
+            this->move(region->transform()[0].z, region->transform()[1].z);
+        else
+            this->move(region->transform()[0].z + region->aabb()[0].x, region->transform()[1].z + region->aabb()[0].y);
     }
 }
 
@@ -68,8 +69,6 @@ void RegionRepresentation::perform_data_update(const std::shared_ptr<Region> &re
 {
     if (region->effect().has_data_changed())
     {
-        const glm::mat3x3 &transform = region->transform();
-
         resize(region->aabb()[3].x - region->aabb()[0].x, region->aabb()[1].y - region->aabb()[0].y);
 
         d_color = QColor(region->color().r, region->color().g, region->color().b, region->color().a);

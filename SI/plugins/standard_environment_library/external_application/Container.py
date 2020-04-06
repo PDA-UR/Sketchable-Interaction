@@ -8,80 +8,36 @@ class Container(PySIEffect.PySIEffect):
         self.aabb = aabb
         self._uuid = uuid
         self.name = "Container"
-        self.region_type = PySIEffect.EffectType.SI_CUSTOM
+        self.region_type = PySIEffect.EffectType.SI_EXTERNAL_APPLICATION_CONTAINER
         self.source = "stdContainer"
         self.qml_path = ""
-        self.color = PySIEffect.Color(0, 0, 0, 255)
-        self.children = []
-        self.delta_x = 0
-        self.delta_y = 0
+        self.color = PySIEffect.Color(0, 0, 255, 255)
+
+        if len(self.aabb):
+            self.last_width = self.aabb[0].x + self.aabb[3].x
+            self.last_height = self.aabb[0].y + self.aabb[1].y
 
         self.cap_emit = PySIEffect.String2_String2FunctionMap_Map()
-        self.cap_emit["PARENT"] = {"on_enter": self.on_child_enter_emit, "on_continuous": None, "on_leave": self.on_child_leave_emit}
+        self.cap_recv = PySIEffect.String2_String2FunctionMap_Map()
 
-        self.cap_recv = PySIEffect.String2_String2FunctionMap_Map({
-            "MOVE": {"on_enter": self.on_move_enter_recv, "on_continuous": self.on_move_continuous_recv, "on_leave": self.on_move_leave_recv}
-        })
-
-        self.cap_link_emit = PySIEffect.String2FunctionMap({
-            "__position__": self.position
-        })
+        self.cap_link_emit = PySIEffect.String2FunctionMap()
 
         self.cap_link_recv = PySIEffect.String2_String2FunctionMap_Map({
-            "__position__": {
-                "__position__": self.set_position_from_position,
-                "__scale__": self.set_scale_from_position
-            }
+            "__geometry__": { "__geometry__": self.set_geometry_from_geometry}
         })
 
-    def set_scale_from_position(self, rel_x, rel_y, sender_uuid=""):
-        # determine in which quadrant the button is
+    def set_geometry_from_geometry(self, x, y, width, height):
+        if self.last_width == width and self.last_height == height:
+            self.x = x
+            self.y = y
 
-
-        print("scale", rel_x, rel_y)
-
-    def on_child_enter_emit(self, child):
-        if child not in self.children:
-            self.children.append(child)
-
-        self.link_relations.append([child._uuid, "__position__", self._uuid, "__scale__"])
-
-        return self._uuid
-
-    def on_child_leave_emit(self, child):
-        # index = self.children.index(child)
-        #
-        # del self.children[index]
-        #
-        # lr = PySIEffect.LinkRelation(child._uuid, "__position__", self._uuid, "__scale__")
-        #
-        # if lr in self.link_relations:
-        #     del self.link_relations[self.link_relations.index(lr)]
-
-        return self._uuid,
-
-    def position(self):
-        return self.delta_x, self.delta_y
-
-    def set_position_from_position(self, rel_x, rel_y, sender_uuid=""):
-        self.x += rel_x
-        self.y += rel_y
-
-        self.delta_x = rel_x
-        self.delta_y = rel_y
-
-        return 0
-
-    def on_move_enter_recv(self, cursor_id, link_attrib):
-        self.link_relations.append([cursor_id, link_attrib, self._uuid, link_attrib])
-
-        return 0
-
-    def on_move_continuous_recv(self):
-        return 0
-
-    def on_move_leave_recv(self, cursor_id, link_attrib):
-        lr = PySIEffect.LinkRelation(cursor_id, link_attrib, self._uuid, link_attrib)
-
-        if lr in self.link_relations:
-            del self.link_relations[self.link_relations.index(lr)]
+            self.last_width = width
+            self.last_height = height
+        else:
+            self.shape = PySIEffect.PointVector([[x, y], [x, y + height], [x + width, y + height], [x + width, y]])
+            self.notify_shape_changed(True)
+            self.has_data_changed = True
+            self.x = x
+            self.y = y
+            self.last_width = width
+            self.last_height = height

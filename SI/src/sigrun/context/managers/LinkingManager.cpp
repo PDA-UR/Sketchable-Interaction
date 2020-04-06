@@ -96,16 +96,7 @@ bool LinkingManager::add_link(const std::shared_ptr<Region> &ra, const std::stri
 
 void LinkingManager::add_link_to_object(std::shared_ptr<Region> &a, const ExternalObject::ExternalObjectType &type)
 {
-    switch(type)
-    {
-        case ExternalObject::ExternalObjectType::MOUSE:
-            connect(Context::SIContext()->input_manager()->external_objects()[a->uuid()].get(), &ExternalObject::LINK_SIGNAL, a.get(), &Region::LINK_SLOT, Qt::UniqueConnection);
-        break;
-
-        case ExternalObject::ExternalObjectType::APPLICATION:
-            connect(a.get(), &Region::LINK_SIGNAL, Context::SIContext()->input_manager()->external_objects()[a->uuid()].get(), &ExternalObject::LINK_SLOT, Qt::UniqueConnection);
-        break;
-    }
+    connect(Context::SIContext()->input_manager()->external_objects()[a->uuid()].get(), &ExternalObject::LINK_SIGNAL, a.get(), &Region::LINK_SLOT, Qt::UniqueConnection);
 }
 
 void LinkingManager::remove_links_by_indices(std::vector<uint32_t>& indices)
