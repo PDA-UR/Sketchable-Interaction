@@ -3,6 +3,7 @@
 #ifndef SITEST_SIGRUNLINKINGMANAGERTEST_HPP
 #define SITEST_SIGRUNLINKINGMANAGERTEST_HPP
 
+#include <sigrun/context/Context.hpp>
 #include <gtest/gtest.h>
 #include <sigrun/SIObject.hpp>
 
@@ -18,6 +19,8 @@ public:
     {
 
     }
+
+    Context d_c;
 };
 
 

@@ -32,7 +32,7 @@ Region::Region(const std::vector<glm::vec3> &contour, const bp::object& effect, 
             d_py_effect = std::shared_ptr<PySIEffect>(new PySIEffect(bp::extract<PySIEffect>(*d_effect)));
     )
 
-    if(mask_width == 0 && mask_height == 0)
+    if(!mask_width && !mask_height)
     {
         mask_width = Context::SIContext()->width();
         mask_height = Context::SIContext()->height();
@@ -45,11 +45,9 @@ Region::~Region()= default;
 
 void Region::move(int32_t x, int32_t y)
 {
-    d_is_transformed = false;
-
-    if(x != 0 || y != 0)
+    if(x != d_last_x || y != d_last_y)
     {
-        glm::vec2 center(d_last_x + d_aabb[0].x + (d_aabb[3].x - d_aabb[0].x), d_last_y + d_aabb[0].y + (d_aabb[1].y - d_aabb[0].y));
+        glm::vec2 center(d_last_x + (d_aabb[0].x + (d_aabb[3].x - d_aabb[0].x)) / 2, d_last_y + (d_aabb[0].y + (d_aabb[1].y - d_aabb[0].y)) / 2);
 
         uprt->update(glm::vec2(x, y), 0, 1, center);
 
@@ -155,9 +153,9 @@ uint8_t Region::on_leave(PySIEffect& colliding_effect)
     return handle_collision_event("on_leave", colliding_effect);
 }
 
-void Region::LINK_SLOT(const std::string& uuid, const std::string& source_cap, const bp::tuple& args)
+void Region::LINK_SLOT(const std::string& uuid_event, const std::string& uuid_sender, const std::string& source_cap, const bp::tuple& args)
 {
-    std::tuple<std::string, std::string> event = std::make_tuple(uuid, source_cap);
+    std::tuple<std::string, std::string> event = std::make_tuple(uuid_event, source_cap);
 
     if(!is_link_event_registered(event))
     {
@@ -166,10 +164,25 @@ void Region::LINK_SLOT(const std::string& uuid, const std::string& source_cap, c
         for(auto& [self_cap, function]: d_py_effect->attr_link_recv()[source_cap])
         {
             HANDLE_PYTHON_CALL(
-                function(*args);
+                // rework linking management so external object links are also stored and tracked
 
-                if(d_py_effect->attr_link_emit().find(self_cap) != d_py_effect->attr_link_emit().end())
-                    Q_EMIT LINK_SIGNAL(uuid, self_cap, bp::extract<bp::tuple>(d_py_effect->attr_link_emit()[self_cap]()));
+                if(uuid_sender.empty())
+                {
+                    function(*args);
+
+                    if(d_py_effect->attr_link_emit().find(self_cap) != d_py_effect->attr_link_emit().end())
+                        Q_EMIT LINK_SIGNAL(uuid_event, this->uuid(), self_cap, bp::extract<bp::tuple>(d_py_effect->attr_link_emit()[self_cap]()));
+                }
+                else
+                {
+                    if(Context::SIContext()->linking_manager()->is_linked(uuid_sender, source_cap, this->uuid(), self_cap, ILink::UD))
+                    {
+                        function(*args);
+
+                        if(d_py_effect->attr_link_emit().find(self_cap) != d_py_effect->attr_link_emit().end())
+                            Q_EMIT LINK_SIGNAL(uuid_event, this->uuid(), self_cap, bp::extract<bp::tuple>(d_py_effect->attr_link_emit()[self_cap]()));
+                    }
+                }
             )
         }
     }
@@ -232,6 +245,8 @@ const int32_t Region::last_delta_y() const
 
 void Region::update()
 {
+    d_is_transformed = false;
+
     HANDLE_PYTHON_CALL(d_py_effect = std::shared_ptr<PySIEffect>(new PySIEffect(bp::extract<PySIEffect>(*d_effect)));)
 
     process_contour_change();
@@ -251,10 +266,7 @@ void Region::process_contour_change()
         d_contour.clear();
 
         if(d_py_effect->has_shape_changed() & REQUIRES_RESAMPLE)
-        {
             RegionResampler::resample(d_contour, d_py_effect->contour());
-            uprt = std::make_unique<RegionTransform>();
-        }
         else
             d_contour = d_py_effect->contour();
 
@@ -266,6 +278,8 @@ void Region::process_contour_change()
         d_effect->attr("require_resample") = false;
 
         uprm = std::make_unique<RegionMask>(Context::SIContext()->width(), Context::SIContext()->height(), d_contour, d_aabb);
+
+        d_is_transformed = true;
     }
 }
 

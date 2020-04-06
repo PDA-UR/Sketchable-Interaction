@@ -27,25 +27,17 @@ void CollisionManager::collide(std::vector<std::shared_ptr<Region>> &regions)
 
             if(has_capabilities_in_common(a, b))
             {
-                if(a->is_transformed() || b->is_transformed())
+                if(collides_with_aabb(a, b))
                 {
-                    if(collides_with_aabb(a, b))
-                    {
-                        if(are_aabbs_equal(a, b) || is_aabb_enveloped(a, b) || is_aabb_enveloped(b, a) || collides_with_mask(a, b))
-                            d_collision_map.find(tuple) != d_collision_map.end() ? handle_event_continuous(a, b, tuple) : handle_event_enter(a, b, tuple);
-                        else
-                            if(d_collision_map.find(tuple) != d_collision_map.end())
-                                handle_event_leave(a, b, tuple);
-                    }
+                    if(are_aabbs_equal(a, b) || is_aabb_enveloped(a, b) || is_aabb_enveloped(b, a) || collides_with_mask(a, b))
+                        d_collision_map.find(tuple) != d_collision_map.end() ? handle_event_continuous(a, b, tuple) : handle_event_enter(a, b, tuple);
                     else
                         if(d_collision_map.find(tuple) != d_collision_map.end())
                             handle_event_leave(a, b, tuple);
                 }
                 else
-                {
                     if(d_collision_map.find(tuple) != d_collision_map.end())
-                        has_capabilities_in_common(a, b) ? handle_event_continuous(a, b, tuple) : handle_event_leave(a, b, tuple);
-                }
+                        handle_event_leave(a, b, tuple);
             }
             else
                 if(d_collision_map.find(tuple) != d_collision_map.end())

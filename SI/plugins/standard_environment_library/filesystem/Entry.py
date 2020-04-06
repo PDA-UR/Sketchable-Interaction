@@ -7,7 +7,7 @@ class Entry(PySIEffect.PySIEffect):
         self.shape = shape
         self.aabb = aabb
         self._uuid = uuid
-        self.name = ""
+        self.name = "stdEntry"
         self.region_type = PySIEffect.EffectType.SI_CUSTOM
         self.source = "libstdSI"
         self.qml_path = ""
@@ -52,6 +52,7 @@ class Entry(PySIEffect.PySIEffect):
 
         self.x += rel_x
         self.y += rel_y
+
         return 0
 
     def on_move_enter_recv(self, cursor_id, link_attrib):

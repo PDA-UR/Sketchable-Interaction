@@ -151,6 +151,20 @@ void Context::begin(const std::unordered_map<std::string, std::unique_ptr<bp::ob
 
         d_ire->start(s_width, s_height);
 
+        for(QWidget* pWidget: QApplication::topLevelWidgets())
+        {
+            d_main_window = qobject_cast<QMainWindow *>(pWidget);
+
+            if (d_main_window)
+                break;
+        }
+
+        if(!d_main_window)
+        {
+            ERROR("Main Window could not be created!");
+            exit(69);
+        }
+
         add_startup_regions(plugins);
 
         if(!d_available_plugins.empty())
@@ -206,6 +220,11 @@ ExternalApplicationManager* Context::external_application_manager()
 Context* Context::SIContext()
 {
     return self;
+}
+
+QMainWindow* Context::main_window() const
+{
+    return d_main_window;
 }
 
 /*
@@ -374,7 +393,7 @@ void Context::create_linking_relations(const std::vector<LinkRelation> &relation
         {
             d_links_in_ctx[source].push_back(std::make_shared<UnidirectionalLink>(*sender, *receiver, relation.sender_attrib, relation.recv_attrib));
 
-            Q_EMIT (*sender)->LINK_SIGNAL(_UUID_, relation.sender_attrib, bp::extract<bp::tuple>((*sender)->effect().attr_link_emit()[relation.sender_attrib]()));
+            Q_EMIT (*sender)->LINK_SIGNAL(_UUID_, (*sender)->uuid(), relation.sender_attrib, bp::extract<bp::tuple>((*sender)->effect().attr_link_emit()[relation.sender_attrib]()));
         }
     }
 }
@@ -394,16 +413,15 @@ void Context::spawn_folder_contents_buttons_as_regions(std::shared_ptr<Region>& 
     bp::dict kwargs;
     kwargs["value"] = false;
 
-    uprm->query_region_insertion(btn_contour, value, parent, kwargs, std::string("__position__"),std::string("__position__"));
+    uprm->query_region_insertion(btn_contour, value, parent, kwargs, std::string("__position__"), std::string("__position__"));
 
     std::vector<glm::vec3> btn_contour2{glm::vec3(dir_x, dir_y + preview_height - btn_height, 1),
                                         glm::vec3(dir_x, dir_y + preview_height, 1),
                                         glm::vec3(dir_x + btn_width, dir_y + preview_height, 1),
                                         glm::vec3(dir_x + btn_width, dir_y + preview_height - btn_height, 1)};
     bp::dict kwargs2;
-    kwargs2["value"] = true;
 
-    uprm->query_region_insertion(btn_contour2, value, parent, kwargs2, std::string("__position__"),std::string("__position__"));
+    uprm->query_region_insertion(btn_contour2, value, parent, kwargs2, std::string("__position__"), std::string("__position__"));
 }
 
 void Context::spawn_folder_contents_entry_as_region(const std::vector<glm::vec3>& contour, std::shared_ptr<Region>& parent, const std::string& effect_type, const bp::dict& kwargs)
@@ -500,13 +518,25 @@ void Context::launch_external_application_with_file(const std::string& uuid, con
         glm::vec3(1 + s_width * 0.3, 1, 1)
     };
 
-    bp::dict kwargs;
+    std::shared_ptr<Region> __empty__ = std::make_shared<Region>(contour, d_available_plugins["Container"]);
 
-    uprm->add_region(contour, d_available_plugins["Container"], 0, kwargs);
-    upeam->launch_standard_application(uuid, path, uprm->regions().back());
+    upeam->launch_standard_application(uuid, path, __empty__);
 }
 
 void Context::terminate_external_application_with_file(const std::string& uuid)
 {
     upeam->terminate_application(uuid);
+}
+
+const std::map<std::string, bp::object>& Context::available_plugins() const
+{
+    return d_available_plugins;
+}
+
+const bp::object& Context::plugin_by_name(const std::string& name)
+{
+    if(MAP_HAS_KEY(d_available_plugins, name))
+        return d_available_plugins[name];
+
+    return bp::object();
 }

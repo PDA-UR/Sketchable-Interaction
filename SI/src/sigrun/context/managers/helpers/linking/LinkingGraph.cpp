@@ -86,13 +86,13 @@ void LinkingGraph::remove_link(const std::shared_ptr<Region> &a, const std::stri
 
 void LinkingGraph::emit_link_event(std::shared_ptr<Region> &a, const std::string &attr_a)
 {
-    const std::string uuid = _UUID_;
+    const std::string uuid_event = _UUID_;
 
     const bp::tuple &args = bp::extract<bp::tuple>(a->effect().attr_link_emit()[attr_a]());
 
-    a->register_link_event({uuid, attr_a});
+    a->register_link_event({uuid_event, attr_a});
 
-    Q_EMIT a->LINK_SIGNAL(uuid, attr_a, args);
+    Q_EMIT a->LINK_SIGNAL(uuid_event, a->uuid(), attr_a, args);
 }
 
 bool LinkingGraph::is_linked(const std::shared_ptr<Region> &a, const std::string &attr_a, const std::shared_ptr<Region> &b, const std::string &attr_b, const ILink::LINK_TYPE &link_type) const
@@ -107,7 +107,8 @@ bool LinkingGraph::is_linked(const std::shared_ptr<Region> &a, const std::string
                                                     link->sender_a()->uuid() == a->uuid() &&
                                                     link->receiver_b()->uuid() == b->uuid() &&
                                                     link->sender_b()->uuid() == b->uuid() &&
-                                                    link->receiver_a()->uuid() == a->uuid()):
+                                                    link->receiver_a()->uuid() == a->uuid())
+                                                    :
                                                    (link->attribute_a() == attr_a &&
                                                     link->attribute_b() == attr_b &&
                                                     link->sender_a()->uuid() == a->uuid() &&
@@ -121,6 +122,35 @@ bool LinkingGraph::is_linked(const std::shared_ptr<Region> &a, const std::string
                                                     link->sender_b()->uuid() == a->uuid() &&
                                                     link->receiver_a()->uuid() == b->uuid());
     });
+}
+
+bool LinkingGraph::is_linked(const std::string& a, const std::string& attr_a, const std::string& b, const std::string& attr_b, const ILink::LINK_TYPE& link_type) const
+{
+    return std::transform_reduce(std::execution::par_unseq, d_links.begin(), d_links.end(), false, [](bool a, bool b)
+    {
+        return a || b;
+    }, [&](auto& link)
+    {
+        return link_type == ILink::LINK_TYPE::UD ? (link->attribute_a() == attr_a &&
+                                                 link->attribute_b() == attr_b &&
+                                                 link->sender_a()->uuid() == a &&
+                                                 link->receiver_b()->uuid() == b &&
+                                                 link->sender_b()->uuid() == b &&
+                                                 link->receiver_a()->uuid() == a)
+                                                 :
+                                                (link->attribute_a() == attr_a &&
+                                                 link->attribute_b() == attr_b &&
+                                                 link->sender_a()->uuid() == a &&
+                                                 link->receiver_b()->uuid() == b &&
+                                                 link->sender_b()->uuid() == b &&
+                                                 link->receiver_a()->uuid() == a) ||
+                                                (link->attribute_a() == attr_b &&
+                                                 link->attribute_b() == attr_a &&
+                                                 link->sender_a()->uuid() == b &&
+                                                 link->receiver_b()->uuid() == a &&
+                                                 link->sender_b()->uuid() == a &&
+                                                 link->receiver_a()->uuid() == b);
+     });
 }
 
 const std::vector<std::shared_ptr<ILink>> &LinkingGraph::links() const
