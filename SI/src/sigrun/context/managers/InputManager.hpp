@@ -5,7 +5,9 @@
 
 #include <sigrun/SIObject.hpp>
 #include <sigrun/log/Log.hpp>
+#include <sigrun/region/Region.hpp>
 #include <QObject>
+#include <unordered_map>
 #include <QEvent>
 #include <glm/glm.hpp>
 #include "helpers/input/ExternalObject.hpp"
@@ -86,7 +88,10 @@ public:
 
     const glm::vec2& mouse_coords() const;
 
-    ExternalObject* mouse_object();
+    std::unordered_map<std::string, std::shared_ptr<ExternalObject>>& external_objects();
+
+    void register_external_application(const std::string& file_uuid, std::shared_ptr<Region>& reg, QWidget* window, uint64_t pid);
+    void unregister_external_application(const std::string& container_uuid);
 
     const MouseWheelAngles mouse_wheel_angles();
 
@@ -103,7 +108,7 @@ private:
     glm::vec2 d_mouse_coords;
     glm::vec2 d_previous_mouse_coords;
 
-    std::vector<std::shared_ptr<ExternalObject>> d_external_objects;
+    std::unordered_map<std::string, std::shared_ptr<ExternalObject>> deo;
 
     float d_mouse_wheel_angle_in_px;
 };

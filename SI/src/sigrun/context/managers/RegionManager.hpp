@@ -22,7 +22,6 @@ public:
 
     void query_region_insertion(const std::vector<glm::vec3> &contour, const bp::object& effect, std::shared_ptr<Region>& parent, const bp::dict& kwargs=bp::dict(), const std::string& attrib_sender="", const std::string& attrib_recv="");
     void add_region(const std::vector<glm::vec3> &contour, const bp::object &effect, uint32_t region_uuid, const bp::dict& kwargs=bp::dict());
-    void delete_region(const std::string& deletion_candidate_uuid);
 
     std::vector<std::shared_ptr<Region>>& regions();
     std::map<std::string, std::vector<glm::vec3>>& partial_regions();
@@ -35,9 +34,10 @@ private:
     std::vector<std::shared_ptr<Region>> d_regions;
     std::map<std::string, std::vector<glm::vec3>> d_partial_regions;
 
-    void update_via_mouse_input();
-
-    bool update_region_deletions(uint32_t deletion_index);
+    void update_mouse_inputs();
+    void update_region_insertions();
+    void update_regions();
+    void update_region_deletions();
 
     void activate_mouse_region_button_down(uint32_t mouse_btn);
     void deactivate_mouse_region_button_down(uint32_t mouse_btn);

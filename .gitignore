@@ -258,3 +258,5 @@ SI/plugins/standard_environment_library/notification/__pycache__/
 SI/tests/res/pysi/__pycache__/
 
 SI/tests/src/pysi/__pycache__/
+
+SI/plugins/standard_environment_library/external_application/__pycache__/

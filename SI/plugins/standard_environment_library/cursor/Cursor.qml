@@ -18,7 +18,7 @@ Item
         onDataChanged: {
             cursorImage.width = data.width;
             cursorImage.height = data.height;
-            cursorImage.source = data.img_path;
+//            cursorImage.source = data.img_path;
         }
     }
 }

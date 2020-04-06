@@ -52,8 +52,8 @@ public:
     uint8_t on_continuous(PySIEffect& other);
     uint8_t on_leave(PySIEffect& other);
 
-    Q_SIGNAL void LINK_SIGNAL(const std::string& uuid, const std::string& source_cap, const bp::tuple& args);
-    Q_SLOT void LINK_SLOT(const std::string& uuid, const std::string& source_cap, const bp::tuple& args);
+    Q_SIGNAL void LINK_SIGNAL(const std::string& uuid_event, const std::string& uuid_sender, const std::string& source_cap, const bp::tuple& args);
+    Q_SLOT void LINK_SLOT(const std::string& uuid_event, const std::string& uuid_sender, const std::string& source_cap, const bp::tuple& args);
     Q_SLOT void REGION_DATA_CHANGED_SLOT(const QMap<QString, QVariant>& data);
 
     void register_link_event(const std::string& uuid, const std::string& attribute);

@@ -36,6 +36,8 @@ public:
     LinkingManager* linking_manager();
     ExternalApplicationManager* external_application_manager();
 
+    QMainWindow* main_window() const;
+
     void update();
     void enable(uint32_t what);
     void disable(uint32_t what);
@@ -55,6 +57,9 @@ public:
 
     void launch_external_application_with_file(const std::string& uuid, const std::string& path);
     void terminate_external_application_with_file(const std::string& uuid);
+
+    const std::map<std::string, bp::object>& available_plugins() const;
+    const bp::object& plugin_by_name(const std::string& name);
 
 private:
     static Context* self;
@@ -90,9 +95,11 @@ private:
     uint32_t s_height = 0;
 
     IRenderEngine* d_ire;
+    QMainWindow* d_main_window;
 
     friend class Core;
     friend class SIGRunCollisionManagerTest;
+    friend class SIGRunLinkingManagerTest;
 };
 
 

@@ -104,8 +104,10 @@ void Context::add_cursor_regions(const std::unique_ptr<bp::object>& cursor_effec
 
     std::vector<glm::vec3> mouse_contour {glm::vec3(0, 0, 1), glm::vec3(0, height_mouse_cursor, 1), glm::vec3(width_mouse_cursor, height_mouse_cursor, 1), glm::vec3(width_mouse_cursor, 0, 1) };
     uprm->add_region(mouse_contour, *cursor_effect, 0, bp::dict());
-    uplm->add_link_to_object(uprm->regions().back(), ExternalObject::ExternalObjectType::MOUSE);
     d_mouse_uuid = uprm->regions().back()->uuid();
+
+    upim->external_objects()[d_mouse_uuid] = std::make_shared<ExternalObject>(ExternalObject::ExternalObjectType::MOUSE);
+    uplm->add_link_to_object(uprm->regions().back(), ExternalObject::ExternalObjectType::MOUSE);
 
     INFO("Plugin available for drawing");
 }
@@ -143,15 +145,25 @@ void Context::begin(const std::unordered_map<std::string, std::unique_ptr<bp::ob
         QApplication d_app(argc, argv);
         INFO("Qt5 Application created!");
 
-        for(const auto& item: plugins)
-            upcm->add_capabilities(*item.second);
-
-        d_app.setOverrideCursor(Qt::BlankCursor);
-
+//        d_app.setOverrideCursor(Qt::BlankCursor);
 
         d_app.installEventFilter(upim.get());
 
         d_ire->start(s_width, s_height);
+
+        for(QWidget* pWidget: QApplication::topLevelWidgets())
+        {
+            d_main_window = qobject_cast<QMainWindow *>(pWidget);
+
+            if (d_main_window)
+                break;
+        }
+
+        if(!d_main_window)
+        {
+            ERROR("Main Window could not be created!");
+            exit(69);
+        }
 
         add_startup_regions(plugins);
 
@@ -208,6 +220,11 @@ ExternalApplicationManager* Context::external_application_manager()
 Context* Context::SIContext()
 {
     return self;
+}
+
+QMainWindow* Context::main_window() const
+{
+    return d_main_window;
 }
 
 /*
@@ -312,8 +329,11 @@ void Context::remove_all_source_linking_relations(const std::string &source)
 {
     if(MAP_HAS_KEY(d_links_in_ctx, source))
     {
-        for(auto & i : d_links_in_ctx[source])
+        std::transform(std::execution::par_unseq, d_links_in_ctx[source].begin(), d_links_in_ctx[source].end(), d_links_in_ctx[source].begin(), [&](auto& i)
+        {
             uplm->remove_link(i->sender_a(), i->attribute_a(), i->receiver_b(), i->attribute_b(), ILink::LINK_TYPE::UD);
+            return i;
+        });
 
         d_links_in_ctx.erase(source);
     }
@@ -323,56 +343,57 @@ void Context::remove_linking_relations(const std::vector<LinkRelation> &relation
 {
     if (MAP_HAS_KEY(d_links_in_ctx, source))
     {
-        auto it = d_links_in_ctx[source].begin();
-
-        while (it != d_links_in_ctx[source].end())
+        d_links_in_ctx[source].erase(std::remove_if(std::execution::par_unseq, d_links_in_ctx[source].begin(), d_links_in_ctx[source].end(), [&](auto& link) -> bool
         {
-            if (std::find_if(relations.begin(), relations.end(),
-                             [&it](const LinkRelation &x)
-                             {
-                                 return it->get()->sender_a()->uuid() == x.sender &&
-                                        it->get()->attribute_a() == x.sender_attrib &&
-                                        it->get()->receiver_b()->uuid() == x.recv &&
-                                        it->get()->attribute_b() == x.recv_attrib;
-                             }) == relations.end())
+            if(std::find_if(std::execution::par_unseq, relations.begin(), relations.end(), [&link](const LinkRelation &x)
             {
-                uplm->remove_link(it->get()->sender_a(), it->get()->attribute_a(), it->get()->receiver_b(), it->get()->attribute_b(), ILink::LINK_TYPE::UD);
-                it = d_links_in_ctx[source].erase(it);
+                return link->sender_a()->uuid() == x.sender &&
+                       link->attribute_a() == x.sender_attrib &&
+                       link->receiver_b()->uuid() == x.recv &&
+                       link->attribute_b() == x.recv_attrib;
+            }) == relations.end())
+            {
+                uplm->remove_link(link->sender_a(), link->attribute_a(), link->receiver_b(), link->attribute_b(), ILink::LINK_TYPE::UD);
+                return true;
             }
-            else
-                ++it;
-        }
+
+            return false;
+
+        }), d_links_in_ctx[source].end());
     }
 }
 
 void Context::create_linking_relations(const std::vector<LinkRelation> &relations, const std::string &source)
 {
     if (!MAP_HAS_KEY(d_links_in_ctx, source))
+    {
         d_links_in_ctx[source] = std::vector<std::shared_ptr<ILink>>();
+        d_links_in_ctx[source].reserve(relations.size());
+    }
 
     for (auto &relation: relations)
     {
-        int32_t index_sender = -1;
-        int32_t index_recv = -1;
-
-        for (uint32_t i = 0; i < uprm->regions().size(); ++i)
+        auto sender = std::find_if(std::execution::par_unseq, uprm->regions().begin(), uprm->regions().end(), [&relation](auto& region)
         {
-            auto &region = uprm->regions()[i];
+           return region->uuid() == relation.sender;
+        });
 
-            if (region->uuid() == relation.sender)
-                index_sender = i;
+        if(sender == uprm->regions().end())
+            continue;
 
-            if (region->uuid() == relation.recv)
-                index_recv = i;
-        }
-
-        if (index_sender != -1 && index_recv != -1)
+        auto receiver = std::find_if(std::execution::par_unseq, uprm->regions().begin(), uprm->regions().end(), [&relation](auto& region)
         {
-            if (uplm->add_link(uprm->regions()[index_sender], relation.sender_attrib, uprm->regions()[index_recv], relation.recv_attrib, ILink::LINK_TYPE::UD))
-            {
-                d_links_in_ctx[source].push_back(std::make_shared<UnidirectionalLink>(uprm->regions()[index_sender], uprm->regions()[index_recv], relation.sender_attrib, relation.recv_attrib));
-                Q_EMIT uprm->regions()[index_sender]->LINK_SIGNAL(_UUID_, relation.sender_attrib, bp::extract<bp::tuple>(uprm->regions()[index_sender]->effect().attr_link_emit()[relation.sender_attrib]()));
-            }
+            return region->uuid() == relation.recv;
+        });
+
+        if(receiver == uprm->regions().end())
+            continue;
+
+        if (uplm->add_link(*sender, relation.sender_attrib, *receiver, relation.recv_attrib, ILink::LINK_TYPE::UD))
+        {
+            d_links_in_ctx[source].push_back(std::make_shared<UnidirectionalLink>(*sender, *receiver, relation.sender_attrib, relation.recv_attrib));
+
+            Q_EMIT (*sender)->LINK_SIGNAL(_UUID_, (*sender)->uuid(), relation.sender_attrib, bp::extract<bp::tuple>((*sender)->effect().attr_link_emit()[relation.sender_attrib]()));
         }
     }
 }
@@ -392,16 +413,15 @@ void Context::spawn_folder_contents_buttons_as_regions(std::shared_ptr<Region>& 
     bp::dict kwargs;
     kwargs["value"] = false;
 
-    uprm->query_region_insertion(btn_contour, value, parent, kwargs, std::string("__position__"),std::string("__position__"));
+    uprm->query_region_insertion(btn_contour, value, parent, kwargs, std::string("__position__"), std::string("__position__"));
 
     std::vector<glm::vec3> btn_contour2{glm::vec3(dir_x, dir_y + preview_height - btn_height, 1),
                                         glm::vec3(dir_x, dir_y + preview_height, 1),
                                         glm::vec3(dir_x + btn_width, dir_y + preview_height, 1),
                                         glm::vec3(dir_x + btn_width, dir_y + preview_height - btn_height, 1)};
     bp::dict kwargs2;
-    kwargs2["value"] = true;
 
-    uprm->query_region_insertion(btn_contour2, value, parent, kwargs2, std::string("__position__"),std::string("__position__"));
+    uprm->query_region_insertion(btn_contour2, value, parent, kwargs2, std::string("__position__"), std::string("__position__"));
 }
 
 void Context::spawn_folder_contents_entry_as_region(const std::vector<glm::vec3>& contour, std::shared_ptr<Region>& parent, const std::string& effect_type, const bp::dict& kwargs)
@@ -462,36 +482,61 @@ void Context::spawn_folder_contents_entries_as_regions(std::shared_ptr<Region>& 
 
 void Context::spawn_folder_contents_as_regions(const std::vector<std::string>& children_paths, const std::string& uuid, const bool with_btns)
 {
-    for(auto& r: uprm->regions())
+    auto it = std::find_if(std::execution::par_unseq, uprm->regions().begin(), uprm->regions().end(), [&uuid](auto& region)
     {
-        if (r->uuid() == uuid)
-        {
-            const uint32_t preview_width = bp::extract<uint32_t>(r->raw_effect().attr("preview_width"));
-            const uint32_t preview_height = bp::extract<uint32_t>(r->raw_effect().attr("preview_height"));
+        return region->uuid() == uuid;
+    });
 
-            const glm::vec3& tlc = r->aabb()[0];
+    if(it != uprm->regions().end())
+    {
+        auto& region = *it;
 
-            const int32_t dir_x = tlc.x + r->transform()[0].z;
-            const int32_t dir_y = tlc.y + r->transform()[1].z;
-            const uint32_t dir_width = bp::extract<uint32_t>(r->raw_effect().attr("icon_width")) * 2;
-            const uint32_t dir_height = bp::extract<uint32_t>(r->raw_effect().attr("icon_height")) + bp::extract<uint32_t>(r->raw_effect().attr("text_height"));
+        const glm::vec3& tlc = region->aabb()[0];
 
-            if(with_btns)
-                spawn_folder_contents_buttons_as_regions(r, dir_x, dir_y, preview_width, preview_height);
+        const int32_t dir_x = tlc.x + region->transform()[0].z;
+        const int32_t dir_y = tlc.y + region->transform()[1].z;
+        const uint32_t preview_width = bp::extract<uint32_t>(region->raw_effect().attr("preview_width"));
+        const uint32_t preview_height = bp::extract<uint32_t>(region->raw_effect().attr("preview_height"));
+        const uint32_t dir_width = bp::extract<uint32_t>(region->raw_effect().attr("icon_width")) * 2;
+        const uint32_t dir_height = bp::extract<uint32_t>(region->raw_effect().attr("icon_height")) + bp::extract<uint32_t>(region->raw_effect().attr("text_height"));
 
-            spawn_folder_contents_entries_as_regions(r, children_paths, dir_x, dir_y, dir_width, dir_height, preview_width, preview_height);
 
-            break;
-        }
+        if(with_btns)
+            spawn_folder_contents_buttons_as_regions(region, dir_x, dir_y, preview_width, preview_height);
+
+        spawn_folder_contents_entries_as_regions(region, children_paths, dir_x, dir_y, dir_width, dir_height, preview_width, preview_height);
     }
 }
 
 void Context::launch_external_application_with_file(const std::string& uuid, const std::string& path)
 {
-    upeam->launch_standard_application(uuid, path);
+    std::vector<glm::vec3> contour
+    {
+        glm::vec3(1, 1, 1),
+        glm::vec3(1, 1 + s_height * 0.3, 1),
+        glm::vec3(1 + s_width * 0.3, 1 + s_height * 0.3, 1),
+        glm::vec3(1 + s_width * 0.3, 1, 1)
+    };
+
+    std::shared_ptr<Region> __empty__ = std::make_shared<Region>(contour, d_available_plugins["Container"]);
+
+    upeam->launch_standard_application(uuid, path, __empty__);
 }
 
 void Context::terminate_external_application_with_file(const std::string& uuid)
 {
     upeam->terminate_application(uuid);
+}
+
+const std::map<std::string, bp::object>& Context::available_plugins() const
+{
+    return d_available_plugins;
+}
+
+const bp::object& Context::plugin_by_name(const std::string& name)
+{
+    if(MAP_HAS_KEY(d_available_plugins, name))
+        return d_available_plugins[name];
+
+    return bp::object();
 }

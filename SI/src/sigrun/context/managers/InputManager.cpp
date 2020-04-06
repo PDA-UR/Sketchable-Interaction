@@ -8,15 +8,20 @@
 
 #include "InputManager.hpp"
 #include <sigrun/context/Context.hpp>
+#include <csignal>
+#include <cstdlib>
 
-InputManager::~InputManager() = default;
+InputManager::~InputManager()
+{
+
+}
 
 InputManager::InputManager():
     d_mouse_coords(0),
     d_previous_mouse_coords(0),
     d_mouse_wheel_angle_in_px(0)
 {
-    d_external_objects.push_back(std::make_shared<ExternalObject>(ExternalObject::ExternalObjectType::MOUSE));
+
 }
 
 void InputManager::update()
@@ -27,18 +32,57 @@ void InputManager::update()
     for(auto& [key, value]: d_button_map)
         d_previous_button_map[key] = value;
 
-    for(auto& obj: d_external_objects)
+    for(auto it = deo.begin(); it != deo.end();)
     {
-        switch(obj->type())
+        switch(it->second->type())
         {
             case ExternalObject::ExternalObjectType::MOUSE:
             {
                 bp::tuple args = bp::make_tuple(d_mouse_coords.x, d_mouse_coords.y);
 
-                Q_EMIT obj->LINK_SIGNAL(_UUID_, "__position__", args);
-                break;
+                Q_EMIT it->second->LINK_SIGNAL(_UUID_,  "","__position__", args);
             }
+            break;
+
+            case ExternalObject::ExternalObjectType::APPLICATION:
+            {
+                if(kill(it->second->embedded_object.external_application.pid, 0) < 0
+                || !it->second->embedded_object.external_application.window->isVisible())
+                {
+                    it->second->embedded_object.external_application.window->close();
+
+                    auto& regions = Context::SIContext()->region_manager()->regions();
+
+                    auto it2 = std::find_if(regions.begin(), regions.end(), [&](auto& region)
+                    {
+                       return region->uuid() == it->first;
+                    });
+
+                    if(it2 != regions.end())
+                        it2->get()->raw_effect().attr("signal_deletion")();
+
+                    delete it->second->embedded_object.external_application.window;
+                    it->second->embedded_object.external_application.window = nullptr;
+                    free(it->second->embedded_object.external_application.file_uuid);
+                    it->second->embedded_object.external_application.file_uuid = nullptr;
+
+                    it = deo.erase(it);
+
+                    continue;
+                }
+                else
+                {
+                    QWidget* current = it->second->embedded_object.external_application.window;
+
+                    bp::tuple args = bp::make_tuple(current->x() - Context::SIContext()->main_window()->x(), current->y(), current->width(), current->height());
+                    current->setProperty("is_resizing", QVariant(false));
+                    Q_EMIT it->second->LINK_SIGNAL(_UUID_, "", "__geometry__", args);
+                }
+            }
+            break;
         }
+
+        ++it;
     }
 }
 
@@ -106,16 +150,6 @@ bool InputManager::was_mouse_down(uint32_t button_id)
 const glm::vec2 &InputManager::mouse_coords() const
 {
     return d_mouse_coords;
-}
-
-ExternalObject* InputManager::mouse_object()
-{
-    auto it = std::find_if(std::execution::par_unseq, d_external_objects.begin(), d_external_objects.end(), [](auto& obj)
-    {
-        return obj->type() == ExternalObject::ExternalObjectType::MOUSE;
-    });
-
-    return it != d_external_objects.end() ? it->get() : nullptr;
 }
 
 bool InputManager::eventFilter(QObject *watched, QEvent *event)
@@ -217,4 +251,50 @@ bool InputManager::eventFilter(QObject *watched, QEvent *event)
     }
 
     return QObject::eventFilter(watched, event);
+}
+
+std::unordered_map<std::string, std::shared_ptr<ExternalObject>>& InputManager::external_objects()
+{
+    return deo;
+}
+
+void InputManager::register_external_application(const std::string& file_uuid, std::shared_ptr<Region> &c, QWidget *window, uint64_t pid)
+{
+    uint32_t x = window->x() - Context::SIContext()->main_window()->x();
+    uint32_t y = window->y();
+    uint32_t width = window->width();
+    uint32_t height = window->height();
+
+    std::vector<glm::vec3> contour
+    {
+        glm::vec3(x, y, 1),
+        glm::vec3(x, y + height, 1),
+        glm::vec3(x + width, y + height, 1),
+        glm::vec3(x + width, y, 1)
+    };
+
+    bp::dict kwargs;
+    kwargs["pid"] = pid;
+
+    Context::SIContext()->region_manager()->add_region(contour, Context::SIContext()->plugin_by_name("Container"), 0);
+
+    auto& container = Context::SIContext()->region_manager()->regions().back();
+
+    deo[container->uuid()] = std::make_shared<ExternalObject>(ExternalObject::ExternalObjectType::APPLICATION);
+    deo[container->uuid()]->embedded_object.external_application.window = window;
+    deo[container->uuid()]->embedded_object.external_application.pid = pid;
+    deo[container->uuid()]->embedded_object.external_application.file_uuid = strdup(file_uuid.c_str());
+
+    Context::SIContext()->linking_manager()->add_link_to_object(container, ExternalObject::ExternalObjectType::APPLICATION);
+}
+
+void InputManager::unregister_external_application(const std::string& file_uuid)
+{
+    auto it = std::find_if(deo.begin(), deo.end(), [&file_uuid](const auto& pair) -> bool
+    {
+        return std::get<1>(pair)->type() == ExternalObject::APPLICATION && std::get<1>(pair)->embedded_object.external_application.file_uuid == file_uuid;
+    });
+
+    if(it != deo.end())
+        kill(deo[it->first]->embedded_object.external_application.pid, SIGTERM);
 }

@@ -28,9 +28,11 @@ public:
     bool add_link(const std::shared_ptr<Region>& ra,  const std::string& aa, const std::shared_ptr<Region>& rb, const std::string& ab, const ILink::LINK_TYPE& type);
     void remove_link(const std::shared_ptr<Region>& ra, const std::string& aa, const std::shared_ptr<Region>& rb, const std::string& ab, const ILink::LINK_TYPE& type);
     bool is_linked(const std::shared_ptr<Region>& ra, const std::string& aa, const std::shared_ptr<Region>& rb, const std::string& ab, const ILink::LINK_TYPE& type);
+    bool is_linked(const std::string& ra_uuid, const std::string& aa, const std::string& rb_uuid, const std::string& ab, const ILink::LINK_TYPE& type);
+
     void emit_link_event(std::shared_ptr<Region> &a, const std::string &attr_a);
 
-    void remove_links_by_indices(const std::vector<uint32_t>& indices);
+    void remove_links_by_indices(std::vector<uint32_t>& indices);
 
     void add_link_to_object(std::shared_ptr<Region>& a, const ExternalObject::ExternalObjectType& type);
 

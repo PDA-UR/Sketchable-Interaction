@@ -21,7 +21,8 @@ public:
     void remove_link(const std::shared_ptr<Region>& a, const std::string& attr_a, const std::shared_ptr<Region>& b, const std::string& attr_b, const ILink::LINK_TYPE& link_type);
     void remove_link(int i);
     void emit_link_event(std::shared_ptr<Region>& a, const std::string& attr_a);
-    [[nodiscard]] bool is_linked(const std::shared_ptr<Region>& a, const std::string& attr_a, const std::shared_ptr<Region>& b, const std::string& attr_b, const ILink::LINK_TYPE& link_type) const;
+    bool is_linked(const std::shared_ptr<Region>& a, const std::string& attr_a, const std::shared_ptr<Region>& b, const std::string& attr_b, const ILink::LINK_TYPE& link_type) const;
+    bool is_linked(const std::string& a, const std::string& attr_a, const std::string& b, const std::string& attr_b, const ILink::LINK_TYPE& link_type) const;
 
     [[nodiscard]] const std::vector<std::shared_ptr<ILink>>& links() const;
 

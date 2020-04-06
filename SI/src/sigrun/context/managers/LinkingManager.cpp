@@ -3,6 +3,8 @@
 #include "LinkingManager.hpp"
 #include <sigrun/log/Log.hpp>
 #include <sigrun/context/Context.hpp>
+#include <execution>
+#include <algorithm>
 
 LinkingManager::LinkingManager():
         d_linking_graph(std::make_unique<LinkingGraph>())
@@ -94,25 +96,16 @@ bool LinkingManager::add_link(const std::shared_ptr<Region> &ra, const std::stri
 
 void LinkingManager::add_link_to_object(std::shared_ptr<Region> &a, const ExternalObject::ExternalObjectType &type)
 {
-    switch(type)
-    {
-        case ExternalObject::ExternalObjectType::MOUSE:
-        {
-            // needs is_linked, remove_link, etc. upgrades
-            d_linking_graph->add_link_to_external_object(UnidirectionalLink(type, a, "__position__", "__position__"));
-            bool success = connect(Context::SIContext()->input_manager()->mouse_object(), &ExternalObject::LINK_SIGNAL, a.get(), &Region::LINK_SLOT, Qt::UniqueConnection);
-        }
-    }
+    connect(Context::SIContext()->input_manager()->external_objects()[a->uuid()].get(), &ExternalObject::LINK_SIGNAL, a.get(), &Region::LINK_SLOT, Qt::UniqueConnection);
 }
 
-void LinkingManager::remove_links_by_indices(const std::vector<uint32_t>& indices)
+void LinkingManager::remove_links_by_indices(std::vector<uint32_t>& indices)
 {
-    for(const uint32_t& i: indices)
+    std::transform(std::execution::par_unseq, indices.begin(), indices.end(), indices.begin(), [&](uint32_t i)
     {
-        auto& link = d_linking_graph->links()[i];
-
-        remove_link(link->sender_a(), link->attribute_a(), link->receiver_b(), link->attribute_b(), ILink::LINK_TYPE::UD);
-    }
+        remove_link(d_linking_graph->links()[i]->sender_a(), d_linking_graph->links()[i]->attribute_a(), d_linking_graph->links()[i]->receiver_b(), d_linking_graph->links()[i]->attribute_b(), ILink::LINK_TYPE::UD);
+        return i;
+    });
 }
 
 void LinkingManager::remove_link(const std::shared_ptr<Region> &ra, const std::string& aa, const std::shared_ptr<Region> &rb, const std::string &ab, const ILink::LINK_TYPE& type)
@@ -136,10 +129,14 @@ void LinkingManager::remove_link(const std::shared_ptr<Region> &ra, const std::s
     }
 }
 
-bool LinkingManager::is_linked(const std::shared_ptr<Region>& ra, const std::string &aa, const std::shared_ptr<Region>& rb, const std::string &ab,
-                          const ILink::LINK_TYPE &type)
+bool LinkingManager::is_linked(const std::shared_ptr<Region>& ra, const std::string &aa, const std::shared_ptr<Region>& rb, const std::string &ab, const ILink::LINK_TYPE &type)
 {
-    return d_linking_graph->is_linked(ra, aa, rb, ab, type);
+    return is_linked(ra->uuid(), aa, rb->uuid(), ab, type);
+}
+
+bool LinkingManager::is_linked(const std::string& ra_uuid, const std::string& aa, const std::string& rb_uuid, const std::string& ab, const ILink::LINK_TYPE& type)
+{
+    return d_linking_graph->is_linked(ra_uuid, aa, rb_uuid, ab, type);
 }
 
 void LinkingManager::emit_link_event(std::shared_ptr<Region> &a, const std::string &attr_a)
