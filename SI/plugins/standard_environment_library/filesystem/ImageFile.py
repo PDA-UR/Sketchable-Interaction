@@ -1,4 +1,4 @@
-from libPySI import PySIEffect, PySICapability
+from libPySI import PySIEffect
 
 
 class ImageFile(PySIEffect.PySIEffect):
@@ -15,14 +15,14 @@ class ImageFile(PySIEffect.PySIEffect):
         self.cap_emit = PySIEffect.String2_String2FunctionMap_Map()
 
         self.cap_recv = PySIEffect.String2_String2FunctionMap_Map({
-            "MOVE": {"on_enter": self.on_move_enter_recv, "on_continuous": self.on_move_continuous_recv,
-                     "on_leave": self.on_move_leave_recv}
+            ImageFile.MOVE: {ImageFile.ON_ENTER: self.on_move_enter_recv, ImageFile.ON_CONTINUOUS: self.on_move_continuous_recv,
+                     ImageFile.ON_LEAVE: self.on_move_leave_recv}
         })
 
         self.cap_link_emit = PySIEffect.String2FunctionMap()
 
         self.cap_link_recv = PySIEffect.String2_String2FunctionMap_Map({
-            "__position__": {"__position__": self.set_position_from_position}
+            ImageFile.POSITION: {ImageFile.POSITION: self.set_position_from_position}
         })
 
     def set_position_from_position(self, rel_x, rel_y):

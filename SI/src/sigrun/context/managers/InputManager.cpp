@@ -40,7 +40,7 @@ void InputManager::update()
             {
                 bp::tuple args = bp::make_tuple(d_mouse_coords.x, d_mouse_coords.y);
 
-                Q_EMIT it->second->LINK_SIGNAL(_UUID_,  "","__position__", args);
+                Q_EMIT it->second->LINK_SIGNAL(_UUID_, "", PySIEffect::d_position_link_id, args);
             }
             break;
 
@@ -76,7 +76,7 @@ void InputManager::update()
 
                     bp::tuple args = bp::make_tuple(current->x() - Context::SIContext()->main_window()->x(), current->y(), current->width(), current->height());
                     current->setProperty("is_resizing", QVariant(false));
-                    Q_EMIT it->second->LINK_SIGNAL(_UUID_, "", "__geometry__", args);
+                    Q_EMIT it->second->LINK_SIGNAL(_UUID_, "", PySIEffect::d_geometry_link_id, args);
                 }
             }
             break;

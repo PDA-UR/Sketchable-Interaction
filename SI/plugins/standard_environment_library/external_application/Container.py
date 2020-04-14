@@ -1,4 +1,4 @@
-from libPySI import PySIEffect, PySICapability
+from libPySI import PySIEffect
 
 
 class Container(PySIEffect.PySIEffect):
@@ -23,7 +23,7 @@ class Container(PySIEffect.PySIEffect):
         self.cap_link_emit = PySIEffect.String2FunctionMap()
 
         self.cap_link_recv = PySIEffect.String2_String2FunctionMap_Map({
-            "__geometry__": { "__geometry__": self.set_geometry_from_geometry}
+            Container.GEOMETRY: { Container.GEOMETRY: self.set_geometry_from_geometry}
         })
 
     def set_geometry_from_geometry(self, x, y, width, height):

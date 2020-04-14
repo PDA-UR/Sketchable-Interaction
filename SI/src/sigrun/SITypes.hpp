@@ -16,10 +16,6 @@
 #define SI_TYPE_MOUSE_CURSOR 9998
 #define SI_TYPE_CUSTOM 9999
 
-
-
-
-
 #define SI_DATA_TYPE_INT 0
 #define SI_DATA_TYPE_FLOAT 1
 #define SI_DATA_TYPE_STRING 2

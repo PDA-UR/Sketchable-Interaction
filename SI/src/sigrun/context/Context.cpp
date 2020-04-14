@@ -26,7 +26,6 @@ Context::Context()
     uprm = std::unique_ptr<RegionManager>(new RegionManager);
     uplm = std::unique_ptr<LinkingManager>(new LinkingManager);
     upim = std::unique_ptr<InputManager>(new InputManager);
-    upcm = std::unique_ptr<Capability>(new Capability);
     uprcm = std::unique_ptr<CollisionManager>(new CollisionManager);
     upfs = std::unique_ptr<FileSystem>(new FileSystem);
     upeam = std::unique_ptr<ExternalApplicationManager>(new ExternalApplicationManager);
@@ -185,11 +184,6 @@ void Context::end()
 {
     if(d_ire)
         d_ire->stop();
-}
-
-Capability* Context::capability_manager()
-{
-    return upcm.get();
 }
 
 RegionManager* Context::region_manager()
