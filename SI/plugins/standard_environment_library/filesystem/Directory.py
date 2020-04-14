@@ -1,4 +1,4 @@
-from libPySI import PySIEffect, PySICapability
+from libPySI import PySIEffect
 import Entry
 
 
@@ -43,12 +43,12 @@ class Directory(Entry.Entry):
         self.add_data("page_name", "1 / " + str(len(self.browse_pages)), PySIEffect.DataType.STRING)
 
         if not self.is_child:
-            self.cap_emit["PARENT"] = {"on_enter": self.on_child_enter_emit, "on_continuous": None, "on_leave": self.on_child_leave_emit}
+            self.cap_emit[Directory.PARENT] = {Directory.ON_ENTER: self.on_child_enter_emit, Directory.ON_CONTINUOUS: None, Directory.ON_LEAVE: self.on_child_leave_emit}
 
-        self.cap_recv["BTN"] = {"on_enter": self.on_btn_enter_recv, "on_continuous": self.on_btn_continuous_recv, "on_leave": self.on_btn_leave_recv}
-        self.cap_recv["OPEN_ENTRY"] = {"on_enter": self.on_open_entry_enter_recv, "on_continuous": self.on_open_entry_continuous_recv, "on_leave": self.on_open_entry_leave_recv}
+        self.cap_recv[Directory.BTN] = {Directory.ON_ENTER: self.on_btn_enter_recv, Directory.ON_CONTINUOUS: self.on_btn_continuous_recv, Directory.ON_LEAVE: self.on_btn_leave_recv}
+        self.cap_recv[Directory.OPEN_ENTRY] = {Directory.ON_ENTER: self.on_open_entry_enter_recv, Directory.ON_CONTINUOUS: self.on_open_entry_continuous_recv, Directory.ON_LEAVE: self.on_open_entry_leave_recv}
 
-        self.cap_link_emit["__position__"] = self.position
+        self.cap_link_emit[Directory.POSITION] = self.position
 
     def on_child_enter_emit(self, child):
         if child not in self.children:

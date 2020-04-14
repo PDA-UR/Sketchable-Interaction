@@ -43,8 +43,6 @@ set(SIUnitTestSrc
         SI/tests/src/sigrun/region/SIGRunRegionTransformTest.hpp
         SI/tests/src/sigrun/region/SIGRunRegionMaskTest.cpp
         SI/tests/src/sigrun/region/SIGRunRegionMaskTest.hpp
-        SI/tests/src/sigrun/context/SIGRunCapabilityTest.cpp
-        SI/tests/src/sigrun/context/SIGRunCapabilityTest.hpp
         SI/tests/src/sigrun/region/SIGRunRegionTest.cpp
         SI/tests/src/sigrun/region/SIGRunRegionTest.hpp
         SI/tests/src/error/SIGRunErrorTest.cpp

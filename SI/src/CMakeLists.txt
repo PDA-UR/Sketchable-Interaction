@@ -77,8 +77,6 @@ set(SIGRunSRC
         SI/src/sigrun/region/RegionTransform.hpp
         SI/src/sigrun/region/RegionMask.cpp
         SI/src/sigrun/region/RegionMask.hpp
-        SI/src/sigrun/context/Capability.cpp
-        SI/src/sigrun/context/Capability.hpp
         SI/src/sigrun/region/Region.cpp
         SI/src/sigrun/region/Region.hpp
         SI/src/error/Error.hpp

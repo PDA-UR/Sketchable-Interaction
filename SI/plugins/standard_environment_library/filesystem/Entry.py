@@ -1,4 +1,4 @@
-from libPySI import PySIEffect, PySICapability
+from libPySI import PySIEffect
 
 
 class Entry(PySIEffect.PySIEffect):
@@ -34,16 +34,16 @@ class Entry(PySIEffect.PySIEffect):
         self.cap_emit = PySIEffect.String2_String2FunctionMap_Map()
 
         self.cap_recv = PySIEffect.String2_String2FunctionMap_Map({
-            "MOVE": {"on_enter": self.on_move_enter_recv, "on_continuous": self.on_move_continuous_recv, "on_leave": self.on_move_leave_recv}
+            Entry.MOVE: {Entry.ON_ENTER: self.on_move_enter_recv, Entry.ON_CONTINUOUS: self.on_move_continuous_recv, Entry.ON_LEAVE: self.on_move_leave_recv}
         })
 
         if self.is_child:
-            self.cap_recv["PARENT"] = {"on_enter": self.on_parent_enter_recv, "on_continuous": None, "on_leave": self.on_parent_leave_recv}
+            self.cap_recv[Entry.PARENT] = {Entry.ON_ENTER: self.on_parent_enter_recv, Entry.ON_CONTINUOUS: None, Entry.ON_LEAVE: self.on_parent_leave_recv}
 
         self.cap_link_emit = PySIEffect.String2FunctionMap()
 
         self.cap_link_recv = PySIEffect.String2_String2FunctionMap_Map({
-            "__position__": {"__position__": self.set_position_from_position}
+            Entry.POSITION: {Entry.POSITION: self.set_position_from_position}
         })
 
     def set_position_from_position(self, rel_x, rel_y):
@@ -77,7 +77,7 @@ class Entry(PySIEffect.PySIEffect):
         return 0
 
     def on_parent_enter_recv(self, parent_id):
-        self.link_relations.append([parent_id, "__position__", self._uuid, "__position__"])
+        self.link_relations.append([parent_id, Entry.POSITION, self._uuid, Entry.POSITION])
 
         return 0
 
@@ -85,9 +85,9 @@ class Entry(PySIEffect.PySIEffect):
         self.is_child = False
 
         if self.region_type == int(PySIEffect.EffectType.SI_DIRECTORY):
-            self.cap_emit["PARENT"] = {"on_enter": self.on_child_enter_emit, "on_continuous": None, "on_leave": self.on_child_leave_emit}
+            self.cap_emit[Entry.PARENT] = {Entry.ON_ENTER: self.on_child_enter_emit, Entry.ON_CONTINUOUS: None, Entry.ON_LEAVE: self.on_child_leave_emit}
 
-        lr = PySIEffect.LinkRelation(parent_id, "__position__", self._uuid, "__position__")
+        lr = PySIEffect.LinkRelation(parent_id, Entry.POSITION, self._uuid, Entry.POSITION)
 
         if lr in self.link_relations:
             del self.link_relations[self.link_relations.index(lr)]

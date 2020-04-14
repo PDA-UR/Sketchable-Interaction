@@ -4,7 +4,6 @@
 #define SITEST_CONTEXT_HPP
 
 #include <sigrun/SIObject.hpp>
-#include "Capability.hpp"
 #include <unordered_map>
 #include <memory>
 #include <QWindow>
@@ -29,7 +28,6 @@ public:
     void begin(const std::unordered_map<std::string, std::unique_ptr<bp::object>>& plugins, IRenderEngine* ire, int argc, char** argv);
     void end();
 
-    Capability* capability_manager();
     RegionManager* region_manager();
     InputManager* input_manager();
     CollisionManager* collision_manager();
@@ -81,7 +79,6 @@ private:
     std::string d_canvas_uuid;
     std::string d_notification_uuid;
 
-    std::unique_ptr<Capability> upcm;
     std::unique_ptr<RegionManager> uprm;
     std::unique_ptr<LinkingManager> uplm;
     std::unique_ptr<InputManager> upim;
