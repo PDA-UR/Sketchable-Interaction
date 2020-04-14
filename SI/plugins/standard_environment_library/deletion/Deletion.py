@@ -22,16 +22,16 @@ class Deletion(PySIEffect.PySIEffect):
         self.add_data("img_path", "res/deletion.png", PySIEffect.DataType.STRING)
 
         self.cap_emit = PySIEffect.String2_String2FunctionMap_Map({
-            Deletion.DELETION: {Deletion.ON_ENTER: self.on_deletion_enter_emit, Deletion.ON_CONTINUOUS: self.on_deletion_continuous_emit, Deletion.ON_LEAVE: self.on_deletion_enter_emit}
+            PySIEffect.DELETION: {PySIEffect.ON_ENTER: self.on_deletion_enter_emit, PySIEffect.ON_CONTINUOUS: self.on_deletion_continuous_emit, PySIEffect.ON_LEAVE: self.on_deletion_enter_emit}
         })
 
         self.cap_recv = PySIEffect.String2_String2FunctionMap_Map({
-            Deletion.MOVE: {Deletion.ON_ENTER: self.on_move_enter_recv, Deletion.ON_CONTINUOUS: self.on_move_continuous_recv, Deletion.ON_LEAVE: self.on_move_leave_recv},
-            Deletion.DELETION: {Deletion.ON_ENTER: None, Deletion.ON_CONTINUOUS: None, Deletion.ON_LEAVE: None}
+            PySIEffect.MOVE: {PySIEffect.ON_ENTER: self.on_move_enter_recv, PySIEffect.ON_CONTINUOUS: self.on_move_continuous_recv, PySIEffect.ON_LEAVE: self.on_move_leave_recv},
+            PySIEffect.DELETION: {PySIEffect.ON_ENTER: None, PySIEffect.ON_CONTINUOUS: None, PySIEffect.ON_LEAVE: None}
         })
 
         self.cap_link_recv = PySIEffect.String2_String2FunctionMap_Map({
-            Deletion.POSITION: {Deletion.POSITION: self.set_position_from_position}
+            PySIEffect.POSITION: {PySIEffect.POSITION: self.set_position_from_position}
         })
 
         self.link_relations = PySIEffect.LinkRelationVector()

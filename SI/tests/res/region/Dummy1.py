@@ -15,23 +15,23 @@ class Dummy1(PySIEffect.PySIEffect):
         self.y = 0
 
         self.cap_emit = PySIEffect.String2_String2FunctionMap_Map({
-            "TEST1": {Dummy1.ON_ENTER: self.test_on_enter_emit, Dummy1.ON_CONTINUOUS: self.test_on_continuous_emit, Dummy1.ON_LEAVE: self.test_on_leave_emit}
+            "TEST1": {PySIEffect.ON_ENTER: self.test_on_enter_emit, PySIEffect.ON_CONTINUOUS: self.test_on_continuous_emit, PySIEffect.ON_LEAVE: self.test_on_leave_emit}
         })
 
         self.cap_recv = PySIEffect.String2_String2FunctionMap_Map({
-            "TEST2": {Dummy1.ON_ENTER: self.test_on_enter_recv, Dummy1.ON_CONTINUOUS: self.test_on_continuous_recv, Dummy1.ON_LEAVE: self.test_on_leave_recv}
+            "TEST2": {PySIEffect.ON_ENTER: self.test_on_enter_recv, PySIEffect.ON_CONTINUOUS: self.test_on_continuous_recv, PySIEffect.ON_LEAVE: self.test_on_leave_recv}
         })
 
         self.cap_link_emit = PySIEffect.String2FunctionMap({
-            Dummy1.POSITION: self.position,
-            Dummy1.ROTATION: self.rotation
+            PySIEffect.POSITION: self.position,
+            PySIEffect.ROTATION: self.rotation
         })
 
         self.cap_link_recv = PySIEffect.String2_String2FunctionMap_Map({
-            Dummy1.POSITION: {Dummy1.POSITION: self.set_position_from_position},
-            Dummy1.COLOR: {Dummy1.POSITION: self.set_position_from_color},
-            Dummy1.SCALE: {Dummy1.POSITION: self.set_position_from_scale},
-            Dummy1.ROTATION: {Dummy1.ROTATION: self.set_rotation_from_rotation}
+            PySIEffect.POSITION: {PySIEffect.POSITION: self.set_position_from_position},
+            PySIEffect.COLOR: {PySIEffect.POSITION: self.set_position_from_color},
+            PySIEffect.SCALE: {PySIEffect.POSITION: self.set_position_from_scale},
+            PySIEffect.ROTATION: {PySIEffect.ROTATION: self.set_rotation_from_rotation}
         })
 
     def __repr__(self):

@@ -23,18 +23,18 @@ class OpenEntry(PySIEffect.PySIEffect):
             self.add_data("img_path", "res/open_entry.png", PySIEffect.DataType.STRING)
 
         self.cap_emit = PySIEffect.String2_String2FunctionMap_Map({
-            OpenEntry.OPEN_ENTRY: {OpenEntry.ON_ENTER: self.on_open_entry_enter_emit, OpenEntry.ON_CONTINUOUS: self.on_open_entry_enter_emit, OpenEntry.ON_LEAVE: self.on_open_entry_enter_emit}
+            PySIEffect.OPEN_ENTRY: {PySIEffect.ON_ENTER: self.on_open_entry_enter_emit, PySIEffect.ON_CONTINUOUS: self.on_open_entry_enter_emit, PySIEffect.ON_LEAVE: self.on_open_entry_enter_emit}
         })
 
         self.cap_recv = PySIEffect.String2_String2FunctionMap_Map({
-            OpenEntry.MOVE: {OpenEntry.ON_ENTER: self.on_move_enter_recv, OpenEntry.ON_CONTINUOUS: self.on_move_continuous_recv, OpenEntry.ON_LEAVE: self.on_move_leave_recv},
-            OpenEntry.DELETION: {OpenEntry.ON_ENTER: None, OpenEntry.ON_CONTINUOUS: None, OpenEntry.ON_LEAVE: None}
+            PySIEffect.MOVE: {PySIEffect.ON_ENTER: self.on_move_enter_recv, PySIEffect.ON_CONTINUOUS: self.on_move_continuous_recv, PySIEffect.ON_LEAVE: self.on_move_leave_recv},
+            PySIEffect.DELETION: {PySIEffect.ON_ENTER: None, PySIEffect.ON_CONTINUOUS: None, PySIEffect.ON_LEAVE: None}
         })
 
         self.cap_link_emit = PySIEffect.String2FunctionMap()
 
         self.cap_link_recv = PySIEffect.String2_String2FunctionMap_Map({
-            OpenEntry.POSITION: {OpenEntry.POSITION: self.set_position_from_position}
+            PySIEffect.POSITION: {PySIEffect.POSITION: self.set_position_from_position}
         })
 
     def set_position_from_position(self, rel_x, rel_y):
