@@ -16,7 +16,7 @@ class TextFile(Entry.Entry):
         self.add_data("color", self.text_color, PySIEffect.DataType.STRING)
         self.add_data("name", self.filename, PySIEffect.DataType.STRING)
 
-        self.cap_recv[TextFile.OPEN_ENTRY] = {TextFile.ON_ENTER: self.on_open_entry_enter_recv, TextFile.ON_CONTINUOUS: self.on_open_entry_continuous_recv, TextFile.ON_LEAVE: self.on_open_entry_leave_recv}
+        self.cap_recv[PySIEffect.OPEN_ENTRY] = {PySIEffect.ON_ENTER: self.on_open_entry_enter_recv, PySIEffect.ON_CONTINUOUS: self.on_open_entry_continuous_recv, PySIEffect.ON_LEAVE: self.on_open_entry_leave_recv}
 
     def on_open_entry_enter_recv(self):
         return 0

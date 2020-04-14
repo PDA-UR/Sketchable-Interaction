@@ -32,19 +32,19 @@ class Button(PySIEffect.PySIEffect):
         self.cap_emit = PySIEffect.String2_String2FunctionMap_Map({
         })
 
-        self.cap_emit[Button.BTN] = {Button.ON_ENTER: self.on_btn_enter_emit, Button.ON_CONTINUOUS: self.on_btn_continuous_emit, Button.ON_LEAVE: self.on_btn_leave_emit}
+        self.cap_emit[PySIEffect.BTN] = {PySIEffect.ON_ENTER: self.on_btn_enter_emit, PySIEffect.ON_CONTINUOUS: self.on_btn_continuous_emit, PySIEffect.ON_LEAVE: self.on_btn_leave_emit}
 
         self.cap_recv = PySIEffect.String2_String2FunctionMap_Map({
-            Button.CLICK: {Button.ON_ENTER: self.on_click_enter_recv, Button.ON_CONTINUOUS: self.on_click_continuous_recv, Button.ON_LEAVE: self.on_click_leave_recv}
+            PySIEffect.CLICK: {PySIEffect.ON_ENTER: self.on_click_enter_recv, PySIEffect.ON_CONTINUOUS: self.on_click_continuous_recv, PySIEffect.ON_LEAVE: self.on_click_leave_recv}
         })
 
-        self.cap_recv[Button.PARENT] = {Button.ON_ENTER: self.on_parent_enter_recv, Button.ON_CONTINUOUS: None, Button.ON_LEAVE: self.on_parent_leave_recv}
+        self.cap_recv[PySIEffect.PARENT] = {PySIEffect.ON_ENTER: self.on_parent_enter_recv, PySIEffect.ON_CONTINUOUS: None, PySIEffect.ON_LEAVE: self.on_parent_leave_recv}
 
         self.cap_link_emit = PySIEffect.String2FunctionMap({
         })
 
         self.cap_link_recv = PySIEffect.String2_String2FunctionMap_Map({
-            Button.POSITION: {Button.POSITION: self.set_position_from_position}
+            PySIEffect.POSITION: {PySIEffect.POSITION: self.set_position_from_position}
         })
 
     def set_position_from_position(self, rel_x, rel_y):
@@ -84,12 +84,12 @@ class Button(PySIEffect.PySIEffect):
         return 0
 
     def on_parent_enter_recv(self, parent_id):
-        self.link_relations.append([parent_id, Button.POSITION, self._uuid, Button.POSITION])
+        self.link_relations.append([parent_id, PySIEffect.POSITION, self._uuid, PySIEffect.POSITION])
 
         return 0
 
     def on_parent_leave_recv(self, parent_id):
-        lr = PySIEffect.LinkRelation(parent_id, Button.POSITION, self._uuid, Button.POSITION)
+        lr = PySIEffect.LinkRelation(parent_id, PySIEffect.POSITION, self._uuid, PySIEffect.POSITION)
 
         if lr in self.link_relations:
             del self.link_relations[self.link_relations.index(lr)]

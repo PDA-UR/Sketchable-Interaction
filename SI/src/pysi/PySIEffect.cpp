@@ -6,24 +6,6 @@
 
 namespace bp = boost::python;
 
-std::string PySIEffect::d_on_enter = "on_enter";
-std::string PySIEffect::d_on_continuous = "on_continuous";
-std::string PySIEffect::d_on_leave = "on_leave";
-
-std::string PySIEffect::d_position_link_id = "__SI_position__";
-std::string PySIEffect::d_scale_link_id = "__SI_scale__";
-std::string PySIEffect::d_rotation_link_id = "__SI_rotation__";
-std::string PySIEffect::d_geometry_link_id = "__SI_geometry__";
-std::string PySIEffect::d_color_link_id = "__SI_color__";
-
-std::string PySIEffect::d_collision_capapbility_move_id = "__SI_MOVE__";
-std::string PySIEffect::d_collision_capapbility_btn_id = "__SI_BTN__";
-std::string PySIEffect::d_collision_capapbility_click_id = "__SI_CLICK__";
-std::string PySIEffect::d_collision_capapbility_parent_id = "__SI_PARENT__";
-std::string PySIEffect::d_collision_capapbility_sketch_id = "__SI_SKETCH__";
-std::string PySIEffect::d_collision_capapbility_deletion_id = "__SI_DELETION__";
-std::string PySIEffect::d_collision_capapbility_open_entry_id = "__SI_OPEN_ENTRY__";
-
 void PySIEffect::init(const std::vector<glm::vec3>& contour, const std::vector<glm::vec3>& aabb, const std::string& uuid, const bp::dict& kwargs)
 {
     d_contour = contour;
@@ -305,25 +287,25 @@ BOOST_PYTHON_MODULE(libPySI)
     create_map<MapExposureString2Function, std::map<std::string, bp::object>>("String2FunctionMap");
     create_map<MapExposureString2_String2FunctionMap_Map, std::map<std::string, std::map<std::string, bp::object>>>("String2_String2FunctionMap_Map");
 
+    bp::scope().attr("ON_ENTER") = SI_COLLISION_EVENT_ON_ENTER;
+    bp::scope().attr("ON_CONTINUOUS") = SI_COLLISION_EVENT_ON_CONTINUOUS;
+    bp::scope().attr("ON_LEAVE") = SI_COLLISION_EVENT_ON_LEAVE;
+
+    bp::scope().attr("MOVE") = SI_CAPABILITY_COLLISION_MOVE;
+    bp::scope().attr("BTN") = SI_CAPABILITY_COLLISION_BUTTON;
+    bp::scope().attr("OPEN_ENTRY") = SI_CAPABILITY_COLLISION_OPEN_ENTRY;
+    bp::scope().attr("PARENT") = SI_CAPABILITY_COLLISION_PARENT;
+    bp::scope().attr("SKETCH") = SI_CAPABILITY_COLLISION_SKETCH;
+    bp::scope().attr("CLICK") = SI_CAPABILITY_COLLISION_CLICK;
+    bp::scope().attr("DELETION") = SI_CAPABILITY_COLLISION_DELETION;
+
+    bp::scope().attr("POSITION") = SI_CAPABILITY_LINK_POSITION;
+    bp::scope().attr("ROTATION") = SI_CAPABILITY_LINK_ROTATION;
+    bp::scope().attr("SCALE") = SI_CAPABILITY_LINK_SCALE;
+    bp::scope().attr("COLOR") = SI_CAPABILITY_LINK_COLOR;
+    bp::scope().attr("GEOMETRY") = SI_CAPABILITY_LINK_GEOMETRY;
+
     bp::class_<PySIEffect, boost::noncopyable>("PySIEffect", bp::init<>())
-        .add_static_property("ON_ENTER", bp::make_getter(&PySIEffect::d_on_enter))
-        .add_static_property("ON_CONTINUOUS", bp::make_getter(&PySIEffect::d_on_continuous))
-        .add_static_property("ON_LEAVE", bp::make_getter(&PySIEffect::d_on_leave))
-
-        .add_static_property("POSITION", bp::make_getter(&PySIEffect::d_position_link_id))
-        .add_static_property("SCALE", bp::make_getter(&PySIEffect::d_scale_link_id))
-        .add_static_property("ROTATION", bp::make_getter(&PySIEffect::d_rotation_link_id))
-        .add_static_property("GEOMETRY", bp::make_getter(&PySIEffect::d_geometry_link_id))
-        .add_static_property("COLOR", bp::make_getter(&PySIEffect::d_color_link_id))
-
-        .add_static_property("MOVE", bp::make_getter(&PySIEffect::d_collision_capapbility_move_id))
-        .add_static_property("BTN", bp::make_getter(&PySIEffect::d_collision_capapbility_btn_id))
-        .add_static_property("CLICK", bp::make_getter(&PySIEffect::d_collision_capapbility_click_id))
-        .add_static_property("PARENT", bp::make_getter(&PySIEffect::d_collision_capapbility_parent_id))
-        .add_static_property("SKETCH", bp::make_getter(&PySIEffect::d_collision_capapbility_sketch_id))
-        .add_static_property("DELETION", bp::make_getter(&PySIEffect::d_collision_capapbility_deletion_id))
-        .add_static_property("OPEN_ENTRY", bp::make_getter(&PySIEffect::d_collision_capapbility_open_entry_id))
-
         .def("__init__", bp::make_constructor(&PySIEffect::init, bp::default_call_policies(), (bp::arg("shape")=std::vector<glm::vec3>(), bp::arg("aabb")=std::vector<glm::vec3>(), bp::arg("uuid")=std::string(), bp::arg("kwargs")=bp::dict())))
         .def("add_data", &PySIEffect::__add_data__)
         .def("notify_shape_changed", &PySIEffect::notify_shape_changed)

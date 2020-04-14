@@ -24,12 +24,12 @@ class Tag(PySIEffect.PySIEffect):
 
         self.cap_emit = PySIEffect.String2_String2FunctionMap_Map()
         self.cap_recv = PySIEffect.String2_String2FunctionMap_Map({
-            Tag.MOVE: {Tag.ON_ENTER: self.on_move_enter_recv, Tag.ON_CONTINUOUS: self.on_move_continuous_recv, Tag.ON_LEAVE: self.on_move_leave_recv},
-            Tag.DELETION: {Tag.ON_ENTER: None, Tag.ON_CONTINUOUS: None, Tag.ON_LEAVE: None}
+            PySIEffect.MOVE: {PySIEffect.ON_ENTER: self.on_move_enter_recv, PySIEffect.ON_CONTINUOUS: self.on_move_continuous_recv, PySIEffect.ON_LEAVE: self.on_move_leave_recv},
+            PySIEffect.DELETION: {PySIEffect.ON_ENTER: None, PySIEffect.ON_CONTINUOUS: None, PySIEffect.ON_LEAVE: None}
         })
 
         self.cap_link_recv = PySIEffect.String2_String2FunctionMap_Map({
-            Tag.POSITION: {Tag.POSITION: self.set_position_from_position}
+            PySIEffect.POSITION: {PySIEffect.POSITION: self.set_position_from_position}
         })
 
         self.link_relations = PySIEffect.LinkRelationVector()

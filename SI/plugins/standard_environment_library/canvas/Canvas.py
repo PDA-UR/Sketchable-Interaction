@@ -17,7 +17,8 @@ class Canvas(PySIEffect.PySIEffect):
         self.cap_emit = PySIEffect.String2_String2FunctionMap_Map()
 
         self.cap_recv = PySIEffect.String2_String2FunctionMap_Map({
-            Canvas.SKETCH: {Canvas.ON_ENTER: self.on_sketch_enter_recv, Canvas.ON_CONTINUOUS: self.on_sketch_continuous_recv, Canvas.ON_LEAVE: self.on_sketch_leave_recv}
+            PySIEffect.SKETCH: {PySIEffect.ON_ENTER: self.on_sketch_enter_recv, PySIEffect.ON_CONTINUOUS: self.on_sketch_continuous_recv,
+                                PySIEffect.ON_LEAVE: self.on_sketch_leave_recv}
         })
 
     def on_sketch_enter_recv(self, x, y, sender_id):

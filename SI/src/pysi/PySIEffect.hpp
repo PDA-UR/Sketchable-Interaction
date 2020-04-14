@@ -74,24 +74,6 @@ public:
     std::string d_qml_path = "";
     std::string d_source = "";
 
-    static std::string d_on_enter;
-    static std::string d_on_continuous;
-    static std::string d_on_leave;
-
-    static std::string d_position_link_id;
-    static std::string d_scale_link_id;
-    static std::string d_rotation_link_id;
-    static std::string d_geometry_link_id;
-    static std::string d_color_link_id;
-
-    static std::string d_collision_capapbility_move_id;
-    static std::string d_collision_capapbility_btn_id;
-    static std::string d_collision_capapbility_click_id;
-    static std::string d_collision_capapbility_parent_id;
-    static std::string d_collision_capapbility_sketch_id;
-    static std::string d_collision_capapbility_deletion_id;
-    static std::string d_collision_capapbility_open_entry_id;
-
     const std::string& name() const;
     const std::string& qml_path() const;
     const std::string& source() const;
