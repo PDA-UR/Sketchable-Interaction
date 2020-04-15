@@ -93,8 +93,7 @@ set(SIGRunSRC
         SI/src/sigrun/context/managers/LinkingManager.hpp
         SI/src/sigrun/context/managers/helpers/linking/Link.cpp
         SI/src/sigrun/context/managers/helpers/linking/Link.hpp
-        SI/src/sigrun/context/managers/helpers/linking/LinkingGraph.cpp
-        SI/src/sigrun/context/managers/helpers/linking/LinkingGraph.hpp
+        SI/src/sigrun/context/managers/helpers/linking/LinkCandidate.hpp
         SI/src/sigrun/context/managers/InputManager.cpp
         SI/src/sigrun/context/managers/InputManager.hpp
         SI/src/sigrun/context/managers/helpers/input/ExternalObject.cpp

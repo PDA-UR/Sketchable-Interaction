@@ -5,7 +5,7 @@ import Entry
 class TextFile(Entry.Entry):
     def __init__(self, shape=PySIEffect.PointVector(), aabb=PySIEffect.PointVector(), uuid="", kwargs={}):
         super(TextFile, self).__init__(shape, aabb, uuid, kwargs)
-        self.name = "stdSITextFile"
+        self.name = PySIEffect.SI_STD_NAME_TEXTFILE
         self.region_type = PySIEffect.EffectType.SI_TEXT_FILE
         self.qml_path = "plugins/standard_environment_library/filesystem/TextFile.qml"
 

@@ -70,12 +70,12 @@ TEST_F(SIGRunLinkingManagerTest, link_creation_uni)
     ASSERT_TRUE(lm.add_link(b, SI_CAPABILITY_LINK_POSITION, c, SI_CAPABILITY_LINK_POSITION, ILink::LINK_TYPE::UD));
     ASSERT_TRUE(lm.add_link(c, SI_CAPABILITY_LINK_POSITION, a, SI_CAPABILITY_LINK_POSITION, ILink::LINK_TYPE::UD));
 
-    ASSERT_FALSE(lm.linking_graph()->links().empty());
+    ASSERT_FALSE(lm.links().empty());
 
-    ASSERT_TRUE(lm.linking_graph()->links().size() == 3);
-    ASSERT_TRUE(lm.linking_graph()->links()[0]->sender_a()->uuid() == a->uuid());
-    ASSERT_TRUE(lm.linking_graph()->links()[1]->sender_a()->uuid() == b->uuid());
-    ASSERT_TRUE(lm.linking_graph()->links()[2]->sender_a()->uuid() == c->uuid());
+    ASSERT_TRUE(lm.links().size() == 3);
+    ASSERT_TRUE(lm.links()[0]->sender_a()->uuid() == a->uuid());
+    ASSERT_TRUE(lm.links()[1]->sender_a()->uuid() == b->uuid());
+    ASSERT_TRUE(lm.links()[2]->sender_a()->uuid() == c->uuid());
 }
 
 TEST_F(SIGRunLinkingManagerTest, is_linked_uni)
@@ -256,12 +256,12 @@ TEST_F(SIGRunLinkingManagerTest, link_removal_uni)
     ASSERT_TRUE(lm->add_link(b, SI_CAPABILITY_LINK_POSITION, c, SI_CAPABILITY_LINK_POSITION, ILink::LINK_TYPE::UD));
     ASSERT_TRUE(lm->add_link(c, SI_CAPABILITY_LINK_POSITION, a, SI_CAPABILITY_LINK_POSITION, ILink::LINK_TYPE::UD));
 
-    ASSERT_FALSE(lm->linking_graph()->links().empty());
+    ASSERT_FALSE(lm->links().empty());
 
-    ASSERT_TRUE(lm->linking_graph()->links().size() == 3);
-    ASSERT_TRUE(lm->linking_graph()->links()[0]->sender_a()->uuid() == a->uuid());
-    ASSERT_TRUE(lm->linking_graph()->links()[1]->sender_a()->uuid() == b->uuid());
-    ASSERT_TRUE(lm->linking_graph()->links()[2]->sender_a()->uuid() == c->uuid());
+    ASSERT_TRUE(lm->links().size() == 3);
+    ASSERT_TRUE(lm->links()[0]->sender_a()->uuid() == a->uuid());
+    ASSERT_TRUE(lm->links()[1]->sender_a()->uuid() == b->uuid());
+    ASSERT_TRUE(lm->links()[2]->sender_a()->uuid() == c->uuid());
 
     lm->emit_link_event(a, SI_CAPABILITY_LINK_POSITION);
 

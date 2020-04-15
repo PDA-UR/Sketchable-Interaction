@@ -71,7 +71,7 @@ void RegionManager::activate_mouse_region_button_down(uint32_t mouse_btn)
 
 void RegionManager::deactivate_mouse_region_button_down(uint32_t mouse_btn)
 {
-    std::transform(std::execution::par_unseq, d_regions.begin(), d_regions.end(), d_regions.begin(), [mouse_btn](auto& region)
+    std::transform(std::execution::par, d_regions.begin(), d_regions.end(), d_regions.begin(), [mouse_btn](auto& region)
     {
         if(region->effect().effect_type() == SI_TYPE_MOUSE_CURSOR && region->effect().has_mouse_pressed_capability(mouse_btn))
         {
@@ -158,7 +158,7 @@ void RegionManager::update_region_deletions()
         if(!region->effect().is_flagged_for_deletion())
             return false;
 
-        Context::SIContext()->remove_all_partaking_linking_relations(region->uuid());
+        Context::SIContext()->linking_manager()->remove_all_partaking_linking_relations(region->uuid());
 
         return true;
     }), d_regions.end());

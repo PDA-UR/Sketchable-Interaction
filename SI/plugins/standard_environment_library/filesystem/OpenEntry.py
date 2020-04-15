@@ -7,7 +7,7 @@ class OpenEntry(PySIEffect.PySIEffect):
         self.shape = shape
         self.aabb = aabb
         self._uuid = uuid
-        self.name = "stdOFSE"
+        self.name = PySIEffect.SI_STD_NAME_OPEN_ENTRY
         self.region_type = PySIEffect.EffectType.SI_CUSTOM
         self.source = "libstdSI"
         self.qml_path = "plugins/standard_environment_library/filesystem/OpenEntry.qml"

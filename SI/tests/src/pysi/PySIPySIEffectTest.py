@@ -3,6 +3,7 @@ import sys
 
 from libPySI import PySIEffect
 
+
 class PySIPySIEffectTest(unittest.TestCase):
     def test(self):
         self.assertTrue(True, True)

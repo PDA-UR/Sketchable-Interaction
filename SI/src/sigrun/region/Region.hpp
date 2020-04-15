@@ -63,7 +63,7 @@ public:
     bool is_link_event_registered(const std::tuple<std::string, std::string>& link_event);
 
     const std::string& name() const;
-    const glm::vec4 color() const;
+    const glm::vec4& color() const;
     const uint16_t type() const;
     const uint32_t width() const;
     const uint32_t height() const;

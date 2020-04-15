@@ -371,9 +371,9 @@ public:
      *
      * @see LinkRelation
      */
-    static boost::shared_ptr<std::vector<LinkRelation>> init(const bp::list& list=bp::list())
+    static boost::shared_ptr<std::vector<LinkCandidate>> init(const bp::list& list=bp::list())
     {
-        auto self = boost::make_shared<std::vector<LinkRelation>>();
+        auto self = boost::make_shared<std::vector<LinkCandidate>>();
         self->reserve(bp::len(list));
 
         if(bp::len(list) > 0)
@@ -393,7 +393,7 @@ public:
      * @param self a vector of LinkRelation to receive a new LinkRelation
      * @param list a python list containing LinkRelation to be added to self
      */
-    static void add(std::vector<LinkRelation>& self, const bp::list& list)
+    static void add(std::vector<LinkCandidate>& self, const bp::list& list)
     {
         if(bp::len(list) > 0)
         {
@@ -413,7 +413,7 @@ public:
     * @param index the index of the value to be changed
     * @param list the list containing LinkRelation to be applied at the given index
     */
-    static void set(std::vector<LinkRelation>& self, uint32_t index, const bp::list& list)
+    static void set(std::vector<LinkCandidate>& self, uint32_t index, const bp::list& list)
     {
         if(index < 0)
             index += self.size();
@@ -427,7 +427,7 @@ public:
                 const char* recv = bp::extract<char*>(list[2]);
                 const char* recv_attrib = bp::extract<char*>(list[3]);
 
-                self[index] = LinkRelation(sender, sender_attrib, recv, recv_attrib);
+                self[index] = LinkCandidate(sender, sender_attrib, recv, recv_attrib);
             }
         }
         else
@@ -441,19 +441,19 @@ public:
      *
      * @return the std::string containing the vector's representation
      */
-    static const std::string repr(std::vector<LinkRelation>& self)
+    static const std::string repr(std::vector<LinkCandidate>& self)
     {
         return std::transform_reduce(std::execution::par, self.begin(), self.end(), std::string("["), [&](const std::string& a, const std::string& b)
         {
            return a + ", " + b;
-        }, [&](const LinkRelation& lr)
+        }, [&](const LinkCandidate& lr)
         {
             return "[" + lr.sender + ", " + lr.sender_attrib + ", " + lr.recv + ", " + lr.recv_attrib + "]";
         }) + "]";
     }
 
 private:
-    static void apply_lists_of_lists(boost::shared_ptr<std::vector<LinkRelation>>& self, const bp::list& list)
+    static void apply_lists_of_lists(boost::shared_ptr<std::vector<LinkCandidate>>& self, const bp::list& list)
     {
         for(uint32_t i = 0; i < bp::len(list); ++i)
         {
@@ -462,7 +462,7 @@ private:
         }
     }
 
-    static void apply_list(boost::shared_ptr<std::vector<LinkRelation>>& self, const bp::list& list)
+    static void apply_list(boost::shared_ptr<std::vector<LinkCandidate>>& self, const bp::list& list)
     {
         const char* sender = bp::extract<char*>(list[0]);
         const char* sender_attrib = bp::extract<char*>(list[1]);

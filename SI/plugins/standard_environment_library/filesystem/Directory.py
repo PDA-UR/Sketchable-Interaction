@@ -5,7 +5,7 @@ import Entry
 class Directory(Entry.Entry):
     def __init__(self, shape=PySIEffect.PointVector(), aabb=PySIEffect.PointVector(), uuid="", kwargs={}):
         super(Directory, self).__init__(shape, aabb, uuid, kwargs)
-        self.name = "stdSIDir"
+        self.name = PySIEffect.SI_STD_NAME_DIRECTORY
         self.region_type = PySIEffect.EffectType.SI_DIRECTORY
         self.qml_path = "plugins/standard_environment_library/filesystem/Directory.qml"
         self.preview_width = 400

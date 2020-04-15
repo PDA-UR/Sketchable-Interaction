@@ -101,8 +101,11 @@ void Core::retrieve_available_plugins(std::unordered_map<std::string, std::uniqu
 
         std::transform(classes.begin(), classes.end(), classes.begin(), [&script, &module_name, &rpath, &plugins](auto& clazz)
         {
-            plugins[clazz] = std::make_unique<bp::object>(script.si_plugin(module_name, rpath, clazz));
+            bp::object obj = script.si_plugin(module_name, rpath, clazz);
 
+            const char* name = bp::extract<char*>(obj.attr("name"));
+
+            plugins[std::string(name)] = std::make_unique<bp::object>(obj);
             return clazz;
         });
 
