@@ -7,7 +7,7 @@ class Button(PySIEffect.PySIEffect):
         self.shape = shape
         self.aabb = aabb
         self._uuid = uuid
-        self.name = "stdButton"
+        self.name = PySIEffect.SI_STD_NAME_BUTTON
         self.region_type = PySIEffect.EffectType.SI_BUTTON
         self.source = "libStdSI"
         self.qml_path = "plugins/standard_environment_library/button/Button.qml"

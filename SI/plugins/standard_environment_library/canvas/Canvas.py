@@ -7,7 +7,7 @@ class Canvas(PySIEffect.PySIEffect):
         self.shape = shape
         self.aabb = aabb
         self._uuid = uuid
-        self.name = "stdCanvas"
+        self.name = PySIEffect.SI_STD_NAME_CANVAS
         self.region_type = PySIEffect.EffectType.SI_CANVAS
         self.source = "libstdSI"
         self.qml_path = ""

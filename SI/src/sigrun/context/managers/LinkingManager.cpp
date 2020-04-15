@@ -6,8 +6,7 @@
 #include <execution>
 #include <algorithm>
 
-LinkingManager::LinkingManager():
-        d_linking_graph(std::make_unique<LinkingGraph>())
+LinkingManager::LinkingManager()
 {
     qRegisterMetaType<std::string>("std::string");
 }
@@ -16,7 +15,7 @@ LinkingManager::~LinkingManager()
 {
     INFO("Destroying LinkingManager...");
 
-    INFO("Destroying LinkingManager...");
+    INFO("LinkingManager destroyed...");
 }
 
 bool LinkingManager::add_link(const std::shared_ptr<Region> &ra, const std::string& aa, const std::shared_ptr<Region> &rb, const std::string &ab, const ILink::LINK_TYPE &type)
@@ -58,7 +57,8 @@ bool LinkingManager::add_link(const std::shared_ptr<Region> &ra, const std::stri
 
                 if(success)
                 {
-                    d_linking_graph->add_link(ra, aa, rb, ab, type);
+                    d_links.push_back(std::make_shared<UnidirectionalLink>(ra, rb, aa, ab));
+
                     INFO("Establishing Unidirectional Link Successfull!");
                 }
                 else
@@ -82,6 +82,8 @@ bool LinkingManager::add_link(const std::shared_ptr<Region> &ra, const std::stri
         {
             INFO("Requested linking relationship is already present!");
 
+            d_links.push_back(std::make_shared<BidirectionalLink>(ra, rb, aa, ab));
+
             return true;
         }
 
@@ -94,16 +96,45 @@ bool LinkingManager::add_link(const std::shared_ptr<Region> &ra, const std::stri
     return false;
 }
 
-void LinkingManager::add_link_to_object(std::shared_ptr<Region> &a, const ExternalObject::ExternalObjectType &type)
+void LinkingManager::add_link(std::shared_ptr<ExternalObject>& eo, std::shared_ptr<Region> &a, const std::string& ea, const std::string& aa)
 {
-    connect(Context::SIContext()->input_manager()->external_objects()[a->uuid()].get(), &ExternalObject::LINK_SIGNAL, a.get(), &Region::LINK_SLOT, Qt::UniqueConnection);
+    if(is_linked(eo, ea, a, aa))
+        return;
+
+    disconnect(eo.get(), &ExternalObject::LINK_SIGNAL, a.get(), &Region::LINK_SLOT);
+    if(connect(eo.get(), &ExternalObject::LINK_SIGNAL, a.get(), &Region::LINK_SLOT, Qt::UniqueConnection))
+    {
+        d_links.push_back(std::make_shared<UnidirectionalLink>(Context::SIContext()->input_manager()->external_objects()[a->uuid()], a, ea, aa));
+
+        INFO("Establishing unidirectional link to external object successfull!");
+    }
+    else
+    {
+        INFO("Establishing unidirectional link to external object failed!");
+    }
+}
+
+void LinkingManager::remove_link(std::shared_ptr<ExternalObject>& eo, std::shared_ptr<Region> &a, const std::string &ea, const std::string &aa)
+{
+    if(is_linked(eo, ea, a, aa))
+    {
+        disconnect(eo.get(), &ExternalObject::LINK_SIGNAL, a.get(), &Region::LINK_SLOT);
+
+        d_links.erase(std::remove_if(std::execution::par_unseq, d_links.begin(), d_links.end(), [&](auto &link)
+        {
+            return (link->attribute_a() == ea &&
+                    link->attribute_b() == aa &&
+                    link->external_sender_a()->uuid() == eo->uuid() &&
+                    link->receiver_b()->uuid() == a->uuid());
+        }), d_links.end());
+    }
 }
 
 void LinkingManager::remove_links_by_indices(std::vector<uint32_t>& indices)
 {
     std::transform(std::execution::par_unseq, indices.begin(), indices.end(), indices.begin(), [&](uint32_t i)
     {
-        remove_link(d_linking_graph->links()[i]->sender_a(), d_linking_graph->links()[i]->attribute_a(), d_linking_graph->links()[i]->receiver_b(), d_linking_graph->links()[i]->attribute_b(), ILink::LINK_TYPE::UD);
+        remove_link(d_links[i]->sender_a(), d_links[i]->attribute_a(), d_links[i]->receiver_b(), d_links[i]->attribute_b(), ILink::LINK_TYPE::UD);
         return i;
     });
 }
@@ -116,15 +147,47 @@ void LinkingManager::remove_link(const std::shared_ptr<Region> &ra, const std::s
         {
             INFO("Requested Deletion of UD Link between " + ra->name() + " and " + rb->name());
             disconnect(ra.get(), &Region::LINK_SIGNAL, rb.get(), &Region::LINK_SLOT);
-            d_linking_graph->remove_link(ra, aa, rb, ab, type);
+
+            d_links.erase(std::remove_if(std::execution::par_unseq, d_links.begin(), d_links.end(),[&](auto& link)
+            {
+                if(link->is_external())
+                    return false;
+
+                return (link->attribute_a() == aa &&
+                        link->attribute_b() == ab &&
+                        link->sender_a()->uuid() == ra->uuid() &&
+                        link->receiver_b()->uuid() == rb->uuid() &&
+                        link->sender_b()->uuid() == rb->uuid() &&
+                        link->receiver_a()->uuid() == ra->uuid());
+            }), d_links.end());
+
             INFO("Requested Deletion of UD Link successful!");
         }
         else if(type == ILink::LINK_TYPE ::BD)
         {
+            INFO("Requested Deletion of BD Link between " + ra->name() + " and " + rb->name());
+
             disconnect(ra.get(), &Region::LINK_SIGNAL, rb.get(), &Region::LINK_SLOT);
             disconnect(rb.get(), &Region::LINK_SIGNAL, ra.get(), &Region::LINK_SLOT);
-            d_linking_graph->remove_link(ra, aa, rb, ab, ILink::LINK_TYPE::UD);
-            d_linking_graph->remove_link(rb, ab, ra, aa, ILink::LINK_TYPE::UD);
+
+            d_links.erase(std::remove_if(std::execution::par_unseq, d_links.begin(), d_links.end(),[&](auto& link)
+            {
+                return ((link->attribute_a() == aa &&
+                         link->attribute_b() == ab &&
+                         link->sender_a()->uuid() == ra->uuid() &&
+                         link->receiver_b()->uuid() == rb->uuid() &&
+                         link->sender_b()->uuid() == rb->uuid() &&
+                         link->receiver_a()->uuid() == ra->uuid()) ||
+                        (link->attribute_a() == ab &&
+                         link->attribute_b() == aa &&
+                         link->sender_a()->uuid() == rb->uuid() &&
+                         link->receiver_b()->uuid() == ra->uuid() &&
+                         link->sender_b()->uuid() == ra->uuid() &&
+                         link->receiver_a()->uuid() == rb->uuid()));
+            }), d_links.end());
+
+            INFO("Requested Deletion of BD Link successful!");
+
         }
     }
 }
@@ -136,25 +199,181 @@ bool LinkingManager::is_linked(const std::shared_ptr<Region>& ra, const std::str
 
 bool LinkingManager::is_linked(const std::string& ra_uuid, const std::string& aa, const std::string& rb_uuid, const std::string& ab, const ILink::LINK_TYPE& type)
 {
-    return d_linking_graph->is_linked(ra_uuid, aa, rb_uuid, ab, type);
+    return std::transform_reduce(std::execution::par_unseq, d_links.begin(), d_links.end(), false, [](bool a, bool b)
+    {
+        return a || b;
+    }, [&](auto& link)
+    {
+        if(link->is_external())
+            return false;
+
+        return type == ILink::LINK_TYPE::UD ? (link->attribute_a() == aa &&
+                                                 link->attribute_b() == ab &&
+                                                 link->sender_a()->uuid() == ra_uuid &&
+                                                 link->receiver_b()->uuid() == rb_uuid &&
+                                                 link->sender_b()->uuid() == rb_uuid &&
+                                                 link->receiver_a()->uuid() == ra_uuid)
+                                                 :
+                                                (link->attribute_a() == aa &&
+                                                 link->attribute_b() == ab &&
+                                                 link->sender_a()->uuid() == ra_uuid &&
+                                                 link->receiver_b()->uuid() == rb_uuid &&
+                                                 link->sender_b()->uuid() == rb_uuid &&
+                                                 link->receiver_a()->uuid() == ra_uuid) ||
+                                                (link->attribute_a() == ab &&
+                                                 link->attribute_b() == aa &&
+                                                 link->sender_a()->uuid() == rb_uuid &&
+                                                 link->receiver_b()->uuid() == ra_uuid &&
+                                                 link->sender_b()->uuid() == ra_uuid &&
+                                                 link->receiver_a()->uuid() == rb_uuid);
+    });
+}
+
+bool LinkingManager::is_linked(const std::shared_ptr<ExternalObject> &eo, const std::string &ea, const std::shared_ptr<Region> &ra, const std::string &aa)
+{
+    return is_linked(eo->uuid(), ea, ra->uuid(), aa);
+}
+
+bool LinkingManager::is_linked(const std::string &eo_uuid, const std::string &ea, const std::string &ra_uuid, const std::string &aa)
+{
+    return std::transform_reduce(std::execution::par_unseq, d_links.begin(), d_links.end(), false, [](bool a, bool b)
+    {
+        return a || b;
+    }, [&](auto& link)
+    {
+        if (!link->is_external())
+            return false;
+
+        return (link->attribute_a() == ea &&
+                link->attribute_b() == aa &&
+                link->external_sender_a()->uuid() == eo_uuid &&
+                link->receiver_b()->uuid() == ra_uuid);
+    });
 }
 
 void LinkingManager::emit_link_event(std::shared_ptr<Region> &a, const std::string &attr_a)
 {
-    d_linking_graph->emit_link_event(a, attr_a);
+    const std::string uuid_event = _UUID_;
+
+    const bp::tuple &args = bp::extract<bp::tuple>(a->effect().attr_link_emit()[attr_a]());
+
+    a->register_link_event({uuid_event, attr_a});
+
+    Q_EMIT a->LINK_SIGNAL(uuid_event, a->uuid(), attr_a, args);
 }
 
 const std::vector<std::shared_ptr<ILink>>& LinkingManager::links() const
 {
-    return d_linking_graph->links();
-}
-
-const std::unique_ptr<LinkingGraph> &LinkingManager::linking_graph() const
-{
-    return d_linking_graph;
+    return d_links;
 }
 
 const uint64_t LinkingManager::num_links() const
 {
-    return d_linking_graph->links().size();
+    return d_links.size();
+}
+
+void LinkingManager::update_linking_candidates(const std::vector<LinkCandidate>& candidates, const std::string& source)
+{
+    if (candidates.empty())
+        remove_all_source_linking_relations(source);
+    else
+    {
+        remove_linking_relations(candidates, source);
+        create_linking_relations(candidates, source);
+    }
+}
+
+void LinkingManager::remove_all_source_linking_relations(const std::string &source)
+{
+    if(MAP_HAS_KEY(d_links_in_ctx, source))
+    {
+        std::transform(std::execution::par_unseq, d_links_in_ctx[source].begin(), d_links_in_ctx[source].end(), d_links_in_ctx[source].begin(), [&](auto& i)
+        {
+            remove_link(i->sender_a(), i->attribute_a(), i->receiver_b(), i->attribute_b(), ILink::LINK_TYPE::UD);
+            return i;
+        });
+
+        d_links_in_ctx.erase(source);
+    }
+}
+
+void LinkingManager::remove_all_partaking_linking_relations(const std::string &source)
+{
+    remove_all_source_linking_relations(source);
+
+    std::vector<uint32_t> indices;
+    indices.reserve(links().size());
+
+    uint32_t i = 0;
+    for(auto& link: d_links)
+    {
+        if(link->is_external())
+            continue;
+
+        if(link->sender_a()->uuid() == source || link->receiver_b()->uuid() == source)
+            indices.push_back(i);
+
+        ++i;
+    }
+
+    remove_links_by_indices(indices);
+}
+
+void LinkingManager::remove_linking_relations(const std::vector<LinkCandidate> &relations, const std::string &source)
+{
+    if (MAP_HAS_KEY(d_links_in_ctx, source))
+    {
+        d_links_in_ctx[source].erase(std::remove_if(std::execution::par_unseq, d_links_in_ctx[source].begin(), d_links_in_ctx[source].end(), [&](auto& link) -> bool
+        {
+            if(std::find_if(std::execution::par_unseq, relations.begin(), relations.end(), [&link](const LinkCandidate &x)
+            {
+                return link->sender_a()->uuid() == x.sender &&
+                       link->attribute_a() == x.sender_attrib &&
+                       link->receiver_b()->uuid() == x.recv &&
+                       link->attribute_b() == x.recv_attrib;
+            }) == relations.end())
+            {
+                remove_link(link->sender_a(), link->attribute_a(), link->receiver_b(), link->attribute_b(), ILink::LINK_TYPE::UD);
+                return true;
+            }
+
+            return false;
+
+        }), d_links_in_ctx[source].end());
+    }
+}
+
+void LinkingManager::create_linking_relations(const std::vector<LinkCandidate> &candidates, const std::string &source)
+{
+    if (!MAP_HAS_KEY(d_links_in_ctx, source))
+    {
+        d_links_in_ctx[source] = std::vector<std::shared_ptr<ILink>>();
+        d_links_in_ctx[source].reserve(candidates.size());
+    }
+
+    for (auto &relation: candidates)
+    {
+        auto sender = std::find_if(std::execution::par_unseq, Context::SIContext()->region_manager()->regions().begin(), Context::SIContext()->region_manager()->regions().end(), [&relation](auto& region)
+        {
+            return region->uuid() == relation.sender;
+        });
+
+        if(sender == Context::SIContext()->region_manager()->regions().end())
+            continue;
+
+        auto receiver = std::find_if(std::execution::par_unseq, Context::SIContext()->region_manager()->regions().begin(), Context::SIContext()->region_manager()->regions().end(), [&relation](auto& region)
+        {
+            return region->uuid() == relation.recv;
+        });
+
+        if(receiver == Context::SIContext()->region_manager()->regions().end())
+            continue;
+
+        if (add_link(*sender, relation.sender_attrib, *receiver, relation.recv_attrib, ILink::LINK_TYPE::UD))
+        {
+            d_links_in_ctx[source].push_back(std::make_shared<UnidirectionalLink>(*sender, *receiver, relation.sender_attrib, relation.recv_attrib));
+
+            Q_EMIT (*sender)->LINK_SIGNAL(_UUID_, (*sender)->uuid(), relation.sender_attrib, bp::extract<bp::tuple>((*sender)->effect().attr_link_emit()[relation.sender_attrib]()));
+        }
+    }
 }

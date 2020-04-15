@@ -534,6 +534,6 @@ TEST_F(PySIVectorExposureTest, create_vector)
     Scripting script;
 
     create_vector<VectorExposureVec3, std::vector<glm::vec3>>("TEST1");
-    create_vector<VectorExposureLinkRelation, std::vector<LinkRelation>>("TEST2");
+    create_vector<VectorExposureLinkRelation, std::vector<LinkCandidate>>("TEST2");
     create_vector<VectorExposureString, std::vector<std::string>>("TEST3");
 }

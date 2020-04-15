@@ -258,7 +258,7 @@ std::unordered_map<std::string, std::shared_ptr<ExternalObject>>& InputManager::
     return deo;
 }
 
-void InputManager::register_external_application(const std::string& file_uuid, std::shared_ptr<Region> &c, QWidget *window, uint64_t pid)
+void InputManager::register_external_application(const std::string& file_uuid, QWidget *window, uint64_t pid)
 {
     uint32_t x = window->x() - Context::SIContext()->main_window()->x();
     uint32_t y = window->y();
@@ -276,7 +276,7 @@ void InputManager::register_external_application(const std::string& file_uuid, s
     bp::dict kwargs;
     kwargs["pid"] = pid;
 
-    Context::SIContext()->region_manager()->add_region(contour, Context::SIContext()->plugin_by_name("Container"), 0);
+    Context::SIContext()->region_manager()->add_region(contour, Context::SIContext()->plugin_by_name(SI_NAME_EFFECT_CONTAINER), 0);
 
     auto& container = Context::SIContext()->region_manager()->regions().back();
 
@@ -285,7 +285,7 @@ void InputManager::register_external_application(const std::string& file_uuid, s
     deo[container->uuid()]->embedded_object.external_application.pid = pid;
     deo[container->uuid()]->embedded_object.external_application.file_uuid = strdup(file_uuid.c_str());
 
-    Context::SIContext()->linking_manager()->add_link_to_object(container, ExternalObject::ExternalObjectType::APPLICATION);
+    Context::SIContext()->linking_manager()->add_link(deo[container->uuid()], container, SI_CAPABILITY_LINK_POSITION, SI_CAPABILITY_LINK_POSITION);
 }
 
 void InputManager::unregister_external_application(const std::string& file_uuid)

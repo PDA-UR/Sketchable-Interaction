@@ -140,17 +140,17 @@ const glm::mat3x3& Region::transform() const
 
 uint8_t Region::on_enter(PySIEffect& colliding_effect)
 {
-    return handle_collision_event("on_enter", colliding_effect);
+    return handle_collision_event(SI_COLLISION_EVENT_ON_ENTER, colliding_effect);
 }
 
 uint8_t Region::on_continuous(PySIEffect& colliding_effect)
 {
-    return handle_collision_event("on_continuous", colliding_effect);
+    return handle_collision_event(SI_COLLISION_EVENT_ON_CONTINUOUS, colliding_effect);
 }
 
 uint8_t Region::on_leave(PySIEffect& colliding_effect)
 {
-    return handle_collision_event("on_leave", colliding_effect);
+    return handle_collision_event(SI_COLLISION_EVENT_ON_LEAVE, colliding_effect);
 }
 
 void Region::LINK_SLOT(const std::string& uuid_event, const std::string& uuid_sender, const std::string& source_cap, const bp::tuple& args)
@@ -164,8 +164,6 @@ void Region::LINK_SLOT(const std::string& uuid_event, const std::string& uuid_se
         for(auto& [self_cap, function]: d_py_effect->attr_link_recv()[source_cap])
         {
             HANDLE_PYTHON_CALL(
-                // rework linking management so external object links are also stored and tracked
-
                 if(uuid_sender.empty())
                 {
                     function(*args);
@@ -307,7 +305,7 @@ void Region::process_canvas_specifics()
 void Region::process_linking_relationships()
 {
     if(d_py_effect->effect_type() != SI_TYPE_CANVAS)
-        Context::SIContext()->update_linking_relations(d_py_effect->link_relations(), d_py_effect->uuid());
+        Context::SIContext()->linking_manager()->update_linking_candidates(d_py_effect->link_relations(), d_py_effect->uuid());
 }
 
 const QMap<QString, QVariant>& Region::data() const
@@ -315,7 +313,7 @@ const QMap<QString, QVariant>& Region::data() const
     return d_py_effect->data();
 }
 
-const glm::vec4 Region::color() const
+const glm::vec4& Region::color() const
 {
     return d_py_effect->color();
 }

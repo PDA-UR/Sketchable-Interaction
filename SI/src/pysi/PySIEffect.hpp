@@ -13,6 +13,8 @@
 #include <QMap>
 #include <sigrun/SIObject.hpp>
 #include <sigrun/log/Log.hpp>
+#include <sigrun/context/managers/helpers/linking/LinkCandidate.hpp>
+
 
 #define PYSI_DEBUG(what) Log::log("PySI", what, Log::LOG_LEVEL::DEBUG_LEVEL, "PySIEffect",__FILENAME__, __FUNCTION__, std::to_string(__LINE__))
 #define PYSI_INFO(what) Log::log("PySI", what, Log::LOG_LEVEL::INFO_LEVEL, "PySIEffect",__FILENAME__, __FUNCTION__, std::to_string(__LINE__))
@@ -21,26 +23,6 @@
 #define REQUIRES_RESAMPLE 0b10
 
 namespace bp = boost::python;
-
-struct LinkRelation: public SIObject
-{ PYSI
-public:
-    LinkRelation(const std::string& _sender, const std::string& _sender_attrib, const std::string& _recv, const std::string& _recv_attrib):
-            sender(_sender),
-            sender_attrib(_sender_attrib),
-            recv(_recv),
-            recv_attrib(_recv_attrib) {}
-
-    const bool operator ==(const LinkRelation& other) const
-    {
-        return sender == other.sender && sender_attrib == other.sender_attrib && recv == other.recv && recv_attrib == other.recv_attrib;
-    }
-
-    std::string sender;
-    std::string sender_attrib;
-    std::string recv;
-    std::string recv_attrib;
-};
 
 class PySIEffect: public SIObject
 { PYSI
@@ -100,8 +82,8 @@ public:
     std::vector<std::string> d_regions_marked_for_registration;
     std::vector<std::string>& regions_for_registration();
 
-    std::vector<LinkRelation> d_link_relations;
-    std::vector<LinkRelation>& link_relations();
+    std::vector<LinkCandidate> d_link_relations;
+    std::vector<LinkCandidate>& link_relations();
 
     std::vector<glm::vec3> d_contour;
     std::vector<glm::vec3> d_aabb;

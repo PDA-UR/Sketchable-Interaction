@@ -15,12 +15,7 @@ TEST_F(PySIPySIEffectTest, PySIEffect_Python_Side)
     std::string path = "src/pysi/PySIPySIEffectTest.py";
     std::string clazz = "PySIPySIEffectTest";
 
-    HANDLE_PYTHON_CALL(
-        bp::object o = script.si_plugin(module, path, clazz);
-        bool python_test_success =  bp::extract<bool>(o.attr("start")());
-
-        ASSERT_TRUE(python_test_success);
-    )
+    ASSERT_TRUE(bp::extract<bool>(script.si_plugin(module, path, clazz).attr("start")()));
 }
 
 TEST_F(PySIPySIEffectTest, init)
