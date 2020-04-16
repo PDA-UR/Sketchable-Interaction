@@ -87,6 +87,7 @@ private:
     friend class Core;
     friend class SIGRunCollisionManagerTest;
     friend class SIGRunLinkingManagerTest;
+    friend class PySIPySIEffectTest;
 };
 
 

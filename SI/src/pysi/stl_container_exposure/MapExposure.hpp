@@ -53,7 +53,7 @@ public:
 
     static void set(T& x, K const& i, V const& v)
     {
-        x[i] = v; // use map autocreation feature
+        x[i] = v;
     }
 
     static void del(T& x, K const& i)
