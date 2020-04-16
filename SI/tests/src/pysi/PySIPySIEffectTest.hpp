@@ -10,6 +10,7 @@
 
 #include <pysi/PySIEffect.hpp>
 #include <sigrun/SIObject.hpp>
+#include <sigrun/context/Context.hpp>
 
 class PySIPySIEffectTest: public ::testing::Test, public SIObject
 { SITEST
@@ -21,6 +22,8 @@ public:
     virtual void TearDown() {
 
     }
+
+    Context c;
 };
 
 #endif //SITEST_PYSIPYSIEFFECTTEST_HPP
