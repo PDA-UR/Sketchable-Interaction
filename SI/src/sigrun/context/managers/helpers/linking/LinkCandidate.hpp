@@ -1,5 +1,4 @@
 
-
 #ifndef SI_SIGRUN_LinkCandidate
 #define SI_SIGRUN_LinkCandidate
 
@@ -17,6 +16,11 @@ public:
     const bool operator ==(const LinkCandidate& other) const
     {
         return sender == other.sender && sender_attrib == other.sender_attrib && recv == other.recv && recv_attrib == other.recv_attrib;
+    }
+
+    const bool operator !=(const LinkCandidate& other) const
+    {
+        return !(*this == other);
     }
 
     std::string sender;

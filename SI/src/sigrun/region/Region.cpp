@@ -289,13 +289,15 @@ void Region::process_canvas_specifics()
 
         if(!d_py_effect->regions_for_registration().empty())
         {
-            for(auto& candidate: d_py_effect->regions_for_registration())
+            std::transform(std::execution::par_unseq, d_py_effect->regions_for_registration().begin(), d_py_effect->regions_for_registration().end(), d_py_effect->regions_for_registration().begin(), [&](auto& candidate)
             {
                 Context::SIContext()->register_new_region(d_py_effect->partial_region_contours()[candidate], candidate);
 
                 if(bp::len(d_effect->attr("__partial_regions__")))
                     HANDLE_PYTHON_CALL(bp::delitem(d_effect->attr("__partial_regions__"), bp::object(candidate));)
-            }
+
+                return candidate;
+            });
 
             HANDLE_PYTHON_CALL(d_effect->attr("registered_regions").attr("clear")();)
         }
@@ -349,5 +351,5 @@ uint8_t Region::handle_collision_event(const std::string &function_name, PySIEff
         }
     )
 
-    return 2;
+    return 0;
 }

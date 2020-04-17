@@ -292,9 +292,13 @@ void InputManager::unregister_external_application(const std::string& file_uuid)
 {
     auto it = std::find_if(deo.begin(), deo.end(), [&file_uuid](const auto& pair) -> bool
     {
-        return std::get<1>(pair)->type() == ExternalObject::APPLICATION && std::get<1>(pair)->embedded_object.external_application.file_uuid == file_uuid;
+        return std::get<1>(pair)->type() == ExternalObject::APPLICATION
+                && std::get<1>(pair)->embedded_object.external_application.file_uuid == file_uuid;
     });
 
     if(it != deo.end())
+    {
+        Context::SIContext()->linking_manager()->remove_link(it->second, Context::SIContext()->region_manager()->region_by_uuid(it->first), SI_CAPABILITY_LINK_POSITION, SI_CAPABILITY_LINK_POSITION);
         kill(deo[it->first]->embedded_object.external_application.pid, SIGTERM);
+    }
 }

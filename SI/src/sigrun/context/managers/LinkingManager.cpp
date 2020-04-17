@@ -122,6 +122,9 @@ void LinkingManager::remove_link(std::shared_ptr<ExternalObject>& eo, std::share
 
         d_links.erase(std::remove_if(std::execution::par_unseq, d_links.begin(), d_links.end(), [&](auto &link)
         {
+            if(!link->is_external())
+                return false;
+
             return (link->attribute_a() == ea &&
                     link->attribute_b() == aa &&
                     link->external_sender_a()->uuid() == eo->uuid() &&

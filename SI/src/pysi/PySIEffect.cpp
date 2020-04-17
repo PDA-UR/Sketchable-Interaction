@@ -30,7 +30,6 @@ bool PySIEffect::is_flagged_for_deletion()
     return d_flagged_for_deletion;
 }
 
-
 // has to be set to false from elsewhere (happens in Region.cpp, where value is used
 void PySIEffect::notify_shape_changed(bool resample)
 {

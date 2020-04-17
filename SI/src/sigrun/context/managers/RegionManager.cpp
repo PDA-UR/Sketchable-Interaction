@@ -196,3 +196,11 @@ void RegionManager::update()
     update_regions();
 }
 
+std::shared_ptr<Region>& RegionManager::region_by_uuid(const std::string& uuid)
+{
+    return *std::find_if(std::execution::par_unseq, d_regions.begin(), d_regions.end(), [&](auto& region)
+    {
+        return region->uuid() == uuid;
+    });
+}
+
