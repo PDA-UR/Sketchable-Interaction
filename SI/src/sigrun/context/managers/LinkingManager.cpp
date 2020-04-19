@@ -122,6 +122,9 @@ void LinkingManager::remove_link(std::shared_ptr<ExternalObject>& eo, std::share
 
         d_links.erase(std::remove_if(std::execution::par_unseq, d_links.begin(), d_links.end(), [&](auto &link)
         {
+            if(!link->is_external())
+                return false;
+
             return (link->attribute_a() == ea &&
                     link->attribute_b() == aa &&
                     link->external_sender_a()->uuid() == eo->uuid() &&
@@ -272,7 +275,7 @@ const uint64_t LinkingManager::num_links() const
     return d_links.size();
 }
 
-void LinkingManager::update_linking_candidates(const std::vector<LinkCandidate>& candidates, const std::string& source)
+void LinkingManager::update_linking_candidates(std::vector<LinkCandidate>& candidates, const std::string& source)
 {
     if (candidates.empty())
         remove_all_source_linking_relations(source);
@@ -301,22 +304,13 @@ void LinkingManager::remove_all_partaking_linking_relations(const std::string &s
 {
     remove_all_source_linking_relations(source);
 
-    std::vector<uint32_t> indices;
-    indices.reserve(links().size());
-
-    uint32_t i = 0;
-    for(auto& link: d_links)
+    d_links.erase(std::remove_if(std::execution::par_unseq, d_links.begin(), d_links.end(), [&](auto& link)
     {
         if(link->is_external())
-            continue;
+            return false;
 
-        if(link->sender_a()->uuid() == source || link->receiver_b()->uuid() == source)
-            indices.push_back(i);
-
-        ++i;
-    }
-
-    remove_links_by_indices(indices);
+        return link->sender_a()->uuid() == source || link->receiver_b()->uuid() == source;
+    }), d_links.end());
 }
 
 void LinkingManager::remove_linking_relations(const std::vector<LinkCandidate> &relations, const std::string &source)
@@ -343,7 +337,7 @@ void LinkingManager::remove_linking_relations(const std::vector<LinkCandidate> &
     }
 }
 
-void LinkingManager::create_linking_relations(const std::vector<LinkCandidate> &candidates, const std::string &source)
+void LinkingManager::create_linking_relations(std::vector<LinkCandidate> &candidates, const std::string &source)
 {
     if (!MAP_HAS_KEY(d_links_in_ctx, source))
     {
@@ -351,7 +345,7 @@ void LinkingManager::create_linking_relations(const std::vector<LinkCandidate> &
         d_links_in_ctx[source].reserve(candidates.size());
     }
 
-    for (auto &relation: candidates)
+    std::transform(std::execution::par_unseq, candidates.begin(), candidates.end(), candidates.begin(), [&](auto& relation)
     {
         auto sender = std::find_if(std::execution::par_unseq, Context::SIContext()->region_manager()->regions().begin(), Context::SIContext()->region_manager()->regions().end(), [&relation](auto& region)
         {
@@ -359,7 +353,7 @@ void LinkingManager::create_linking_relations(const std::vector<LinkCandidate> &
         });
 
         if(sender == Context::SIContext()->region_manager()->regions().end())
-            continue;
+            return relation;
 
         auto receiver = std::find_if(std::execution::par_unseq, Context::SIContext()->region_manager()->regions().begin(), Context::SIContext()->region_manager()->regions().end(), [&relation](auto& region)
         {
@@ -367,7 +361,7 @@ void LinkingManager::create_linking_relations(const std::vector<LinkCandidate> &
         });
 
         if(receiver == Context::SIContext()->region_manager()->regions().end())
-            continue;
+            return relation;
 
         if (add_link(*sender, relation.sender_attrib, *receiver, relation.recv_attrib, ILink::LINK_TYPE::UD))
         {
@@ -375,5 +369,7 @@ void LinkingManager::create_linking_relations(const std::vector<LinkCandidate> &
 
             Q_EMIT (*sender)->LINK_SIGNAL(_UUID_, (*sender)->uuid(), relation.sender_attrib, bp::extract<bp::tuple>((*sender)->effect().attr_link_emit()[relation.sender_attrib]()));
         }
-    }
+
+       return relation;
+    });
 }

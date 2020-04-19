@@ -16,13 +16,12 @@ void CollisionManager::collide(std::vector<std::shared_ptr<Region>> &regions)
     for(auto& [key, value]: d_collision_map)
         value = false;
 
-    for(int32_t i = regions.size() - 1; i > -1; --i)
-    {
-        auto& a = regions[i];
+    int i = 0;
 
-        for(int32_t k = i - 1; k > -1; --k)
+    std::for_each(std::execution::seq, regions.rbegin(), regions.rend(), [&](auto& a)
+    {
+        std::for_each(std::execution::seq, regions.rbegin() + (++i), regions.rend(), [&](auto& b)
         {
-            auto& b = regions[k];
             auto tuple = std::make_tuple(a->uuid(), b->uuid());
 
             if(has_capabilities_in_common(a, b))
@@ -32,18 +31,18 @@ void CollisionManager::collide(std::vector<std::shared_ptr<Region>> &regions)
                     if(are_aabbs_equal(a, b) || is_aabb_enveloped(a, b) || is_aabb_enveloped(b, a) || collides_with_mask(a, b))
                         d_collision_map.find(tuple) != d_collision_map.end() ? handle_event_continuous(a, b, tuple) : handle_event_enter(a, b, tuple);
                     else
-                        if(d_collision_map.find(tuple) != d_collision_map.end())
-                            handle_event_leave(a, b, tuple);
-                }
-                else
                     if(d_collision_map.find(tuple) != d_collision_map.end())
                         handle_event_leave(a, b, tuple);
+                }
+                else
+                if(d_collision_map.find(tuple) != d_collision_map.end())
+                    handle_event_leave(a, b, tuple);
             }
             else
                 if(d_collision_map.find(tuple) != d_collision_map.end())
                     handle_event_leave(a, b, tuple);
-        }
-    }
+        });
+    });
 
     for(auto it = d_collision_map.begin(); it != d_collision_map.end();)
         it->second ? ++it : d_collision_map.erase(it++);

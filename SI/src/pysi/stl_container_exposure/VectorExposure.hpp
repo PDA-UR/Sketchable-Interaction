@@ -122,7 +122,8 @@ public:
 
         if(index >= 0 && index < self.size())
             self.erase(self.begin() + index);
-        else IndexError();
+        else
+            IndexError();
     }
 
     /**
@@ -193,6 +194,8 @@ public:
 
         if(bp::len(list) > 0)
         {
+            self->reserve(bp::len(list));
+
             if(bp::extract<bp::list>(list[0]).check())
                 apply_lists_of_lists(self, list);
             else
@@ -258,7 +261,7 @@ public:
         }, [](const glm::vec3& p)
         {
             return "[" + std::to_string(p.x) + ", " + std::to_string(p.y) + "]";
-        });
+        }) + "]";
     }
 
 private:

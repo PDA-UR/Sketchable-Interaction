@@ -71,7 +71,7 @@ void RegionManager::activate_mouse_region_button_down(uint32_t mouse_btn)
 
 void RegionManager::deactivate_mouse_region_button_down(uint32_t mouse_btn)
 {
-    std::transform(std::execution::par, d_regions.begin(), d_regions.end(), d_regions.begin(), [mouse_btn](auto& region)
+    std::transform(std::execution::par_unseq, d_regions.begin(), d_regions.end(), d_regions.begin(), [mouse_btn](auto& region)
     {
         if(region->effect().effect_type() == SI_TYPE_MOUSE_CURSOR && region->effect().has_mouse_pressed_capability(mouse_btn))
         {
@@ -153,7 +153,7 @@ void RegionManager::toggle_mouse_region_wheel_scrolled(float angle_px, float ang
 
 void RegionManager::update_region_deletions()
 {
-    d_regions.erase(std::remove_if(d_regions.begin(), d_regions.end(), [&](auto& region) -> bool
+    d_regions.erase(std::remove_if(std::execution::seq, d_regions.begin(), d_regions.end(), [&](auto& region) -> bool
     {
         if(!region->effect().is_flagged_for_deletion())
             return false;
@@ -194,5 +194,13 @@ void RegionManager::update()
     update_region_deletions();
     update_region_insertions();
     update_regions();
+}
+
+std::shared_ptr<Region>& RegionManager::region_by_uuid(const std::string& uuid)
+{
+    return *std::find_if(std::execution::par_unseq, d_regions.begin(), d_regions.end(), [&](auto& region)
+    {
+        return region->uuid() == uuid;
+    });
 }
 
