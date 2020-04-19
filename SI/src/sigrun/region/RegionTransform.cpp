@@ -75,7 +75,7 @@ void RegionTransform::update(const glm::vec2& translation, float angle, float sc
     d_scale[0][0] = scale;
     d_scale[1][1] = scale;
 
-    d_transform = d_translation * d_positive_rotation_origin* d_rotation * d_negative_rotation_origin * d_scale;
+    d_transform = d_translation * d_positive_rotation_origin * d_rotation * d_negative_rotation_origin * d_scale;
 }
 
 /**

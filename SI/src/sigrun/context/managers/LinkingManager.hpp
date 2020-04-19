@@ -41,7 +41,7 @@ public:
 
     const uint64_t num_links() const;
 
-    void update_linking_candidates(const std::vector<LinkCandidate>& relations, const std::string& source);
+    void update_linking_candidates(std::vector<LinkCandidate>& relations, const std::string& source);
     void remove_all_partaking_linking_relations(const std::string& source);
 
 private:
@@ -50,7 +50,7 @@ private:
 
     void remove_all_source_linking_relations(const std::string& source);
     void remove_linking_relations(const std::vector<LinkCandidate>& candidates, const std::string& source);
-    void create_linking_relations(const std::vector<LinkCandidate>& candidates, const std::string& source);
+    void create_linking_relations(std::vector<LinkCandidate>& candidates, const std::string& source);
 };
 
 

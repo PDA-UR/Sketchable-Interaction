@@ -328,7 +328,7 @@ TEST_F(PySIVectorExposureTest, VectorExposureVec3_repr)
 
     std::string repr = VectorExposureVec3::repr(*vev);
 
-    ASSERT_EQ("[, [1.000000, 1.000000], [2.000000, 2.000000], [3.000000, 3.000000], [4.000000, 4.000000], [5.000000, 5.000000], [6.000000, 6.000000]", repr);
+    ASSERT_EQ("[, [1.000000, 1.000000], [2.000000, 2.000000], [3.000000, 3.000000], [4.000000, 4.000000], [5.000000, 5.000000], [6.000000, 6.000000]]", repr);
 }
 
 TEST_F(PySIVectorExposureTest, VectorExposureString_init)

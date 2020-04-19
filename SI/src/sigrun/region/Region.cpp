@@ -120,8 +120,6 @@ void Region::set_aabb()
 
     glm::vec3 tlc(x_min, y_min, 1), blc(x_min, y_max, 1), brc(x_max, y_max, 1), trc(x_max, y_min, 1);
 
-    d_aabb.clear();
-
     d_aabb = std::vector<glm::vec3>
     {
         tlc, blc, brc, trc
