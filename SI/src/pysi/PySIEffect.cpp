@@ -381,6 +381,7 @@ BOOST_PYTHON_MODULE(libPySI)
         .value("SI_BUTTON", SI_TYPE_BUTTON)
         .value("SI_NOTIFICATION", SI_TYPE_NOTIFICATION)
         .value("SI_CUSTOM", SI_TYPE_CUSTOM)
+        .value("SI_ENTRY", SI_TYPE_ENTRY)
 
         .export_values()
         ;
