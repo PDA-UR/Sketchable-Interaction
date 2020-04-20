@@ -30,6 +30,8 @@ public:
 
     void update();
 
+    std::shared_ptr<Region>& region_by_uuid(const std::string& uuid);
+
 private:
     std::vector<std::shared_ptr<Region>> d_regions;
     std::map<std::string, std::vector<glm::vec3>> d_partial_regions;

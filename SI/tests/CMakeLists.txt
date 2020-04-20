@@ -43,8 +43,6 @@ set(SIUnitTestSrc
         SI/tests/src/sigrun/region/SIGRunRegionTransformTest.hpp
         SI/tests/src/sigrun/region/SIGRunRegionMaskTest.cpp
         SI/tests/src/sigrun/region/SIGRunRegionMaskTest.hpp
-        SI/tests/src/sigrun/context/SIGRunCapabilityTest.cpp
-        SI/tests/src/sigrun/context/SIGRunCapabilityTest.hpp
         SI/tests/src/sigrun/region/SIGRunRegionTest.cpp
         SI/tests/src/sigrun/region/SIGRunRegionTest.hpp
         SI/tests/src/error/SIGRunErrorTest.cpp
@@ -71,8 +69,14 @@ set(SIUnitTestSrc
         SI/tests/src/pysi/stl_container_exposure/PySIMapExposureTest.hpp
         SI/tests/src/pysi/PySIPySIEffectTest.cpp
         SI/tests/src/pysi/PySIPySIEffectTest.hpp
-        SI/tests/src/sigrun/util/SIGRunUtilTest.hpp
-
+        SI/tests/src/sigrun/context/managers/helpers/input/SIGRunExternalObjectTest.cpp
+        SI/tests/src/sigrun/context/managers/helpers/input/SIGRunExternalObjectTest.hpp
+        SI/tests/src/sigrun/context/managers/helpers/input/SIGRunFilesystemTest.cpp
+        SI/tests/src/sigrun/context/managers/helpers/input/SIGRunFilesystemTest.hpp
+        SI/tests/src/sigrun/context/managers/helpers/linking/SIGRunLinkCandidateTest.cpp
+        SI/tests/src/sigrun/context/managers/helpers/linking/SIGRunLinkCandidateTest.hpp
+        SI/tests/src/sigrun/context/managers/helpers/linking/SIGRunLinkTest.cpp
+        SI/tests/src/sigrun/context/managers/helpers/linking/SIGRunLinkTest.hpp
         )
 
 ADD_DEFINITIONS(-DQT_NO_KEYWORDS)

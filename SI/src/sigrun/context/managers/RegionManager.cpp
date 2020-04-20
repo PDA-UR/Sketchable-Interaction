@@ -153,12 +153,12 @@ void RegionManager::toggle_mouse_region_wheel_scrolled(float angle_px, float ang
 
 void RegionManager::update_region_deletions()
 {
-    d_regions.erase(std::remove_if(d_regions.begin(), d_regions.end(), [&](auto& region) -> bool
+    d_regions.erase(std::remove_if(std::execution::seq, d_regions.begin(), d_regions.end(), [&](auto& region) -> bool
     {
         if(!region->effect().is_flagged_for_deletion())
             return false;
 
-        Context::SIContext()->remove_all_partaking_linking_relations(region->uuid());
+        Context::SIContext()->linking_manager()->remove_all_partaking_linking_relations(region->uuid());
 
         return true;
     }), d_regions.end());
@@ -194,5 +194,13 @@ void RegionManager::update()
     update_region_deletions();
     update_region_insertions();
     update_regions();
+}
+
+std::shared_ptr<Region>& RegionManager::region_by_uuid(const std::string& uuid)
+{
+    return *std::find_if(std::execution::par_unseq, d_regions.begin(), d_regions.end(), [&](auto& region)
+    {
+        return region->uuid() == uuid;
+    });
 }
 

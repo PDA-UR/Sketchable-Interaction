@@ -7,6 +7,7 @@
 void RegionResampler::resample(std::vector<glm::vec3> &out, const std::vector<glm::vec3> &in, int step_count)
 {
     auto points = in;
+    out.reserve(step_count);
 
     if (!points.empty())
     {
@@ -18,14 +19,12 @@ void RegionResampler::resample(std::vector<glm::vec3> &out, const std::vector<gl
 
         for (uint32_t i = 1; i < points.size(); i++)
         {
-
-            auto& p0 = points[i - 1];
-            float d = distance(p0, points[i]);
+            float d = distance(points[i - 1], points[i]);
 
             if (current_position + d >= stepsize)
             {
-                float nx = p0.x + ((stepsize - current_position) / d) * (points[i].x - p0.x);
-                float ny = p0.y + ((stepsize - current_position) / d) * (points[i].y - p0.y);
+                float nx = points[i - 1].x + ((stepsize - current_position) / d) * (points[i].x - points[i - 1].x);
+                float ny = points[i - 1].y + ((stepsize - current_position) / d) * (points[i].y - points[i - 1].y);
 
                 glm::vec3 vert(nx, ny, 1);
 
@@ -50,15 +49,17 @@ float RegionResampler::total_length(const std::vector<glm::vec3> &vertices)
     if (!vertices.empty())
     {
         glm::vec3 p0 = vertices[0];
-        float length = 0.0f;
 
-        for (uint32_t i = 1; i < vertices.size(); i++)
+        return std::transform_reduce(std::execution::seq, vertices.begin(), vertices.end(), 0.0, [](float a, float b)
         {
-            length += distance(p0, vertices[i]);
-            p0 = vertices[i];
-        }
+            return a + b;
+        }, [&p0](auto& p)
+        {
+            float d = distance(p0, p);
+            p0 = p;
 
-        return length;
+            return d;
+        });
     }
 
     return 0.0f;

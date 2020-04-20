@@ -1,11 +1,11 @@
-from libPySI import PySIEffect, PySICapability
+from libPySI import PySIEffect
 import Entry
 
 
 class TextFile(Entry.Entry):
     def __init__(self, shape=PySIEffect.PointVector(), aabb=PySIEffect.PointVector(), uuid="", kwargs={}):
         super(TextFile, self).__init__(shape, aabb, uuid, kwargs)
-        self.name = "stdSITextFile"
+        self.name = PySIEffect.SI_STD_NAME_TEXTFILE
         self.region_type = PySIEffect.EffectType.SI_TEXT_FILE
         self.qml_path = "plugins/standard_environment_library/filesystem/TextFile.qml"
 
@@ -16,7 +16,7 @@ class TextFile(Entry.Entry):
         self.add_data("color", self.text_color, PySIEffect.DataType.STRING)
         self.add_data("name", self.filename, PySIEffect.DataType.STRING)
 
-        self.cap_recv["OPEN_ENTRY"] = {"on_enter": self.on_open_entry_enter_recv, "on_continuous": self.on_open_entry_continuous_recv, "on_leave": self.on_open_entry_leave_recv}
+        self.cap_recv[PySIEffect.OPEN_ENTRY] = {PySIEffect.ON_ENTER: self.on_open_entry_enter_recv, PySIEffect.ON_CONTINUOUS: self.on_open_entry_continuous_recv, PySIEffect.ON_LEAVE: self.on_open_entry_leave_recv}
 
     def on_open_entry_enter_recv(self):
         return 0

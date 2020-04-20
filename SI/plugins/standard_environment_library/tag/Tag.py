@@ -1,4 +1,4 @@
-from libPySI import PySIEffect, PySICapability
+from libPySI import PySIEffect
 
 
 class Tag(PySIEffect.PySIEffect):
@@ -7,7 +7,7 @@ class Tag(PySIEffect.PySIEffect):
         self.shape = shape
         self.aabb = aabb
         self._uuid = uuid
-        self.name = "stdTag"
+        self.name = PySIEffect.SI_STD_NAME_TAG
         self.region_type = PySIEffect.EffectType.SI_CUSTOM
         self.source = "libstdSI"
         self.qml_path = "plugins/standard_environment_library/tag/Tag.qml"
@@ -24,12 +24,12 @@ class Tag(PySIEffect.PySIEffect):
 
         self.cap_emit = PySIEffect.String2_String2FunctionMap_Map()
         self.cap_recv = PySIEffect.String2_String2FunctionMap_Map({
-            "MOVE": {"on_enter": self.on_move_enter_recv, "on_continuous": self.on_move_continuous_recv, "on_leave": self.on_move_leave_recv},
-            "DELETION": {"on_enter": None, "on_continuous": None, "on_leave": None}
+            PySIEffect.MOVE: {PySIEffect.ON_ENTER: self.on_move_enter_recv, PySIEffect.ON_CONTINUOUS: self.on_move_continuous_recv, PySIEffect.ON_LEAVE: self.on_move_leave_recv},
+            PySIEffect.DELETION: {PySIEffect.ON_ENTER: None, PySIEffect.ON_CONTINUOUS: None, PySIEffect.ON_LEAVE: None}
         })
 
         self.cap_link_recv = PySIEffect.String2_String2FunctionMap_Map({
-            "__position__": {"__position__": self.set_position_from_position}
+            PySIEffect.POSITION: {PySIEffect.POSITION: self.set_position_from_position}
         })
 
         self.link_relations = PySIEffect.LinkRelationVector()

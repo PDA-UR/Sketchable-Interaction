@@ -1,4 +1,4 @@
-from libPySI import PySIEffect, PySICapability
+from libPySI import PySIEffect
 
 
 class Deletion(PySIEffect.PySIEffect):
@@ -7,7 +7,7 @@ class Deletion(PySIEffect.PySIEffect):
         self.shape = shape
         self.aabb = aabb
         self._uuid = uuid
-        self.name = "stdDeletion"
+        self.name = PySIEffect.SI_STD_NAME_DELETION
         self.region_type = PySIEffect.EffectType.SI_DELETION
         self.qml_path = "plugins/standard_environment_library/deletion/Deletion.qml"
         self.color = PySIEffect.Color(255, 255, 0, 255)
@@ -22,16 +22,16 @@ class Deletion(PySIEffect.PySIEffect):
         self.add_data("img_path", "res/deletion.png", PySIEffect.DataType.STRING)
 
         self.cap_emit = PySIEffect.String2_String2FunctionMap_Map({
-            "DELETION": {"on_enter": self.on_deletion_enter_emit, "on_continuous": self.on_deletion_continuous_emit, "on_leave": self.on_deletion_enter_emit}
+            PySIEffect.DELETION: {PySIEffect.ON_ENTER: self.on_deletion_enter_emit, PySIEffect.ON_CONTINUOUS: self.on_deletion_continuous_emit, PySIEffect.ON_LEAVE: self.on_deletion_enter_emit}
         })
 
         self.cap_recv = PySIEffect.String2_String2FunctionMap_Map({
-            "MOVE": {"on_enter": self.on_move_enter_recv, "on_continuous": self.on_move_continuous_recv, "on_leave": self.on_move_leave_recv},
-            "DELETION": {"on_enter": None, "on_continuous": None, "on_leave": None}
+            PySIEffect.MOVE: {PySIEffect.ON_ENTER: self.on_move_enter_recv, PySIEffect.ON_CONTINUOUS: self.on_move_continuous_recv, PySIEffect.ON_LEAVE: self.on_move_leave_recv},
+            PySIEffect.DELETION: {PySIEffect.ON_ENTER: None, PySIEffect.ON_CONTINUOUS: None, PySIEffect.ON_LEAVE: None}
         })
 
         self.cap_link_recv = PySIEffect.String2_String2FunctionMap_Map({
-            "__position__": {"__position__": self.set_position_from_position}
+            PySIEffect.POSITION: {PySIEffect.POSITION: self.set_position_from_position}
         })
 
         self.link_relations = PySIEffect.LinkRelationVector()

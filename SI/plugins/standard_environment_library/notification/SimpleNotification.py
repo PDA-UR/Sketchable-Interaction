@@ -1,4 +1,4 @@
-from libPySI import PySIEffect, PySICapability
+from libPySI import PySIEffect
 
 
 class SimpleNotification(PySIEffect.PySIEffect):
@@ -7,7 +7,7 @@ class SimpleNotification(PySIEffect.PySIEffect):
         self.shape = shape
         self.aabb = aabb
         self._uuid = uuid
-        self.name = "stdSimpleNotification"
+        self.name = PySIEffect.SI_STD_NAME_SIMPLE_NOTIFICATION
         self.region_type = PySIEffect.EffectType.SI_NOTIFICATION
         self.source = "libstdSI"
         self.qml_path = "plugins/standard_environment_library/notification/SimpleNotification.qml"

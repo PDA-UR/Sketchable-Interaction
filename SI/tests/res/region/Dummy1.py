@@ -1,4 +1,4 @@
-from libPySI import PySIEffect, PySICapability
+from libPySI import PySIEffect
 
 
 class Dummy1(PySIEffect.PySIEffect):
@@ -15,23 +15,23 @@ class Dummy1(PySIEffect.PySIEffect):
         self.y = 0
 
         self.cap_emit = PySIEffect.String2_String2FunctionMap_Map({
-            PySICapability.__TEST1__: {"on_enter": self.test_on_enter_emit, "on_continuous": self.test_on_continuous_emit, "on_leave": self.test_on_leave_emit}
+            "TEST1": {PySIEffect.ON_ENTER: self.test_on_enter_emit, PySIEffect.ON_CONTINUOUS: self.test_on_continuous_emit, PySIEffect.ON_LEAVE: self.test_on_leave_emit}
         })
 
         self.cap_recv = PySIEffect.String2_String2FunctionMap_Map({
-            PySICapability.__TEST2__: {"on_enter": self.test_on_enter_recv, "on_continuous": self.test_on_continuous_recv, "on_leave": self.test_on_leave_recv}
+            "TEST2": {PySIEffect.ON_ENTER: self.test_on_enter_recv, PySIEffect.ON_CONTINUOUS: self.test_on_continuous_recv, PySIEffect.ON_LEAVE: self.test_on_leave_recv}
         })
 
         self.cap_link_emit = PySIEffect.String2FunctionMap({
-            "__position__": self.position,
-            "__rotation__": self.rotation
+            PySIEffect.POSITION: self.position,
+            PySIEffect.ROTATION: self.rotation
         })
 
         self.cap_link_recv = PySIEffect.String2_String2FunctionMap_Map({
-            "__position__": {"__position__": self.set_position_from_position},
-            "__color__": {"__position__": self.set_position_from_color},
-            "__scale__": {"__position__": self.set_position_from_scale},
-            "__rotation__": {"__rotation__": self.set_rotation_from_rotation}
+            PySIEffect.POSITION: {PySIEffect.POSITION: self.set_position_from_position},
+            PySIEffect.COLOR: {PySIEffect.POSITION: self.set_position_from_color},
+            PySIEffect.SCALE: {PySIEffect.POSITION: self.set_position_from_scale},
+            PySIEffect.ROTATION: {PySIEffect.ROTATION: self.set_rotation_from_rotation}
         })
 
     def __repr__(self):

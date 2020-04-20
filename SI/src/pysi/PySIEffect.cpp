@@ -1,6 +1,5 @@
 
 #include "PySIEffect.hpp"
-#include <sigrun/context/Capability.hpp>
 #include "pysi/stl_container_exposure/MapExposure.hpp"
 #include "pysi/stl_container_exposure/VectorExposure.hpp"
 #include <sigrun/context/Context.hpp>
@@ -31,7 +30,6 @@ bool PySIEffect::is_flagged_for_deletion()
     return d_flagged_for_deletion;
 }
 
-
 // has to be set to false from elsewhere (happens in Region.cpp, where value is used
 void PySIEffect::notify_shape_changed(bool resample)
 {
@@ -41,12 +39,12 @@ void PySIEffect::notify_shape_changed(bool resample)
 
 void PySIEffect::__embed_file_standard_appliation_into_context__(const std::string& uuid, const std::string& path)
 {
-    Context::SIContext()->launch_external_application_with_file(uuid, path);
+    Context::SIContext()->external_application_manager()->launch_standard_application(uuid, path);
 }
 
 void PySIEffect::__destroy_embedded_file_standard_appliation_in_context__(const std::string& uuid)
 {
-    Context::SIContext()->terminate_external_application_with_file(uuid);
+    Context::SIContext()->external_application_manager()->terminate_application(uuid);
 }
 
 uint32_t PySIEffect::has_shape_changed()
@@ -185,7 +183,7 @@ const float PySIEffect::angle_degrees() const
     return d_angle_deg;
 }
 
-std::vector<LinkRelation>& PySIEffect::link_relations()
+std::vector<LinkCandidate>& PySIEffect::link_relations()
 {
     return d_link_relations;
 }
@@ -245,11 +243,6 @@ void PySIEffect::__show_folder_contents__(const std::vector<std::string>& page_c
 
 BOOST_PYTHON_MODULE(libPySI)
 {
-    bp::class_<Capability>("PySICapability")
-        .add_static_property("__TEST1__", bp::make_getter(&Capability::__test1__))
-        .add_static_property("__TEST2__", bp::make_getter(&Capability::__test2__))
-        ;
-
     bp::scope the_scope = bp::class_<PySIEffect>("PySIEffect")
     ;
 
@@ -277,21 +270,51 @@ BOOST_PYTHON_MODULE(libPySI)
             .enable_pickling()
             ;
 
-    bp::class_<LinkRelation>("LinkRelation", bp::init<const std::string&, const std::string&, const std::string&, const std::string&>())
-        .def_readwrite("sender", &LinkRelation::sender)
-        .def_readwrite("sender_attrib", &LinkRelation::sender_attrib)
-        .def_readwrite("recv", &LinkRelation::recv)
-        .def_readwrite("recv_attrib", &LinkRelation::recv_attrib)
+    bp::class_<LinkCandidate>("LinkRelation", bp::init<const std::string&, const std::string&, const std::string&, const std::string&>())
+        .def_readwrite("sender", &LinkCandidate::sender)
+        .def_readwrite("sender_attrib", &LinkCandidate::sender_attrib)
+        .def_readwrite("recv", &LinkCandidate::recv)
+        .def_readwrite("recv_attrib", &LinkCandidate::recv_attrib)
 
         .enable_pickling()
         ;
 
     create_vector<VectorExposureVec3, std::vector<glm::vec3>>("PointVector");
-    create_vector<VectorExposureLinkRelation, std::vector<LinkRelation>>("LinkRelationVector");
+    create_vector<VectorExposureLinkRelation, std::vector<LinkCandidate>>("LinkRelationVector");
     create_vector<VectorExposureString, std::vector<std::string>>("StringVector");
     create_map<MapExposurePartialContour, std::map<std::string, std::vector<glm::vec3>>>("PartialContour");
     create_map<MapExposureString2Function, std::map<std::string, bp::object>>("String2FunctionMap");
     create_map<MapExposureString2_String2FunctionMap_Map, std::map<std::string, std::map<std::string, bp::object>>>("String2_String2FunctionMap_Map");
+
+    bp::scope().attr("ON_ENTER") = SI_COLLISION_EVENT_ON_ENTER;
+    bp::scope().attr("ON_CONTINUOUS") = SI_COLLISION_EVENT_ON_CONTINUOUS;
+    bp::scope().attr("ON_LEAVE") = SI_COLLISION_EVENT_ON_LEAVE;
+
+    bp::scope().attr("MOVE") = SI_CAPABILITY_COLLISION_MOVE;
+    bp::scope().attr("BTN") = SI_CAPABILITY_COLLISION_BUTTON;
+    bp::scope().attr("OPEN_ENTRY") = SI_CAPABILITY_COLLISION_OPEN_ENTRY;
+    bp::scope().attr("PARENT") = SI_CAPABILITY_COLLISION_PARENT;
+    bp::scope().attr("SKETCH") = SI_CAPABILITY_COLLISION_SKETCH;
+    bp::scope().attr("CLICK") = SI_CAPABILITY_COLLISION_CLICK;
+    bp::scope().attr("DELETION") = SI_CAPABILITY_COLLISION_DELETION;
+
+    bp::scope().attr("POSITION") = SI_CAPABILITY_LINK_POSITION;
+    bp::scope().attr("ROTATION") = SI_CAPABILITY_LINK_ROTATION;
+    bp::scope().attr("SCALE") = SI_CAPABILITY_LINK_SCALE;
+    bp::scope().attr("COLOR") = SI_CAPABILITY_LINK_COLOR;
+    bp::scope().attr("GEOMETRY") = SI_CAPABILITY_LINK_GEOMETRY;
+
+    bp::scope().attr("SI_STD_NAME_DIRECTORY") = SI_NAME_EFFECT_DIRECTORY;
+    bp::scope().attr("SI_STD_NAME_TEXTFILE") = SI_NAME_EFFECT_TEXTFILE;
+    bp::scope().attr("SI_STD_NAME_BUTTON") = SI_NAME_EFFECT_BUTTON;
+    bp::scope().attr("SI_STD_NAME_TAG") = SI_NAME_EFFECT_TAG;
+    bp::scope().attr("SI_STD_NAME_DELETION") = SI_NAME_EFFECT_DELETION;
+    bp::scope().attr("SI_STD_NAME_OPEN_ENTRY") = SI_NAME_EFFECT_OPEN_ENTRY;
+    bp::scope().attr("SI_STD_NAME_MOUSE_CURSOR") = SI_NAME_EFFECT_MOUSE_CURSOR;
+    bp::scope().attr("SI_STD_NAME_CANVAS") = SI_NAME_EFFECT_CANVAS;
+    bp::scope().attr("SI_STD_NAME_SIMPLE_NOTIFICATION") = SI_NAME_EFFECT_SIMPLE_NOTIFICATION;
+    bp::scope().attr("SI_STD_NAME_ENTRY") = SI_NAME_EFFECT_ENTRY;
+    bp::scope().attr("SI_STD_NAME_CONTAINER") = SI_NAME_EFFECT_CONTAINER;
 
     bp::class_<PySIEffect, boost::noncopyable>("PySIEffect", bp::init<>())
         .def("__init__", bp::make_constructor(&PySIEffect::init, bp::default_call_policies(), (bp::arg("shape")=std::vector<glm::vec3>(), bp::arg("aabb")=std::vector<glm::vec3>(), bp::arg("uuid")=std::string(), bp::arg("kwargs")=bp::dict())))
@@ -335,6 +358,7 @@ BOOST_PYTHON_MODULE(libPySI)
         .enable_pickling()
         ;
 
+
     bp::enum_<uint32_t>("DataType")
         .value("INT", SI_DATA_TYPE_INT)
         .value("FLOAT", SI_DATA_TYPE_FLOAT)
@@ -357,6 +381,7 @@ BOOST_PYTHON_MODULE(libPySI)
         .value("SI_BUTTON", SI_TYPE_BUTTON)
         .value("SI_NOTIFICATION", SI_TYPE_NOTIFICATION)
         .value("SI_CUSTOM", SI_TYPE_CUSTOM)
+        .value("SI_ENTRY", SI_TYPE_ENTRY)
 
         .export_values()
         ;

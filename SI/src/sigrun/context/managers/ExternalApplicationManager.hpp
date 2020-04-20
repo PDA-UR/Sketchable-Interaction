@@ -23,7 +23,7 @@ public:
     ~ExternalApplicationManager();
 
     void launch_application(const std::string& uuid, const std::string& file_path, std::shared_ptr<Region>& reg, const std::string& application_name="");
-    void launch_standard_application(const std::string& uuid, const std::string& file_path, std::shared_ptr<Region>& reg);
+    void launch_standard_application(const std::string& uuid, const std::string& file_path);
     void terminate_application(const std::string& uuid);
 
     void set_process_winid_fetch_sleep_time_ms(double time);
@@ -37,8 +37,8 @@ private:
     QString generate_wmctrl_command(const std::string& file_path);
     QString generate_wmctrl_command_output(const QString& cmd);
 
-    void process_wmctrl_command_output(const QString& input, const std::string& uuid, const std::string& file_path, std::shared_ptr<Region>& reg);
-    void register_new_application_container(QMainWindow* parent, const std::string& source_uuid, uint64_t winid, std::shared_ptr<Region>& reg, uint64_t pid, const QString& window_name);
+    void process_wmctrl_command_output(const QString& input, const std::string& uuid, const std::string& file_path);
+    void register_new_application_container(QMainWindow* parent, const std::string& source_uuid, uint64_t winid, uint64_t pid, const QString& window_name);
 
     QMainWindow* retrieve_current_main_window();
 

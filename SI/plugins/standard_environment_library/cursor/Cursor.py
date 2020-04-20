@@ -1,4 +1,4 @@
-from libPySI import PySIEffect, PySICapability
+from libPySI import PySIEffect
 
 
 class MouseCursor(PySIEffect.PySIEffect):
@@ -7,7 +7,7 @@ class MouseCursor(PySIEffect.PySIEffect):
         self.shape = shape
         self.aabb = aabb
         self._uuid = uuid
-        self.name = "MouseCursor"
+        self.name = PySIEffect.SI_STD_NAME_MOUSE_CURSOR
         self.region_type = PySIEffect.EffectType.SI_MOUSE_CURSOR
         self.source = "libstdSI"
         self.qml_path = "plugins/standard_environment_library/cursor/Cursor.qml"
@@ -32,11 +32,11 @@ class MouseCursor(PySIEffect.PySIEffect):
         self.cap_recv = PySIEffect.String2_String2FunctionMap_Map()
 
         self.cap_link_emit = PySIEffect.String2FunctionMap({
-            "__position__": self.position
+            PySIEffect.POSITION: self.position
         })
 
         self.cap_link_recv = PySIEffect.String2_String2FunctionMap_Map({
-            "__position__": {"__position__": self.set_position}
+            PySIEffect.POSITION: {PySIEffect.POSITION: self.set_position}
         })
 
     def position(self):
@@ -69,7 +69,7 @@ class MouseCursor(PySIEffect.PySIEffect):
             self.move_target = other
 
         if self.move_target is other:
-            return self._uuid, "__position__"
+            return self._uuid, PySIEffect.POSITION
 
         return "", ""
 
@@ -79,7 +79,7 @@ class MouseCursor(PySIEffect.PySIEffect):
     def on_move_leave_emit(self, other):
         if self.move_target is other:
             self.move_target = None
-            return self._uuid, "__position__"
+            return self._uuid, PySIEffect.POSITION
 
         return "", ""
 
@@ -96,30 +96,30 @@ class MouseCursor(PySIEffect.PySIEffect):
 
     def on_left_mouse_click(self, is_active):
         if is_active:
-            if "CLICK" not in self.cap_emit.keys():
-                self.cap_emit["CLICK"] = {"on_enter": self.on_btn_press_enter_emit, "on_continuous": self.on_btn_press_continuous_emit, "on_leave": self.on_btn_press_leave_emit}
+            if PySIEffect.CLICK not in self.cap_emit.keys():
+                self.cap_emit[PySIEffect.CLICK] = {PySIEffect.ON_ENTER: self.on_btn_press_enter_emit, PySIEffect.ON_CONTINUOUS: self.on_btn_press_continuous_emit, PySIEffect.ON_LEAVE: self.on_btn_press_leave_emit}
 
-            if "SKETCH" not in self.cap_emit.keys():
-                self.cap_emit["SKETCH"] = {"on_enter": self.self_on_sketch_enter_emit, "on_continuous": self.on_sketch_continuous_emit, "on_leave": self.on_sketch_leave_emit}
+            if PySIEffect.SKETCH not in self.cap_emit.keys():
+                self.cap_emit[PySIEffect.SKETCH] = {PySIEffect.ON_ENTER: self.self_on_sketch_enter_emit, PySIEffect.ON_CONTINUOUS: self.on_sketch_continuous_emit, PySIEffect.ON_LEAVE: self.on_sketch_leave_emit}
         else:
-            if "SKETCH" in self.cap_emit.keys():
-                del self.cap_emit["SKETCH"]
+            if PySIEffect.SKETCH in self.cap_emit.keys():
+                del self.cap_emit[PySIEffect.SKETCH]
 
                 if self.parent_canvas is not None:
                     self.parent_canvas.on_sketch_leave_recv(*self.on_sketch_leave_emit(self.parent_canvas))
                 self.parent_canvas = None
 
-            if "CLICK" in self.cap_emit.keys():
-                del self.cap_emit["CLICK"]
+            if PySIEffect.CLICK in self.cap_emit.keys():
+                del self.cap_emit[PySIEffect.CLICK]
                 if self.btn_taget is not None:
                     self.btn_taget.on_click_leave_recv()
 
     def on_right_mouse_click(self, is_active):
         if is_active:
-            if "MOVE" not in self.cap_emit.keys():
-                self.cap_emit["MOVE"] = {"on_enter": self.on_move_enter_emit, "on_continuous": self.on_move_continuous_emit, "on_leave": self.on_move_leave_emit}
-        elif "MOVE" in self.cap_emit.keys():
-            del self.cap_emit["MOVE"]
+            if PySIEffect.MOVE not in self.cap_emit.keys():
+                self.cap_emit[PySIEffect.MOVE] = {PySIEffect.ON_ENTER: self.on_move_enter_emit, PySIEffect.ON_CONTINUOUS: self.on_move_continuous_emit, PySIEffect.ON_LEAVE: self.on_move_leave_emit}
+        elif PySIEffect.MOVE in self.cap_emit.keys():
+            del self.cap_emit[PySIEffect.MOVE]
             if self.move_target is not None:
                 self.move_target.on_move_leave_recv(*self.on_move_leave_emit(self.move_target))
 

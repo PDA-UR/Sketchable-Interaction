@@ -2,6 +2,8 @@ from libPySI import PySIEffect
 
 class Test(PySIEffect):
     def __init__(self):
+        self.name = "Test"
+
         self.cap_emit = {
 
         }

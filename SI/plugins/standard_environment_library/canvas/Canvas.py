@@ -1,4 +1,4 @@
-from libPySI import PySIEffect, PySICapability
+from libPySI import PySIEffect
 
 
 class Canvas(PySIEffect.PySIEffect):
@@ -7,7 +7,7 @@ class Canvas(PySIEffect.PySIEffect):
         self.shape = shape
         self.aabb = aabb
         self._uuid = uuid
-        self.name = "stdCanvas"
+        self.name = PySIEffect.SI_STD_NAME_CANVAS
         self.region_type = PySIEffect.EffectType.SI_CANVAS
         self.source = "libstdSI"
         self.qml_path = ""
@@ -17,7 +17,8 @@ class Canvas(PySIEffect.PySIEffect):
         self.cap_emit = PySIEffect.String2_String2FunctionMap_Map()
 
         self.cap_recv = PySIEffect.String2_String2FunctionMap_Map({
-            "SKETCH": {"on_enter": self.on_sketch_enter_recv, "on_continuous": self.on_sketch_continuous_recv, "on_leave": self.on_sketch_leave_recv}
+            PySIEffect.SKETCH: {PySIEffect.ON_ENTER: self.on_sketch_enter_recv, PySIEffect.ON_CONTINUOUS: self.on_sketch_continuous_recv,
+                                PySIEffect.ON_LEAVE: self.on_sketch_leave_recv}
         })
 
     def on_sketch_enter_recv(self, x, y, sender_id):

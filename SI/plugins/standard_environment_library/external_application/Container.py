@@ -1,4 +1,4 @@
-from libPySI import PySIEffect, PySICapability
+from libPySI import PySIEffect
 
 
 class Container(PySIEffect.PySIEffect):
@@ -7,9 +7,9 @@ class Container(PySIEffect.PySIEffect):
         self.shape = shape
         self.aabb = aabb
         self._uuid = uuid
-        self.name = "Container"
+        self.name = PySIEffect.SI_STD_NAME_CONTAINER
         self.region_type = PySIEffect.EffectType.SI_EXTERNAL_APPLICATION_CONTAINER
-        self.source = "stdContainer"
+        self.source = "libStdSI"
         self.qml_path = ""
         self.color = PySIEffect.Color(0, 0, 255, 255)
 
@@ -23,7 +23,7 @@ class Container(PySIEffect.PySIEffect):
         self.cap_link_emit = PySIEffect.String2FunctionMap()
 
         self.cap_link_recv = PySIEffect.String2_String2FunctionMap_Map({
-            "__geometry__": { "__geometry__": self.set_geometry_from_geometry}
+            PySIEffect.GEOMETRY: {PySIEffect.GEOMETRY: self.set_geometry_from_geometry}
         })
 
     def set_geometry_from_geometry(self, x, y, width, height):

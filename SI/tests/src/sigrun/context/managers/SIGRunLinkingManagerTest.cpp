@@ -66,16 +66,16 @@ TEST_F(SIGRunLinkingManagerTest, link_creation_uni)
     QSignalSpy spy2(b.get(), &Region::LINK_SIGNAL);
     QSignalSpy spy3(c.get(), &Region::LINK_SIGNAL);
 
-    ASSERT_TRUE(lm.add_link(a, "__position__", b, "__position__", ILink::LINK_TYPE::UD));
-    ASSERT_TRUE(lm.add_link(b, "__position__", c, "__position__", ILink::LINK_TYPE::UD));
-    ASSERT_TRUE(lm.add_link(c, "__position__", a, "__position__", ILink::LINK_TYPE::UD));
+    ASSERT_TRUE(lm.add_link(a, SI_CAPABILITY_LINK_POSITION, b, SI_CAPABILITY_LINK_POSITION, ILink::LINK_TYPE::UD));
+    ASSERT_TRUE(lm.add_link(b, SI_CAPABILITY_LINK_POSITION, c, SI_CAPABILITY_LINK_POSITION, ILink::LINK_TYPE::UD));
+    ASSERT_TRUE(lm.add_link(c, SI_CAPABILITY_LINK_POSITION, a, SI_CAPABILITY_LINK_POSITION, ILink::LINK_TYPE::UD));
 
-    ASSERT_FALSE(lm.linking_graph()->links().empty());
+    ASSERT_FALSE(lm.links().empty());
 
-    ASSERT_TRUE(lm.linking_graph()->links().size() == 3);
-    ASSERT_TRUE(lm.linking_graph()->links()[0]->sender_a()->uuid() == a->uuid());
-    ASSERT_TRUE(lm.linking_graph()->links()[1]->sender_a()->uuid() == b->uuid());
-    ASSERT_TRUE(lm.linking_graph()->links()[2]->sender_a()->uuid() == c->uuid());
+    ASSERT_TRUE(lm.links().size() == 3);
+    ASSERT_TRUE(lm.links()[0]->sender_a()->uuid() == a->uuid());
+    ASSERT_TRUE(lm.links()[1]->sender_a()->uuid() == b->uuid());
+    ASSERT_TRUE(lm.links()[2]->sender_a()->uuid() == c->uuid());
 }
 
 TEST_F(SIGRunLinkingManagerTest, is_linked_uni)
@@ -124,15 +124,15 @@ TEST_F(SIGRunLinkingManagerTest, is_linked_uni)
     QSignalSpy spy1(a.get(), &Region::LINK_SIGNAL);
     QSignalSpy spy2(b.get(), &Region::LINK_SIGNAL);
 
-    ASSERT_TRUE(lm.add_link(a, "__position__", b, "__position__", ILink::LINK_TYPE::UD));
-    ASSERT_TRUE(lm.add_link(b, "__position__", c, "__position__", ILink::LINK_TYPE::UD));
+    ASSERT_TRUE(lm.add_link(a, SI_CAPABILITY_LINK_POSITION, b, SI_CAPABILITY_LINK_POSITION, ILink::LINK_TYPE::UD));
+    ASSERT_TRUE(lm.add_link(b, SI_CAPABILITY_LINK_POSITION, c, SI_CAPABILITY_LINK_POSITION, ILink::LINK_TYPE::UD));
 
-    ASSERT_TRUE(lm.is_linked(a, "__position__", b, "__position__", ILink::LINK_TYPE::UD));
-    ASSERT_TRUE(lm.is_linked(b, "__position__", c, "__position__", ILink::LINK_TYPE::UD));
-    ASSERT_FALSE(lm.is_linked(c, "__position__", a, "__position__", ILink::LINK_TYPE::UD));
-    ASSERT_FALSE(lm.is_linked(c, "__position__", b, "__position__", ILink::LINK_TYPE::UD));
-    ASSERT_FALSE(lm.is_linked(b, "__position__", a, "__position__", ILink::LINK_TYPE::UD));
-    ASSERT_FALSE(lm.is_linked(a, "__position__", c, "__position__", ILink::LINK_TYPE::UD));
+    ASSERT_TRUE(lm.is_linked(a, SI_CAPABILITY_LINK_POSITION, b, SI_CAPABILITY_LINK_POSITION, ILink::LINK_TYPE::UD));
+    ASSERT_TRUE(lm.is_linked(b, SI_CAPABILITY_LINK_POSITION, c, SI_CAPABILITY_LINK_POSITION, ILink::LINK_TYPE::UD));
+    ASSERT_FALSE(lm.is_linked(c, SI_CAPABILITY_LINK_POSITION, a, SI_CAPABILITY_LINK_POSITION, ILink::LINK_TYPE::UD));
+    ASSERT_FALSE(lm.is_linked(c, SI_CAPABILITY_LINK_POSITION, b, SI_CAPABILITY_LINK_POSITION, ILink::LINK_TYPE::UD));
+    ASSERT_FALSE(lm.is_linked(b, SI_CAPABILITY_LINK_POSITION, a, SI_CAPABILITY_LINK_POSITION, ILink::LINK_TYPE::UD));
+    ASSERT_FALSE(lm.is_linked(a, SI_CAPABILITY_LINK_POSITION, c, SI_CAPABILITY_LINK_POSITION, ILink::LINK_TYPE::UD));
 }
 
 TEST_F(SIGRunLinkingManagerTest, link_event_execution_uni)
@@ -184,10 +184,10 @@ TEST_F(SIGRunLinkingManagerTest, link_event_execution_uni)
     QSignalSpy spy3(c.get(), &Region::LINK_SIGNAL);
     QSignalSpy spy4(d.get(), &Region::LINK_SIGNAL);
 
-    ASSERT_TRUE(lm->add_link(a, "__position__", b, "__position__", ILink::LINK_TYPE::UD));
-    ASSERT_TRUE(lm->add_link(b, "__position__", c, "__position__", ILink::LINK_TYPE::UD));
-    ASSERT_TRUE(lm->add_link(c, "__position__", a, "__position__", ILink::LINK_TYPE::UD));
-    ASSERT_TRUE(lm->add_link(c, "__position__", d, "__position__", ILink::LINK_TYPE::UD));
+    ASSERT_TRUE(lm->add_link(a, SI_CAPABILITY_LINK_POSITION, b, SI_CAPABILITY_LINK_POSITION, ILink::LINK_TYPE::UD));
+    ASSERT_TRUE(lm->add_link(b, SI_CAPABILITY_LINK_POSITION, c, SI_CAPABILITY_LINK_POSITION, ILink::LINK_TYPE::UD));
+    ASSERT_TRUE(lm->add_link(c, SI_CAPABILITY_LINK_POSITION, a, SI_CAPABILITY_LINK_POSITION, ILink::LINK_TYPE::UD));
+    ASSERT_TRUE(lm->add_link(c, SI_CAPABILITY_LINK_POSITION, d, SI_CAPABILITY_LINK_POSITION, ILink::LINK_TYPE::UD));
 
     ASSERT_FALSE(lm->links().empty());
 
@@ -197,7 +197,7 @@ TEST_F(SIGRunLinkingManagerTest, link_event_execution_uni)
     ASSERT_TRUE(lm->links()[2]->sender_a()->uuid() == c->uuid());
     ASSERT_TRUE(lm->links()[3]->sender_a()->uuid() == c->uuid());
 
-    lm->emit_link_event(a, "__position__");
+    lm->emit_link_event(a, SI_CAPABILITY_LINK_POSITION);
 
     ASSERT_EQ(spy1.count(), 1);
     ASSERT_EQ(spy2.count(), 1);
@@ -252,37 +252,37 @@ TEST_F(SIGRunLinkingManagerTest, link_removal_uni)
     QSignalSpy spy2(b.get(), &Region::LINK_SIGNAL);
     QSignalSpy spy3(c.get(), &Region::LINK_SIGNAL);
 
-    ASSERT_TRUE(lm->add_link(a, "__position__", b, "__position__", ILink::LINK_TYPE::UD));
-    ASSERT_TRUE(lm->add_link(b, "__position__", c, "__position__", ILink::LINK_TYPE::UD));
-    ASSERT_TRUE(lm->add_link(c, "__position__", a, "__position__", ILink::LINK_TYPE::UD));
+    ASSERT_TRUE(lm->add_link(a, SI_CAPABILITY_LINK_POSITION, b, SI_CAPABILITY_LINK_POSITION, ILink::LINK_TYPE::UD));
+    ASSERT_TRUE(lm->add_link(b, SI_CAPABILITY_LINK_POSITION, c, SI_CAPABILITY_LINK_POSITION, ILink::LINK_TYPE::UD));
+    ASSERT_TRUE(lm->add_link(c, SI_CAPABILITY_LINK_POSITION, a, SI_CAPABILITY_LINK_POSITION, ILink::LINK_TYPE::UD));
 
-    ASSERT_FALSE(lm->linking_graph()->links().empty());
+    ASSERT_FALSE(lm->links().empty());
 
-    ASSERT_TRUE(lm->linking_graph()->links().size() == 3);
-    ASSERT_TRUE(lm->linking_graph()->links()[0]->sender_a()->uuid() == a->uuid());
-    ASSERT_TRUE(lm->linking_graph()->links()[1]->sender_a()->uuid() == b->uuid());
-    ASSERT_TRUE(lm->linking_graph()->links()[2]->sender_a()->uuid() == c->uuid());
+    ASSERT_TRUE(lm->links().size() == 3);
+    ASSERT_TRUE(lm->links()[0]->sender_a()->uuid() == a->uuid());
+    ASSERT_TRUE(lm->links()[1]->sender_a()->uuid() == b->uuid());
+    ASSERT_TRUE(lm->links()[2]->sender_a()->uuid() == c->uuid());
 
-    lm->emit_link_event(a, "__position__");
+    lm->emit_link_event(a, SI_CAPABILITY_LINK_POSITION);
 
     ASSERT_EQ(spy1.count(), 1);
     ASSERT_EQ(spy2.count(), 1);
     ASSERT_EQ(spy3.count(), 1);
 
-    lm->remove_link(b, "__position__", c, "__position__", ILink::LINK_TYPE::UD);
+    lm->remove_link(b, SI_CAPABILITY_LINK_POSITION, c, SI_CAPABILITY_LINK_POSITION, ILink::LINK_TYPE::UD);
 
     ASSERT_TRUE(lm->links().size() == 2);
 
     ASSERT_FALSE(lm->links().empty());
     ASSERT_TRUE(lm->links()[1]->sender_a()->uuid() == c->uuid());
 
-    lm->emit_link_event(a, "__position__");
+    lm->emit_link_event(a, SI_CAPABILITY_LINK_POSITION);
 
     ASSERT_EQ(spy1.count(), 2);
     ASSERT_EQ(spy2.count(), 2);
     ASSERT_EQ(spy3.count(), 1);
 
-    lm->emit_link_event(c, "__position__");
+    lm->emit_link_event(c, SI_CAPABILITY_LINK_POSITION);
 
     ASSERT_EQ(spy1.count(), 3);
     ASSERT_EQ(spy2.count(), 3);
@@ -336,9 +336,9 @@ TEST_F(SIGRunLinkingManagerTest, link_creation_bi)
     QSignalSpy spy2(b.get(), &Region::LINK_SIGNAL);
     QSignalSpy spy3(c.get(), &Region::LINK_SIGNAL);
 
-    ASSERT_TRUE(lm->add_link(a, "__position__", b, "__position__", ILink::LINK_TYPE::BD));
-    ASSERT_TRUE(lm->add_link(b, "__position__", c, "__position__", ILink::LINK_TYPE::BD));
-    ASSERT_TRUE(lm->add_link(c, "__position__", a, "__position__", ILink::LINK_TYPE::BD));
+    ASSERT_TRUE(lm->add_link(a, SI_CAPABILITY_LINK_POSITION, b, SI_CAPABILITY_LINK_POSITION, ILink::LINK_TYPE::BD));
+    ASSERT_TRUE(lm->add_link(b, SI_CAPABILITY_LINK_POSITION, c, SI_CAPABILITY_LINK_POSITION, ILink::LINK_TYPE::BD));
+    ASSERT_TRUE(lm->add_link(c, SI_CAPABILITY_LINK_POSITION, a, SI_CAPABILITY_LINK_POSITION, ILink::LINK_TYPE::BD));
 
     ASSERT_FALSE(lm->links().empty());
     ASSERT_EQ(lm->links().size(), 6);
@@ -399,13 +399,13 @@ TEST_F(SIGRunLinkingManagerTest, is_linked_bi)
     QSignalSpy spy1(a.get(), &Region::LINK_SIGNAL);
     QSignalSpy spy2(b.get(), &Region::LINK_SIGNAL);
 
-    ASSERT_TRUE(lm->add_link(a, "__position__", b, "__position__", ILink::LINK_TYPE::BD));
+    ASSERT_TRUE(lm->add_link(a, SI_CAPABILITY_LINK_POSITION, b, SI_CAPABILITY_LINK_POSITION, ILink::LINK_TYPE::BD));
 
     ASSERT_FALSE(lm->links().empty());
     ASSERT_EQ(lm->links().size(), 2); // bidirectional links are two unidirectional links internally
 
-    ASSERT_TRUE(lm->is_linked(a, "__position__", b, "__position__", ILink::LINK_TYPE::BD));
-    ASSERT_TRUE(lm->is_linked(b, "__position__", a, "__position__", ILink::LINK_TYPE::BD));
+    ASSERT_TRUE(lm->is_linked(a, SI_CAPABILITY_LINK_POSITION, b, SI_CAPABILITY_LINK_POSITION, ILink::LINK_TYPE::BD));
+    ASSERT_TRUE(lm->is_linked(b, SI_CAPABILITY_LINK_POSITION, a, SI_CAPABILITY_LINK_POSITION, ILink::LINK_TYPE::BD));
 }
 
 TEST_F(SIGRunLinkingManagerTest, link_event_execution_bi)
@@ -455,15 +455,15 @@ TEST_F(SIGRunLinkingManagerTest, link_event_execution_bi)
     QSignalSpy spy2(b.get(), &Region::LINK_SIGNAL);
     QSignalSpy spy3(c.get(), &Region::LINK_SIGNAL);
 
-    ASSERT_TRUE(lm->add_link(a, "__position__", b, "__position__", ILink::LINK_TYPE::BD));
-    ASSERT_TRUE(lm->add_link(b, "__position__", c, "__position__", ILink::LINK_TYPE::BD));
-    ASSERT_TRUE(lm->add_link(c, "__position__", a, "__position__", ILink::LINK_TYPE::BD));
+    ASSERT_TRUE(lm->add_link(a, SI_CAPABILITY_LINK_POSITION, b, SI_CAPABILITY_LINK_POSITION, ILink::LINK_TYPE::BD));
+    ASSERT_TRUE(lm->add_link(b, SI_CAPABILITY_LINK_POSITION, c, SI_CAPABILITY_LINK_POSITION, ILink::LINK_TYPE::BD));
+    ASSERT_TRUE(lm->add_link(c, SI_CAPABILITY_LINK_POSITION, a, SI_CAPABILITY_LINK_POSITION, ILink::LINK_TYPE::BD));
 
     ASSERT_TRUE(lm->links().size() == 6);
 
     ASSERT_EQ(lm->links()[4]->sender_a()->uuid(), c->uuid());
 
-    lm->emit_link_event(a, "__position__");
+    lm->emit_link_event(a, SI_CAPABILITY_LINK_POSITION);
 
     ASSERT_EQ(spy1.count(), 1);
     ASSERT_EQ(spy2.count(), 1);
@@ -520,24 +520,24 @@ TEST_F(SIGRunLinkingManagerTest, link_removal_bi)
     QSignalSpy spy3(c.get(), &Region::LINK_SIGNAL);
     QSignalSpy spy4(d.get(), &Region::LINK_SIGNAL);
 
-    ASSERT_TRUE(lm->add_link(a, "__position__", b, "__position__", ILink::LINK_TYPE::BD));
-    ASSERT_TRUE(lm->add_link(b, "__position__", c, "__position__", ILink::LINK_TYPE::BD));
-    ASSERT_TRUE(lm->add_link(c, "__position__", a, "__position__", ILink::LINK_TYPE::BD));
-    ASSERT_TRUE(lm->add_link(c, "__position__", d, "__position__", ILink::LINK_TYPE::UD));
+    ASSERT_TRUE(lm->add_link(a, SI_CAPABILITY_LINK_POSITION, b, SI_CAPABILITY_LINK_POSITION, ILink::LINK_TYPE::BD));
+    ASSERT_TRUE(lm->add_link(b, SI_CAPABILITY_LINK_POSITION, c, SI_CAPABILITY_LINK_POSITION, ILink::LINK_TYPE::BD));
+    ASSERT_TRUE(lm->add_link(c, SI_CAPABILITY_LINK_POSITION, a, SI_CAPABILITY_LINK_POSITION, ILink::LINK_TYPE::BD));
+    ASSERT_TRUE(lm->add_link(c, SI_CAPABILITY_LINK_POSITION, d, SI_CAPABILITY_LINK_POSITION, ILink::LINK_TYPE::UD));
 
     ASSERT_TRUE(lm->links().size() == 7);
 
     ASSERT_EQ(lm->links()[0]->sender_a()->uuid(), a->uuid());
     ASSERT_EQ(lm->links()[5]->sender_a()->uuid(), a->uuid());
 
-    lm->emit_link_event(a, "__position__");
+    lm->emit_link_event(a, SI_CAPABILITY_LINK_POSITION);
 
     ASSERT_EQ(spy1.count(), 1);
     ASSERT_EQ(spy2.count(), 1);
     ASSERT_EQ(spy3.count(), 1);
     ASSERT_EQ(spy4.count(), 1);
 
-    lm->remove_link(b, "__position__", c, "__position__", ILink::LINK_TYPE::BD);
+    lm->remove_link(b, SI_CAPABILITY_LINK_POSITION, c, SI_CAPABILITY_LINK_POSITION, ILink::LINK_TYPE::BD);
 
     ASSERT_EQ(lm->links().size(), 5);
 
@@ -553,21 +553,21 @@ TEST_F(SIGRunLinkingManagerTest, link_removal_bi)
     ASSERT_EQ(lm->links()[3]->sender_a()->uuid(), a->uuid());
     ASSERT_EQ(lm->links()[3]->receiver_b()->uuid(), c->uuid());
 
-    lm->emit_link_event(a, "__position__");
+    lm->emit_link_event(a, SI_CAPABILITY_LINK_POSITION);
 
     ASSERT_EQ(spy1.count(), 2);
     ASSERT_EQ(spy2.count(), 2);
     ASSERT_EQ(spy3.count(), 2);
     ASSERT_EQ(spy4.count(), 2);
 
-    lm->emit_link_event(b, "__position__");
+    lm->emit_link_event(b, SI_CAPABILITY_LINK_POSITION);
 
     ASSERT_EQ(spy1.count(), 3);
     ASSERT_EQ(spy2.count(), 3);
     ASSERT_EQ(spy3.count(), 3);
     ASSERT_EQ(spy4.count(), 3);
 
-    lm->emit_link_event(c, "__position__");
+    lm->emit_link_event(c, SI_CAPABILITY_LINK_POSITION);
 
     ASSERT_EQ(spy1.count(), 4);
     ASSERT_EQ(spy2.count(), 4);

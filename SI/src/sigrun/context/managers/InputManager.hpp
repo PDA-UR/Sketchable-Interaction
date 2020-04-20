@@ -90,7 +90,7 @@ public:
 
     std::unordered_map<std::string, std::shared_ptr<ExternalObject>>& external_objects();
 
-    void register_external_application(const std::string& file_uuid, std::shared_ptr<Region>& reg, QWidget* window, uint64_t pid);
+    void register_external_application(const std::string& file_uuid, QWidget* window, uint64_t pid);
     void unregister_external_application(const std::string& container_uuid);
 
     const MouseWheelAngles mouse_wheel_angles();

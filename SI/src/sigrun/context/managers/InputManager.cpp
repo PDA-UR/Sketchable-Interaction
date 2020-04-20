@@ -40,7 +40,7 @@ void InputManager::update()
             {
                 bp::tuple args = bp::make_tuple(d_mouse_coords.x, d_mouse_coords.y);
 
-                Q_EMIT it->second->LINK_SIGNAL(_UUID_,  "","__position__", args);
+                Q_EMIT it->second->LINK_SIGNAL(_UUID_, "", SI_CAPABILITY_LINK_POSITION, args);
             }
             break;
 
@@ -76,7 +76,7 @@ void InputManager::update()
 
                     bp::tuple args = bp::make_tuple(current->x() - Context::SIContext()->main_window()->x(), current->y(), current->width(), current->height());
                     current->setProperty("is_resizing", QVariant(false));
-                    Q_EMIT it->second->LINK_SIGNAL(_UUID_, "", "__geometry__", args);
+                    Q_EMIT it->second->LINK_SIGNAL(_UUID_, "", SI_CAPABILITY_LINK_GEOMETRY, args);
                 }
             }
             break;
@@ -258,7 +258,7 @@ std::unordered_map<std::string, std::shared_ptr<ExternalObject>>& InputManager::
     return deo;
 }
 
-void InputManager::register_external_application(const std::string& file_uuid, std::shared_ptr<Region> &c, QWidget *window, uint64_t pid)
+void InputManager::register_external_application(const std::string& file_uuid, QWidget *window, uint64_t pid)
 {
     uint32_t x = window->x() - Context::SIContext()->main_window()->x();
     uint32_t y = window->y();
@@ -276,7 +276,7 @@ void InputManager::register_external_application(const std::string& file_uuid, s
     bp::dict kwargs;
     kwargs["pid"] = pid;
 
-    Context::SIContext()->region_manager()->add_region(contour, Context::SIContext()->plugin_by_name("Container"), 0);
+    Context::SIContext()->region_manager()->add_region(contour, Context::SIContext()->plugin_by_name(SI_NAME_EFFECT_CONTAINER), 0);
 
     auto& container = Context::SIContext()->region_manager()->regions().back();
 
@@ -285,16 +285,20 @@ void InputManager::register_external_application(const std::string& file_uuid, s
     deo[container->uuid()]->embedded_object.external_application.pid = pid;
     deo[container->uuid()]->embedded_object.external_application.file_uuid = strdup(file_uuid.c_str());
 
-    Context::SIContext()->linking_manager()->add_link_to_object(container, ExternalObject::ExternalObjectType::APPLICATION);
+    Context::SIContext()->linking_manager()->add_link(deo[container->uuid()], container, SI_CAPABILITY_LINK_POSITION, SI_CAPABILITY_LINK_POSITION);
 }
 
 void InputManager::unregister_external_application(const std::string& file_uuid)
 {
     auto it = std::find_if(deo.begin(), deo.end(), [&file_uuid](const auto& pair) -> bool
     {
-        return std::get<1>(pair)->type() == ExternalObject::APPLICATION && std::get<1>(pair)->embedded_object.external_application.file_uuid == file_uuid;
+        return std::get<1>(pair)->type() == ExternalObject::APPLICATION
+                && std::get<1>(pair)->embedded_object.external_application.file_uuid == file_uuid;
     });
 
     if(it != deo.end())
+    {
+        Context::SIContext()->linking_manager()->remove_link(it->second, Context::SIContext()->region_manager()->region_by_uuid(it->first), SI_CAPABILITY_LINK_POSITION, SI_CAPABILITY_LINK_POSITION);
         kill(deo[it->first]->embedded_object.external_application.pid, SIGTERM);
+    }
 }

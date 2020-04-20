@@ -328,7 +328,7 @@ TEST_F(PySIVectorExposureTest, VectorExposureVec3_repr)
 
     std::string repr = VectorExposureVec3::repr(*vev);
 
-    ASSERT_EQ("[, [1.000000, 1.000000], [2.000000, 2.000000], [3.000000, 3.000000], [4.000000, 4.000000], [5.000000, 5.000000], [6.000000, 6.000000]", repr);
+    ASSERT_EQ("[, [1.000000, 1.000000], [2.000000, 2.000000], [3.000000, 3.000000], [4.000000, 4.000000], [5.000000, 5.000000], [6.000000, 6.000000]]", repr);
 }
 
 TEST_F(PySIVectorExposureTest, VectorExposureString_init)
@@ -534,6 +534,6 @@ TEST_F(PySIVectorExposureTest, create_vector)
     Scripting script;
 
     create_vector<VectorExposureVec3, std::vector<glm::vec3>>("TEST1");
-    create_vector<VectorExposureLinkRelation, std::vector<LinkRelation>>("TEST2");
+    create_vector<VectorExposureLinkRelation, std::vector<LinkCandidate>>("TEST2");
     create_vector<VectorExposureString, std::vector<std::string>>("TEST3");
 }

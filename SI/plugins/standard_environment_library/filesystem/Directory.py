@@ -1,11 +1,11 @@
-from libPySI import PySIEffect, PySICapability
+from libPySI import PySIEffect
 import Entry
 
 
 class Directory(Entry.Entry):
     def __init__(self, shape=PySIEffect.PointVector(), aabb=PySIEffect.PointVector(), uuid="", kwargs={}):
         super(Directory, self).__init__(shape, aabb, uuid, kwargs)
-        self.name = "stdSIDir"
+        self.name = PySIEffect.SI_STD_NAME_DIRECTORY
         self.region_type = PySIEffect.EffectType.SI_DIRECTORY
         self.qml_path = "plugins/standard_environment_library/filesystem/Directory.qml"
         self.preview_width = 400
@@ -43,12 +43,12 @@ class Directory(Entry.Entry):
         self.add_data("page_name", "1 / " + str(len(self.browse_pages)), PySIEffect.DataType.STRING)
 
         if not self.is_child:
-            self.cap_emit["PARENT"] = {"on_enter": self.on_child_enter_emit, "on_continuous": None, "on_leave": self.on_child_leave_emit}
+            self.cap_emit[PySIEffect.PARENT] = {PySIEffect.ON_ENTER: self.on_child_enter_emit, PySIEffect.ON_CONTINUOUS: None, PySIEffect.ON_LEAVE: self.on_child_leave_emit}
 
-        self.cap_recv["BTN"] = {"on_enter": self.on_btn_enter_recv, "on_continuous": self.on_btn_continuous_recv, "on_leave": self.on_btn_leave_recv}
-        self.cap_recv["OPEN_ENTRY"] = {"on_enter": self.on_open_entry_enter_recv, "on_continuous": self.on_open_entry_continuous_recv, "on_leave": self.on_open_entry_leave_recv}
+        self.cap_recv[PySIEffect.BTN] = {PySIEffect.ON_ENTER: self.on_btn_enter_recv, PySIEffect.ON_CONTINUOUS: self.on_btn_continuous_recv, PySIEffect.ON_LEAVE: self.on_btn_leave_recv}
+        self.cap_recv[PySIEffect.OPEN_ENTRY] = {PySIEffect.ON_ENTER: self.on_open_entry_enter_recv, PySIEffect.ON_CONTINUOUS: self.on_open_entry_continuous_recv, PySIEffect.ON_LEAVE: self.on_open_entry_leave_recv}
 
-        self.cap_link_emit["__position__"] = self.position
+        self.cap_link_emit[PySIEffect.POSITION] = self.position
 
     def on_child_enter_emit(self, child):
         if child not in self.children:
