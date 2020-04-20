@@ -39,15 +39,16 @@ void Context::add_startup_regions(const std::unordered_map<std::string, std::uni
     {
         if(!value->is_none())
         {
-            DEBUG(key);
-
             HANDLE_PYTHON_CALL(
                 switch (bp::extract<int>(value->attr("region_type")))
                 {
-                    case SI_TYPE_CANVAS: break;
+                    case SI_TYPE_CANVAS:
+                        break;
+
                     case SI_TYPE_MOUSE_CURSOR:
                         add_cursor_regions(value);
                         break;
+
                     case SI_TYPE_NOTIFICATION:
                     {
                         const int& width = bp::extract<int>(value->attr("width"));
@@ -63,8 +64,32 @@ void Context::add_startup_regions(const std::unordered_map<std::string, std::uni
                         d_notification_uuid = uprm->regions().back()->uuid();
                     }
                     break;
+
                     case SI_TYPE_DIRECTORY:
                         add_directory_region(value);
+                        break;
+
+                    case SI_TYPE_BUTTON:
+                        break;
+
+                    case SI_TYPE_EXTERNAL_APPLICATION_CONTAINER:
+                        break;
+
+                    case SI_TYPE_TEXT_FILE:
+                        break;
+
+                    case SI_TYPE_IMAGE_FILE:
+                        break;
+
+                    case SI_TYPE_UNKNOWN_FILE:
+                        break;
+
+                    case SI_TYPE_CURSOR:
+                        break;
+
+                    case SI_TYPE_ENTRY:
+                        break;
+
                     default:
                     {
                         d_available_plugins[key] = *value;
@@ -140,6 +165,9 @@ void Context::begin(const std::unordered_map<std::string, std::unique_ptr<bp::ob
     {
         d_ire = ire;
 
+        for(auto& [key, value]: plugins)
+            d_plugins[key] = *value;
+
         INFO("Creating Qt5 Application...");
         QApplication d_app(argc, argv);
         INFO("Qt5 Application created!");
@@ -168,9 +196,16 @@ void Context::begin(const std::unordered_map<std::string, std::unique_ptr<bp::ob
 
         if(!d_available_plugins.empty())
         {
+            d_available_plugins_names.reserve(d_available_plugins.size());
+
+            std::transform(d_available_plugins.begin(), d_available_plugins.end(), std::back_inserter(d_available_plugins_names), [&](const auto& pair)
+            {
+               return pair.first;
+            });
+
             DEBUG("Test case with further effect type");
 
-            d_selected_effects_by_id[d_mouse_uuid] = d_available_plugins[SI_NAME_EFFECT_TAG];
+            d_selected_effects_by_id[d_mouse_uuid] = d_available_plugins[d_available_plugins_names[d_selected_effect_index]];
             const std::string& selected = bp::extract<std::string>(d_selected_effects_by_id[d_mouse_uuid].attr("name"));
             DEBUG("Mouse Cursor: " + d_mouse_uuid + " set to " + selected);
         }
@@ -235,20 +270,15 @@ void Context::update()
 {
     if(upim->is_key_pressed(SI_KEY_A))
     {
-        if(test_help == SI_NAME_EFFECT_TAG)
-            test_help = SI_NAME_EFFECT_DELETION;
-        else if(test_help == SI_NAME_EFFECT_DELETION)
-            test_help = SI_NAME_EFFECT_OPEN_ENTRY;
-        else
-            test_help = SI_NAME_EFFECT_TAG;
+        d_selected_effect_index = (++d_selected_effect_index) % d_available_plugins_names.size();
 
-        d_selected_effects_by_id[d_mouse_uuid] = d_available_plugins[test_help];
+        d_selected_effects_by_id[d_mouse_uuid] = d_available_plugins[d_available_plugins_names[d_selected_effect_index]];
 
         for(auto& region: uprm->regions())
         {
             if(region->type() == SI_TYPE_NOTIFICATION)
             {
-                region->raw_effect().attr("update_message")("Mouse Cursor set to " + test_help);
+                region->raw_effect().attr("update_message")("Mouse Cursor set to " + d_available_plugins_names[d_selected_effect_index]);
                 break;
             }
         }
@@ -290,7 +320,7 @@ void Context::register_new_region(const std::vector<glm::vec3>& contour, const s
 
 void Context::spawn_folder_contents_buttons_as_regions(std::shared_ptr<Region>& parent, uint32_t dir_x, uint32_t dir_y, uint32_t preview_width, uint32_t preview_height)
 {
-    bp::object value = d_available_plugins[SI_NAME_EFFECT_BUTTON];
+    bp::object value = d_plugins[SI_NAME_EFFECT_BUTTON];
 
     uint32_t btn_width = bp::extract<uint32_t>(value.attr("width"));
     uint32_t btn_height = bp::extract<uint32_t>(value.attr("height"));
@@ -316,7 +346,7 @@ void Context::spawn_folder_contents_buttons_as_regions(std::shared_ptr<Region>& 
 
 void Context::spawn_folder_contents_entry_as_region(const std::vector<glm::vec3>& contour, std::shared_ptr<Region>& parent, const std::string& effect_name, const bp::dict& kwargs)
 {
-    uprm->query_region_insertion(contour, d_available_plugins[effect_name], parent, kwargs, SI_CAPABILITY_LINK_POSITION, SI_CAPABILITY_LINK_POSITION);
+    uprm->query_region_insertion(contour, d_plugins[effect_name], parent, kwargs, SI_CAPABILITY_LINK_POSITION, SI_CAPABILITY_LINK_POSITION);
 }
 
 void Context::spawn_folder_contents_entries_as_regions(std::shared_ptr<Region>& parent, const std::vector<std::string>& children_paths, uint32_t dir_x, uint32_t dir_y, uint32_t dir_width, uint32_t dir_height, uint32_t preview_width, uint32_t preview_height)
@@ -389,8 +419,7 @@ void Context::spawn_folder_contents_as_regions(const std::vector<std::string>& c
         const uint32_t preview_height = bp::extract<uint32_t>(region->raw_effect().attr("preview_height"));
         const uint32_t dir_width = bp::extract<uint32_t>(region->raw_effect().attr("icon_width")) * 2;
         const uint32_t dir_height = bp::extract<uint32_t>(region->raw_effect().attr("icon_height")) + bp::extract<uint32_t>(region->raw_effect().attr("text_height"));
-
-
+        
         if(with_btns)
             spawn_folder_contents_buttons_as_regions(region, dir_x, dir_y, preview_width, preview_height);
 
@@ -405,8 +434,8 @@ const std::map<std::string, bp::object>& Context::available_plugins() const
 
 const bp::object& Context::plugin_by_name(const std::string& name)
 {
-    if(MAP_HAS_KEY(d_available_plugins, name))
-        return d_available_plugins[name];
+    if(MAP_HAS_KEY(d_plugins, name))
+        return d_plugins[name];
 
     return bp::object();
 }

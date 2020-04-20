@@ -62,7 +62,10 @@ private:
     void add_cursor_regions(const std::unique_ptr<bp::object>& cursor_effect);
     void add_directory_region(const std::unique_ptr<bp::object>& effect);
 
+
+    std::vector<std::string> d_available_plugins_names;
     std::map<std::string, bp::object> d_available_plugins;
+    std::unordered_map<std::string, bp::object> d_plugins;
     std::unordered_map<std::string, bp::object> d_selected_effects_by_id;
 
     std::string d_mouse_uuid;
@@ -76,7 +79,7 @@ private:
     std::unique_ptr<FileSystem> upfs;
     std::unique_ptr<ExternalApplicationManager> upeam;
 
-    std::string test_help = SI_NAME_EFFECT_TAG;
+    int d_selected_effect_index = 0;
 
     uint32_t s_width = 0;
     uint32_t s_height = 0;

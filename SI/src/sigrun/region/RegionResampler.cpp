@@ -50,7 +50,7 @@ float RegionResampler::total_length(const std::vector<glm::vec3> &vertices)
     {
         glm::vec3 p0 = vertices[0];
 
-        return std::transform_reduce(std::execution::par_unseq, vertices.begin(), vertices.end(), 0.0, [](float a, float b)
+        return std::transform_reduce(std::execution::seq, vertices.begin(), vertices.end(), 0.0, [](float a, float b)
         {
             return a + b;
         }, [&p0](auto& p)
