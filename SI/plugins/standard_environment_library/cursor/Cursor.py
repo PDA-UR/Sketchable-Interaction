@@ -123,3 +123,5 @@ class MouseCursor(PySIEffect.PySIEffect):
             if self.move_target is not None:
                 self.move_target.on_move_leave_recv(*self.on_move_leave_emit(self.move_target))
 
+    # def on_middle_mouse_click(self, is_active):
+    #     pass
