@@ -35,7 +35,7 @@ std::vector<std::shared_ptr<Region>> &RegionManager::regions()
 
 void RegionManager::activate_mouse_region_button_down(uint32_t mouse_btn)
 {
-    std::transform(std::execution::par_unseq, d_regions.begin(), d_regions.end(), d_regions.begin(), [mouse_btn](auto& region)
+    std::transform(std::execution::par_unseq, d_regions.begin(), d_regions.end(), d_regions.begin(), [&](auto& region)
     {
         if(region->effect().effect_type() == SI_TYPE_MOUSE_CURSOR && !region->effect().has_mouse_pressed_capability(mouse_btn))
         {
@@ -43,23 +43,29 @@ void RegionManager::activate_mouse_region_button_down(uint32_t mouse_btn)
 
             switch(mouse_btn)
             {
-                case 0:
+                case SI_LEFT_MOUSE_BUTTON:
                 {
-                    region->raw_effect().attr("left_mouse_clicked") = true;
-                    region->raw_effect().attr("on_left_mouse_click")(true);
+                    HANDLE_PYTHON_CALL(
+                        region->raw_effect().attr("left_mouse_clicked") = true;
+                        region->raw_effect().attr("on_left_mouse_click")(true);
+                    )
                     break;
                 }
-                case 1:
+                case SI_RIGHT_MOUSE_BUTTON:
                 {
-                    region->raw_effect().attr("right_mouse_clicked") = true;
-                    region->raw_effect().attr("on_right_mouse_click")(true);
+                    HANDLE_PYTHON_CALL(
+                        region->raw_effect().attr("right_mouse_clicked") = true;
+                        region->raw_effect().attr("on_right_mouse_click")(true);
+                    )
                     break;
                 }
 
-                case 2:
+                case SI_MIDDLE_MOUSE_BUTTON:
                 {
-                    region->raw_effect().attr("middle_mouse_clicked") = true;
-                    region->raw_effect().attr("on_middle_mouse_click")(true);
+                    HANDLE_PYTHON_CALL(
+                        region->raw_effect().attr("middle_mouse_clicked") = true;
+                        region->raw_effect().attr("on_middle_mouse_click")(true);
+                    )
                     break;
                 }
             }
@@ -71,7 +77,7 @@ void RegionManager::activate_mouse_region_button_down(uint32_t mouse_btn)
 
 void RegionManager::deactivate_mouse_region_button_down(uint32_t mouse_btn)
 {
-    std::transform(std::execution::par_unseq, d_regions.begin(), d_regions.end(), d_regions.begin(), [mouse_btn](auto& region)
+    std::transform(std::execution::par_unseq, d_regions.begin(), d_regions.end(), d_regions.begin(), [&](auto& region)
     {
         if(region->effect().effect_type() == SI_TYPE_MOUSE_CURSOR && region->effect().has_mouse_pressed_capability(mouse_btn))
         {
@@ -79,23 +85,29 @@ void RegionManager::deactivate_mouse_region_button_down(uint32_t mouse_btn)
 
             switch(mouse_btn)
             {
-                case 0:
+                case SI_LEFT_MOUSE_BUTTON:
                 {
-                    region->raw_effect().attr("left_mouse_clicked") = false;
-                    region->raw_effect().attr("on_left_mouse_click")(false);
+                    HANDLE_PYTHON_CALL(
+                        region->raw_effect().attr("left_mouse_clicked") = false;
+                        region->raw_effect().attr("on_left_mouse_click")(false);
+                    )
                     break;
                 }
-                case 1:
+                case SI_RIGHT_MOUSE_BUTTON:
                 {
-                    region->raw_effect().attr("right_mouse_clicked") = false;
-                    region->raw_effect().attr("on_right_mouse_click")(false);
+                    HANDLE_PYTHON_CALL(
+                        region->raw_effect().attr("right_mouse_clicked") = false;
+                        region->raw_effect().attr("on_right_mouse_click")(false);
+                    )
                     break;
                 }
 
-                case 2:
+                case SI_MIDDLE_MOUSE_BUTTON:
                 {
-                    region->raw_effect().attr("middle_mouse_clicked") = false;
-                    region->raw_effect().attr("on_middle_mouse_click")(false);
+                    HANDLE_PYTHON_CALL(
+                        region->raw_effect().attr("middle_mouse_clicked") = false;
+                        region->raw_effect().attr("on_middle_mouse_click")(false);
+                    )
                     break;
                 }
             }

@@ -119,11 +119,11 @@ bool PySIEffect::has_mouse_pressed_capability(uint32_t btn)
 {
     switch (btn)
     {
-        case 0: // left mouse button
+        case SI_LEFT_MOUSE_BUTTON: // left mouse button
             return d_is_left_mouse_clicked;
-        case 1: // right mouse button
+        case SI_RIGHT_MOUSE_BUTTON: // right mouse button
             return d_is_right_mouse_clicked;
-        case 2: // middle mouse button
+        case SI_MIDDLE_MOUSE_BUTTON: // middle mouse button
             return d_is_middle_mouse_clicked;
         default:
             return false;
@@ -134,13 +134,13 @@ void PySIEffect::set_mouse_pressed_capability(uint32_t btn, bool active)
 {
     switch (btn)
     {
-        case 0: // left mouse button
+        case SI_LEFT_MOUSE_BUTTON: // left mouse button
             d_is_left_mouse_clicked = active;
             break;
-        case 1: // right mouse button
+        case SI_RIGHT_MOUSE_BUTTON: // right mouse button
             d_is_right_mouse_clicked = active;
             break;
-        case 2: // middle mouse button
+        case SI_MIDDLE_MOUSE_BUTTON: // middle mouse button
             d_is_middle_mouse_clicked = active;
             break;
         default:
@@ -247,28 +247,28 @@ BOOST_PYTHON_MODULE(libPySI)
     ;
 
     bp::class_<glm::vec2>("Point2", bp::init<float, float>())
-            .def_readwrite("x", &glm::vec2::x)
-            .def_readwrite("y", &glm::vec2::y)
+        .def_readwrite("x", &glm::vec2::x)
+        .def_readwrite("y", &glm::vec2::y)
 
-            .enable_pickling()
-            ;
+        .enable_pickling()
+        ;
 
     bp::class_<glm::vec3>("Point3", bp::init<float, float, float>())
-            .def_readwrite("x", &glm::vec3::x)
-            .def_readwrite("y", &glm::vec3::y)
-            .def_readwrite("z", &glm::vec3::z)
+        .def_readwrite("x", &glm::vec3::x)
+        .def_readwrite("y", &glm::vec3::y)
+        .def_readwrite("z", &glm::vec3::z)
 
-            .enable_pickling()
-            ;
+        .enable_pickling()
+        ;
 
     bp::class_<glm::vec4>("Color", bp::init<float, float, float, float>())
-            .def_readwrite("r", &glm::vec4::r)
-            .def_readwrite("g", &glm::vec4::g)
-            .def_readwrite("b", &glm::vec4::b)
-            .def_readwrite("a", &glm::vec4::a)
+        .def_readwrite("r", &glm::vec4::r)
+        .def_readwrite("g", &glm::vec4::g)
+        .def_readwrite("b", &glm::vec4::b)
+        .def_readwrite("a", &glm::vec4::a)
 
-            .enable_pickling()
-            ;
+        .enable_pickling()
+        ;
 
     bp::class_<LinkCandidate>("LinkRelation", bp::init<const std::string&, const std::string&, const std::string&, const std::string&>())
         .def_readwrite("sender", &LinkCandidate::sender)
