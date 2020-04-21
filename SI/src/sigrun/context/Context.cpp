@@ -158,8 +158,10 @@ void Context::begin(const std::unordered_map<std::string, std::unique_ptr<bp::ob
     {
         d_ire = ire;
 
-        for(auto& [key, value]: plugins)
-            d_plugins[key] = *value;
+        std::for_each(std::execution::par_unseq, plugins.begin(), plugins.end(), [&](auto& plugin)
+        {
+           d_plugins[plugin.first] = *plugin.second;
+        });
 
         INFO("Creating Qt5 Application...");
         QApplication d_app(argc, argv);

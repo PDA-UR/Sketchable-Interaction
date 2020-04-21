@@ -159,28 +159,28 @@ void Region::LINK_SLOT(const std::string& uuid_event, const std::string& uuid_se
     {
         register_link_event(event);
 
-        for(auto& [self_cap, function]: d_py_effect->attr_link_recv()[source_cap])
+        std::for_each(std::execution::par_unseq, d_py_effect->attr_link_recv()[source_cap].begin(), d_py_effect->attr_link_recv()[source_cap].end(), [&](auto& pair)
         {
             HANDLE_PYTHON_CALL(
                 if(uuid_sender.empty())
                 {
-                    function(*args);
+                    pair.second(*args);
 
-                    if(d_py_effect->attr_link_emit().find(self_cap) != d_py_effect->attr_link_emit().end())
-                        Q_EMIT LINK_SIGNAL(uuid_event, this->uuid(), self_cap, bp::extract<bp::tuple>(d_py_effect->attr_link_emit()[self_cap]()));
+                    if(d_py_effect->attr_link_emit().find(pair.first) != d_py_effect->attr_link_emit().end())
+                        Q_EMIT LINK_SIGNAL(uuid_event, this->uuid(), pair.first, bp::extract<bp::tuple>(d_py_effect->attr_link_emit()[pair.first]()));
                 }
                 else
                 {
-                    if(Context::SIContext()->linking_manager()->is_linked(uuid_sender, source_cap, this->uuid(), self_cap, ILink::UD))
+                    if(Context::SIContext()->linking_manager()->is_linked(uuid_sender, source_cap, this->uuid(), pair.first, ILink::UD))
                     {
-                        function(*args);
+                        pair.second(*args);
 
-                        if(d_py_effect->attr_link_emit().find(self_cap) != d_py_effect->attr_link_emit().end())
-                            Q_EMIT LINK_SIGNAL(uuid_event, this->uuid(), self_cap, bp::extract<bp::tuple>(d_py_effect->attr_link_emit()[self_cap]()));
+                        if(d_py_effect->attr_link_emit().find(pair.first) != d_py_effect->attr_link_emit().end())
+                            Q_EMIT LINK_SIGNAL(uuid_event, this->uuid(), pair.first, bp::extract<bp::tuple>(d_py_effect->attr_link_emit()[pair.first]()));
                     }
                 }
             )
-        }
+        });
     }
 }
 
@@ -321,13 +321,16 @@ const glm::vec4& Region::color() const
 uint8_t Region::handle_collision_event(const std::string &function_name, PySIEffect &colliding_effect)
 {
     HANDLE_PYTHON_CALL(
-        for (auto& [capability, emission_function]: colliding_effect.cap_collision_emit())
+        std::for_each(std::execution::par_unseq, colliding_effect.cap_collision_emit().begin(), colliding_effect.cap_collision_emit().end(), [&](auto& pair)
         {
+            const std::string& capability = pair.first;
+            auto& emission_functions = pair.second;
+
             if (d_py_effect->cap_collision_recv().find(capability) != d_py_effect->cap_collision_recv().end())
             {
-                if(!emission_function[function_name].is_none())
+                if(!emission_functions[function_name].is_none())
                 {
-                    const bp::object &t = emission_function[function_name](*d_effect);
+                    const bp::object &t = emission_functions[function_name](*d_effect);
 
                     if (t.is_none())
                     {
@@ -346,7 +349,7 @@ uint8_t Region::handle_collision_event(const std::string &function_name, PySIEff
                     }
                 }
             }
-        }
+        });
     )
 
     return 0;

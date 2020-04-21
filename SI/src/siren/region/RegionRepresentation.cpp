@@ -3,6 +3,9 @@
 #include <glm/glm.hpp>
 #include <QQmlEngine>
 #include <QLayout>
+#include <execution>
+#include <algorithm>
+#include <numeric>
 #include <QQmlContext>
 
 RegionRepresentation::RegionRepresentation(QWidget *parent, const std::shared_ptr<Region>& region):
@@ -15,8 +18,10 @@ RegionRepresentation::RegionRepresentation(QWidget *parent, const std::shared_pt
 
     d_fill.moveTo(region->contour()[0].x - region->aabb()[0].x, region->contour()[0].y - region->aabb()[0].y);
 
-    for (uint32_t i = 1; i < region->contour().size(); ++i)
-        d_fill.lineTo(region->contour()[i].x - region->aabb()[0].x, region->contour()[i].y - region->aabb()[0].y);
+    std::for_each(std::execution::seq, region->contour().begin() + 1, region->contour().end(), [&](auto& point)
+    {
+        d_fill.lineTo(point.x - region->aabb()[0].x, point.y - region->aabb()[0].y);
+    });
 
     d_view->engine()->rootContext()->setContextProperty("Region", this);
 
@@ -77,8 +82,10 @@ void RegionRepresentation::perform_data_update(const std::shared_ptr<Region> &re
 
         d_fill.moveTo(region->contour()[0].x - region->aabb()[0].x, region->contour()[0].y - region->aabb()[0].y);
 
-        for (uint32_t i = 1; i < region->contour().size(); ++i)
-            d_fill.lineTo(region->contour()[i].x - region->aabb()[0].x, region->contour()[i].y - region->aabb()[0].y);
+        std::for_each(std::execution::seq, region->contour().begin() + 1, region->contour().end(), [&](auto& point)
+        {
+            d_fill.lineTo(point.x - region->aabb()[0].x, point.y - region->aabb()[0].y);
+        });
     }
 
     Q_EMIT dataChanged(region->data());
@@ -95,17 +102,19 @@ void RegionRepresentation::paintEvent(QPaintEvent *event)
     {
         const auto& partial_regions = Context::SIContext()->region_manager()->partial_regions();
 
-        for(auto& [key, partial_region]: partial_regions)
+        std::for_each(std::execution::par_unseq, partial_regions.begin(), partial_regions.end(), [&](auto& pair)
         {
             QPolygonF partial_poly;
 
             up_qp.setBrush(QColor(255, 255, 255));
 
-            for(auto& p: partial_region)
+            std::for_each(std::execution::seq, pair.second.begin(), pair.second.end(), [&](auto& p)
+            {
                 partial_poly << QPointF(p.x, p.y);
+            });
 
             up_qp.drawPolyline(partial_poly);
-        }
+        });
     }
 
     up_qp.end();

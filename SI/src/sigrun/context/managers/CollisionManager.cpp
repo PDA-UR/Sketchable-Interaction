@@ -13,8 +13,10 @@ CollisionManager::~CollisionManager()
 
 void CollisionManager::collide(std::vector<std::shared_ptr<Region>> &regions)
 {
-    for(auto& [key, value]: d_collision_map)
-        value = false;
+    std::for_each(std::execution::par_unseq, d_collision_map.begin(), d_collision_map.end(), [](auto& pair)
+    {
+       pair.second = false;
+    });
 
     int i = 0;
 
