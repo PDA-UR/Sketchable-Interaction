@@ -135,10 +135,9 @@ void LinkingManager::remove_link(std::shared_ptr<ExternalObject>& eo, std::share
 
 void LinkingManager::remove_links_by_indices(std::vector<uint32_t>& indices)
 {
-    std::transform(std::execution::par_unseq, indices.begin(), indices.end(), indices.begin(), [&](uint32_t i)
+    std::for_each(std::execution::par_unseq, indices.begin(), indices.end(), [&](uint32_t i)
     {
         remove_link(d_links[i]->sender_a(), d_links[i]->attribute_a(), d_links[i]->receiver_b(), d_links[i]->attribute_b(), ILink::LINK_TYPE::UD);
-        return i;
     });
 }
 
@@ -290,10 +289,9 @@ void LinkingManager::remove_all_source_linking_relations(const std::string &sour
 {
     if(MAP_HAS_KEY(d_links_in_ctx, source))
     {
-        std::transform(std::execution::par_unseq, d_links_in_ctx[source].begin(), d_links_in_ctx[source].end(), d_links_in_ctx[source].begin(), [&](auto& i)
+        std::for_each(std::execution::par_unseq, d_links_in_ctx[source].begin(), d_links_in_ctx[source].end(), [&](auto& i)
         {
             remove_link(i->sender_a(), i->attribute_a(), i->receiver_b(), i->attribute_b(), ILink::LINK_TYPE::UD);
-            return i;
         });
 
         d_links_in_ctx.erase(source);
@@ -332,7 +330,6 @@ void LinkingManager::remove_linking_relations(const std::vector<LinkCandidate> &
             }
 
             return false;
-
         }), d_links_in_ctx[source].end());
     }
 }
@@ -345,31 +342,26 @@ void LinkingManager::create_linking_relations(std::vector<LinkCandidate> &candid
         d_links_in_ctx[source].reserve(candidates.size());
     }
 
-    std::transform(std::execution::par_unseq, candidates.begin(), candidates.end(), candidates.begin(), [&](auto& relation)
+    std::for_each(std::execution::par_unseq, candidates.begin(), candidates.end(), [&](auto& relation)
     {
         auto sender = std::find_if(std::execution::par_unseq, Context::SIContext()->region_manager()->regions().begin(), Context::SIContext()->region_manager()->regions().end(), [&relation](auto& region)
         {
             return region->uuid() == relation.sender;
         });
 
-        if(sender == Context::SIContext()->region_manager()->regions().end())
-            return relation;
-
         auto receiver = std::find_if(std::execution::par_unseq, Context::SIContext()->region_manager()->regions().begin(), Context::SIContext()->region_manager()->regions().end(), [&relation](auto& region)
         {
             return region->uuid() == relation.recv;
         });
 
-        if(receiver == Context::SIContext()->region_manager()->regions().end())
-            return relation;
-
-        if (add_link(*sender, relation.sender_attrib, *receiver, relation.recv_attrib, ILink::LINK_TYPE::UD))
+        if(sender != Context::SIContext()->region_manager()->regions().end() && receiver != Context::SIContext()->region_manager()->regions().end())
         {
-            d_links_in_ctx[source].push_back(std::make_shared<UnidirectionalLink>(*sender, *receiver, relation.sender_attrib, relation.recv_attrib));
+            if (add_link(*sender, relation.sender_attrib, *receiver, relation.recv_attrib, ILink::LINK_TYPE::UD))
+            {
+                d_links_in_ctx[source].push_back(std::make_shared<UnidirectionalLink>(*sender, *receiver, relation.sender_attrib, relation.recv_attrib));
 
-            Q_EMIT (*sender)->LINK_SIGNAL(_UUID_, (*sender)->uuid(), relation.sender_attrib, bp::extract<bp::tuple>((*sender)->effect().attr_link_emit()[relation.sender_attrib]()));
+                Q_EMIT (*sender)->LINK_SIGNAL(_UUID_, (*sender)->uuid(), relation.sender_attrib, bp::extract<bp::tuple>((*sender)->effect().attr_link_emit()[relation.sender_attrib]()));
+            }
         }
-
-       return relation;
     });
 }

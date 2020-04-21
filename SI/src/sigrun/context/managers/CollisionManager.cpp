@@ -33,12 +33,12 @@ void CollisionManager::collide(std::vector<std::shared_ptr<Region>> &regions)
                     if(are_aabbs_equal(a, b) || is_aabb_enveloped(a, b) || is_aabb_enveloped(b, a) || collides_with_mask(a, b))
                         d_collision_map.find(tuple) != d_collision_map.end() ? handle_event_continuous(a, b, tuple) : handle_event_enter(a, b, tuple);
                     else
-                    if(d_collision_map.find(tuple) != d_collision_map.end())
-                        handle_event_leave(a, b, tuple);
+                        if(d_collision_map.find(tuple) != d_collision_map.end())
+                            handle_event_leave(a, b, tuple);
                 }
                 else
-                if(d_collision_map.find(tuple) != d_collision_map.end())
-                    handle_event_leave(a, b, tuple);
+                    if(d_collision_map.find(tuple) != d_collision_map.end())
+                        handle_event_leave(a, b, tuple);
             }
             else
                 if(d_collision_map.find(tuple) != d_collision_map.end())

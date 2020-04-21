@@ -49,7 +49,7 @@ public:
      *
      * @return a reference to the value in self at the given index
      */
-    static V& get(T& self, uint32_t index)
+    inline static V& get(T& self, uint32_t index)
     {
         if(index < 0)
             index += self.size();
@@ -98,7 +98,7 @@ public:
      * @param index the index of the value to be changed
      * @param value the new value to be set at the given index in self
      */
-    static void set(T& self, uint32_t index, V const& value)
+    inline static void set(T& self, uint32_t index, V const& value)
     {
         if(index < 0)
             index += self.size();
@@ -115,7 +115,7 @@ public:
      * @param self the STL vector of type T with values of type V to have a value deleted
      * @param index the index of the value to be deleted in self
      */
-    static void del(T& self, uint32_t index)
+    inline static void del(T& self, uint32_t index)
     {
         if(index < 0)
             index += self.size();
@@ -132,7 +132,7 @@ public:
      * @param self the STL vector to receive the value
      * @param value the value to be pushed to the back of self
      */
-    static void add(T& self, V const& value)
+    inline static void add(T& self, V const& value)
     {
         self.push_back(value);
     }
@@ -145,7 +145,7 @@ public:
      *
      * @return true if self contains the value and false else
      */
-    static bool in(T const& self, V const& value)
+    constexpr static bool in(T const& self, V const& value)
     {
         return VEC_CONTAINS(self, value);
     }
@@ -159,7 +159,7 @@ public:
      *
      * @return the index of the value in self or -1 if the value is not contained by self
      */
-    static int index(T const& self, V const& value)
+    constexpr static int index(T const& self, V const& value)
     {
         int i = 0;
 
@@ -211,7 +211,7 @@ public:
      * @param self a vector of points to receive a new point
      * @param list a python list containing a points coordinates to be added to self
      */
-    static void add(std::vector<glm::vec3>& self, const bp::list& list)
+    inline static void add(std::vector<glm::vec3>& self, const bp::list& list)
     {
         if(bp::len(list) > 0)
         {
@@ -229,7 +229,7 @@ public:
     * @param index the index of the value to be changed
     * @param list the list containing point coordinates to be applied to the point at the given index
     */
-    static void set(std::vector<glm::vec3>& self, uint32_t index, const bp::list& list)
+    inline static void set(std::vector<glm::vec3>& self, uint32_t index, const bp::list& list)
     {
         if(index < 0)
             index += self.size();
@@ -265,7 +265,7 @@ public:
     }
 
 private:
-    static void apply_lists_of_lists(boost::shared_ptr<std::vector<glm::vec3>>& self, const bp::list& list)
+    inline static void apply_lists_of_lists(boost::shared_ptr<std::vector<glm::vec3>>& self, const bp::list& list)
     {
         for(uint32_t i = 0; i < bp::len(list); ++i)
         {
@@ -274,7 +274,7 @@ private:
         }
     }
 
-    static void apply_list(boost::shared_ptr<std::vector<glm::vec3>>& self, const bp::list& list)
+    inline static void apply_list(boost::shared_ptr<std::vector<glm::vec3>>& self, const bp::list& list)
     {
         float x = bp::extract<float>(list[0]);
         float y = bp::extract<float>(list[1]);
@@ -318,7 +318,7 @@ public:
      * @param self a vector of points to receive a new point
      * @param s a std::string to be added to self
      */
-    static void add(std::vector<std::string>& self, const std::string& s)
+    inline static void add(std::vector<std::string>& self, const std::string& s)
     {
         self.push_back(s);
     }
@@ -330,7 +330,7 @@ public:
     * @param index the index of the value in self to be changed
     * @param s the std::string to be applied at the given index
     */
-    static void set(std::vector<std::string>& self, uint32_t index, const std::string& s)
+    inline static void set(std::vector<std::string>& self, uint32_t index, const std::string& s)
     {
         if(index < 0)
             index += self.size();
@@ -396,7 +396,7 @@ public:
      * @param self a vector of LinkRelation to receive a new LinkRelation
      * @param list a python list containing LinkRelation to be added to self
      */
-    static void add(std::vector<LinkCandidate>& self, const bp::list& list)
+    inline static void add(std::vector<LinkCandidate>& self, const bp::list& list)
     {
         if(bp::len(list) > 0)
         {
@@ -416,7 +416,7 @@ public:
     * @param index the index of the value to be changed
     * @param list the list containing LinkRelation to be applied at the given index
     */
-    static void set(std::vector<LinkCandidate>& self, uint32_t index, const bp::list& list)
+    inline static void set(std::vector<LinkCandidate>& self, uint32_t index, const bp::list& list)
     {
         if(index < 0)
             index += self.size();
@@ -456,7 +456,7 @@ public:
     }
 
 private:
-    static void apply_lists_of_lists(boost::shared_ptr<std::vector<LinkCandidate>>& self, const bp::list& list)
+    inline static void apply_lists_of_lists(boost::shared_ptr<std::vector<LinkCandidate>>& self, const bp::list& list)
     {
         for(uint32_t i = 0; i < bp::len(list); ++i)
         {
@@ -465,7 +465,7 @@ private:
         }
     }
 
-    static void apply_list(boost::shared_ptr<std::vector<LinkCandidate>>& self, const bp::list& list)
+    inline static void apply_list(boost::shared_ptr<std::vector<LinkCandidate>>& self, const bp::list& list)
     {
         const char* sender = bp::extract<char*>(list[0]);
         const char* sender_attrib = bp::extract<char*>(list[1]);

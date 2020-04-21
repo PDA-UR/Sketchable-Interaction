@@ -87,7 +87,7 @@ void Core::retrieve_available_plugins(std::unordered_map<std::string, std::uniqu
 
     PluginCollector().collect("/" + plugin_path, files);
 
-    std::transform(std::execution::seq, files.begin(), files.end(), files.begin(), [&](auto& file)
+    std::for_each(std::execution::seq, files.begin(), files.end(), [&](auto& file)
     {
         std::vector<std::string> classes;
 
@@ -100,17 +100,14 @@ void Core::retrieve_available_plugins(std::unordered_map<std::string, std::uniqu
         script.load_class_names(classes, rpath);
 
         HANDLE_PYTHON_CALL(
-            std::transform(std::execution::par_unseq, classes.begin(), classes.end(), classes.begin(), [&](auto& clazz)
+            std::for_each(std::execution::par_unseq, classes.begin(), classes.end(), [&](auto& clazz)
             {
                 bp::object obj = script.si_plugin(module_name, rpath, clazz);
 
                 const char* name = bp::extract<char*>(obj.attr("name"));
 
                 plugins[std::string(name)] = std::make_unique<bp::object>(obj);
-                return clazz;
             });
         )
-
-       return file;
     });
 }

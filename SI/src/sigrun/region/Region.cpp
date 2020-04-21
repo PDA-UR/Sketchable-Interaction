@@ -110,13 +110,13 @@ void Region::set_aabb()
     int32_t y_min = std::numeric_limits<int32_t>::max();
     int32_t y_max = std::numeric_limits<int32_t>::min();
 
-    for (auto &v: d_contour)
+    std::for_each(std::execution::par_unseq, d_contour.begin(), d_contour.end(), [&](auto& v)
     {
         x_max = v.x > x_max ? v.x : x_max;
         y_max = v.y > y_max ? v.y : y_max;
         x_min = v.x < x_min ? v.x : x_min;
         y_min = v.y < y_min ? v.y : y_min;
-    }
+    });
 
     glm::vec3 tlc(x_min, y_min, 1), blc(x_min, y_max, 1), brc(x_max, y_max, 1), trc(x_max, y_min, 1);
 

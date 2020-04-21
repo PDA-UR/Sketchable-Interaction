@@ -47,7 +47,7 @@ public:
     }
 
     template<typename T>
-    static std::string _print(const std::vector<std::vector<T>> &v)
+    inline static std::string _print(const std::vector<std::vector<T>> &v)
     {
         return std::transform_reduce(std::execution::par, v.begin(), v.end(), std::string("["), [](const std::string& a, const std::string& b)
         {
@@ -59,7 +59,7 @@ public:
     }
 
     template<typename T>
-    static std::string _print(const std::vector<T>& v)
+    inline static std::string _print(const std::vector<T>& v)
     {
         return std::transform_reduce(std::execution::par, v.begin(), v.end(), std::string("["), [](const std::string& a, const std::string& b)
         {
@@ -71,7 +71,7 @@ public:
     }
 
     template<typename T1, typename T2>
-    static std::string _print(const std::map<T1, T2> &map)
+    inline static std::string _print(const std::map<T1, T2> &map)
     {
         return std::transform_reduce(std::execution::par_unseq, map.begin(), map.end(), std::string("{"), [](const std::string& a, const std::string& b)
         {
@@ -82,12 +82,12 @@ public:
         }) + "}";
     }
 
-    static std::string _print(const QString& qs)
+    inline static std::string _print(const QString& qs)
     {
         return qs.toStdString();
     }
 
-    static std::string _print(const QVariant& qv)
+    inline static std::string _print(const QVariant& qv)
     {
         if(std::string(qv.typeName()) == "int")
             return std::to_string(qv.value<int>());
@@ -100,67 +100,67 @@ public:
     }
 
     template <typename T>
-    static T _print(T& p)
+    inline static T _print(T& p)
     {
         return p;
     }
 
-    static std::string _print(int32_t p)
+    inline static std::string _print(int32_t p)
     {
         return std::to_string(p);
     }
 
-    static std::string _print(int16_t p)
+    inline static std::string _print(int16_t p)
     {
         return std::to_string(p);
     }
 
-    static std::string _print(int64_t p)
+    inline static std::string _print(int64_t p)
     {
         return std::to_string(p);
     }
 
-    static std::string _print(uint32_t p)
+    inline static std::string _print(uint32_t p)
     {
         return std::to_string(p);
     }
 
-    static std::string _print(uint16_t p)
+    inline static std::string _print(uint16_t p)
     {
         return std::to_string(p);
     }
 
-    static std::string _print(uint64_t p)
+    inline static std::string _print(uint64_t p)
     {
         return std::to_string(p);
     }
 
-    static std::string _print(float p)
+    inline static std::string _print(float p)
     {
         return std::to_string(p);
     }
 
-    static std::string _print(double p)
+    inline static std::string _print(double p)
     {
         return std::to_string(p);
     }
 
-    static std::string _print(char p)
+    inline static std::string _print(char p)
     {
         return std::to_string(p);
     }
 
-    static std::string _print(int8_t p)
+    inline static std::string _print(int8_t p)
     {
         return std::to_string(p);
     }
 
-    static std::string _print(uint8_t p)
+    inline static std::string _print(uint8_t p)
     {
         return std::to_string(p);
     }
 
-    static std::string _print(const glm::vec3& p)
+    inline static std::string _print(const glm::vec3& p)
     {
         return "(" + std::to_string(p.x) + ", " + std::to_string(p.y) + ")";
     }
