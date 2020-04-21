@@ -26,11 +26,15 @@ InputManager::InputManager():
 
 void InputManager::update()
 {
-    for(auto& [key, value]: d_key_map)
-        d_previous_key_map[key] = value;
+    std::for_each(std::execution::par_unseq, d_key_map.begin(), d_key_map.end(), [&](auto& pair)
+    {
+        d_previous_key_map[pair.first] = pair.second;
+    });
 
-    for(auto& [key, value]: d_button_map)
-        d_previous_button_map[key] = value;
+    std::for_each(std::execution::par_unseq, d_button_map.begin(), d_button_map.end(), [&](auto& pair)
+    {
+        d_previous_button_map[pair.first] = pair.second;
+    });
 
     for(auto it = deo.begin(); it != deo.end();)
     {
