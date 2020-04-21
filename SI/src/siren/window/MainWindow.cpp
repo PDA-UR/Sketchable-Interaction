@@ -36,14 +36,12 @@ void MainWindow::loop(double delta, uint32_t fps)
             d_region_representations.erase(representation.first);
     });
 
-    std::transform(std::execution::seq, regions.begin(), regions.end(), regions.begin(), [&](auto& region)
+    std::for_each(std::execution::seq, regions.begin(), regions.end(), [&](auto& region)
     {
         if(d_region_representations.find(region->uuid()) == d_region_representations.end())
             d_region_representations[region->uuid()] = std::make_unique<RegionRepresentation>(this, region);
         else
             d_region_representations[region->uuid()]->update(region);
-
-        return region;
     });
 
     Context::SIContext()->update();

@@ -43,7 +43,7 @@ public:
      */
     typedef typename T::mapped_type V;
 
-    static V& get(T& x, K const& i)
+    inline  static V& get(T& x, K const& i)
     {
         if(x.find(i) != x.end())
             return x[i];
@@ -51,12 +51,12 @@ public:
         KeyError();
     }
 
-    static void set(T& x, K const& i, V const& v)
+    inline static void set(T& x, K const& i, V const& v)
     {
         x[i] = v;
     }
 
-    static void del(T& x, K const& i)
+    inline static void del(T& x, K const& i)
     {
         if(x.find(i) != x.end())
             x.erase(i);
@@ -64,7 +64,7 @@ public:
             KeyError();
     }
 
-    static bool in(T const& x, K const& i)
+    constexpr static bool in(T const& x, K const& i)
     {
         return x.find(i) != x.end();
     }
@@ -73,8 +73,10 @@ public:
     {
         bp::list t;
 
-        for(typename T::const_iterator it = x.begin(); it != x.end(); ++it)
-            t.append(it->first);
+        std::for_each(std::execution::par_unseq, x.begin(), x.end(), [&](auto& pair)
+        {
+           t.append(pair.first);
+        });
 
         return t;
     }
@@ -83,8 +85,10 @@ public:
     {
         bp::list t;
 
-        for(typename T::const_iterator it = x.begin(); it != x.end(); ++it)
-            t.append(it->second);
+        std::for_each(std::execution::par_unseq, x.begin(), x.end(), [&](auto& pair)
+        {
+            t.append(pair.second);
+        });
 
         return t;
     }
@@ -93,13 +97,15 @@ public:
     {
         bp::list t;
 
-        for(typename T::const_iterator it = x.begin(); it != x.end(); ++it)
-            t.append(bp::make_tuple(it->first, it->second));
+        std::for_each(std::execution::par_unseq, x.begin(), x.end(), [&](auto& pair)
+        {
+            t.append(bp::make_tuple(pair.first, pair.second));
+        });
 
         return t;
     }
 
-    static int32_t index(T const& x, K const& k)
+    constexpr static int32_t index(T const& x, K const& k)
     {
         int i = 0;
         for(typename T::const_iterator it = x.begin(); it != x.end(); ++it, ++i)
@@ -127,7 +133,7 @@ public:
         return self;
     }
 
-    static void set(std::map<std::string, std::vector<glm::vec3>>& self, const std::string& key, const std::vector<glm::vec3>& points)
+    inline static void set(std::map<std::string, std::vector<glm::vec3>>& self, const std::string& key, const std::vector<glm::vec3>& points)
     {
         self[key] = points;
     }
@@ -170,7 +176,7 @@ public:
         return self;
     }
 
-    static void set(std::map<std::string, bp::object>& self, const std::string& key, const bp::object& function)
+    inline static void set(std::map<std::string, bp::object>& self, const std::string& key, const bp::object& function)
     {
         self[key] = function;
     }
@@ -221,7 +227,7 @@ public:
         return self;
     }
 
-    static void set(std::map<std::string, std::map<std::string, bp::object>>& self, const std::string& key, const bp::dict& dict)
+    inline static void set(std::map<std::string, std::map<std::string, bp::object>>& self, const std::string& key, const bp::dict& dict)
     {
         const bp::list keys = bp::extract<bp::list>(dict.keys());
 

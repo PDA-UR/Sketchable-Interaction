@@ -299,20 +299,13 @@ void RegionMask::scanlinefill(const std::vector<glm::vec3>& contour, const std::
     max.x = d_brc_aabb_x;
     max.y = d_brc_aabb_y;
 
-    for(auto& p : contour)
+    std::for_each(std::execution::par_unseq, contour.begin(), contour.end(), [&](auto& v)
     {
-        if (p.x < min.x)
-            min.x = p.x;
-
-        if (p.y < min.y)
-            min.y = p.y;
-
-        if (p.x > max.x)
-            max.x = p.x;
-
-        if (p.y > max.y)
-            max.y = p.y;
-    }
+        max.x = v.x > max.x ? v.x : max.x;
+        max.y = v.y > max.y ? v.y : max.y;
+        min.x = v.x < min.x ? v.x : min.x;
+        min.y = v.y < min.y ? v.y : min.y;
+    });
 
     // Bounds check
     if ((max.x < 0) || (min.x > d_canvas_width) || (max.y < 0) || (min.y > d_canvas_height))
@@ -367,20 +360,19 @@ void RegionMask::scanlinefill(const std::vector<glm::vec3>& contour, const std::
 
             // test to see if this segment makes the scan-cut.
             if ((pa.y > pb.y && y < pa.y && y > pb.y) || (pa.y < pb.y && y > pa.y && y < pb.y))
-            {
-                glm::vec2 intersect(pa.x == pb.x ? pa.x : (pb.x - pa.x) / (pb.y - pa.y) * (y - pa.y) + pa.x, y);
-                scan_hits.push_back(intersect);
-            }
+                scan_hits.emplace_back(pa.x == pb.x ? pa.x : (pb.x - pa.x) / (pb.y - pa.y) * (y - pa.y) + pa.x, y);
         }
 
         // Sort the scan hits by X, so we have a proper left->right ordering
-        sort(scan_hits.begin(), scan_hits.end(), [&](glm::vec2 const &a, glm::vec2 const &b)
+        std::sort(std::execution::par_unseq, scan_hits.begin(), scan_hits.end(), [&](glm::vec2 const &a, glm::vec2 const &b)
         {
             return a.x < b.x;
         });
 
+        int32_t l = scan_hits.size() - 1;
+
         // generate the line segments.
-        for (int32_t i = 0, l = scan_hits.size() - 1; i < l; i += 2)
+        for (int32_t i = 0; i < l; i += 2)
             for(int32_t x = scan_hits[i].x; x < scan_hits[i + 1].x; x++)
                 this->set_bit(glm::vec3(x, y, 1));
 
