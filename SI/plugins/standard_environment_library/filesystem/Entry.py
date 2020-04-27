@@ -1,12 +1,11 @@
 from libPySI import PySIEffect
 
+from SI.plugins.standard_environment_library import SIEffect
 
-class Entry(PySIEffect.PySIEffect):
+
+class Entry(SIEffect.SIEffect):
     def __init__(self, shape=PySIEffect.PointVector(), aabb=PySIEffect.PointVector(), uuid="", kwargs={}):
-        super(Entry, self).__init__()
-        self.shape = shape
-        self.aabb = aabb
-        self._uuid = uuid
+        super(Entry, self).__init__(shape, aabb, uuid, self.TEXTURE_PATH_NONE, kwargs)
         self.name = PySIEffect.SI_STD_NAME_ENTRY
         self.region_type = PySIEffect.EffectType.SI_ENTRY
         self.source = "libstdSI"
@@ -24,72 +23,47 @@ class Entry(PySIEffect.PySIEffect):
         self.is_visible = True
         self.is_under_user_control = False
         self.is_open_entry_capability_blocked = False
-        self.last_x = 0
-        self.last_y = 0
+
+        self.disable_effect(PySIEffect.DELETION, self.RECEPTION)
 
         if self.path is not "":
             self.filename = self.path[self.path.rfind("/") + 1:]
+
         self.is_container_visible = True
 
-        self.cap_emit = PySIEffect.String2_String2FunctionMap_Map()
+        self.add_QML_data("icon_width", self.icon_width, PySIEffect.DataType.INT)
+        self.add_QML_data("icon_height", self.icon_height, PySIEffect.DataType.INT)
+        self.add_QML_data("color", self.text_color, PySIEffect.DataType.STRING)
+        self.add_QML_data("name", self.filename, PySIEffect.DataType.STRING)
 
-        self.cap_recv = PySIEffect.String2_String2FunctionMap_Map({
-            PySIEffect.MOVE: {PySIEffect.ON_ENTER: self.on_move_enter_recv, PySIEffect.ON_CONTINUOUS: self.on_move_continuous_recv, PySIEffect.ON_LEAVE: self.on_move_leave_recv}
-        })
+        self.enable_effect(PySIEffect.OPEN_ENTRY, self.RECEPTION, self.on_open_entry_enter_recv, self.on_open_entry_continuous_recv, self.on_open_entry_leave_recv)
 
         if self.is_child:
-            self.cap_recv[PySIEffect.PARENT] = {PySIEffect.ON_ENTER: self.on_parent_enter_recv, PySIEffect.ON_CONTINUOUS: None, PySIEffect.ON_LEAVE: self.on_parent_leave_recv}
-
-        self.cap_link_emit = PySIEffect.String2FunctionMap()
-
-        self.cap_link_recv = PySIEffect.String2_String2FunctionMap_Map({
-            PySIEffect.POSITION: {PySIEffect.POSITION: self.set_position_from_position}
-        })
-
-    def set_position_from_position(self, rel_x, rel_y):
-        self.last_x = self.x
-        self.last_y = self.y
-
-        self.x += rel_x
-        self.y += rel_y
-
-        return 0
-
-    def on_move_enter_recv(self, cursor_id, link_attrib):
-        if cursor_id is not "" and link_attrib is not "":
-            self.link_relations.append([cursor_id, link_attrib, self._uuid, link_attrib])
-            self.is_under_user_control = True
-
-        return 0
-
-    def on_move_continuous_recv(self):
-        return 0
-
-    def on_move_leave_recv(self, cursor_id, link_attrib):
-        if cursor_id is not "" and link_attrib is not "":
-            self.is_under_user_control = False
-
-            lr = PySIEffect.LinkRelation(cursor_id, link_attrib, self._uuid, link_attrib)
-
-            if lr in self.link_relations:
-                del self.link_relations[self.link_relations.index(lr)]
-
-        return 0
+            self.enable_effect(PySIEffect.PARENT, self.RECEPTION, self.on_parent_enter_recv, None, self.on_parent_leave_recv)
 
     def on_parent_enter_recv(self, parent_id):
-        self.link_relations.append([parent_id, PySIEffect.POSITION, self._uuid, PySIEffect.POSITION])
-
-        return 0
+        self.create_link(parent_id, PySIEffect.POSITION, self._uuid, PySIEffect.POSITION)
 
     def on_parent_leave_recv(self, parent_id):
         self.is_child = False
 
         if self.region_type == int(PySIEffect.EffectType.SI_DIRECTORY):
-            self.cap_emit[PySIEffect.PARENT] = {PySIEffect.ON_ENTER: self.on_child_enter_emit, PySIEffect.ON_CONTINUOUS: None, PySIEffect.ON_LEAVE: self.on_child_leave_emit}
+            self.enable_effect(PySIEffect.PARENT, self.EMISSION, self.on_child_enter_emit, None, self.on_child_leave_emit)
 
-        lr = PySIEffect.LinkRelation(parent_id, PySIEffect.POSITION, self._uuid, PySIEffect.POSITION)
+        self.remove_link(parent_id, PySIEffect.POSITION, self._uuid, PySIEffect.POSITION)
 
-        if lr in self.link_relations:
-            del self.link_relations[self.link_relations.index(lr)]
+    def on_open_entry_enter_recv(self, is_other_controlled):
+        return 0
+
+    def on_open_entry_continuous_recv(self, is_other_controlled):
+        if not self.is_child and not self.is_open_entry_capability_blocked and not self.is_under_user_control and not is_other_controlled:
+            self.start_standard_application(self._uuid, self.path)
+            self.is_open_entry_capability_blocked = True
+
+        return 0
+
+    def on_open_entry_leave_recv(self, is_other_controlled):
+        self.close_standard_application(self._uuid)
+        self.is_open_entry_capability_blocked = False
 
         return 0

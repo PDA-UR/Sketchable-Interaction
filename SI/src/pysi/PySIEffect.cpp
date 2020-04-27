@@ -297,6 +297,7 @@ BOOST_PYTHON_MODULE(libPySI)
     bp::scope().attr("SKETCH") = SI_CAPABILITY_COLLISION_SKETCH;
     bp::scope().attr("CLICK") = SI_CAPABILITY_COLLISION_CLICK;
     bp::scope().attr("DELETION") = SI_CAPABILITY_COLLISION_DELETION;
+    bp::scope().attr("PREVIEW") = SI_CAPABILITY_COLLISION_PREVIEW;
 
     bp::scope().attr("POSITION") = SI_CAPABILITY_LINK_POSITION;
     bp::scope().attr("ROTATION") = SI_CAPABILITY_LINK_ROTATION;
@@ -306,6 +307,8 @@ BOOST_PYTHON_MODULE(libPySI)
 
     bp::scope().attr("SI_STD_NAME_DIRECTORY") = SI_NAME_EFFECT_DIRECTORY;
     bp::scope().attr("SI_STD_NAME_TEXTFILE") = SI_NAME_EFFECT_TEXTFILE;
+    bp::scope().attr("SI_STD_NAME_IMAGEFILE") = SI_NAME_EFFECT_IMAGEFILE;
+    bp::scope().attr("SI_STD_NAME_UNKNOWNFILE") = SI_NAME_EFFECT_UNKNOWNFILE;
     bp::scope().attr("SI_STD_NAME_BUTTON") = SI_NAME_EFFECT_BUTTON;
     bp::scope().attr("SI_STD_NAME_TAG") = SI_NAME_EFFECT_TAG;
     bp::scope().attr("SI_STD_NAME_DELETION") = SI_NAME_EFFECT_DELETION;
@@ -315,22 +318,24 @@ BOOST_PYTHON_MODULE(libPySI)
     bp::scope().attr("SI_STD_NAME_SIMPLE_NOTIFICATION") = SI_NAME_EFFECT_SIMPLE_NOTIFICATION;
     bp::scope().attr("SI_STD_NAME_ENTRY") = SI_NAME_EFFECT_ENTRY;
     bp::scope().attr("SI_STD_NAME_CONTAINER") = SI_NAME_EFFECT_CONTAINER;
+    bp::scope().attr("SI_STD_NAME_PLACEHOLDER") = SI_NAME_EFFECT_PLACEHOLDER;
+    bp::scope().attr("SI_STD_NAME_PREVIEW") = SI_NAME_EFFECT_PREVIEW;
 
     bp::class_<PySIEffect, boost::noncopyable>("PySIEffect", bp::init<>())
         .def("__init__", bp::make_constructor(&PySIEffect::init, bp::default_call_policies(), (bp::arg("shape")=std::vector<glm::vec3>(), bp::arg("aabb")=std::vector<glm::vec3>(), bp::arg("uuid")=std::string(), bp::arg("kwargs")=bp::dict())))
-        .def("add_data", &PySIEffect::__add_data__)
-        .def("notify_shape_changed", &PySIEffect::notify_shape_changed)
-        .def("signal_deletion", &PySIEffect::signal_deletion)
-        .def("show_folder_contents_page", &PySIEffect::__show_folder_contents__)
-        .def("embed_file_standard_appliation_into_context", &PySIEffect::__embed_file_standard_appliation_into_context__)
-        .def("destroy_embedded_window", &PySIEffect::__destroy_embedded_file_standard_appliation_in_context__)
+        .def("__add_data__", &PySIEffect::__add_data__)
+        .def("__notify_shape_changed__", &PySIEffect::notify_shape_changed)
+        .def("__signal_deletion__", &PySIEffect::signal_deletion)
+        .def("__show_folder_contents_page__", &PySIEffect::__show_folder_contents__)
+        .def("__embed_file_standard_appliation_into_context__", &PySIEffect::__embed_file_standard_appliation_into_context__)
+        .def("__destroy_embedded_window__", &PySIEffect::__destroy_embedded_file_standard_appliation_in_context__)
 
         .def_readwrite("__partial_regions__", &PySIEffect::d_partial_regions)
+        .def_readwrite("__registered_regions__", &PySIEffect::d_regions_marked_for_registration)
         .def_readwrite("cap_emit", &PySIEffect::d_cap_collision_emit)
         .def_readwrite("cap_recv", &PySIEffect::d_cap_collision_recv)
         .def_readwrite("cap_link_emit", &PySIEffect::d_cap_link_emit)
         .def_readwrite("cap_link_recv", &PySIEffect::d_cap_link_recv)
-        .def_readwrite("registered_regions", &PySIEffect::d_regions_marked_for_registration)
         .def_readwrite("color", &PySIEffect::d_color)
         .def_readwrite("x", &PySIEffect::d_x)
         .def_readwrite("y", &PySIEffect::d_y)
@@ -382,6 +387,7 @@ BOOST_PYTHON_MODULE(libPySI)
         .value("SI_NOTIFICATION", SI_TYPE_NOTIFICATION)
         .value("SI_CUSTOM", SI_TYPE_CUSTOM)
         .value("SI_ENTRY", SI_TYPE_ENTRY)
+        .value("SI_PREVIEW", SI_TYPE_PREVIEW)
 
         .export_values()
         ;

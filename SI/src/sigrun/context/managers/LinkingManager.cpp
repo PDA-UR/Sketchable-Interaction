@@ -289,7 +289,7 @@ void LinkingManager::remove_all_source_linking_relations(const std::string &sour
 {
     if(MAP_HAS_KEY(d_links_in_ctx, source))
     {
-        std::for_each(std::execution::par_unseq, d_links_in_ctx[source].begin(), d_links_in_ctx[source].end(), [&](auto& i)
+        std::for_each(std::execution::seq, d_links_in_ctx[source].begin(), d_links_in_ctx[source].end(), [&](auto& i)
         {
             remove_link(i->sender_a(), i->attribute_a(), i->receiver_b(), i->attribute_b(), ILink::LINK_TYPE::UD);
         });
@@ -302,7 +302,7 @@ void LinkingManager::remove_all_partaking_linking_relations(const std::string &s
 {
     remove_all_source_linking_relations(source);
 
-    d_links.erase(std::remove_if(std::execution::par_unseq, d_links.begin(), d_links.end(), [&](auto& link)
+    d_links.erase(std::remove_if(std::execution::seq, d_links.begin(), d_links.end(), [&](auto& link)
     {
         if(link->is_external())
             return false;
@@ -315,7 +315,7 @@ void LinkingManager::remove_linking_relations(const std::vector<LinkCandidate> &
 {
     if (MAP_HAS_KEY(d_links_in_ctx, source))
     {
-        d_links_in_ctx[source].erase(std::remove_if(std::execution::par_unseq, d_links_in_ctx[source].begin(), d_links_in_ctx[source].end(), [&](auto& link) -> bool
+        d_links_in_ctx[source].erase(std::remove_if(std::execution::seq, d_links_in_ctx[source].begin(), d_links_in_ctx[source].end(), [&](auto& link) -> bool
         {
             if(std::find_if(std::execution::par_unseq, relations.begin(), relations.end(), [&link](const LinkCandidate &x)
             {
@@ -342,7 +342,7 @@ void LinkingManager::create_linking_relations(std::vector<LinkCandidate> &candid
         d_links_in_ctx[source].reserve(candidates.size());
     }
 
-    std::for_each(std::execution::par_unseq, candidates.begin(), candidates.end(), [&](auto& relation)
+    std::for_each(std::execution::seq, candidates.begin(), candidates.end(), [&](auto& relation)
     {
         auto sender = std::find_if(std::execution::par_unseq, Context::SIContext()->region_manager()->regions().begin(), Context::SIContext()->region_manager()->regions().end(), [&relation](auto& region)
         {

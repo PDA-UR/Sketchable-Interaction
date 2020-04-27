@@ -42,7 +42,7 @@ void InputManager::update()
         {
             case ExternalObject::ExternalObjectType::MOUSE:
             {
-                bp::tuple args = bp::make_tuple(d_mouse_coords.x, d_mouse_coords.y);
+                bp::tuple args = bp::make_tuple(d_previous_mouse_coords.x, d_previous_mouse_coords.y, d_mouse_coords.x, d_mouse_coords.y);
 
                 Q_EMIT it->second->LINK_SIGNAL(_UUID_, "", SI_CAPABILITY_LINK_POSITION, args);
             }
@@ -63,7 +63,7 @@ void InputManager::update()
                     });
 
                     if(it2 != regions.end())
-                        it2->get()->raw_effect().attr("signal_deletion")();
+                        it2->get()->raw_effect().attr("__signal_deletion__")();
 
                     delete it->second->embedded_object.external_application.window;
                     it->second->embedded_object.external_application.window = nullptr;

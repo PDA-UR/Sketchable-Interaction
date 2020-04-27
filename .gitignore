@@ -260,3 +260,13 @@ SI/tests/res/pysi/__pycache__/
 SI/tests/src/pysi/__pycache__/
 
 SI/plugins/standard_environment_library/external_application/__pycache__/
+
+SI/plugins/standard_environment_library/preview/__pycache__/
+
+SI-Doc/si/pysi/html/
+
+SI-Doc/si/pysi/latex/
+
+SI-Doc/si/sigrun/html/
+
+SI-Doc/si/sigrun/latex/

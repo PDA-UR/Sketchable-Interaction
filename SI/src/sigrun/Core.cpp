@@ -87,27 +87,27 @@ void Core::retrieve_available_plugins(std::unordered_map<std::string, std::uniqu
 
     PluginCollector().collect("/" + plugin_path, files);
 
-    std::for_each(std::execution::seq, files.begin(), files.end(), [&](auto& file)
-    {
-        std::vector<std::string> classes;
+    HANDLE_PYTHON_CALL(
+        std::for_each(std::execution::seq, files.begin(), files.end(), [&](auto& file)
+        {
+            std::vector<std::string> classes;
 
-        const std::string& full_path = std::get<0>(file);
-        const std::string& name = std::get<1>(file);
+            const std::string& full_path = std::get<0>(file);
+            const std::string& name = std::get<1>(file);
 
-        std::string module_name = name.substr(0, name.find_last_of('.'));
-        std::string rpath = full_path.substr(full_path.find(plugin_path)) + "/" + name;
+            std::string module_name = name.substr(0, name.find_last_of('.'));
+            std::string rpath = full_path.substr(full_path.find(plugin_path)) + "/" + name;
 
-        script.load_class_names(classes, rpath);
+            script.load_class_names(classes, rpath);
 
-        HANDLE_PYTHON_CALL(
-            std::for_each(std::execution::par_unseq, classes.begin(), classes.end(), [&](auto& clazz)
-            {
-                bp::object obj = script.si_plugin(module_name, rpath, clazz);
+                std::for_each(std::execution::par_unseq, classes.begin(), classes.end(), [&](auto& clazz)
+                {
+                    bp::object obj = script.si_plugin(module_name, rpath, clazz);
 
-                const char* name = bp::extract<char*>(obj.attr("name"));
+                    const char* name = bp::extract<char*>(obj.attr("name"));
 
-                plugins[std::string(name)] = std::make_unique<bp::object>(obj);
-            });
-        )
-    });
+                    plugins[std::string(name)] = std::make_unique<bp::object>(obj);
+                });
+        });
+    )
 }
