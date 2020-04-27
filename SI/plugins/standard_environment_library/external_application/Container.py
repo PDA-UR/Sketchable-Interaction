@@ -1,43 +1,33 @@
 from libPySI import PySIEffect
 
+from SI.plugins.standard_environment_library import SIEffect
 
-class Container(PySIEffect.PySIEffect):
+
+class Container(SIEffect.SIEffect):
     def __init__(self, shape=PySIEffect.PointVector(), aabb=PySIEffect.PointVector(), uuid="", kwargs={}):
-        super(Container, self).__init__()
-        self.shape = shape
-        self.aabb = aabb
-        self._uuid = uuid
+        super(Container, self).__init__(shape, aabb, uuid, self.TEXTURE_PATH_NONE, kwargs)
         self.name = PySIEffect.SI_STD_NAME_CONTAINER
         self.region_type = PySIEffect.EffectType.SI_EXTERNAL_APPLICATION_CONTAINER
         self.source = "libStdSI"
-        self.qml_path = ""
-        self.color = PySIEffect.Color(0, 0, 255, 255)
+        self.color = PySIEffect.Color(255, 0, 0, 255)
 
-        if len(self.aabb):
-            self.last_width = self.aabb[0].x + self.aabb[3].x
-            self.last_height = self.aabb[0].y + self.aabb[1].y
+        self.disable_effect(PySIEffect.DELETION, self.RECEPTION)
+        self.disable_effect(PySIEffect.MOVE, self.RECEPTION)
+        self.disable_link_reception(PySIEffect.POSITION)
+        self.enable_link_reception(PySIEffect.GEOMETRY, PySIEffect.GEOMETRY, self.set_geometry_from_geometry)
 
-        self.cap_emit = PySIEffect.String2_String2FunctionMap_Map()
-        self.cap_recv = PySIEffect.String2_String2FunctionMap_Map()
+    def set_geometry_from_geometry(self, abs_x, abs_y, width, height):
+        if self.width == width and self.height == height:
+            self.x = abs_x
+            self.y = abs_y
 
-        self.cap_link_emit = PySIEffect.String2FunctionMap()
-
-        self.cap_link_recv = PySIEffect.String2_String2FunctionMap_Map({
-            PySIEffect.GEOMETRY: {PySIEffect.GEOMETRY: self.set_geometry_from_geometry}
-        })
-
-    def set_geometry_from_geometry(self, x, y, width, height):
-        if self.last_width == width and self.last_height == height:
-            self.x = x
-            self.y = y
-
-            self.last_width = width
-            self.last_height = height
+            self.width = width
+            self.height = height
         else:
-            self.shape = PySIEffect.PointVector([[x, y], [x, y + height], [x + width, y + height], [x + width, y]])
-            self.notify_shape_changed(True)
+            self.shape = PySIEffect.PointVector([[abs_x, abs_y], [abs_x, abs_y + height], [abs_x + width, abs_y + height], [abs_x + width, abs_y]])
+            self.__notify_shape_changed__(True)
             self.has_data_changed = True
-            self.x = x
-            self.y = y
-            self.last_width = width
-            self.last_height = height
+            self.x = abs_x
+            self.y = abs_y
+            self.width = width
+            self.height = height

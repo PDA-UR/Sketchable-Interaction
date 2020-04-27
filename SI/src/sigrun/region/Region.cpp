@@ -13,7 +13,7 @@ namespace bp = boost::python;
 Region::Region(const std::vector<glm::vec3> &contour, const bp::object& effect, uint32_t mask_width, uint32_t mask_height, const bp::dict& kwargs):
     uprt(std::make_unique<RegionTransform>()),
     d_is_transformed(false),
-    d_link_events(20),
+    d_link_events(50),
     d_last_x(0),
     d_last_y(0),
     d_last_delta_x(0),
@@ -28,7 +28,10 @@ Region::Region(const std::vector<glm::vec3> &contour, const bp::object& effect, 
 
     HANDLE_PYTHON_CALL(
             d_effect = std::make_shared<bp::object>(bp::import("copy").attr("deepcopy")(effect));
+            d_effect->attr("x") = d_aabb[0].x;
+            d_effect->attr("y") = d_aabb[0].y;
             d_effect->attr("__init__")(d_contour, d_aabb, std::string(_UUID_), kwargs);
+
             d_py_effect = std::shared_ptr<PySIEffect>(new PySIEffect(bp::extract<PySIEffect>(*d_effect)));
     )
 
@@ -196,7 +199,8 @@ void Region::register_link_event(const std::string &uuid, const std::string &att
 
 void Region::register_link_event(const std::tuple<std::string, std::string>& link_event)
 {
-    d_link_events << link_event;
+    if(std::get<0>(link_event) != "" && std::get<1>(link_event) != "")
+        d_link_events << link_event;
 }
 
 bool Region::is_link_event_registered(const std::string &uuid, const std::string &attribute)
@@ -297,7 +301,7 @@ void Region::process_canvas_specifics()
                 return candidate;
             });
 
-            HANDLE_PYTHON_CALL(d_effect->attr("registered_regions").attr("clear")();)
+            HANDLE_PYTHON_CALL(d_effect->attr("__registered_regions__").attr("clear")();)
         }
     }
 }
@@ -320,37 +324,38 @@ const glm::vec4& Region::color() const
 
 uint8_t Region::handle_collision_event(const std::string &function_name, PySIEffect &colliding_effect)
 {
-    HANDLE_PYTHON_CALL(
-        std::for_each(std::execution::par_unseq, colliding_effect.cap_collision_emit().begin(), colliding_effect.cap_collision_emit().end(), [&](auto& pair)
+    std::for_each(std::execution::par_unseq, colliding_effect.cap_collision_emit().begin(), colliding_effect.cap_collision_emit().end(), [&](auto& pair)
+    {
+        HANDLE_PYTHON_CALL(
+
+        const std::string& capability = pair.first;
+        auto& emission_functions = pair.second;
+
+        if (d_py_effect->cap_collision_recv().find(capability) != d_py_effect->cap_collision_recv().end())
         {
-            const std::string& capability = pair.first;
-            auto& emission_functions = pair.second;
-
-            if (d_py_effect->cap_collision_recv().find(capability) != d_py_effect->cap_collision_recv().end())
+            if(!emission_functions[function_name].is_none())
             {
-                if(!emission_functions[function_name].is_none())
-                {
-                    const bp::object &t = emission_functions[function_name](*d_effect);
+                const bp::object &t = emission_functions[function_name](*d_effect);
 
-                    if (t.is_none())
+                if (t.is_none())
+                {
+                    if(!d_py_effect->cap_collision_recv()[capability][function_name].is_none())
+                        d_py_effect->cap_collision_recv()[capability][function_name]();
+                }
+                else
+                {
+                    if(!d_py_effect->cap_collision_recv()[capability][function_name].is_none())
                     {
-                        if(!d_py_effect->cap_collision_recv()[capability][function_name].is_none())
-                            d_py_effect->cap_collision_recv()[capability][function_name]();
-                    }
-                    else
-                    {
-                        if(!d_py_effect->cap_collision_recv()[capability][function_name].is_none())
-                        {
-                            if (bp::extract<bp::tuple>(t).check())
-                                d_py_effect->cap_collision_recv()[capability][function_name](*t);
-                            else
-                                d_py_effect->cap_collision_recv()[capability][function_name](t);
-                        }
+                        if (bp::extract<bp::tuple>(t).check())
+                            d_py_effect->cap_collision_recv()[capability][function_name](*t);
+                        else
+                            d_py_effect->cap_collision_recv()[capability][function_name](t);
                     }
                 }
             }
-        });
-    )
+        }
+        )
+    });
 
     return 0;
 }

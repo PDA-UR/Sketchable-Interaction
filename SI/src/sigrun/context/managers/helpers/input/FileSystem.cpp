@@ -79,7 +79,7 @@ uint32_t FileSystem::entry_type(const std::string& _path)
     {
         const std::string& ext = path.extension().string();
 
-        if(ext == ".png" || ext == ".jpeg" || ext == ".jpg")
+        if(ext == ".png" || ext == ".jpeg" || ext == ".jpg" || ext == ".gif")
             return SI_TYPE_IMAGE_FILE;
         else if(ext == ".txt" || ext == ".odt" || ext == ".md")
             return SI_TYPE_TEXT_FILE;

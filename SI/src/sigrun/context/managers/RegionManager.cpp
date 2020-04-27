@@ -18,9 +18,9 @@ RegionManager::~RegionManager()
 {
 }
 
-void RegionManager::query_region_insertion(const std::vector<glm::vec3> &contour, const bp::object& effect, std::shared_ptr<Region>& parent, const bp::dict& kwargs, const std::string& attrib_sender, const std::string& attrib_recv)
+void RegionManager::query_region_insertion(const std::vector<glm::vec3> &contour, const bp::object& effect, std::shared_ptr<Region>& parent, const bp::dict& kwargs)
 {
-    d_region_insertion_queries.emplace_back(contour, effect, kwargs, parent, attrib_sender, attrib_recv);
+    d_region_insertion_queries.emplace_back(contour, effect, kwargs, parent);
 }
 
 void RegionManager::add_region(const std::vector<glm::vec3> &contour, const bp::object &effect, uint32_t region_uuid, const bp::dict& kwargs)

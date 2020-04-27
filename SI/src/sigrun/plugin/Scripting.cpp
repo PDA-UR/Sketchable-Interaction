@@ -31,12 +31,10 @@ Scripting::~Scripting()
 
 bp::object Scripting::si_plugin(std::string &module_name, std::string &path, std::string &class_name)
 {
-    try
-    {
+    HANDLE_PYTHON_CALL
+    (
         return import(module_name, path).attr(class_name.c_str())();
-    }
-    catch(bp::error_already_set&)
-    {}
+    )
 
     return bp::object();
 }
@@ -78,7 +76,7 @@ void Scripting::load_class_names(std::vector<std::string> &classes, const std::s
             {
                 std::string class_name = source.substr(found + clazz.size() + space.size(),found2 - (found + clazz.size() + space.size()));
 
-                if(class_name.substr(0, 2) != double_underscore)
+                if(class_name.substr(0, 2) != double_underscore && class_name != "SIEffect")
                     classes.push_back(class_name);
 
                 size += found2;
