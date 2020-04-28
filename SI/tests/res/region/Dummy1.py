@@ -2,10 +2,10 @@ from libPySI import PySIEffect
 
 
 class Dummy1(PySIEffect.PySIEffect):
-    def __init__(self, shape=PySIEffect.PointVector(), aabb=PySIEffect.PointVector(), uuid="", kwargs={}):
+    def __init__(self, shape=PySIEffect.PointVector(), uuid="", kwargs={}):
         super(Dummy1, self).__init__()
         self.shape = shape
-        self.aabb = aabb
+        self.aabb
         self._uuid = uuid
         self.name = "Dummy1"
         self.region_type = PySIEffect.EffectType.SI_CUSTOM

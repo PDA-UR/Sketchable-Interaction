@@ -3,8 +3,8 @@ import Entry
 
 
 class ImageFile(Entry.Entry):
-    def __init__(self, shape=PySIEffect.PointVector(), aabb=PySIEffect.PointVector(), uuid="", kwargs={}):
-        super(ImageFile, self).__init__(shape, aabb, uuid, kwargs)
+    def __init__(self, shape=PySIEffect.PointVector(), uuid="", kwargs={}):
+        super(ImageFile, self).__init__(shape, uuid, kwargs)
         self.name = PySIEffect.SI_STD_NAME_IMAGEFILE
         self.region_type = PySIEffect.EffectType.SI_IMAGE_FILE
         self.qml_path = "plugins/standard_environment_library/filesystem/ImageFile.qml"
@@ -26,7 +26,6 @@ class ImageFile(Entry.Entry):
         self.height = 450
 
         self.shape = PySIEffect.PointVector([[x, y], [x, y + self.height], [x + self.width, y + self.height], [x + self.width, y]])
-        self.__notify_shape_changed__(True)
 
         self.add_QML_data("img_path", self.path, PySIEffect.DataType.STRING)
         self.add_QML_data("is_in_preview", self.is_in_preview, PySIEffect.DataType.BOOL)
@@ -48,7 +47,6 @@ class ImageFile(Entry.Entry):
         self.height = self.icon_height + self.text_height
 
         self.shape = PySIEffect.PointVector([[x, y], [x, y + self.height], [x + self.width, y + self.height], [x + self.width, y]])
-        self.register_shape_change(self.RESAMPLING)
 
         self.add_QML_data("img_path", self.path, PySIEffect.DataType.STRING)
         self.add_QML_data("is_in_preview", self.is_in_preview, PySIEffect.DataType.BOOL)

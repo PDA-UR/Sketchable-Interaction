@@ -79,7 +79,6 @@ public:
 private:
     void process_canvas_specifics();
     void process_linking_relationships();
-    void process_contour_change();
 
     std::shared_ptr<PySIEffect> d_py_effect;
     std::shared_ptr<bp::object> d_effect;

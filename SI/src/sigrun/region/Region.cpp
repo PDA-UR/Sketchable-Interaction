@@ -22,18 +22,16 @@ Region::Region(const std::vector<glm::vec3> &contour, const bp::object& effect, 
     qRegisterMetaType<bp::object>("bp::object");
     qRegisterMetaType<bp::tuple>("bp::tuple");
 
-    RegionResampler::resample(d_contour, contour);
-
-    set_aabb();
+    d_contour = contour;
 
     HANDLE_PYTHON_CALL(
-            d_effect = std::make_shared<bp::object>(bp::import("copy").attr("deepcopy")(effect));
-            d_effect->attr("x") = d_aabb[0].x;
-            d_effect->attr("y") = d_aabb[0].y;
-            d_effect->attr("__init__")(d_contour, d_aabb, std::string(_UUID_), kwargs);
+        d_effect = std::make_shared<bp::object>(bp::import("copy").attr("deepcopy")(effect));
+        d_effect->attr("__init__")(contour, std::string(_UUID_), kwargs);
 
-            d_py_effect = std::shared_ptr<PySIEffect>(new PySIEffect(bp::extract<PySIEffect>(*d_effect)));
+        d_py_effect = std::shared_ptr<PySIEffect>(new PySIEffect(bp::extract<PySIEffect>(*d_effect)));
     )
+
+    set_aabb();
 
     if(!mask_width && !mask_height)
     {
@@ -41,7 +39,7 @@ Region::Region(const std::vector<glm::vec3> &contour, const bp::object& effect, 
         mask_height = Context::SIContext()->height();
     }
 
-    uprm = std::make_unique<RegionMask>(mask_width, mask_height, d_contour, d_aabb);
+    uprm = std::make_unique<RegionMask>(mask_width, mask_height, d_py_effect->contour(), d_py_effect->aabb());
 }
 
 Region::~Region()= default;
@@ -50,7 +48,7 @@ void Region::move(int32_t x, int32_t y)
 {
     if(x != d_last_x || y != d_last_y)
     {
-        glm::vec2 center(d_last_x + (d_aabb[0].x + (d_aabb[3].x - d_aabb[0].x)) / 2, d_last_y + (d_aabb[0].y + (d_aabb[1].y - d_aabb[0].y)) / 2);
+        glm::vec2 center(d_last_x + (d_py_effect->aabb()[0].x + (d_py_effect->aabb()[3].x - d_py_effect->aabb()[0].x)) / 2, d_last_y + (d_py_effect->aabb()[0].y + (d_py_effect->aabb()[1].y - d_py_effect->aabb()[0].y)) / 2);
 
         uprt->update(glm::vec2(x, y), 0, 1, center);
 
@@ -98,12 +96,12 @@ const std::unique_ptr<RegionMask> &Region::mask() const
 
 const std::vector<glm::vec3>& Region::aabb()
 {
-    return d_aabb;
+    return d_py_effect->aabb();
 }
 
 const std::vector<glm::vec3>& Region::contour()
 {
-    return d_contour;
+    return d_py_effect->contour();
 }
 
 void Region::set_aabb()
@@ -113,7 +111,7 @@ void Region::set_aabb()
     int32_t y_min = std::numeric_limits<int32_t>::max();
     int32_t y_max = std::numeric_limits<int32_t>::min();
 
-    std::for_each(std::execution::par_unseq, d_contour.begin(), d_contour.end(), [&](auto& v)
+    std::for_each(std::execution::par_unseq, d_py_effect->contour().begin(), d_py_effect->contour().end(), [&](auto& v)
     {
         x_max = v.x > x_max ? v.x : x_max;
         y_max = v.y > y_max ? v.y : y_max;
@@ -249,39 +247,12 @@ void Region::update()
 
     HANDLE_PYTHON_CALL(d_py_effect = std::shared_ptr<PySIEffect>(new PySIEffect(bp::extract<PySIEffect>(*d_effect)));)
 
-    process_contour_change();
-
-    HANDLE_PYTHON_CALL(d_py_effect = std::shared_ptr<PySIEffect>(new PySIEffect(bp::extract<PySIEffect>(*d_effect)));)
-
     move(d_py_effect->x(), d_py_effect->y());
 
     process_canvas_specifics();
     process_linking_relationships();
 }
 
-void Region::process_contour_change()
-{
-    if(d_py_effect->has_shape_changed() & REQUIRES_NEW_SHAPE)
-    {
-        d_contour.clear();
-
-        if(d_py_effect->has_shape_changed() & REQUIRES_RESAMPLE)
-            RegionResampler::resample(d_contour, d_py_effect->contour());
-        else
-            d_contour = d_py_effect->contour();
-
-        set_aabb();
-
-        d_effect->attr("shape") = d_contour;
-        d_effect->attr("aabb") = d_aabb;
-        d_effect->attr("has_shape_changed") = false;
-        d_effect->attr("require_resample") = false;
-
-        uprm = std::make_unique<RegionMask>(Context::SIContext()->width(), Context::SIContext()->height(), d_contour, d_aabb);
-
-        d_is_transformed = true;
-    }
-}
 
 void Region::process_canvas_specifics()
 {

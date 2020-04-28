@@ -44,27 +44,11 @@ TEST_F(PySIPySIEffectTest, add_data)
     ASSERT_TRUE(pysie.d_data_changed);
 }
 
-TEST_F(PySIPySIEffectTest, notify_shape_changed)
-{
-    PySIEffect pysie;
-    EXPECT_NO_FATAL_FAILURE(pysie.notify_shape_changed());
-
-    ASSERT_TRUE(pysie.d_has_shape_changed);
-    ASSERT_FALSE(pysie.d_require_resample);
-
-    pysie.d_has_shape_changed = false;
-    EXPECT_NO_FATAL_FAILURE(pysie.notify_shape_changed(true));
-
-    ASSERT_TRUE(pysie.d_has_shape_changed);
-    ASSERT_TRUE(pysie.d_require_resample);
-}
-
 TEST_F(PySIPySIEffectTest, signal_deletion)
 {
     PySIEffect pysie;
 
     EXPECT_NO_FATAL_FAILURE(pysie.signal_deletion());
-
 }
 
 TEST_F(PySIPySIEffectTest, show_folder_contents_page)
