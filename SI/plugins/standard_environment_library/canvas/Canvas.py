@@ -21,5 +21,5 @@ class Canvas(SIEffect.SIEffect):
     def on_sketch_continuous_recv(self, x, y, cursor_id):
         self.add_point_to_region_drawing(x, y, cursor_id)
 
-    def on_sketch_leave_recv(self, x, y, sender_id):
-        self.register_region_from_drawing(sender_id)
+    def on_sketch_leave_recv(self, x, y, cursor_id):
+        self.register_region_from_drawing(cursor_id)
