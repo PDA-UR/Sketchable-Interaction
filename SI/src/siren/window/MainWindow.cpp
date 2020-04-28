@@ -27,23 +27,21 @@ void MainWindow::loop(double delta, uint32_t fps)
 {
     auto& regions = Context::SIContext()->region_manager()->regions();
 
-    for(const auto& [key, val]: d_region_representations)
+    std::for_each(std::execution::par_unseq, d_region_representations.begin(), d_region_representations.end(), [&](auto& representation)
     {
-        if(std::find_if(std::execution::par_unseq, regions.begin(), regions.end(), [&key](const auto& region)
+        if(std::find_if(std::execution::par_unseq, regions.begin(), regions.end(), [&](const auto& region)
         {
-            return key == region->uuid();
+            return representation.first == region->uuid();
         }) == regions.end())
-            d_region_representations.erase(key);
-    }
+            d_region_representations.erase(representation.first);
+    });
 
-    std::transform(std::execution::seq, regions.begin(), regions.end(), regions.begin(), [&](auto& region)
+    std::for_each(std::execution::seq, regions.begin(), regions.end(), [&](auto& region)
     {
         if(d_region_representations.find(region->uuid()) == d_region_representations.end())
             d_region_representations[region->uuid()] = std::make_unique<RegionRepresentation>(this, region);
         else
             d_region_representations[region->uuid()]->update(region);
-
-        return region;
     });
 
     Context::SIContext()->update();

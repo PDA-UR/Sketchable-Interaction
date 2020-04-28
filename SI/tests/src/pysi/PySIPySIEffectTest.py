@@ -449,7 +449,7 @@ class PySIPySIEffectTest(unittest.TestCase):
         self.assertNotEqual(pyeff.cap_recv, None)
         self.assertNotEqual(pyeff.cap_link_emit, None)
         self.assertNotEqual(pyeff.cap_link_recv, None)
-        self.assertNotEqual(pyeff.registered_regions, None)
+        self.assertNotEqual(pyeff.__registered_regions__, None)
         self.assertNotEqual(pyeff.color, None)
         self.assertNotEqual(pyeff.x, None)
         self.assertNotEqual(pyeff.y, None)
@@ -478,12 +478,12 @@ class PySIPySIEffectTest(unittest.TestCase):
         pyeff = TestClass()
 
         self.assertNotEqual(pyeff.__init__, None)
-        self.assertNotEqual(pyeff.add_data, None)
-        self.assertNotEqual(pyeff.notify_shape_changed, None)
-        self.assertNotEqual(pyeff.signal_deletion, None)
-        self.assertNotEqual(pyeff.show_folder_contents_page, None)
-        self.assertNotEqual(pyeff.embed_file_standard_appliation_into_context, None)
-        self.assertNotEqual(pyeff.destroy_embedded_window, None)
+        self.assertNotEqual(pyeff.__add_data__, None)
+        self.assertNotEqual(pyeff.__notify_shape_changed__, None)
+        self.assertNotEqual(pyeff.__signal_deletion__, None)
+        self.assertNotEqual(pyeff.__show_folder_contents_page__, None)
+        self.assertNotEqual(pyeff.__embed_file_standard_appliation_into_context__, None)
+        self.assertNotEqual(pyeff.__destroy_embedded_window__, None)
 
 
     @staticmethod

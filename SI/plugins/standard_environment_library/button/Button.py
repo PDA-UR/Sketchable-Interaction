@@ -1,19 +1,16 @@
 from libPySI import PySIEffect
+from SI.plugins.standard_environment_library import SIEffect
 
 
-class Button(PySIEffect.PySIEffect):
+class Button(SIEffect.SIEffect):
     def __init__(self, shape=PySIEffect.PointVector(), aabb=PySIEffect.PointVector(), uuid="", kwargs={}):
-        super(Button, self).__init__()
-        self.shape = shape
-        self.aabb = aabb
-        self._uuid = uuid
+        super(Button, self).__init__(shape, aabb, uuid, "res/next.png", kwargs)
         self.name = PySIEffect.SI_STD_NAME_BUTTON
         self.region_type = PySIEffect.EffectType.SI_BUTTON
-        self.source = "libStdSI"
         self.qml_path = "plugins/standard_environment_library/button/Button.qml"
         self.color = PySIEffect.Color(192, 192, 192, 0)
-        self.delta_x = 0
-        self.delta_y = 0
+
+        self.disable_effect(PySIEffect.MOVE, False)
 
         self.value = kwargs["value"] if len(kwargs) else True
 
@@ -25,42 +22,18 @@ class Button(PySIEffect.PySIEffect):
         self.width = 100
         self.height = 100
 
-        self.add_data("icon_width", self.icon_width, PySIEffect.DataType.INT)
-        self.add_data("icon_height", self.icon_height, PySIEffect.DataType.INT)
-        self.add_data("img_path", "res/next.png", PySIEffect.DataType.STRING)
+        self.add_QML_data("icon_width", self.icon_width, PySIEffect.DataType.INT)
+        self.add_QML_data("icon_height", self.icon_height, PySIEffect.DataType.INT)
 
-        self.cap_emit = PySIEffect.String2_String2FunctionMap_Map({
-        })
-
-        self.cap_emit[PySIEffect.BTN] = {PySIEffect.ON_ENTER: self.on_btn_enter_emit, PySIEffect.ON_CONTINUOUS: self.on_btn_continuous_emit, PySIEffect.ON_LEAVE: self.on_btn_leave_emit}
-
-        self.cap_recv = PySIEffect.String2_String2FunctionMap_Map({
-            PySIEffect.CLICK: {PySIEffect.ON_ENTER: self.on_click_enter_recv, PySIEffect.ON_CONTINUOUS: self.on_click_continuous_recv, PySIEffect.ON_LEAVE: self.on_click_leave_recv}
-        })
-
-        self.cap_recv[PySIEffect.PARENT] = {PySIEffect.ON_ENTER: self.on_parent_enter_recv, PySIEffect.ON_CONTINUOUS: None, PySIEffect.ON_LEAVE: self.on_parent_leave_recv}
-
-        self.cap_link_emit = PySIEffect.String2FunctionMap({
-        })
-
-        self.cap_link_recv = PySIEffect.String2_String2FunctionMap_Map({
-            PySIEffect.POSITION: {PySIEffect.POSITION: self.set_position_from_position}
-        })
-
-    def set_position_from_position(self, rel_x, rel_y):
-        self.x += rel_x
-        self.y += rel_y
-
-        self.delta_x = rel_x
-        self.delta_y = rel_y
-
-        return 0
+        self.enable_effect(PySIEffect.BTN, self.EMISSION, self.on_btn_enter_emit, self.on_btn_continuous_emit, self.on_btn_leave_emit)
+        self.enable_effect(PySIEffect.CLICK, self.RECEPTION, self.on_click_enter_recv, self.on_click_continuous_recv, self.on_click_leave_recv)
+        self.enable_effect(PySIEffect.PARENT, self.RECEPTION, self.on_parent_enter_recv, None, self.on_parent_leave_recv)
 
     def on_btn_enter_emit(self, other):
         return "", ""
 
     def on_btn_continuous_emit(self, other):
-        if self.is_triggered and not self.is_triggered_reported:
+        if self.is_triggered and not self.is_triggered_reported and not other.is_child:
             self.is_triggered_reported = True
             return self._uuid, self.value
 
@@ -84,14 +57,7 @@ class Button(PySIEffect.PySIEffect):
         return 0
 
     def on_parent_enter_recv(self, parent_id):
-        self.link_relations.append([parent_id, PySIEffect.POSITION, self._uuid, PySIEffect.POSITION])
-
-        return 0
+        self.create_link(parent_id, PySIEffect.POSITION, self._uuid, PySIEffect.POSITION)
 
     def on_parent_leave_recv(self, parent_id):
-        lr = PySIEffect.LinkRelation(parent_id, PySIEffect.POSITION, self._uuid, PySIEffect.POSITION)
-
-        if lr in self.link_relations:
-            del self.link_relations[self.link_relations.index(lr)]
-
-        return 0
+        self.remove_link(parent_id, PySIEffect.POSITION, self._uuid, PySIEffect.POSITION)

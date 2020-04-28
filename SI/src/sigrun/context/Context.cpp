@@ -158,8 +158,10 @@ void Context::begin(const std::unordered_map<std::string, std::unique_ptr<bp::ob
     {
         d_ire = ire;
 
-        for(auto& [key, value]: plugins)
-            d_plugins[key] = *value;
+        std::for_each(std::execution::par_unseq, plugins.begin(), plugins.end(), [&](auto& plugin)
+        {
+           d_plugins[plugin.first] = *plugin.second;
+        });
 
         INFO("Creating Qt5 Application...");
         QApplication d_app(argc, argv);
@@ -322,7 +324,7 @@ void Context::spawn_folder_contents_buttons_as_regions(std::shared_ptr<Region>& 
     bp::dict kwargs;
     kwargs["value"] = false;
 
-    uprm->query_region_insertion(btn_contour, value, parent, kwargs, SI_CAPABILITY_LINK_POSITION, SI_CAPABILITY_LINK_POSITION);
+    uprm->query_region_insertion(btn_contour, value, parent, kwargs);
 
     std::vector<glm::vec3> btn_contour2{glm::vec3(dir_x, dir_y + preview_height - btn_height, 1),
                                         glm::vec3(dir_x, dir_y + preview_height, 1),
@@ -330,12 +332,12 @@ void Context::spawn_folder_contents_buttons_as_regions(std::shared_ptr<Region>& 
                                         glm::vec3(dir_x + btn_width, dir_y + preview_height - btn_height, 1)};
     bp::dict kwargs2;
 
-    uprm->query_region_insertion(btn_contour2, value, parent, kwargs2, SI_CAPABILITY_LINK_POSITION, SI_CAPABILITY_LINK_POSITION);
+    uprm->query_region_insertion(btn_contour2, value, parent, kwargs2);
 }
 
 void Context::spawn_folder_contents_entry_as_region(const std::vector<glm::vec3>& contour, std::shared_ptr<Region>& parent, const std::string& effect_name, const bp::dict& kwargs)
 {
-    uprm->query_region_insertion(contour, d_plugins[effect_name], parent, kwargs, SI_CAPABILITY_LINK_POSITION, SI_CAPABILITY_LINK_POSITION);
+    uprm->query_region_insertion(contour, d_plugins[effect_name], parent, kwargs);
 }
 
 void Context::spawn_folder_contents_entries_as_regions(std::shared_ptr<Region>& parent, const std::vector<std::string>& children_paths, uint32_t dir_x, uint32_t dir_y, uint32_t dir_width, uint32_t dir_height, uint32_t preview_width, uint32_t preview_height)
@@ -374,12 +376,16 @@ void Context::spawn_folder_contents_entries_as_regions(std::shared_ptr<Region>& 
                 kwargs["is_child"] = true;
                 effect_name = SI_NAME_EFFECT_DIRECTORY;
                 break;
-            case SI_TYPE_UNKNOWN_FILE:
             case SI_TYPE_IMAGE_FILE:
-            case SI_TYPE_TEXT_FILE:
+                effect_name = SI_NAME_EFFECT_IMAGEFILE;
                 kwargs["cwd"] = child_path;
                 kwargs["is_child"] = true;
+                break;
+            case SI_TYPE_UNKNOWN_FILE:
+            case SI_TYPE_TEXT_FILE:
                 effect_name = SI_NAME_EFFECT_TEXTFILE;
+                kwargs["cwd"] = child_path;
+                kwargs["is_child"] = true;
                 break;
         }
 

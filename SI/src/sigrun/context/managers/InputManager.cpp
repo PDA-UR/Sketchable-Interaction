@@ -26,11 +26,15 @@ InputManager::InputManager():
 
 void InputManager::update()
 {
-    for(auto& [key, value]: d_key_map)
-        d_previous_key_map[key] = value;
+    std::for_each(std::execution::par_unseq, d_key_map.begin(), d_key_map.end(), [&](auto& pair)
+    {
+        d_previous_key_map[pair.first] = pair.second;
+    });
 
-    for(auto& [key, value]: d_button_map)
-        d_previous_button_map[key] = value;
+    std::for_each(std::execution::par_unseq, d_button_map.begin(), d_button_map.end(), [&](auto& pair)
+    {
+        d_previous_button_map[pair.first] = pair.second;
+    });
 
     for(auto it = deo.begin(); it != deo.end();)
     {
@@ -38,7 +42,7 @@ void InputManager::update()
         {
             case ExternalObject::ExternalObjectType::MOUSE:
             {
-                bp::tuple args = bp::make_tuple(d_mouse_coords.x, d_mouse_coords.y);
+                bp::tuple args = bp::make_tuple(d_previous_mouse_coords.x, d_previous_mouse_coords.y, d_mouse_coords.x, d_mouse_coords.y);
 
                 Q_EMIT it->second->LINK_SIGNAL(_UUID_, "", SI_CAPABILITY_LINK_POSITION, args);
             }
@@ -59,7 +63,7 @@ void InputManager::update()
                     });
 
                     if(it2 != regions.end())
-                        it2->get()->raw_effect().attr("signal_deletion")();
+                        it2->get()->raw_effect().attr("__signal_deletion__")();
 
                     delete it->second->embedded_object.external_application.window;
                     it->second->embedded_object.external_application.window = nullptr;
@@ -292,8 +296,7 @@ void InputManager::unregister_external_application(const std::string& file_uuid)
 {
     auto it = std::find_if(deo.begin(), deo.end(), [&file_uuid](const auto& pair) -> bool
     {
-        return std::get<1>(pair)->type() == ExternalObject::APPLICATION
-                && std::get<1>(pair)->embedded_object.external_application.file_uuid == file_uuid;
+        return std::get<1>(pair)->type() == ExternalObject::APPLICATION && std::get<1>(pair)->embedded_object.external_application.file_uuid == file_uuid;
     });
 
     if(it != deo.end())

@@ -166,23 +166,24 @@ if (BUILD_DOCS)
     message("Documentation Generation enabled.")
 
     if (DOXYGEN_FOUND)
+        message("Generating SIGRun Documentation")
         # set input and output files
-        set(DOXYGEN_IN SI/docs/doxyfiles/Doxyfile.in)
-        set(DOXYGEN_OUT ${CMAKE_CURRENT_SOURCE_DIR}/SI/docs/doxyfiles/Doxyfile)
+        set(DOXYGEN_IN SI/docs/doxyfiles/DoxyfileSIGRun.in)
+        set(DOXYGEN_OUT ${CMAKE_CURRENT_SOURCE_DIR}/SI/docs/doxyfiles/DoxyfileSIGRun)
 
         # request to configure the file
         configure_file(${DOXYGEN_IN} ${DOXYGEN_OUT} @ONLY)
         message("Doxygen build started")
 
         # note the option ALL which allows to build the docs together with the application
-        add_custom_target(SIDocs ALL
+        add_custom_target(SIGRunDocs ALL
                 COMMAND ${DOXYGEN_EXECUTABLE} ${DOXYGEN_OUT}
-                WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/SI-Doc/si
+                WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/SI-Doc/si/sigrun
                 COMMENT "Generating API documentation with Doxygen")
 
-        add_custom_target(SIDocsPDF
+        add_custom_target(SIGRunDocsPDF
                 COMMENT "Generating API documentation with Doxygen as PDF"
-                WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/SI-Doc/si/latex
+                WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/SI-Doc/si/sigrun/latex
                 COMMAND make
                 COMMAND mv refman.pdf ../SIGRunDoc.pdf)
 
@@ -190,12 +191,40 @@ if (BUILD_DOCS)
 
         install(CODE "EXECUTE_PROCESS(COMMAND ${CMAKE_COMMAND} --build ${CMAKE_BINARY_DIR} --target doc)")
 
+        ############################
+
+        message("Generating PySI Documentation")
+        # set input and output files
+        set(DOXYGEN_IN SI/docs/doxyfiles/DoxyfilePySI.in)
+        set(DOXYGEN_OUT ${CMAKE_CURRENT_SOURCE_DIR}/SI/docs/doxyfiles/DoxyfilePySI)
+
+        # request to configure the file
+        configure_file(${DOXYGEN_IN} ${DOXYGEN_OUT} @ONLY)
+        message("Doxygen build started")
+
+        # note the option ALL which allows to build the docs together with the application
+        add_custom_target(PySIDocs ALL
+                COMMAND ${DOXYGEN_EXECUTABLE} ${DOXYGEN_OUT}
+                WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/SI-Doc/si/pysi
+                COMMENT "Generating API documentation with Doxygen")
+
+        add_custom_target(PySIDocsPDF
+                COMMENT "Generating API documentation with Doxygen as PDF"
+                WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/SI-Doc/si/pysi/latex
+                COMMAND make
+                COMMAND mv refman.pdf ../PySIDoc.pdf)
+
+        message("Doxygen build installed")
+
+        install(CODE "EXECUTE_PROCESS(COMMAND ${CMAKE_COMMAND} --build ${CMAKE_BINARY_DIR} --target doc)")
+
     else (DOXYGEN_FOUND)
-        message("Doxygen need to be installed to generate the doxygen documentation")
+        message("Doxygen needs to be installed to generate the doxygen documentation")
     endif (DOXYGEN_FOUND)
 
-    add_dependencies(SIDocsPDF SIDocs)
-    add_dependencies(SIGeneralRuntime PySI SIDocsPDF)
+    add_dependencies(SIGRunDocsPDF SIGRunDocs)
+    add_dependencies(PySIDocsPDF PySIDocs)
+    add_dependencies(SIGeneralRuntime PySI SIGRunDocsPDF PySIDocsPDF)
 
 else (BUILD_DOCS)
     message("Documentation Generation disabled.")

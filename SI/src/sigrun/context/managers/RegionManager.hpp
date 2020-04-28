@@ -20,7 +20,7 @@ public:
     RegionManager();
     ~RegionManager();
 
-    void query_region_insertion(const std::vector<glm::vec3> &contour, const bp::object& effect, std::shared_ptr<Region>& parent, const bp::dict& kwargs=bp::dict(), const std::string& attrib_sender="", const std::string& attrib_recv="");
+    void query_region_insertion(const std::vector<glm::vec3> &contour, const bp::object& effect, std::shared_ptr<Region>& parent, const bp::dict& kwargs=bp::dict());
     void add_region(const std::vector<glm::vec3> &contour, const bp::object &effect, uint32_t region_uuid, const bp::dict& kwargs=bp::dict());
 
     std::vector<std::shared_ptr<Region>>& regions();
@@ -48,7 +48,7 @@ private:
 
     friend class SIGRunRegionManagerTest;
 
-    std::vector<std::tuple<std::vector<glm::vec3>, bp::object, bp::dict, std::shared_ptr<Region>, std::string, std::string>> d_region_insertion_queries;
+    std::vector<std::tuple<std::vector<glm::vec3>, bp::object, bp::dict, std::shared_ptr<Region>>> d_region_insertion_queries;
 };
 
 
