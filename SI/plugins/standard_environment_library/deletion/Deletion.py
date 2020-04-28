@@ -4,8 +4,8 @@ from SI.plugins.standard_environment_library import SIEffect
 
 
 class Deletion(SIEffect.SIEffect):
-    def __init__(self, shape=PySIEffect.PointVector(), aabb=PySIEffect.PointVector(), uuid="", kwargs={}):
-        super(Deletion, self).__init__(shape, aabb, uuid, "res/deletion.png", kwargs)
+    def __init__(self, shape=PySIEffect.PointVector(), uuid="", kwargs={}):
+        super(Deletion, self).__init__(shape, uuid, "res/deletion.png", kwargs)
         self.name = PySIEffect.SI_STD_NAME_DELETION
         self.region_type = PySIEffect.EffectType.SI_DELETION
         self.qml_path = "plugins/standard_environment_library/deletion/Deletion.qml"

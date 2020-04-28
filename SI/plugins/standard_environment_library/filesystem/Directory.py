@@ -3,8 +3,8 @@ import Entry
 
 
 class Directory(Entry.Entry):
-    def __init__(self, shape=PySIEffect.PointVector(), aabb=PySIEffect.PointVector(), uuid="", kwargs={}):
-        super(Directory, self).__init__(shape, aabb, uuid, kwargs)
+    def __init__(self, shape=PySIEffect.PointVector(), uuid="", kwargs={}):
+        super(Directory, self).__init__(shape, uuid, kwargs)
         self.name = PySIEffect.SI_STD_NAME_DIRECTORY
         self.region_type = PySIEffect.EffectType.SI_DIRECTORY
         self.qml_path = "plugins/standard_environment_library/filesystem/Directory.qml"
@@ -110,7 +110,6 @@ class Directory(Entry.Entry):
             self.height = self.preview_height
 
             self.shape = PySIEffect.PointVector([[x, y], [x, y + self.height], [x + self.width, y + self.height], [x + self.width, y]])
-            self.register_shape_change(self.RESAMPLING)
 
             self.is_icon_visible = False
             self.is_opened_visible = True
@@ -135,7 +134,6 @@ class Directory(Entry.Entry):
             self.height = self.icon_height + self.text_height
 
             self.shape = PySIEffect.PointVector([[x, y], [x, y + self.height], [x + self.width, y + self.height], [x + self.width, y]])
-            self.register_shape_change(self.RESAMPLING)
 
             self.is_icon_visible = True
             self.is_opened_visible = False

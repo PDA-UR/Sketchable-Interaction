@@ -39,14 +39,17 @@ class SIEffect(PySIEffect.PySIEffect):
     # @param uuid the universally unique identifier of the drawn region (str)
     # @param texture_path the path to an image intended to be used as an icon for the drawn region (str)
     # @param kwargs keyworded arguments which may necessary for more specific implementations of region effects (dict)
-    def __init__(self, shape=PySIEffect.PointVector(), aabb=PySIEffect.PointVector(), uuid="", texture_path="", kwargs={}):
+    def __init__(self, shape=PySIEffect.PointVector(), uuid="", texture_path="", kwargs={}):
         super(SIEffect, self).__init__()
 
         ## member attribute variable containing the shape (contour) of a drawn region as a PySIEffect.PointVector
         self.shape = shape
 
         ## member attribute variable containing the axis-aligned bounding-box (aabb) of a drawn region as a PySIEffect.PointVector
-        self.aabb = aabb
+        #
+        # This variable is automatically computed when shape is changed.
+        # It is recommended to use this variable read-only.
+        self.aabb
 
         ## member attribute variable containing the universally unique identifier (uuid) of a drawn region as a str
         self._uuid = uuid

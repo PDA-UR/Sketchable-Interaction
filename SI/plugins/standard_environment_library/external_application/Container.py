@@ -4,8 +4,8 @@ from SI.plugins.standard_environment_library import SIEffect
 
 
 class Container(SIEffect.SIEffect):
-    def __init__(self, shape=PySIEffect.PointVector(), aabb=PySIEffect.PointVector(), uuid="", kwargs={}):
-        super(Container, self).__init__(shape, aabb, uuid, self.TEXTURE_PATH_NONE, kwargs)
+    def __init__(self, shape=PySIEffect.PointVector(), uuid="", kwargs={}):
+        super(Container, self).__init__(shape, uuid, self.TEXTURE_PATH_NONE, kwargs)
         self.name = PySIEffect.SI_STD_NAME_CONTAINER
         self.region_type = PySIEffect.EffectType.SI_EXTERNAL_APPLICATION_CONTAINER
         self.source = "libStdSI"

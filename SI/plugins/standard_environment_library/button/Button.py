@@ -3,8 +3,8 @@ from SI.plugins.standard_environment_library import SIEffect
 
 
 class Button(SIEffect.SIEffect):
-    def __init__(self, shape=PySIEffect.PointVector(), aabb=PySIEffect.PointVector(), uuid="", kwargs={}):
-        super(Button, self).__init__(shape, aabb, uuid, "res/next.png", kwargs)
+    def __init__(self, shape=PySIEffect.PointVector(), uuid="", kwargs={}):
+        super(Button, self).__init__(shape, uuid, "res/next.png", kwargs)
         self.name = PySIEffect.SI_STD_NAME_BUTTON
         self.region_type = PySIEffect.EffectType.SI_BUTTON
         self.qml_path = "plugins/standard_environment_library/button/Button.qml"

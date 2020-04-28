@@ -109,7 +109,7 @@ bp::object Scripting::import(const std::string &module, const std::string &path)
     return locals["new_module"];
 }
 
-std::ostream &operator<<(std::ostream &os, const Scripting &scripting)
+std::ostream& operator<<(std::ostream &os, const Scripting &scripting)
 {
     return os << "Scripting Object: Globals: " << bp::extract<std::string>(bp::str(scripting.d_globals))() << " Main: " << bp::extract<std::string>(bp::str(scripting.d_main))();
 }

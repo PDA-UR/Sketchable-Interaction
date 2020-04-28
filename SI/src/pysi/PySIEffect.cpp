@@ -3,6 +3,7 @@
 #include "pysi/stl_container_exposure/MapExposure.hpp"
 #include "pysi/stl_container_exposure/VectorExposure.hpp"
 #include <sigrun/context/Context.hpp>
+#include <sigrun/region/RegionResampler.hpp>
 
 namespace bp = boost::python;
 
@@ -11,8 +12,6 @@ void PySIEffect::init(const std::vector<glm::vec3>& contour, const std::vector<g
     d_contour = contour;
     d_aabb = aabb;
     d_uuid = uuid;
-    d_has_shape_changed = false;
-    d_require_resample = false;
 
     d_regions_marked_for_registration.reserve(10);
     d_link_relations.reserve(100);
@@ -30,13 +29,6 @@ bool PySIEffect::is_flagged_for_deletion()
     return d_flagged_for_deletion;
 }
 
-// has to be set to false from elsewhere (happens in Region.cpp, where value is used
-void PySIEffect::notify_shape_changed(bool resample)
-{
-    d_has_shape_changed = true;
-    d_require_resample = resample;
-}
-
 void PySIEffect::__embed_file_standard_appliation_into_context__(const std::string& uuid, const std::string& path)
 {
     Context::SIContext()->external_application_manager()->launch_standard_application(uuid, path);
@@ -45,19 +37,6 @@ void PySIEffect::__embed_file_standard_appliation_into_context__(const std::stri
 void PySIEffect::__destroy_embedded_file_standard_appliation_in_context__(const std::string& uuid)
 {
     Context::SIContext()->external_application_manager()->terminate_application(uuid);
-}
-
-uint32_t PySIEffect::has_shape_changed()
-{
-    uint32_t ret = 0;
-
-    if(d_has_shape_changed)
-        ret |= REQUIRES_NEW_SHAPE;
-
-    if(d_require_resample)
-        ret |= REQUIRES_RESAMPLE;
-
-    return ret;
 }
 
 const uint32_t PySIEffect::x() const
@@ -241,6 +220,41 @@ void PySIEffect::__show_folder_contents__(const std::vector<std::string>& page_c
     Context::SIContext()->spawn_folder_contents_as_regions(page_contents, uuid, with_btns);
 }
 
+std::vector<glm::vec3> PySIEffect::get_shape()
+{
+    return d_contour;
+}
+
+void PySIEffect::set_shape(const std::vector<glm::vec3>& shape)
+{
+    if(!shape.empty())
+    {
+        d_contour.clear();
+
+        RegionResampler::resample(d_contour, shape);
+
+        int32_t x_min = std::numeric_limits<int32_t>::max();
+        int32_t x_max = std::numeric_limits<int32_t>::min();
+        int32_t y_min = std::numeric_limits<int32_t>::max();
+        int32_t y_max = std::numeric_limits<int32_t>::min();
+
+        std::for_each(std::execution::par_unseq, d_contour.begin(), d_contour.end(), [&](auto& v)
+        {
+            x_max = v.x > x_max ? v.x : x_max;
+            y_max = v.y > y_max ? v.y : y_max;
+            x_min = v.x < x_min ? v.x : x_min;
+            y_min = v.y < y_min ? v.y : y_min;
+        });
+
+        glm::vec3 tlc(x_min, y_min, 1), blc(x_min, y_max, 1), brc(x_max, y_max, 1), trc(x_max, y_min, 1);
+
+        d_aabb = std::vector<glm::vec3>
+        {
+            tlc, blc, brc, trc
+        };
+    }
+}
+
 BOOST_PYTHON_MODULE(libPySI)
 {
     bp::scope the_scope = bp::class_<PySIEffect>("PySIEffect")
@@ -322,13 +336,14 @@ BOOST_PYTHON_MODULE(libPySI)
     bp::scope().attr("SI_STD_NAME_PREVIEW") = SI_NAME_EFFECT_PREVIEW;
 
     bp::class_<PySIEffect, boost::noncopyable>("PySIEffect", bp::init<>())
-        .def("__init__", bp::make_constructor(&PySIEffect::init, bp::default_call_policies(), (bp::arg("shape")=std::vector<glm::vec3>(), bp::arg("aabb")=std::vector<glm::vec3>(), bp::arg("uuid")=std::string(), bp::arg("kwargs")=bp::dict())))
+        .def("__init__", bp::make_constructor(&PySIEffect::init, bp::default_call_policies(), (bp::arg("shape")=std::vector<glm::vec3>(), bp::arg("uuid")=std::string(), bp::arg("kwargs")=bp::dict())))
         .def("__add_data__", &PySIEffect::__add_data__)
-        .def("__notify_shape_changed__", &PySIEffect::notify_shape_changed)
         .def("__signal_deletion__", &PySIEffect::signal_deletion)
         .def("__show_folder_contents_page__", &PySIEffect::__show_folder_contents__)
         .def("__embed_file_standard_appliation_into_context__", &PySIEffect::__embed_file_standard_appliation_into_context__)
         .def("__destroy_embedded_window__", &PySIEffect::__destroy_embedded_file_standard_appliation_in_context__)
+
+        .add_property("shape", &PySIEffect::get_shape, &PySIEffect::set_shape)
 
         .def_readwrite("__partial_regions__", &PySIEffect::d_partial_regions)
         .def_readwrite("__registered_regions__", &PySIEffect::d_regions_marked_for_registration)
@@ -352,10 +367,7 @@ BOOST_PYTHON_MODULE(libPySI)
         .def_readwrite("right_mouse_clicked", &PySIEffect::d_is_right_mouse_clicked)
         .def_readwrite("middle_mouse_clicked", &PySIEffect::d_is_middle_mouse_clicked)
         .def_readwrite("link_relations", &PySIEffect::d_link_relations)
-        .def_readwrite("shape", &PySIEffect::d_contour)
-        .def_readwrite("aabb", &PySIEffect::d_aabb)
-        .def_readwrite("has_shape_changed", &PySIEffect::d_has_shape_changed)
-        .def_readwrite("require_resample", &PySIEffect::d_require_resample)
+        .def_readonly("aabb", &PySIEffect::d_aabb)
         .def_readwrite("has_data_changed", &PySIEffect::d_data_changed)
         .def_readwrite("mouse_wheel_angle_px", &PySIEffect::mouse_wheel_angle_px)
         .def_readwrite("mouse_wheel_angle_degrees", &PySIEffect::mouse_wheel_angle_degrees)
