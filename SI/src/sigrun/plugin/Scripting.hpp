@@ -29,6 +29,10 @@ public:
 
 private:
 
+    void remove_comments(std::string& source);
+    std::string remove_line_comments(const std::string& source);
+    std::string remove_block_comments(const std::string& source);
+
     bp::object d_main;
     bp::object d_globals;
 };

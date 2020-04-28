@@ -3,7 +3,12 @@
 #include <string>
 #include <fstream>
 #include <streambuf>
+#include <algorithm>
+#include <numeric>
+#include <QString>
+#include <QStringList>
 #include <boost/python.hpp>
+#include <sigrun/log/Log.hpp>
 
 namespace bp = boost::python;
 
@@ -49,6 +54,8 @@ std::string Scripting::load_plugin_source(const char *source)
     file.seekg(0, std::ios::beg);
 
     ret.assign(std::istreambuf_iterator<char>(file), std::istreambuf_iterator<char>());
+
+    remove_comments(ret);
 
     return ret;
 }
@@ -105,4 +112,57 @@ bp::object Scripting::import(const std::string &module, const std::string &path)
 std::ostream &operator<<(std::ostream &os, const Scripting &scripting)
 {
     return os << "Scripting Object: Globals: " << bp::extract<std::string>(bp::str(scripting.d_globals))() << " Main: " << bp::extract<std::string>(bp::str(scripting.d_main))();
+}
+
+std::string Scripting::remove_line_comments(const std::string& source)
+{
+    std::string temp = source;
+    size_t cursor = std::string::npos;
+
+    do
+    {
+        size_t hashtag = temp.find('#');
+        size_t new_line = temp.find('\n', hashtag);
+
+        if(hashtag != std::string::npos && new_line != std::string::npos)
+        {
+            temp.replace(hashtag, new_line - hashtag, "");
+
+            cursor = hashtag - 1;
+        }
+        else
+            cursor = std::string::npos;
+    }
+    while(cursor != std::string::npos);
+
+    return temp;
+}
+
+std::string Scripting::remove_block_comments(const std::string& source)
+{
+    std::string temp = source;
+    size_t cursor = std::string::npos;
+
+    do
+    {
+        size_t left_triple_quotes = temp.find(R"(""")");
+        size_t right_triple_quotes = temp.find(R"(""")", left_triple_quotes + 3);
+
+        if(left_triple_quotes != std::string::npos && right_triple_quotes != std::string::npos)
+        {
+            temp.replace(left_triple_quotes, right_triple_quotes + 3 - left_triple_quotes, "");
+
+            cursor = left_triple_quotes - 1;
+        }
+        else
+            cursor = std::string::npos;
+    }
+    while(cursor != std::string::npos);
+
+    return temp;
+}
+
+void Scripting::remove_comments(std::string& source)
+{
+    source = remove_line_comments(remove_block_comments(source));
 }
