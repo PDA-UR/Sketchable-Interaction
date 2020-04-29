@@ -22,16 +22,12 @@ Region::Region(const std::vector<glm::vec3> &contour, const bp::object& effect, 
     qRegisterMetaType<bp::object>("bp::object");
     qRegisterMetaType<bp::tuple>("bp::tuple");
 
-    d_contour = contour;
-
     HANDLE_PYTHON_CALL(
         d_effect = std::make_shared<bp::object>(bp::import("copy").attr("deepcopy")(effect));
         d_effect->attr("__init__")(contour, std::string(_UUID_), kwargs);
 
         d_py_effect = std::shared_ptr<PySIEffect>(new PySIEffect(bp::extract<PySIEffect>(*d_effect)));
     )
-
-    set_aabb();
 
     if(!mask_width && !mask_height)
     {
@@ -44,8 +40,11 @@ Region::Region(const std::vector<glm::vec3> &contour, const bp::object& effect, 
 
 Region::~Region()= default;
 
-void Region::move(int32_t x, int32_t y)
+void Region::move()
 {
+    const int32_t& x = d_py_effect->x();
+    const int32_t& y = d_py_effect->y();
+
     if(x != d_last_x || y != d_last_y)
     {
         glm::vec2 center(d_last_x + (d_py_effect->aabb()[0].x + (d_py_effect->aabb()[3].x - d_py_effect->aabb()[0].x)) / 2, d_last_y + (d_py_effect->aabb()[0].y + (d_py_effect->aabb()[1].y - d_py_effect->aabb()[0].y)) / 2);
@@ -102,29 +101,6 @@ const std::vector<glm::vec3>& Region::aabb()
 const std::vector<glm::vec3>& Region::contour()
 {
     return d_py_effect->contour();
-}
-
-void Region::set_aabb()
-{
-    int32_t x_min = std::numeric_limits<int32_t>::max();
-    int32_t x_max = std::numeric_limits<int32_t>::min();
-    int32_t y_min = std::numeric_limits<int32_t>::max();
-    int32_t y_max = std::numeric_limits<int32_t>::min();
-
-    std::for_each(std::execution::par_unseq, d_py_effect->contour().begin(), d_py_effect->contour().end(), [&](auto& v)
-    {
-        x_max = v.x > x_max ? v.x : x_max;
-        y_max = v.y > y_max ? v.y : y_max;
-        x_min = v.x < x_min ? v.x : x_min;
-        y_min = v.y < y_min ? v.y : y_min;
-    });
-
-    glm::vec3 tlc(x_min, y_min, 1), blc(x_min, y_max, 1), brc(x_max, y_max, 1), trc(x_max, y_min, 1);
-
-    d_aabb = std::vector<glm::vec3>
-    {
-        tlc, blc, brc, trc
-    };
 }
 
 const std::string &Region::qml_path() const
@@ -247,7 +223,13 @@ void Region::update()
 
     HANDLE_PYTHON_CALL(d_py_effect = std::shared_ptr<PySIEffect>(new PySIEffect(bp::extract<PySIEffect>(*d_effect)));)
 
-    move(d_py_effect->x(), d_py_effect->y());
+    if(d_py_effect->d_recompute_mask)
+    {
+        uprm = std::make_unique<RegionMask>(Context::SIContext()->width(), Context::SIContext()->height(), d_py_effect->contour(), d_py_effect->aabb());
+        d_effect->attr("__recompute_collision_mask__") = false;
+    }
+
+    move();
 
     process_canvas_specifics();
     process_linking_relationships();

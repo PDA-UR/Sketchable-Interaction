@@ -252,6 +252,8 @@ void PySIEffect::set_shape(const std::vector<glm::vec3>& shape)
         {
             tlc, blc, brc, trc
         };
+
+        d_recompute_mask = true;
     }
 }
 
@@ -345,6 +347,9 @@ BOOST_PYTHON_MODULE(libPySI)
 
         .add_property("shape", &PySIEffect::get_shape, &PySIEffect::set_shape)
 
+        .def_readonly("aabb", &PySIEffect::d_aabb)
+        .def_readwrite("__recompute_collision_mask__", &PySIEffect::d_recompute_mask)
+
         .def_readwrite("__partial_regions__", &PySIEffect::d_partial_regions)
         .def_readwrite("__registered_regions__", &PySIEffect::d_regions_marked_for_registration)
         .def_readwrite("cap_emit", &PySIEffect::d_cap_collision_emit)
@@ -367,7 +372,6 @@ BOOST_PYTHON_MODULE(libPySI)
         .def_readwrite("right_mouse_clicked", &PySIEffect::d_is_right_mouse_clicked)
         .def_readwrite("middle_mouse_clicked", &PySIEffect::d_is_middle_mouse_clicked)
         .def_readwrite("link_relations", &PySIEffect::d_link_relations)
-        .def_readonly("aabb", &PySIEffect::d_aabb)
         .def_readwrite("has_data_changed", &PySIEffect::d_data_changed)
         .def_readwrite("mouse_wheel_angle_px", &PySIEffect::mouse_wheel_angle_px)
         .def_readwrite("mouse_wheel_angle_degrees", &PySIEffect::mouse_wheel_angle_degrees)

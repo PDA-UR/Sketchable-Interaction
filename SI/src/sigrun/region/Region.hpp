@@ -40,11 +40,9 @@ public:
     const std::vector<glm::vec3>& aabb();
     const std::vector<glm::vec3>& contour();
 
-    void set_aabb();
-
     const std::string& qml_path() const;
 
-    void move(int32_t x, int32_t y);
+    void move();
 
     const glm::mat3x3& transform() const;
 

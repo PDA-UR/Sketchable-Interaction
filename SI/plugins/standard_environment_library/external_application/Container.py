@@ -25,7 +25,6 @@ class Container(SIEffect.SIEffect):
             self.height = height
         else:
             self.shape = PySIEffect.PointVector([[abs_x, abs_y], [abs_x, abs_y + height], [abs_x + width, abs_y + height], [abs_x + width, abs_y]])
-            self.__notify_shape_changed__(True)
             self.has_data_changed = True
             self.x = abs_x
             self.y = abs_y

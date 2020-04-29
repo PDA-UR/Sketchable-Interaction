@@ -64,6 +64,8 @@ public:
     bool d_is_right_mouse_clicked = false;
     bool d_is_middle_mouse_clicked = false;
 
+    bool d_recompute_mask = false;
+
     float mouse_wheel_angle_degrees = 0.0;
     float mouse_wheel_angle_px = 0.0;
 
