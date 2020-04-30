@@ -17,9 +17,9 @@ class Deletion(SIEffect.SIEffect):
     def on_deletion_enter_emit(self, other):
         if other.region_type is int(PySIEffect.EffectType.SI_DELETION):
             if self.is_under_user_control:
-                other.__signal_deletion__()
+                other.delete()
 
     def on_deletion_continuous_emit(self, other):
         if other.region_type is not int(PySIEffect.EffectType.SI_DELETION):
             if not other.is_under_user_control:
-                other.__signal_deletion__()
+                other.delete()

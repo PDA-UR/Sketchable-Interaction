@@ -28,7 +28,6 @@ class Directory(Entry.Entry):
 
         self.btn_presses = 0
 
-        self.add_QML_data("text_height", self.text_height, PySIEffect.DataType.INT)
         self.add_QML_data("container_width", self.width, PySIEffect.DataType.INT)
         self.add_QML_data("container_height", self.height, PySIEffect.DataType.INT)
         self.add_QML_data("img_path", "res/dir.png", PySIEffect.DataType.STRING)
@@ -80,7 +79,7 @@ class Directory(Entry.Entry):
 
         for child in self.children:
             if child.region_type is not int(PySIEffect.EffectType.SI_BUTTON):
-                child.__signal_deletion__()
+                child.delete()
 
         self.add_QML_data("page_name", str(self.current_page + 1) + "/" + str(len(self.browse_pages)), PySIEffect.DataType.STRING)
 
@@ -123,8 +122,6 @@ class Directory(Entry.Entry):
 
             self.is_open_entry_capability_blocked = True
 
-        return 0
-
     def on_open_entry_leave_recv(self, is_other_controlled):
         if not self.is_child and self.is_open_entry_capability_blocked:
             x = self.aabb[0].x
@@ -145,6 +142,6 @@ class Directory(Entry.Entry):
             self.is_open_entry_capability_blocked = False
 
             for child in self.children:
-                child.__signal_deletion__()
+                child.delete()
 
-        return 0
+            self.snap_to_mouse()
