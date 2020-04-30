@@ -165,11 +165,12 @@ void RegionManager::toggle_mouse_region_wheel_scrolled(float angle_px, float ang
 
 void RegionManager::update_region_deletions()
 {
-    d_regions.erase(std::remove_if(std::execution::seq, d_regions.begin(), d_regions.end(), [&](auto& region) -> bool
+    d_regions.erase(std::remove_if(std::execution::seq, d_regions.begin(), d_regions.end(), [&](std::shared_ptr<Region>& region) -> bool
     {
         if(!region->effect().is_flagged_for_deletion())
             return false;
 
+        Context::SIContext()->collision_manager()->handle_event_leave_on_deletion(region);
         Context::SIContext()->linking_manager()->remove_all_partaking_linking_relations(region->uuid());
 
         return true;
