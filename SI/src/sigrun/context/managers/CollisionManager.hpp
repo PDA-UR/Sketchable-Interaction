@@ -17,6 +17,7 @@ public:
     CollisionManager();
 
     void collide(std::vector<std::shared_ptr<Region>>& regions);
+    void handle_event_leave_on_deletion(std::shared_ptr<Region>& deleted_region);
 
 private:
     bool collides_with_aabb(const std::shared_ptr<Region>& a, const std::shared_ptr<Region>& b);

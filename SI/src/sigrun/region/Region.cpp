@@ -280,33 +280,32 @@ uint8_t Region::handle_collision_event(const std::string &function_name, PySIEff
     std::for_each(std::execution::par_unseq, colliding_effect.cap_collision_emit().begin(), colliding_effect.cap_collision_emit().end(), [&](auto& pair)
     {
         HANDLE_PYTHON_CALL(
+            const std::string& capability = pair.first;
+            auto& emission_functions = pair.second;
 
-        const std::string& capability = pair.first;
-        auto& emission_functions = pair.second;
-
-        if (d_py_effect->cap_collision_recv().find(capability) != d_py_effect->cap_collision_recv().end())
-        {
-            if(!emission_functions[function_name].is_none())
+            if (d_py_effect->cap_collision_recv().find(capability) != d_py_effect->cap_collision_recv().end())
             {
-                const bp::object &t = emission_functions[function_name](*d_effect);
+                if(!emission_functions[function_name].is_none())
+                {
+                    const bp::object &t = emission_functions[function_name](*d_effect);
 
-                if (t.is_none())
-                {
-                    if(!d_py_effect->cap_collision_recv()[capability][function_name].is_none())
-                        d_py_effect->cap_collision_recv()[capability][function_name]();
-                }
-                else
-                {
-                    if(!d_py_effect->cap_collision_recv()[capability][function_name].is_none())
+                    if (t.is_none())
                     {
-                        if (bp::extract<bp::tuple>(t).check())
-                            d_py_effect->cap_collision_recv()[capability][function_name](*t);
-                        else
-                            d_py_effect->cap_collision_recv()[capability][function_name](t);
+                        if(!d_py_effect->cap_collision_recv()[capability][function_name].is_none())
+                            d_py_effect->cap_collision_recv()[capability][function_name]();
+                    }
+                    else
+                    {
+                        if(!d_py_effect->cap_collision_recv()[capability][function_name].is_none())
+                        {
+                            if (bp::extract<bp::tuple>(t).check())
+                                d_py_effect->cap_collision_recv()[capability][function_name](*t);
+                            else
+                                d_py_effect->cap_collision_recv()[capability][function_name](t);
+                        }
                     }
                 }
             }
-        }
         )
     });
 

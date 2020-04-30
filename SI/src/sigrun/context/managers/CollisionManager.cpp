@@ -47,7 +47,19 @@ void CollisionManager::collide(std::vector<std::shared_ptr<Region>> &regions)
     });
 
     for(auto it = d_collision_map.begin(); it != d_collision_map.end();)
-        it->second ? ++it : d_collision_map.erase(it++);
+        it = it->second ? ++it: d_collision_map.erase(it++);
+}
+
+void CollisionManager::handle_event_leave_on_deletion(std::shared_ptr<Region>& deleted_region)
+{
+    std::for_each(std::execution::par_unseq, d_collision_map.begin(), d_collision_map.end(), [&](auto& pair)
+    {
+        if(std::get<0>(pair.first) == deleted_region->uuid())
+            handle_event_leave(deleted_region, Context::SIContext()->region_manager()->region_by_uuid(std::get<1>(pair.first)), pair.first);
+
+        if(std::get<1>(pair.first) == deleted_region->uuid())
+            handle_event_leave(Context::SIContext()->region_manager()->region_by_uuid(std::get<0>(pair.first)), deleted_region, pair.first);
+    });
 }
 
 CollisionManager::CollisionManager() = default;
@@ -187,7 +199,7 @@ void CollisionManager::handle_event_leave(const std::shared_ptr<Region>& a, cons
     a->on_leave(b->effect());
     b->on_leave(a->effect());
 
-    d_collision_map.erase(tuple);
+    d_collision_map[tuple] = false;
 }
 
 void CollisionManager::handle_event_continuous(const std::shared_ptr<Region>& a, const std::shared_ptr<Region>& b, const std::tuple<std::string, std::string>& tuple)
