@@ -11,6 +11,7 @@ Item
         id: image
         anchors.left: parent.left
         anchors.top: parent.top
+        fillMode: Image.PreserveAspectFit
 
         visible: true
     }
@@ -41,7 +42,11 @@ Item
 
             image.width = data.icon_width;
             image.height = data.icon_height;
-//            image.anchors.leftMargin = image.width / 2;
+
+            if(data.is_in_preview)
+                image.anchors.leftMargin = 0;
+            else
+                image.anchors.leftMargin = image.width / 2;
 
             image.source = data.img_path;
 
