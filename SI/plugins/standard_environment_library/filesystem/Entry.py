@@ -31,6 +31,7 @@ class Entry(SIEffect.SIEffect):
 
         self.is_container_visible = True
 
+        self.add_QML_data("text_height", self.text_height, PySIEffect.DataType.INT)
         self.add_QML_data("icon_width", self.icon_width, PySIEffect.DataType.INT)
         self.add_QML_data("icon_height", self.icon_height, PySIEffect.DataType.INT)
         self.add_QML_data("color", self.text_color, PySIEffect.DataType.STRING)
@@ -53,17 +54,13 @@ class Entry(SIEffect.SIEffect):
         self.remove_link(parent_id, PySIEffect.POSITION, self._uuid, PySIEffect.POSITION)
 
     def on_open_entry_enter_recv(self, is_other_controlled):
-        return 0
+        pass
 
     def on_open_entry_continuous_recv(self, is_other_controlled):
         if not self.is_child and not self.is_open_entry_capability_blocked and not self.is_under_user_control and not is_other_controlled:
             self.start_standard_application(self._uuid, self.path)
             self.is_open_entry_capability_blocked = True
 
-        return 0
-
     def on_open_entry_leave_recv(self, is_other_controlled):
         self.close_standard_application(self._uuid)
         self.is_open_entry_capability_blocked = False
-
-        return 0
