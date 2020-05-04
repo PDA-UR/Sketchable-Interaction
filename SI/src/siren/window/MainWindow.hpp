@@ -20,13 +20,10 @@ public:
     MainWindow(uint32_t width, uint32_t height);
     MainWindow() = default;
 
-    void set_is_running(bool running);
 private:
-    bool d_is_exit_requested = false;
-
     Q_SLOT void loop(double delta, uint32_t fps);
 
-    std::map<std::string, std::unique_ptr<RegionRepresentation>> d_region_representations;
+    std::vector<std::unique_ptr<RegionRepresentation>> d_reg_reps;
 
     UpdateWorker up_update_worker;
 

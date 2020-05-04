@@ -21,6 +21,8 @@ public:
 
     void update(const std::shared_ptr<Region>& region);
     const uint32_t type() const;
+    const std::string& uuid() const;
+    const std::string& name() const;
 
     Q_SIGNAL void dataChanged(const QMap<QString, QVariant>& data);
 
@@ -34,6 +36,8 @@ private:
 
     QColor d_color;
     std::string d_qml_path;
+    std::string d_uuid;
+    std::string d_name;
     QPainterPath d_fill;
     std::unique_ptr<QQuickWidget> d_view;
     uint32_t d_type;

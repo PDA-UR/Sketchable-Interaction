@@ -16,8 +16,6 @@ class ImageFile(Entry.Entry):
         if(self.path != ""):
             self.img_width, self.img_height = Image.open(self.path).size
 
-        print(self.img_width, self.img_height)
-
         self.add_QML_data("img_path", self.path, PySIEffect.DataType.STRING)
         self.add_QML_data("is_visible", self.is_visible, PySIEffect.DataType.BOOL)
         self.add_QML_data("is_in_preview", self.is_in_preview, PySIEffect.DataType.BOOL)
@@ -25,7 +23,7 @@ class ImageFile(Entry.Entry):
         self.cap_recv[PySIEffect.PREVIEW] = {PySIEffect.ON_ENTER: self.on_preview_enter_recv, PySIEffect.ON_CONTINUOUS: self.on_preview_continuous_recv, PySIEffect.ON_LEAVE: self.on_preview_leave_recv}
 
     def on_preview_enter_recv(self):
-        if not self.is_in_preview:
+        if not self.is_in_preview and not self.is_child:
             self.color = PySIEffect.Color(10, 0, 0, 255)
 
             self.is_in_preview = True
@@ -51,7 +49,7 @@ class ImageFile(Entry.Entry):
         pass
 
     def on_preview_leave_recv(self):
-        if self.is_in_preview:
+        if self.is_in_preview and not self.is_child:
             self.color = PySIEffect.Color(10, 0, 0, 0)
 
             self.is_in_preview = False

@@ -12,8 +12,10 @@ RegionRepresentation::RegionRepresentation(QWidget *parent, const std::shared_pt
     d_color(QColor(region->color().r, region->color().g, region->color().b, region->color().a)),
     d_qml_path(region->qml_path()),
     d_view(std::make_unique<QQuickWidget>(parent)),
-    d_type(region->type())
-{
+    d_type(region->type()),
+    d_uuid(region->uuid()),
+    d_name(region->name())
+    {
     d_region_connection = connect(this, &RegionRepresentation::dataChanged, region.get(), &Region::REGION_DATA_CHANGED_SLOT);
 
     d_fill.moveTo(region->contour()[0].x - region->aabb()[0].x, region->contour()[0].y - region->aabb()[0].y);
@@ -51,6 +53,16 @@ RegionRepresentation::~RegionRepresentation()
 const uint32_t RegionRepresentation::type() const
 {
     return d_type;
+}
+
+const std::string& RegionRepresentation::uuid() const
+{
+    return d_uuid;
+}
+
+const std::string& RegionRepresentation::name() const
+{
+    return d_name;
 }
 
 void RegionRepresentation::update(const std::shared_ptr<Region>& region)
@@ -94,21 +106,18 @@ void RegionRepresentation::perform_data_update(const std::shared_ptr<Region> &re
 void RegionRepresentation::paintEvent(QPaintEvent *event)
 {
     up_qp.begin(this);
-
-    up_qp.setBrush(d_color);
     up_qp.fillPath(d_fill,d_color);
 
     if(d_type == SI_TYPE_CANVAS)
     {
         const auto& partial_regions = Context::SIContext()->region_manager()->partial_regions();
+        up_qp.setBrush(QColor(255, 255, 255));
 
         std::for_each(std::execution::par_unseq, partial_regions.begin(), partial_regions.end(), [&](auto& pair)
         {
             QPolygonF partial_poly;
 
-            up_qp.setBrush(QColor(255, 255, 255));
-
-            std::for_each(std::execution::seq, pair.second.begin(), pair.second.end(), [&](auto& p)
+            std::for_each(std::execution::seq, pair.second.begin(), pair.second.end(), [&partial_poly](auto& p)
             {
                 partial_poly << QPointF(p.x, p.y);
             });
