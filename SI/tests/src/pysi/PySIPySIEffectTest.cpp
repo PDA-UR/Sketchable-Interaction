@@ -48,7 +48,7 @@ TEST_F(PySIPySIEffectTest, signal_deletion)
 {
     PySIEffect pysie;
 
-    EXPECT_NO_FATAL_FAILURE(pysie.signal_deletion());
+    EXPECT_NO_FATAL_FAILURE(pysie.__signal_deletion__());
 }
 
 TEST_F(PySIPySIEffectTest, show_folder_contents_page)

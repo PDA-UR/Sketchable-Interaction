@@ -15,10 +15,6 @@
 #include <sigrun/log/Log.hpp>
 #include <sigrun/context/managers/helpers/linking/LinkCandidate.hpp>
 
-
-#define PYSI_DEBUG(what) Log::log("PySI", what, Log::LOG_LEVEL::DEBUG_LEVEL, "PySIEffect",__FILENAME__, __FUNCTION__, std::to_string(__LINE__))
-#define PYSI_INFO(what) Log::log("PySI", what, Log::LOG_LEVEL::INFO_LEVEL, "PySIEffect",__FILENAME__, __FUNCTION__, std::to_string(__LINE__))
-
 namespace bp = boost::python;
 
 class PySIEffect: public SIObject
@@ -29,7 +25,11 @@ public:
     void __show_folder_contents__(const std::vector<std::string>& page_contents, const std::string& uuid, const bool with_btns=false);
     void __embed_file_standard_appliation_into_context__(const std::string& uuid, const std::string& path);
     void __destroy_embedded_file_standard_appliation_in_context__(const std::string& uuid);
-    void signal_deletion();
+    void __signal_deletion__();
+
+    void __create_region__(const std::vector<glm::vec3>& contour, const std::string& name);
+    void __create_region__(const bp::list& contour, const std::string& name);
+    std::vector<std::string> __available_plugins_by_name__();
 
     std::vector<glm::vec3> get_shape();
     void set_shape(const std::vector<glm::vec3>& shape);

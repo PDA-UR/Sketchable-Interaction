@@ -35,6 +35,40 @@ void Context::add_startup_regions(const std::unordered_map<std::string, std::uni
 {
     std::for_each(std::execution::par_unseq, plugins.begin(), plugins.end(), [&](const auto& plugin)
     {
+        switch (bp::extract<int>(plugin.second->attr("region_type")))
+        {
+            case SI_TYPE_CANVAS:
+            case SI_TYPE_MOUSE_CURSOR:
+            case SI_TYPE_NOTIFICATION:
+            case SI_TYPE_DIRECTORY:
+            case SI_TYPE_BUTTON:
+            case SI_TYPE_EXTERNAL_APPLICATION_CONTAINER:
+            case SI_TYPE_TEXT_FILE:
+            case SI_TYPE_IMAGE_FILE:
+            case SI_TYPE_UNKNOWN_FILE:
+            case SI_TYPE_CURSOR:
+            case SI_TYPE_ENTRY:
+                break;
+
+            default:
+                d_available_plugins[plugin.first] = *plugin.second;
+                break;
+        }
+    });
+
+    if(!d_available_plugins.empty())
+    {
+        d_available_plugins_names.reserve(d_available_plugins.size());
+
+        // needs to be this way to function, no idea why. parallelizing attempts are a waste of time
+        std::transform(d_available_plugins.begin(), d_available_plugins.end(), std::back_inserter(d_available_plugins_names), [&](const auto& pair)
+        {
+            return pair.first;
+        });
+    }
+
+    std::for_each(std::execution::par_unseq, plugins.begin(), plugins.end(), [&](const auto& plugin)
+    {
         const std::string& key = plugin.first;
         const std::unique_ptr<bp::object>& value = plugin.second;
 
@@ -194,17 +228,7 @@ void Context::begin(const std::unordered_map<std::string, std::unique_ptr<bp::ob
         add_startup_regions(plugins);
 
         if(!d_available_plugins.empty())
-        {
-            d_available_plugins_names.reserve(d_available_plugins.size());
-
-            // needs to be this way to function, no idea why. parallelizing attempts are a waste of time
-            std::transform(d_available_plugins.begin(), d_available_plugins.end(), std::back_inserter(d_available_plugins_names), [&](const auto& pair)
-            {
-               return pair.first;
-            });
-
             d_selected_effects_by_id[d_mouse_uuid] = d_available_plugins[d_available_plugins_names[d_selected_effect_index]];
-        }
 
         d_app.exec();
         INFO("QT5 Application terminated!");
@@ -310,6 +334,16 @@ void Context::register_new_region(const std::vector<glm::vec3>& contour, const s
         std::shared_ptr<Region> t(nullptr);
         uprm->query_region_insertion(contour, d_selected_effects_by_id[uuid], t);
     }
+}
+
+void Context::register_new_region_via_name(const std::vector<glm::vec3>& contour, const std::string& name)
+{
+
+}
+
+std::vector<std::string> Context::available_plugins_names()
+{
+    return d_available_plugins_names;
 }
 
 void Context::spawn_folder_contents_buttons_as_regions(std::shared_ptr<Region>& parent, uint32_t dir_x, uint32_t dir_y, uint32_t preview_width, uint32_t preview_height)
