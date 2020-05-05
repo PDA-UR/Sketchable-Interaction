@@ -434,6 +434,12 @@ class SIEffect(PySIEffect.PySIEffect):
     def delete(self):
         self.__signal_deletion__()
 
+    def create_region(self, shape, effect_name):
+        self.__create_region__(shape, effect_name)
+
+    def available_plugins(self):
+        return self.__available_plugins_by_name__()
+
     ## member function for snapping a region's center to the mouse cursor
     #
     # @param self the object pointer

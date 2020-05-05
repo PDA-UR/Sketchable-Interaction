@@ -4,6 +4,7 @@
 #include "pysi/stl_container_exposure/VectorExposure.hpp"
 #include <sigrun/context/Context.hpp>
 #include <sigrun/region/RegionResampler.hpp>
+#include <debug/Print.hpp>
 
 namespace bp = boost::python;
 
@@ -19,7 +20,7 @@ void PySIEffect::init(const std::vector<glm::vec3>& contour, const std::vector<g
     d_aabb.reserve(4);
 }
 
-void PySIEffect::signal_deletion()
+void PySIEffect::__signal_deletion__()
 {
     d_flagged_for_deletion = true;
 }
@@ -257,6 +258,35 @@ void PySIEffect::set_shape(const std::vector<glm::vec3>& shape)
     }
 }
 
+void PySIEffect::__create_region__(const std::vector<glm::vec3>& contour, const std::string& name)
+{
+    Context::SIContext()->register_new_region_via_name(contour, name);
+}
+
+void PySIEffect::__create_region__(const bp::list& contour, const std::string& name)
+{
+    std::vector<glm::vec3> _contour;
+    _contour.reserve(bp::len(contour));
+
+    for(uint32_t i = 0; i < bp::len(contour); ++i)
+    {
+        float x = bp::extract<float>(contour[i][0]);
+        float y = bp::extract<float>(contour[i][1]);
+
+        _contour.emplace_back(x, y, 1);
+    }
+
+    __create_region__(_contour, name);
+}
+
+std::vector<std::string> PySIEffect::__available_plugins_by_name__()
+{
+    if(Context::SIContext())
+        return Context::SIContext()->available_plugins_names();
+
+    return std::vector<std::string>();
+}
+
 BOOST_PYTHON_MODULE(libPySI)
 {
     bp::scope the_scope = bp::class_<PySIEffect>("PySIEffect")
@@ -340,10 +370,13 @@ BOOST_PYTHON_MODULE(libPySI)
     bp::class_<PySIEffect, boost::noncopyable>("PySIEffect", bp::init<>())
         .def("__init__", bp::make_constructor(&PySIEffect::init, bp::default_call_policies(), (bp::arg("shape")=std::vector<glm::vec3>(), bp::arg("uuid")=std::string(), bp::arg("kwargs")=bp::dict())))
         .def("__add_data__", &PySIEffect::__add_data__)
-        .def("__signal_deletion__", &PySIEffect::signal_deletion)
+        .def("__signal_deletion__", &PySIEffect::__signal_deletion__)
         .def("__show_folder_contents_page__", &PySIEffect::__show_folder_contents__)
         .def("__embed_file_standard_appliation_into_context__", &PySIEffect::__embed_file_standard_appliation_into_context__)
         .def("__destroy_embedded_window__", &PySIEffect::__destroy_embedded_file_standard_appliation_in_context__)
+        .def<void (PySIEffect::*)(const std::vector<glm::vec3>&, const std::string&)>("__create_region__", &PySIEffect::__create_region__)
+        .def<void (PySIEffect::*)(const bp::list&, const std::string&)>("__create_region__", &PySIEffect::__create_region__)
+        .def("__available_plugins_by_name__", &PySIEffect::__available_plugins_by_name__)
 
         .add_property("shape", &PySIEffect::get_shape, &PySIEffect::set_shape)
 
