@@ -301,10 +301,10 @@ void RegionMask::scanlinefill(const std::vector<glm::vec3>& contour, const std::
 
     std::for_each(std::execution::par_unseq, contour.begin(), contour.end(), [&](auto& v)
     {
-        max.x = v.x > max.x ? v.x : max.x;
-        max.y = v.y > max.y ? v.y : max.y;
-        min.x = v.x < min.x ? v.x : min.x;
-        min.y = v.y < min.y ? v.y : min.y;
+        max.x = std::max(max.x, v.x);
+        max.y = std::max(max.y, v.y);
+        min.x = std::min(min.x, v.x);
+        min.y = std::min(min.y, v.y);
     });
 
     // Bounds check

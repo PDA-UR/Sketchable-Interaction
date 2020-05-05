@@ -15,7 +15,7 @@ RegionRepresentation::RegionRepresentation(QWidget *parent, const std::shared_pt
     d_type(region->type()),
     d_uuid(region->uuid()),
     d_name(region->name())
-    {
+{
     d_region_connection = connect(this, &RegionRepresentation::dataChanged, region.get(), &Region::REGION_DATA_CHANGED_SLOT);
 
     d_fill.moveTo(region->contour()[0].x - region->aabb()[0].x, region->contour()[0].y - region->aabb()[0].y);

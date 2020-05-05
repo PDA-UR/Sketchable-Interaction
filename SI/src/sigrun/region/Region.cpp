@@ -163,7 +163,9 @@ void Region::LINK_SLOT(const std::string& uuid_event, const std::string& uuid_se
 
 void Region::REGION_DATA_CHANGED_SLOT(const QMap<QString, QVariant>& data)
 {
-    d_effect->attr("has_data_changed") = false;
+    HANDLE_PYTHON_CALL(
+        d_effect->attr("has_data_changed") = false;
+    )
 }
 
 void Region::register_link_event(const std::string &uuid, const std::string &attribute)
@@ -221,12 +223,17 @@ void Region::update()
 {
     d_is_transformed = false;
 
-    HANDLE_PYTHON_CALL(d_py_effect = std::shared_ptr<PySIEffect>(new PySIEffect(bp::extract<PySIEffect>(*d_effect)));)
+    HANDLE_PYTHON_CALL(
+        d_py_effect = std::shared_ptr<PySIEffect>(new PySIEffect(bp::extract<PySIEffect>(*d_effect)));
+    )
 
     if(d_py_effect->d_recompute_mask)
     {
         uprm = std::make_unique<RegionMask>(Context::SIContext()->width(), Context::SIContext()->height(), d_py_effect->contour(), d_py_effect->aabb());
-        d_effect->attr("__recompute_collision_mask__") = false;
+
+        HANDLE_PYTHON_CALL(
+            d_effect->attr("__recompute_collision_mask__") = false;
+        )
     }
 
     move();
@@ -248,13 +255,17 @@ void Region::process_canvas_specifics()
             {
                 Context::SIContext()->register_new_region(d_py_effect->partial_region_contours()[candidate], candidate);
 
-                if(bp::len(d_effect->attr("__partial_regions__")))
-                    HANDLE_PYTHON_CALL(bp::delitem(d_effect->attr("__partial_regions__"), bp::object(candidate));)
+                HANDLE_PYTHON_CALL(
+                    if(bp::len(d_effect->attr("__partial_regions__")))
+                        bp::delitem(d_effect->attr("__partial_regions__"), bp::object(candidate));
+                )
 
                 return candidate;
             });
 
-            HANDLE_PYTHON_CALL(d_effect->attr("__registered_regions__").attr("clear")();)
+            HANDLE_PYTHON_CALL(
+                d_effect->attr("__registered_regions__").attr("clear")();
+            )
         }
     }
 }

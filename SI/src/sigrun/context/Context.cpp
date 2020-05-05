@@ -116,17 +116,19 @@ void Context::add_canvas_region(const std::unordered_map<std::string, std::uniqu
 
 void Context::add_cursor_regions(const std::unique_ptr<bp::object>& cursor_effect)
 {
-    uint32_t width_mouse_cursor = bp::extract<uint32_t>(cursor_effect->attr("width"));
-    uint32_t height_mouse_cursor = bp::extract<uint32_t>(cursor_effect->attr("height"));
+    HANDLE_PYTHON_CALL(
+        uint32_t width_mouse_cursor = bp::extract<uint32_t>(cursor_effect->attr("width"));
+        uint32_t height_mouse_cursor = bp::extract<uint32_t>(cursor_effect->attr("height"));
 
-    std::vector<glm::vec3> mouse_contour {glm::vec3(0, 0, 1), glm::vec3(0, height_mouse_cursor, 1), glm::vec3(width_mouse_cursor, height_mouse_cursor, 1), glm::vec3(width_mouse_cursor, 0, 1) };
-    uprm->add_region(mouse_contour, *cursor_effect, 0, bp::dict());
-    d_mouse_uuid = uprm->regions().back()->uuid();
+        std::vector<glm::vec3> mouse_contour {glm::vec3(0, 0, 1), glm::vec3(0, height_mouse_cursor, 1), glm::vec3(width_mouse_cursor, height_mouse_cursor, 1), glm::vec3(width_mouse_cursor, 0, 1) };
+        uprm->add_region(mouse_contour, *cursor_effect, 0, bp::dict());
+        d_mouse_uuid = uprm->regions().back()->uuid();
 
-    upim->external_objects()[d_mouse_uuid] = std::make_shared<ExternalObject>(ExternalObject::ExternalObjectType::MOUSE);
-    uplm->add_link(Context::SIContext()->input_manager()->external_objects()[uprm->regions().back()->uuid()], uprm->regions().back(), SI_CAPABILITY_LINK_POSITION, SI_CAPABILITY_LINK_POSITION);
+        upim->external_objects()[d_mouse_uuid] = std::make_shared<ExternalObject>(ExternalObject::ExternalObjectType::MOUSE);
+        uplm->add_link(Context::SIContext()->input_manager()->external_objects()[uprm->regions().back()->uuid()], uprm->regions().back(), SI_CAPABILITY_LINK_POSITION, SI_CAPABILITY_LINK_POSITION);
 
-    INFO("Plugin available for drawing");
+        INFO("Plugin available for drawing");
+    )
 }
 
 void Context::add_directory_region(const std::unique_ptr<bp::object>& directory_effect)
@@ -136,20 +138,22 @@ void Context::add_directory_region(const std::unique_ptr<bp::object>& directory_
 
     INFO("Creating Region for " + cwd);
 
-    uint32_t width_directory = bp::extract<uint32_t>(directory_effect->attr("width"));
-    uint32_t height_directory = bp::extract<uint32_t>(directory_effect->attr("height"));
+    HANDLE_PYTHON_CALL(
+        uint32_t width_directory = bp::extract<uint32_t>(directory_effect->attr("width"));
+        uint32_t height_directory = bp::extract<uint32_t>(directory_effect->attr("height"));
 
-    std::vector<glm::vec3> dir_contour {glm::vec3(0, 0, 1), glm::vec3(0, height_directory, 1), glm::vec3(width_directory, height_directory, 1), glm::vec3(width_directory, 0, 1) };
+        std::vector<glm::vec3> dir_contour {glm::vec3(0, 0, 1), glm::vec3(0, height_directory, 1), glm::vec3(width_directory, height_directory, 1), glm::vec3(width_directory, 0, 1) };
 
-    bp::dict kwargs;
+        bp::dict kwargs;
 
-    kwargs["cwd"] = cwd;
-    kwargs["children"] = children_paths;
-    kwargs["is_child"] = false;
+        kwargs["cwd"] = cwd;
+        kwargs["children"] = children_paths;
+        kwargs["is_child"] = false;
 
-    uprm->add_region(dir_contour, *directory_effect, 0, kwargs);
+        uprm->add_region(dir_contour, *directory_effect, 0, kwargs);
 
-    INFO("Region for " + cwd + " created");
+        INFO("Region for " + cwd + " created");
+    )
 }
 
 void Context::begin(const std::unordered_map<std::string, std::unique_ptr<bp::object>>& plugins, IRenderEngine* ire, int argc, char** argv)
@@ -193,16 +197,13 @@ void Context::begin(const std::unordered_map<std::string, std::unique_ptr<bp::ob
         {
             d_available_plugins_names.reserve(d_available_plugins.size());
 
+            // needs to be this way to function, no idea why. parallelizing attempts are a waste of time
             std::transform(d_available_plugins.begin(), d_available_plugins.end(), std::back_inserter(d_available_plugins_names), [&](const auto& pair)
             {
                return pair.first;
             });
 
-            DEBUG("Test case with further effect type");
-
             d_selected_effects_by_id[d_mouse_uuid] = d_available_plugins[d_available_plugins_names[d_selected_effect_index]];
-            const std::string& selected = bp::extract<std::string>(d_selected_effects_by_id[d_mouse_uuid].attr("name"));
-            DEBUG("Mouse Cursor: " + d_mouse_uuid + " set to " + selected);
         }
 
         d_app.exec();
@@ -265,14 +266,16 @@ void Context::update()
 {
     if(upim->is_key_pressed(SI_KEY_A))
     {
-        (++d_selected_effect_index) %= d_available_plugins_names.size();
+        HANDLE_PYTHON_CALL(
+            (++d_selected_effect_index) %= d_available_plugins_names.size();
 
-        d_selected_effects_by_id[d_mouse_uuid] = d_available_plugins[d_available_plugins_names[d_selected_effect_index]];
+            d_selected_effects_by_id[d_mouse_uuid] = d_available_plugins[d_available_plugins_names[d_selected_effect_index]];
 
-        (*std::find_if(std::execution::par_unseq, uprm->regions().begin(), uprm->regions().end(), [&](auto& region)
-        {
-            return region->type() == SI_TYPE_NOTIFICATION;
-        }))->raw_effect().attr("update_message")("Mouse Cursor set to " + d_available_plugins_names[d_selected_effect_index]);
+            (*std::find_if(std::execution::par_unseq, uprm->regions().begin(), uprm->regions().end(), [&](auto& region)
+            {
+                return region->type() == SI_TYPE_NOTIFICATION;
+            }))->raw_effect().attr("update_message")("Mouse Cursor set to " + d_available_plugins_names[d_selected_effect_index]);
+        )
     }
 
     upim->update();
@@ -311,28 +314,30 @@ void Context::register_new_region(const std::vector<glm::vec3>& contour, const s
 
 void Context::spawn_folder_contents_buttons_as_regions(std::shared_ptr<Region>& parent, uint32_t dir_x, uint32_t dir_y, uint32_t preview_width, uint32_t preview_height)
 {
-    bp::object value = d_plugins[SI_NAME_EFFECT_BUTTON];
+    HANDLE_PYTHON_CALL(
+        bp::object value = d_plugins[SI_NAME_EFFECT_BUTTON];
 
-    uint32_t btn_width = bp::extract<uint32_t>(value.attr("width"));
-    uint32_t btn_height = bp::extract<uint32_t>(value.attr("height"));
+        uint32_t btn_width = bp::extract<uint32_t>(value.attr("width"));
+        uint32_t btn_height = bp::extract<uint32_t>(value.attr("height"));
 
-    std::vector<glm::vec3> btn_contour{glm::vec3(dir_x + preview_width - btn_width, dir_y + preview_height - btn_height, 1),
-                                       glm::vec3(dir_x + preview_width - btn_width, dir_y + preview_height, 1),
-                                       glm::vec3(dir_x + preview_width, dir_y + preview_height, 1),
-                                       glm::vec3(dir_x + preview_width, dir_y + preview_height - btn_height, 1)};
+        std::vector<glm::vec3> btn_contour{glm::vec3(dir_x + preview_width - btn_width, dir_y + preview_height - btn_height, 1),
+                                           glm::vec3(dir_x + preview_width - btn_width, dir_y + preview_height, 1),
+                                           glm::vec3(dir_x + preview_width, dir_y + preview_height, 1),
+                                           glm::vec3(dir_x + preview_width, dir_y + preview_height - btn_height, 1)};
 
-    bp::dict kwargs;
-    kwargs["value"] = false;
+        bp::dict kwargs;
+        kwargs["value"] = false;
 
-    uprm->query_region_insertion(btn_contour, value, parent, kwargs);
+        uprm->query_region_insertion(btn_contour, value, parent, kwargs);
 
-    std::vector<glm::vec3> btn_contour2{glm::vec3(dir_x, dir_y + preview_height - btn_height, 1),
-                                        glm::vec3(dir_x, dir_y + preview_height, 1),
-                                        glm::vec3(dir_x + btn_width, dir_y + preview_height, 1),
-                                        glm::vec3(dir_x + btn_width, dir_y + preview_height - btn_height, 1)};
-    bp::dict kwargs2;
+        std::vector<glm::vec3> btn_contour2{glm::vec3(dir_x, dir_y + preview_height - btn_height, 1),
+                                            glm::vec3(dir_x, dir_y + preview_height, 1),
+                                            glm::vec3(dir_x + btn_width, dir_y + preview_height, 1),
+                                            glm::vec3(dir_x + btn_width, dir_y + preview_height - btn_height, 1)};
+        bp::dict kwargs2;
 
-    uprm->query_region_insertion(btn_contour2, value, parent, kwargs2);
+        uprm->query_region_insertion(btn_contour2, value, parent, kwargs2);
+    )
 }
 
 void Context::spawn_folder_contents_entry_as_region(const std::vector<glm::vec3>& contour, std::shared_ptr<Region>& parent, const std::string& effect_name, const bp::dict& kwargs)
@@ -410,15 +415,18 @@ void Context::spawn_folder_contents_as_regions(const std::vector<std::string>& c
 
         const int32_t dir_x = tlc.x + region->transform()[0].z;
         const int32_t dir_y = tlc.y + region->transform()[1].z;
-        const uint32_t preview_width = bp::extract<uint32_t>(region->raw_effect().attr("preview_width"));
-        const uint32_t preview_height = bp::extract<uint32_t>(region->raw_effect().attr("preview_height"));
-        const uint32_t dir_width = bp::extract<uint32_t>(region->raw_effect().attr("icon_width")) * 2;
-        const uint32_t dir_height = bp::extract<uint32_t>(region->raw_effect().attr("icon_height")) + bp::extract<uint32_t>(region->raw_effect().attr("text_height"));
 
-        if(with_btns)
-            spawn_folder_contents_buttons_as_regions(region, dir_x, dir_y, preview_width, preview_height);
+        HANDLE_PYTHON_CALL(
+            const uint32_t preview_width = bp::extract<uint32_t>(region->raw_effect().attr("preview_width"));
+            const uint32_t preview_height = bp::extract<uint32_t>(region->raw_effect().attr("preview_height"));
+            const uint32_t dir_width = bp::extract<uint32_t>(region->raw_effect().attr("icon_width")) * 2;
+            const uint32_t dir_height = bp::extract<uint32_t>(region->raw_effect().attr("icon_height")) + bp::extract<uint32_t>(region->raw_effect().attr("text_height"));
 
-        spawn_folder_contents_entries_as_regions(region, children_paths, dir_x, dir_y, dir_width, dir_height, preview_width, preview_height);
+            if(with_btns)
+                spawn_folder_contents_buttons_as_regions(region, dir_x, dir_y, preview_width, preview_height);
+
+            spawn_folder_contents_entries_as_regions(region, children_paths, dir_x, dir_y, dir_width, dir_height, preview_width, preview_height);
+        )
     }
 }
 

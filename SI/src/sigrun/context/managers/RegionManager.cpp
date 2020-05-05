@@ -158,8 +158,10 @@ void RegionManager::toggle_mouse_region_wheel_scrolled(float angle_px, float ang
 
     if(it != d_regions.end())
     {
-        it->get()->raw_effect().attr("mouse_wheel_angle_px") = angle_px;
-        it->get()->raw_effect().attr("mouse_wheel_angle_degrees") = angle_degrees;
+        HANDLE_PYTHON_CALL(
+            it->get()->raw_effect().attr("mouse_wheel_angle_px") = angle_px;
+            it->get()->raw_effect().attr("mouse_wheel_angle_degrees") = angle_degrees;
+        )
     }
 }
 
@@ -179,12 +181,14 @@ void RegionManager::update_region_deletions()
 
 void RegionManager::update_region_insertions()
 {
-    std::transform(d_region_insertion_queries.begin(), d_region_insertion_queries.end(), std::back_inserter(d_regions), [](const auto& query) -> std::shared_ptr<Region>
+    std::transform(d_region_insertion_queries.begin(), d_region_insertion_queries.end(), std::back_inserter(d_regions), [&](const auto& query) -> std::shared_ptr<Region>
     {
         auto region = std::make_shared<Region>(std::get<0>(query), std::get<1>(query), 0, 0, std::get<2>(query));
 
-        if(std::get<3>(query).get())
-            std::get<3>(query)->raw_effect().attr("children").attr("append")(region->raw_effect());
+        HANDLE_PYTHON_CALL(
+            if(std::get<3>(query).get())
+                std::get<3>(query)->raw_effect().attr("children").attr("append")(region->raw_effect());
+        )
 
         return region;
     });
@@ -215,4 +219,3 @@ std::shared_ptr<Region>& RegionManager::region_by_uuid(const std::string& uuid)
         return region->uuid() == uuid;
     });
 }
-

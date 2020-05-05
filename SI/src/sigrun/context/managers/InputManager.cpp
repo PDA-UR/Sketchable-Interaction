@@ -57,13 +57,17 @@ void InputManager::update()
 
                     auto& regions = Context::SIContext()->region_manager()->regions();
 
-                    auto it2 = std::find_if(regions.begin(), regions.end(), [&](auto& region)
+                    auto it2 = std::find_if(std::execution::par_unseq, regions.begin(), regions.end(), [&](auto& region)
                     {
                        return region->uuid() == it->first;
                     });
 
                     if(it2 != regions.end())
-                        it2->get()->raw_effect().attr("__signal_deletion__")();
+                    {
+                        HANDLE_PYTHON_CALL(
+                            it2->get()->raw_effect().attr("__signal_deletion__")();
+                        )
+                    }
 
                     delete it->second->embedded_object.external_application.window;
                     it->second->embedded_object.external_application.window = nullptr;
@@ -278,7 +282,7 @@ void InputManager::register_external_application(const std::string& file_uuid, Q
     };
 
     bp::dict kwargs;
-    kwargs["pid"] = pid;
+    kwargs[SI_LINUX_PID] = pid;
 
     Context::SIContext()->region_manager()->add_region(contour, Context::SIContext()->plugin_by_name(SI_NAME_EFFECT_CONTAINER), 0);
 
@@ -294,7 +298,7 @@ void InputManager::register_external_application(const std::string& file_uuid, Q
 
 void InputManager::unregister_external_application(const std::string& file_uuid)
 {
-    auto it = std::find_if(deo.begin(), deo.end(), [&file_uuid](const auto& pair) -> bool
+    auto it = std::find_if(std::execution::par_unseq, deo.begin(), deo.end(), [&file_uuid](const auto& pair) -> bool
     {
         return std::get<1>(pair)->type() == ExternalObject::APPLICATION && std::get<1>(pair)->embedded_object.external_application.file_uuid == file_uuid;
     });
