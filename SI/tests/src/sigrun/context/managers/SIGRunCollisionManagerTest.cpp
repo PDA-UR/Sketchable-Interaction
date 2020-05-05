@@ -351,9 +351,7 @@ TEST_F(SIGRunCollisionManagerTest, handle_event_continuous)
     std::shared_ptr<Region> a = std::make_shared<Region>(contour1, *o, 1920, 1080);
     std::shared_ptr<Region> b = std::make_shared<Region>(contour2, *t, 1920, 1080);
 
-    auto tuple = std::make_tuple(a->uuid(), b->uuid());
-
-    EXPECT_NO_FATAL_FAILURE(cm_handle_event_continuous(a, b, tuple));
+    EXPECT_NO_FATAL_FAILURE(cm_handle_event_continuous(a, b));
 }
 
 TEST_F(SIGRunCollisionManagerTest, handle_event_enter)
@@ -396,7 +394,7 @@ TEST_F(SIGRunCollisionManagerTest, handle_event_enter)
 
     auto tuple = std::make_tuple(a->uuid(), b->uuid());
 
-    EXPECT_NO_FATAL_FAILURE(cm_handle_event_enter(a, b, tuple));
+    EXPECT_NO_FATAL_FAILURE(cm_handle_event_enter(a, b));
 }
 
 TEST_F(SIGRunCollisionManagerTest, handle_event_leave)
@@ -439,5 +437,5 @@ TEST_F(SIGRunCollisionManagerTest, handle_event_leave)
 
     auto tuple = std::make_tuple(a->uuid(), b->uuid());
 
-    EXPECT_NO_FATAL_FAILURE(cm_handle_event_leave(a, b, tuple));
+    EXPECT_NO_FATAL_FAILURE(cm_handle_event_leave(a, b));
 }

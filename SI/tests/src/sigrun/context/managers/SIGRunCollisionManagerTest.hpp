@@ -50,19 +50,19 @@ public:
         return cm.are_aabbs_equal(a, b);
     }
 
-    void cm_handle_event_continuous(const std::shared_ptr<Region>& a, const std::shared_ptr<Region>& b, const std::tuple<std::string, std::string>& tuple)
+    void cm_handle_event_continuous(const std::shared_ptr<Region>& a, const std::shared_ptr<Region>& b)
     {
-        cm.handle_event_continuous(a, b, tuple);
+        cm.handle_event_continuous(a, b);
     }
 
-    void cm_handle_event_leave(const std::shared_ptr<Region>& a, const std::shared_ptr<Region>& b, const std::tuple<std::string, std::string>& tuple)
+    void cm_handle_event_leave(const std::shared_ptr<Region>& a, const std::shared_ptr<Region>& b)
     {
-        cm.handle_event_leave(a, b, tuple);
+        cm.handle_event_leave(a, b);
     }
 
-    void cm_handle_event_enter(const std::shared_ptr<Region>& a, const std::shared_ptr<Region>& b, const std::tuple<std::string, std::string>& tuple)
+    void cm_handle_event_enter(const std::shared_ptr<Region>& a, const std::shared_ptr<Region>& b)
     {
-        cm.handle_event_enter(a, b, tuple);
+        cm.handle_event_enter(a, b);
     }
 };
 

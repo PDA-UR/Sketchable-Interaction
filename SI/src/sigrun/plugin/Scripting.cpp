@@ -9,26 +9,29 @@
 #include <QStringList>
 #include <boost/python.hpp>
 #include <sigrun/log/Log.hpp>
+#include "PythonInvoker.hpp"
 
 namespace bp = boost::python;
 
 Scripting::Scripting()
 {
-    PyImport_AppendInittab((char *) "libPySI", &PyInit_libPySI);
+    HANDLE_PYTHON_CALL(
+        PyImport_AppendInittab((char *) "libPySI", &PyInit_libPySI);
 
-    Py_Initialize();
+        Py_Initialize();
 
-    char buf[FILENAME_MAX];
-    getcwd(buf, FILENAME_MAX);
-    std::string directory(buf);
+        char buf[FILENAME_MAX];
+        getcwd(buf, FILENAME_MAX);
+        std::string directory(buf);
 
-    bp::object sys_module = bp::import("sys");
-    bp::str module_directory = directory.substr(0, directory.size() - 2).c_str();
-    sys_module.attr("path").attr("insert")(1, module_directory);
+        bp::object sys_module = bp::import("sys");
+        bp::str module_directory = directory.substr(0, directory.size() - 2).c_str();
+        sys_module.attr("path").attr("insert")(1, module_directory);
 
-    d_main = bp::import("__main__");
-    d_globals = d_main.attr("__dict__");
-    d_globals["__builtins__"] = bp::import("builtins");
+        d_main = bp::import("__main__");
+        d_globals = d_main.attr("__dict__");
+        d_globals["__builtins__"] = bp::import("builtins");
+    )
 }
 
 Scripting::~Scripting()
@@ -96,17 +99,21 @@ void Scripting::load_class_names(std::vector<std::string> &classes, const std::s
 
 bp::object Scripting::import(const std::string &module, const std::string &path)
 {
-    bp::dict locals;
+    HANDLE_PYTHON_CALL(
+        bp::dict locals;
 
-    locals["module_name"] = module;
-    locals["path"] = path;
+        locals["module_name"] = module;
+        locals["path"] = path;
 
-    bp::exec("import imp\n"
-             "new_module = imp.load_module(module_name, open(path), path, ('py', 'U', imp.PY_SOURCE))\n",
-             d_globals,
-             locals);
+        bp::exec("import imp\n"
+                 "new_module = imp.load_module(module_name, open(path), path, ('py', 'U', imp.PY_SOURCE))\n",
+                 d_globals,
+                 locals);
 
-    return locals["new_module"];
+        return locals["new_module"];
+    )
+
+    return bp::object();
 }
 
 std::ostream& operator<<(std::ostream &os, const Scripting &scripting)
