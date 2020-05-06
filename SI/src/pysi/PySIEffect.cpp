@@ -268,15 +268,18 @@ void PySIEffect::__create_region__(const bp::list& contour, const std::string& n
     std::vector<glm::vec3> _contour;
     _contour.reserve(bp::len(contour));
 
-    for(uint32_t i = 0; i < bp::len(contour); ++i)
-    {
-        float x = bp::extract<float>(contour[i][0]);
-        float y = bp::extract<float>(contour[i][1]);
+    HANDLE_PYTHON_CALL(
+        for(uint32_t i = 0; i < bp::len(contour); ++i)
+        {
+            float x = bp::extract<float>(contour[i][0]);
+            float y = bp::extract<float>(contour[i][1]);
 
-        _contour.emplace_back(x, y, 1);
-    }
+            _contour.emplace_back(x, y, 1);
+        }
+    )
 
-    __create_region__(_contour, name);
+    if(!_contour.empty())
+        __create_region__(_contour, name);
 }
 
 std::vector<std::string> PySIEffect::__available_plugins_by_name__()
@@ -366,6 +369,7 @@ BOOST_PYTHON_MODULE(libPySI)
     bp::scope().attr("SI_STD_NAME_CONTAINER") = SI_NAME_EFFECT_CONTAINER;
     bp::scope().attr("SI_STD_NAME_PLACEHOLDER") = SI_NAME_EFFECT_PLACEHOLDER;
     bp::scope().attr("SI_STD_NAME_PREVIEW") = SI_NAME_EFFECT_PREVIEW;
+    bp::scope().attr("SI_STD_NAME_PALETTE") = SI_NAME_EFFECT_PALETTE;
 
     bp::class_<PySIEffect, boost::noncopyable>("PySIEffect", bp::init<>())
         .def("__init__", bp::make_constructor(&PySIEffect::init, bp::default_call_policies(), (bp::arg("shape")=std::vector<glm::vec3>(), bp::arg("uuid")=std::string(), bp::arg("kwargs")=bp::dict())))
@@ -437,6 +441,7 @@ BOOST_PYTHON_MODULE(libPySI)
         .value("SI_CUSTOM", SI_TYPE_CUSTOM)
         .value("SI_ENTRY", SI_TYPE_ENTRY)
         .value("SI_PREVIEW", SI_TYPE_PREVIEW)
+        .value("SI_PALETTE", SI_TYPE_PALETTE)
 
         .export_values()
         ;

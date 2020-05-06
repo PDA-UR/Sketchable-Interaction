@@ -9,7 +9,7 @@ namespace bp = boost::python;
 
 TEST_F(SIGRunRegionResamplerTest, resample)
 {
-    std::string path = "res/region";
+    std::string path = "tests/res/region";
 
     std::vector<std::tuple<std::string, std::string>> files;
     std::vector<std::string> classes;

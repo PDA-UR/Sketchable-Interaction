@@ -13,7 +13,7 @@ namespace bp = boost::python;
 
 TEST_F(SIGRunCollisionManagerTest, collide)
 {
-    std::string path = "res/region";
+    std::string path = "tests/res/region";
 
     std::vector<std::tuple<std::string, std::string>> files;
     std::vector<std::string> classes;
@@ -55,7 +55,7 @@ TEST_F(SIGRunCollisionManagerTest, collide)
 
 TEST_F(SIGRunCollisionManagerTest, has_capabilities_in_common)
 {
-    std::string path = "res/region";
+    std::string path = "tests/res/region";
 
     std::vector<std::tuple<std::string, std::string>> files;
     std::vector<std::string> classes;
@@ -95,7 +95,7 @@ TEST_F(SIGRunCollisionManagerTest, has_capabilities_in_common)
 
 TEST_F(SIGRunCollisionManagerTest, collides_with_aabb)
 {
-    std::string path = "res/region";
+    std::string path = "tests/res/region";
 
     std::vector<std::tuple<std::string, std::string>> files;
     std::vector<std::string> classes;
@@ -135,7 +135,7 @@ TEST_F(SIGRunCollisionManagerTest, collides_with_aabb)
 
 TEST_F(SIGRunCollisionManagerTest, is_aabb_enveloped_negative)
 {
-    std::string path = "res/region";
+    std::string path = "tests/res/region";
 
     std::vector<std::tuple<std::string, std::string>> files;
     std::vector<std::string> classes;
@@ -176,7 +176,7 @@ TEST_F(SIGRunCollisionManagerTest, is_aabb_enveloped_negative)
 
 TEST_F(SIGRunCollisionManagerTest, is_aabb_enveloped_positive)
 {
-    std::string path = "res/region";
+    std::string path = "tests/res/region";
 
     std::vector<std::tuple<std::string, std::string>> files;
     std::vector<std::string> classes;
@@ -218,7 +218,7 @@ TEST_F(SIGRunCollisionManagerTest, is_aabb_enveloped_positive)
 
 TEST_F(SIGRunCollisionManagerTest, cm_collides_with_mask)
 {
-    std::string path = "res/region";
+    std::string path = "tests/res/region";
 
     std::vector<std::tuple<std::string, std::string>> files;
     std::vector<std::string> classes;
@@ -263,7 +263,7 @@ TEST_F(SIGRunCollisionManagerTest, cm_collides_with_mask)
 
 TEST_F(SIGRunCollisionManagerTest, are_aabbs_equal)
 {
-    std::string path = "res/region";
+    std::string path = "tests/res/region";
 
     std::vector<std::tuple<std::string, std::string>> files;
     std::vector<std::string> classes;
@@ -315,7 +315,7 @@ TEST_F(SIGRunCollisionManagerTest, are_aabbs_equal)
 
 TEST_F(SIGRunCollisionManagerTest, handle_event_continuous)
 {
-    std::string path = "res/region";
+    std::string path = "tests/res/region";
 
     std::vector<std::tuple<std::string, std::string>> files;
     std::vector<std::string> classes;
@@ -356,7 +356,7 @@ TEST_F(SIGRunCollisionManagerTest, handle_event_continuous)
 
 TEST_F(SIGRunCollisionManagerTest, handle_event_enter)
 {
-    std::string path = "res/region";
+    std::string path = "tests/res/region";
 
     std::vector<std::tuple<std::string, std::string>> files;
     std::vector<std::string> classes;
@@ -399,7 +399,7 @@ TEST_F(SIGRunCollisionManagerTest, handle_event_enter)
 
 TEST_F(SIGRunCollisionManagerTest, handle_event_leave)
 {
-    std::string path = "res/region";
+    std::string path = "tests/res/region";
 
     std::vector<std::tuple<std::string, std::string>> files;
     std::vector<std::string> classes;

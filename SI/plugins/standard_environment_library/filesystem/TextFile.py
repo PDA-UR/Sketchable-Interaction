@@ -1,5 +1,5 @@
 from libPySI import PySIEffect
-import Entry
+from plugins.standard_environment_library.filesystem import Entry
 
 
 class TextFile(Entry.Entry):

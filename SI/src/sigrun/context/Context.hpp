@@ -61,7 +61,7 @@ private:
     Context();
 
     void add_startup_regions(const std::unordered_map<std::string, std::unique_ptr<bp::object>>& plugins);
-    void add_canvas_region(const std::unordered_map<std::string, std::unique_ptr<bp::object>>& plugins);
+    void add_canvas_region(const std::unique_ptr<bp::object>& plugins);
     void add_cursor_regions(const std::unique_ptr<bp::object>& cursor_effect);
     void add_directory_region(const std::unique_ptr<bp::object>& effect);
 

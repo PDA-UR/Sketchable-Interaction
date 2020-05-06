@@ -1,5 +1,5 @@
 from libPySI import PySIEffect
-import Entry
+from plugins.standard_environment_library.filesystem import Entry
 from PIL import Image
 
 

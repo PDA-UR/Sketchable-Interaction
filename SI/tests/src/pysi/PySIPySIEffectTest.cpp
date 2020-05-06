@@ -12,7 +12,7 @@ TEST_F(PySIPySIEffectTest, PySIEffect_Python_Side)
     Scripting script;
 
     std::string module = "PySIPySIEffectTest";
-    std::string path = "src/pysi/PySIPySIEffectTest.py";
+    std::string path = "tests/src/pysi/PySIPySIEffectTest.py";
     std::string clazz = "PySIPySIEffectTest";
 
     ASSERT_TRUE(bp::extract<bool>(script.si_plugin(module, path, clazz).attr("start")()));

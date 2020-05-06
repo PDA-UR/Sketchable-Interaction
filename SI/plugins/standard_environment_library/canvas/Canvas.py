@@ -1,6 +1,6 @@
 from libPySI import PySIEffect
 
-from SI.plugins.standard_environment_library import SIEffect
+from plugins.standard_environment_library import SIEffect
 
 
 class Canvas(SIEffect.SIEffect):
@@ -14,11 +14,6 @@ class Canvas(SIEffect.SIEffect):
         self.disable_effect(PySIEffect.DELETION, self.RECEPTION)
         self.enable_effect(PySIEffect.SKETCH, self.RECEPTION, self.on_sketch_enter_recv, self.on_sketch_continuous_recv, self.on_sketch_leave_recv)
         self.disable_link_reception(PySIEffect.POSITION)
-
-        # testing for now
-        self.create_region(PySIEffect.PointVector(), "test")
-        self.create_region([[1, 1], [2, 2]], "test")
-        print(self.available_plugins())
 
     def on_sketch_enter_recv(self, x, y, sender_id):
         return 0
