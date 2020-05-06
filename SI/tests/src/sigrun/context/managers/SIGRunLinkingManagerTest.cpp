@@ -21,7 +21,7 @@ TEST_F(SIGRunLinkingManagerTest, construction)
 
 TEST_F(SIGRunLinkingManagerTest, link_creation_uni)
 {
-    std::string path = "res/region";
+    std::string path = "tests/res/region";
 
     std::vector<std::tuple<std::string, std::string>> files;
     std::vector<std::string> classes;
@@ -80,7 +80,7 @@ TEST_F(SIGRunLinkingManagerTest, link_creation_uni)
 
 TEST_F(SIGRunLinkingManagerTest, is_linked_uni)
 {
-    std::string path = "res/region";
+    std::string path = "tests/res/region";
 
     std::vector<std::tuple<std::string, std::string>> files;
     std::vector<std::string> classes;
@@ -137,7 +137,7 @@ TEST_F(SIGRunLinkingManagerTest, is_linked_uni)
 
 TEST_F(SIGRunLinkingManagerTest, link_event_execution_uni)
 {
-    std::string path = "res/region";
+    std::string path = "tests/res/region";
 
     std::vector<std::tuple<std::string, std::string>> files;
     std::vector<std::string> classes;
@@ -207,7 +207,7 @@ TEST_F(SIGRunLinkingManagerTest, link_event_execution_uni)
 
 TEST_F(SIGRunLinkingManagerTest, link_removal_uni)
 {
-    std::string path = "res/region";
+    std::string path = "tests/res/region";
 
     std::vector<std::tuple<std::string, std::string>> files;
     std::vector<std::string> classes;
@@ -291,7 +291,7 @@ TEST_F(SIGRunLinkingManagerTest, link_removal_uni)
 
 TEST_F(SIGRunLinkingManagerTest, link_creation_bi)
 {
-    std::string path = "res/region";
+    std::string path = "tests/res/region";
 
     std::vector<std::tuple<std::string, std::string>> files;
     std::vector<std::string> classes;
@@ -356,7 +356,7 @@ TEST_F(SIGRunLinkingManagerTest, link_creation_bi)
 
 TEST_F(SIGRunLinkingManagerTest, is_linked_bi)
 {
-    std::string path = "res/region";
+    std::string path = "tests/res/region";
 
     std::vector<std::tuple<std::string, std::string>> files;
     std::vector<std::string> classes;
@@ -410,7 +410,7 @@ TEST_F(SIGRunLinkingManagerTest, is_linked_bi)
 
 TEST_F(SIGRunLinkingManagerTest, link_event_execution_bi)
 {
-    std::string path = "res/region";
+    std::string path = "tests/res/region";
 
     std::vector<std::tuple<std::string, std::string>> files;
     std::vector<std::string> classes;
@@ -472,7 +472,7 @@ TEST_F(SIGRunLinkingManagerTest, link_event_execution_bi)
 
 TEST_F(SIGRunLinkingManagerTest, link_removal_bi)
 {
-    std::string path = "res/region";
+    std::string path = "tests/res/region";
 
     std::vector<std::tuple<std::string, std::string>> files;
     std::vector<std::string> classes;

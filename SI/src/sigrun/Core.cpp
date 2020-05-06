@@ -87,7 +87,7 @@ void Core::retrieve_available_plugins(std::unordered_map<std::string, std::uniqu
 
     PluginCollector().collect("/" + plugin_path, files);
 
-    std::for_each(std::execution::seq, files.begin(), files.end(), [&](auto& file)
+    std::for_each(files.begin(), files.end(), [&](auto& file)
     {
         HANDLE_PYTHON_CALL(
             std::vector<std::string> classes;

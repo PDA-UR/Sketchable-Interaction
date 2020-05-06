@@ -1,5 +1,5 @@
 from libPySI import PySIEffect
-from SI.plugins.standard_environment_library import SIEffect
+from plugins.standard_environment_library import SIEffect
 
 
 class Button(SIEffect.SIEffect):

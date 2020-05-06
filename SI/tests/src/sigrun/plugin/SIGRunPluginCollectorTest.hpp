@@ -18,7 +18,7 @@ public:
 
     }
 
-    const std::string PATH = "res/plugin_collector";
+    const std::string PATH = "tests/res/plugin_collector";
 
 };
 

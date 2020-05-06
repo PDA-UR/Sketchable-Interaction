@@ -48,6 +48,7 @@ void Context::add_startup_regions(const std::unordered_map<std::string, std::uni
             case SI_TYPE_UNKNOWN_FILE:
             case SI_TYPE_CURSOR:
             case SI_TYPE_ENTRY:
+            case SI_TYPE_PALETTE:
                 break;
 
             default:
@@ -67,24 +68,18 @@ void Context::add_startup_regions(const std::unordered_map<std::string, std::uni
         });
     }
 
-    std::for_each(std::execution::par_unseq, plugins.begin(), plugins.end(), [&](const auto& plugin)
+    std::for_each(std::execution::seq, plugins.begin(), plugins.end(), [&](const auto& plugin)
     {
-        const std::string& key = plugin.first;
-        const std::unique_ptr<bp::object>& value = plugin.second;
+        HANDLE_PYTHON_CALL(
+            const std::string& key = plugin.first;
+            const std::unique_ptr<bp::object>& value = plugin.second;
 
-        if(!value->is_none())
-        {
-            HANDLE_PYTHON_CALL(
+            if(!value->is_none())
+            {
                 switch (bp::extract<int>(value->attr("region_type")))
                 {
                     case SI_TYPE_CANVAS:
-                    {
-                        std::vector<glm::vec3> canvas_contour{glm::vec3(1, 1, 1), glm::vec3(1, s_height - 1, 1),
-                                                              glm::vec3(s_width - 1, s_height - 1, 1),
-                                                              glm::vec3(s_width - 1, 1, 1)};
-                        uprm->add_region(canvas_contour, *value, 0, bp::dict());
-                        d_canvas_uuid = uprm->regions().back()->uuid();
-                    }
+                        add_canvas_region(value);
                         break;
 
                     case SI_TYPE_MOUSE_CURSOR:
@@ -102,7 +97,7 @@ void Context::add_startup_regions(const std::unordered_map<std::string, std::uni
                                                        glm::vec3(x, height, 1),
                                                        glm::vec3(x + width, height - 1, 1),
                                                        glm::vec3(x + width, 1, 1)};
-                        uprm->add_region(contour, *value, 0, bp::dict());
+                        uprm->add_region(contour, *value, 0);
                         d_notification_uuid = uprm->regions().back()->uuid();
                     }
                         break;
@@ -112,49 +107,47 @@ void Context::add_startup_regions(const std::unordered_map<std::string, std::uni
                         break;
 
                     case SI_TYPE_BUTTON:
-                        break;
-
                     case SI_TYPE_EXTERNAL_APPLICATION_CONTAINER:
-                        break;
-
                     case SI_TYPE_TEXT_FILE:
-                        break;
-
                     case SI_TYPE_IMAGE_FILE:
-                        break;
-
                     case SI_TYPE_UNKNOWN_FILE:
-                        break;
-
                     case SI_TYPE_CURSOR:
-                        break;
-
                     case SI_TYPE_ENTRY:
                         break;
 
-                    default:
+                    case SI_TYPE_PALETTE:
                     {
-                        d_available_plugins[key] = *value;
+                        std::vector<glm::vec3> contour{glm::vec3(s_width - 300, 50, 1),
+                                                       glm::vec3(s_width - 300, 450, 1),
+                                                       glm::vec3(s_width - 100, 450, 1),
+                                                       glm::vec3(s_width - 100, 50, 1)};
+
+                        uprm->add_region(contour, *value, 0);
+                        break;
                     }
+                    default:
+                        d_available_plugins[key] = *value;
                         break;
                 }
-            )
-        }
+            }
+        )
     });
 }
 
-void Context::add_canvas_region(const std::unordered_map<std::string, std::unique_ptr<bp::object>>& plugins)
+void Context::add_canvas_region(const std::unique_ptr<bp::object>& canvas_effect)
 {
+    std::vector<glm::vec3> canvas_contour{glm::vec3(1, 1, 1), glm::vec3(1, s_height - 1, 1),
+                                          glm::vec3(s_width - 1, s_height - 1, 1),
+                                          glm::vec3(s_width - 1, 1, 1)};
 
+    uprm->add_region(canvas_contour, *canvas_effect, 0);
+    d_canvas_uuid = uprm->regions().back()->uuid();
 }
 
 void Context::add_cursor_regions(const std::unique_ptr<bp::object>& cursor_effect)
 {
     HANDLE_PYTHON_CALL(
-        uint32_t width_mouse_cursor = bp::extract<uint32_t>(cursor_effect->attr("width"));
-        uint32_t height_mouse_cursor = bp::extract<uint32_t>(cursor_effect->attr("height"));
-
-        std::vector<glm::vec3> mouse_contour {glm::vec3(0, 0, 1), glm::vec3(0, height_mouse_cursor, 1), glm::vec3(width_mouse_cursor, height_mouse_cursor, 1), glm::vec3(width_mouse_cursor, 0, 1) };
+        std::vector<glm::vec3> mouse_contour {glm::vec3(0, 0, 1), glm::vec3(0, 24, 1), glm::vec3(18, 24, 1), glm::vec3(18, 0, 1)};
         uprm->add_region(mouse_contour, *cursor_effect, 0, bp::dict());
         d_mouse_uuid = uprm->regions().back()->uuid();
 

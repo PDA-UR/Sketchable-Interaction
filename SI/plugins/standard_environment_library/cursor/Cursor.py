@@ -1,5 +1,5 @@
 from libPySI import PySIEffect
-from SI.plugins.standard_environment_library import SIEffect
+from plugins.standard_environment_library import SIEffect
 
 
 class MouseCursor(SIEffect.SIEffect):
@@ -11,8 +11,8 @@ class MouseCursor(SIEffect.SIEffect):
         self.qml_path = "plugins/standard_environment_library/cursor/Cursor.qml"
         self.color = PySIEffect.Color(0, 0, 0, 0)
 
-        self.width = 18
-        self.height = 24
+        # self.width = 18
+        # self.height = 24
 
         self.clicks = 0
 
