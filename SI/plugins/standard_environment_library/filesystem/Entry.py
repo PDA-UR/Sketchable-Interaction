@@ -3,6 +3,10 @@ from libPySI import PySIEffect
 from plugins.standard_environment_library import SIEffect
 
 
+region_type = PySIEffect.EffectType.SI_ENTRY
+region_name = PySIEffect.SI_STD_NAME_ENTRY
+
+
 class Entry(SIEffect.SIEffect):
     def __init__(self, shape=PySIEffect.PointVector(), uuid="", kwargs={}):
         super(Entry, self).__init__(shape, uuid, self.TEXTURE_PATH_NONE, kwargs)
@@ -43,6 +47,7 @@ class Entry(SIEffect.SIEffect):
             self.enable_effect(PySIEffect.PARENT, self.RECEPTION, self.on_parent_enter_recv, None, self.on_parent_leave_recv)
 
     def on_parent_enter_recv(self, parent_id):
+        self.is_child = True
         self.create_link(parent_id, PySIEffect.POSITION, self._uuid, PySIEffect.POSITION)
 
     def on_parent_leave_recv(self, parent_id):
@@ -62,5 +67,20 @@ class Entry(SIEffect.SIEffect):
             self.is_open_entry_capability_blocked = True
 
     def on_open_entry_leave_recv(self, is_other_controlled):
-        self.close_standard_application(self._uuid)
-        self.is_open_entry_capability_blocked = False
+        if not self.is_child and self.is_open_entry_capability_blocked:
+            self.close_standard_application(self._uuid)
+            self.is_open_entry_capability_blocked = False
+
+    def on_child_enter_emit(self, child):
+        if child not in self.children:
+            self.children.append(child)
+
+        return self._uuid
+
+    def on_child_leave_emit(self, child):
+        if child in self.children:
+            index = self.children.index(child)
+
+            del self.children[index]
+
+        return self._uuid

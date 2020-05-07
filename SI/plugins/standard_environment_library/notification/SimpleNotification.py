@@ -3,6 +3,12 @@ from libPySI import PySIEffect
 from plugins.standard_environment_library import SIEffect
 
 
+region_type = PySIEffect.EffectType.SI_NOTIFICATION
+region_name = PySIEffect.SI_STD_NAME_SIMPLE_NOTIFICATION
+region_width = 800
+region_height = 75
+
+
 class SimpleNotification(SIEffect.SIEffect):
     def __init__(self, shape=PySIEffect.PointVector(), uuid="", kwargs={}):
         super(SimpleNotification, self).__init__(shape, uuid, "", kwargs)

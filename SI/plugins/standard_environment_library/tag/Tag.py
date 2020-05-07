@@ -3,6 +3,10 @@ from libPySI import PySIEffect
 from plugins.standard_environment_library import SIEffect
 
 
+region_type = PySIEffect.EffectType.SI_CUSTOM
+region_name = PySIEffect.SI_STD_NAME_TAG
+
+
 class Tag(SIEffect.SIEffect):
     def __init__(self, shape=PySIEffect.PointVector(), uuid="", kwargs={}):
         super(Tag, self).__init__(shape, uuid, "res/tag.png", kwargs)

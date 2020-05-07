@@ -42,7 +42,10 @@ bp::object Scripting::si_plugin(std::string &module_name, std::string &path, std
     std::string temp = path.substr(0, path.length() - 3); // -3 removes .py
     std::replace(temp.begin(), temp.end(), '/', '.');
 
-    return bp::import(bp::str((temp).c_str())).attr(class_name.c_str())();
+    bp::object ret = bp::import(bp::str((temp).c_str()));
+    ret.attr("__si_name__") = class_name.c_str();
+
+    return ret;
 }
 
 std::string Scripting::load_plugin_source(const char *source)
