@@ -104,9 +104,7 @@ void Core::retrieve_available_plugins(std::unordered_map<std::string, std::uniqu
             {
                 bp::object obj = script.si_plugin(module_name, rpath, clazz);
 
-                const char* name = bp::extract<char*>(obj.attr("name"));
-
-                plugins[std::string(name)] = std::make_unique<bp::object>(obj);
+                plugins[std::string(bp::extract<char*>(obj.attr("region_name")))] = std::make_unique<bp::object>(obj);
             });
         )
     });

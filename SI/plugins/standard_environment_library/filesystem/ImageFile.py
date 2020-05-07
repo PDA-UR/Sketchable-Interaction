@@ -3,6 +3,9 @@ from plugins.standard_environment_library.filesystem import Entry
 from PIL import Image
 
 
+region_type = PySIEffect.EffectType.SI_IMAGE_FILE
+region_name = PySIEffect.SI_STD_NAME_IMAGEFILE
+
 class ImageFile(Entry.Entry):
     def __init__(self, shape=PySIEffect.PointVector(), uuid="", kwargs={}):
         super(ImageFile, self).__init__(shape, uuid, kwargs)

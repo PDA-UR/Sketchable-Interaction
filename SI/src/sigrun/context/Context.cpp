@@ -35,26 +35,28 @@ void Context::add_startup_regions(const std::unordered_map<std::string, std::uni
 {
     std::for_each(std::execution::par_unseq, plugins.begin(), plugins.end(), [&](const auto& plugin)
     {
-        switch (bp::extract<int>(plugin.second->attr("region_type")))
-        {
-            case SI_TYPE_CANVAS:
-            case SI_TYPE_MOUSE_CURSOR:
-            case SI_TYPE_NOTIFICATION:
-            case SI_TYPE_DIRECTORY:
-            case SI_TYPE_BUTTON:
-            case SI_TYPE_EXTERNAL_APPLICATION_CONTAINER:
-            case SI_TYPE_TEXT_FILE:
-            case SI_TYPE_IMAGE_FILE:
-            case SI_TYPE_UNKNOWN_FILE:
-            case SI_TYPE_CURSOR:
-            case SI_TYPE_ENTRY:
-            case SI_TYPE_PALETTE:
-                break;
+        HANDLE_PYTHON_CALL(
+            switch (bp::extract<int>(plugin.second->attr("region_type")))
+            {
+                case SI_TYPE_CANVAS:
+                case SI_TYPE_MOUSE_CURSOR:
+                case SI_TYPE_NOTIFICATION:
+                case SI_TYPE_DIRECTORY:
+                case SI_TYPE_BUTTON:
+                case SI_TYPE_EXTERNAL_APPLICATION_CONTAINER:
+                case SI_TYPE_TEXT_FILE:
+                case SI_TYPE_IMAGE_FILE:
+                case SI_TYPE_UNKNOWN_FILE:
+                case SI_TYPE_CURSOR:
+                case SI_TYPE_ENTRY:
+                case SI_TYPE_PALETTE:
+                    break;
 
-            default:
-                d_available_plugins[plugin.first] = *plugin.second;
-                break;
-        }
+                default:
+                    d_available_plugins[plugin.first] = *plugin.second;
+                    break;
+            }
+        )
     });
 
     if(!d_available_plugins.empty())
@@ -88,8 +90,8 @@ void Context::add_startup_regions(const std::unordered_map<std::string, std::uni
 
                     case SI_TYPE_NOTIFICATION:
                     {
-                        const int& width = bp::extract<int>(value->attr("width"));
-                        const int& height = bp::extract<int>(value->attr("height"));
+                        const int& width = bp::extract<int>(value->attr("region_width"));
+                        const int& height = bp::extract<int>(value->attr("region_height"));
 
                         uint32_t x = s_width / 2 - width / 2;
 
@@ -97,6 +99,7 @@ void Context::add_startup_regions(const std::unordered_map<std::string, std::uni
                                                        glm::vec3(x, height, 1),
                                                        glm::vec3(x + width, height - 1, 1),
                                                        glm::vec3(x + width, 1, 1)};
+
                         uprm->add_region(contour, *value, 0);
                         d_notification_uuid = uprm->regions().back()->uuid();
                     }
@@ -166,8 +169,8 @@ void Context::add_directory_region(const std::unique_ptr<bp::object>& directory_
     INFO("Creating Region for " + cwd);
 
     HANDLE_PYTHON_CALL(
-        uint32_t width_directory = bp::extract<uint32_t>(directory_effect->attr("width"));
-        uint32_t height_directory = bp::extract<uint32_t>(directory_effect->attr("height"));
+        uint32_t width_directory = bp::extract<uint32_t>(directory_effect->attr("region_width"));
+        uint32_t height_directory = bp::extract<uint32_t>(directory_effect->attr("region_height"));
 
         std::vector<glm::vec3> dir_contour {glm::vec3(0, 0, 1), glm::vec3(0, height_directory, 1), glm::vec3(width_directory, height_directory, 1), glm::vec3(width_directory, 0, 1) };
 
@@ -344,8 +347,8 @@ void Context::spawn_folder_contents_buttons_as_regions(std::shared_ptr<Region>& 
     HANDLE_PYTHON_CALL(
         bp::object value = d_plugins[SI_NAME_EFFECT_BUTTON];
 
-        uint32_t btn_width = bp::extract<uint32_t>(value.attr("width"));
-        uint32_t btn_height = bp::extract<uint32_t>(value.attr("height"));
+        uint32_t btn_width = bp::extract<uint32_t>(value.attr("region_width"));
+        uint32_t btn_height = bp::extract<uint32_t>(value.attr("region_height"));
 
         std::vector<glm::vec3> btn_contour{glm::vec3(dir_x + preview_width - btn_width, dir_y + preview_height - btn_height, 1),
                                            glm::vec3(dir_x + preview_width - btn_width, dir_y + preview_height, 1),
@@ -365,11 +368,6 @@ void Context::spawn_folder_contents_buttons_as_regions(std::shared_ptr<Region>& 
 
         uprm->query_region_insertion(btn_contour2, value, parent, kwargs2);
     )
-}
-
-void Context::spawn_folder_contents_entry_as_region(const std::vector<glm::vec3>& contour, std::shared_ptr<Region>& parent, const std::string& effect_name, const bp::dict& kwargs)
-{
-    uprm->query_region_insertion(contour, d_plugins[effect_name], parent, kwargs);
 }
 
 void Context::spawn_folder_contents_entries_as_regions(std::shared_ptr<Region>& parent, const std::vector<std::string>& children_paths, uint32_t dir_x, uint32_t dir_y, uint32_t dir_width, uint32_t dir_height, uint32_t preview_width, uint32_t preview_height)
@@ -405,23 +403,22 @@ void Context::spawn_folder_contents_entries_as_regions(std::shared_ptr<Region>& 
             case SI_TYPE_DIRECTORY:
                 kwargs["cwd"] = child_path;
                 kwargs["children"] = upfs->cwd_contents_paths(child_path);
-                kwargs["is_child"] = true;
                 effect_name = SI_NAME_EFFECT_DIRECTORY;
                 break;
             case SI_TYPE_IMAGE_FILE:
                 effect_name = SI_NAME_EFFECT_IMAGEFILE;
                 kwargs["cwd"] = child_path;
-                kwargs["is_child"] = true;
                 break;
             case SI_TYPE_UNKNOWN_FILE:
             case SI_TYPE_TEXT_FILE:
                 effect_name = SI_NAME_EFFECT_TEXTFILE;
                 kwargs["cwd"] = child_path;
-                kwargs["is_child"] = true;
                 break;
         }
 
-        spawn_folder_contents_entry_as_region(contour, parent, effect_name, kwargs);
+        kwargs["is_child"] = true;
+
+        uprm->query_region_insertion(contour, d_plugins[effect_name], parent, kwargs);
 
         ++i;
     });

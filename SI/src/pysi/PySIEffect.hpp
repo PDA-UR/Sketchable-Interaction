@@ -20,7 +20,8 @@ namespace bp = boost::python;
 class PySIEffect: public SIObject
 { PYSI
 public:
-    void init(const std::vector<glm::vec3>& contour, const std::vector<glm::vec3>& aabb, const std::string& uuid, const bp::dict& kwargs);
+    PySIEffect(const std::vector<glm::vec3>& contour, const std::string& uuid, const std::string& tex_path, const bp::dict& kwargs);
+
     void __add_data__(const std::string& key, const bp::object& value, const uint32_t type);
     void __show_folder_contents__(const std::vector<std::string>& page_contents, const std::string& uuid, const bool with_btns=false);
     void __embed_file_standard_appliation_into_context__(const std::string& uuid, const std::string& path);
@@ -29,6 +30,9 @@ public:
 
     void __create_region__(const std::vector<glm::vec3>& contour, const std::string& name);
     void __create_region__(const bp::list& contour, const std::string& name);
+
+    bp::tuple __context_dimensions__();
+
     std::vector<std::string> __available_plugins_by_name__();
 
     std::vector<glm::vec3> get_shape();

@@ -39,8 +39,8 @@ class SIEffect(PySIEffect.PySIEffect):
     # @param uuid the universally unique identifier of the drawn region (str)
     # @param texture_path the path to an image intended to be used as an icon for the drawn region (str)
     # @param kwargs keyworded arguments which may necessary for more specific implementations of region effects (dict)
-    def __init__(self, shape=PySIEffect.PointVector(), uuid="", texture_path="", kwargs={}):
-        super(SIEffect, self).__init__()
+    def __init__(self, shape, uuid, texture_path, kwargs):
+        super(SIEffect, self).__init__(shape, uuid, texture_path, kwargs)
 
         ## member attribute variable containing the shape (contour) of a drawn region as a PySIEffect.PointVector
         self.shape = shape
@@ -446,3 +446,6 @@ class SIEffect(PySIEffect.PySIEffect):
     def snap_to_mouse(self):
         self.x = self.mouse_x - self.aabb[0].x - self.width / 2
         self.y = self.mouse_y - self.aabb[0].y - self.height / 2
+
+    def context_dimensions(self):
+        return self.__context_dimensions__

@@ -65,10 +65,20 @@ void CollisionManager::handle_event_leave_on_deletion(std::shared_ptr<Region>& d
     std::for_each(std::execution::seq, d_cols.begin(), d_cols.end(), [&](auto& tuple)
     {
         if(std::get<0>(tuple) == deleted_region->uuid())
-            handle_event_leave(deleted_region, Context::SIContext()->region_manager()->region_by_uuid(std::get<1>(tuple)));
+        {
+            auto& other_region = Context::SIContext()->region_manager()->region_by_uuid(std::get<1>(tuple));
+
+            if(other_region)
+                handle_event_leave(deleted_region, other_region);
+        }
 
         if(std::get<1>(tuple) == deleted_region->uuid())
-            handle_event_leave(Context::SIContext()->region_manager()->region_by_uuid(std::get<0>(tuple)), deleted_region);
+        {
+            auto& other_region = Context::SIContext()->region_manager()->region_by_uuid(std::get<0>(tuple));
+
+            if(other_region)
+                handle_event_leave(other_region, deleted_region);
+        }
     });
 }
 

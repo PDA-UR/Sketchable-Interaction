@@ -127,10 +127,9 @@ TEST_F(SIGRunRegionTest, on_enter)
     std::vector<glm::vec3> contour {glm::vec3(100, 100, 1), glm::vec3(100, 600, 1), glm::vec3(600, 600, 1), glm::vec3(600, 100, 1)};
 
     Region r(contour, *o, 1920, 1080);
+    Region rt(contour, *t, 1920, 1080);
 
-    PySIEffect te = bp::extract<PySIEffect>(*t);
-
-    EXPECT_NO_FATAL_FAILURE(r.on_enter(te));
+    EXPECT_NO_FATAL_FAILURE(r.on_enter(rt.effect()));
 }
 
 TEST_F(SIGRunRegionTest, on_continuous)
@@ -168,10 +167,9 @@ TEST_F(SIGRunRegionTest, on_continuous)
     std::vector<glm::vec3> contour {glm::vec3(100, 100, 1), glm::vec3(100, 600, 1), glm::vec3(600, 600, 1), glm::vec3(600, 100, 1)};
 
     Region r(contour, *o, 1920, 1080);
+    Region rt(contour, *t, 1920, 1080);
 
-    PySIEffect te = bp::extract<PySIEffect>(*t);
-
-    EXPECT_NO_FATAL_FAILURE(r.on_continuous(te));
+    EXPECT_NO_FATAL_FAILURE(r.on_continuous(rt.effect()));
 }
 
 TEST_F(SIGRunRegionTest, on_leave)
@@ -209,8 +207,7 @@ TEST_F(SIGRunRegionTest, on_leave)
     std::vector<glm::vec3> contour {glm::vec3(100, 100, 1), glm::vec3(100, 600, 1), glm::vec3(600, 600, 1), glm::vec3(600, 100, 1)};
 
     Region r(contour, *o, 1920, 1080);
+    Region rt(contour, *t, 1920, 1080);
 
-    PySIEffect te = bp::extract<PySIEffect>(*t);
-
-    EXPECT_NO_FATAL_FAILURE(r.on_leave(te));
+    EXPECT_NO_FATAL_FAILURE(r.on_leave(rt.effect()));
 }

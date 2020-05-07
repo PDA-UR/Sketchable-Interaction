@@ -8,16 +8,37 @@
 
 namespace bp = boost::python;
 
-void PySIEffect::init(const std::vector<glm::vec3>& contour, const std::vector<glm::vec3>& aabb, const std::string& uuid, const bp::dict& kwargs)
+PySIEffect::PySIEffect(const std::vector<glm::vec3>& contour, const std::string& uuid, const std::string& tex_path, const bp::dict& kwargs)
+    : d_data_changed(false)
 {
-    d_contour = contour;
-    d_aabb = aabb;
-    d_uuid = uuid;
-
     d_regions_marked_for_registration.reserve(10);
     d_link_relations.reserve(100);
     d_contour.reserve(64);
     d_aabb.reserve(4);
+
+    RegionResampler::resample(d_contour, contour);
+
+    int32_t x_min = std::numeric_limits<int32_t>::max();
+    int32_t x_max = std::numeric_limits<int32_t>::min();
+    int32_t y_min = std::numeric_limits<int32_t>::max();
+    int32_t y_max = std::numeric_limits<int32_t>::min();
+
+    std::for_each(std::execution::par_unseq, d_contour.begin(), d_contour.end(), [&](auto& v)
+    {
+        x_max = v.x > x_max ? v.x : x_max;
+        y_max = v.y > y_max ? v.y : y_max;
+        x_min = v.x < x_min ? v.x : x_min;
+        y_min = v.y < y_min ? v.y : y_min;
+    });
+
+    glm::vec3 tlc(x_min, y_min, 1), blc(x_min, y_max, 1), brc(x_max, y_max, 1), trc(x_max, y_min, 1);
+
+    d_aabb = std::vector<glm::vec3>
+    {
+        tlc, blc, brc, trc
+    };
+
+    d_uuid = uuid;
 }
 
 void PySIEffect::__signal_deletion__()
@@ -290,9 +311,14 @@ std::vector<std::string> PySIEffect::__available_plugins_by_name__()
     return std::vector<std::string>();
 }
 
+bp::tuple PySIEffect::__context_dimensions__()
+{
+    return bp::make_tuple(Context::SIContext()->width(), Context::SIContext()->height());
+}
+
 BOOST_PYTHON_MODULE(libPySI)
 {
-    bp::scope the_scope = bp::class_<PySIEffect>("PySIEffect")
+    bp::scope the_scope = bp::class_<PySIEffect>("PySIEffect", bp::init<const std::vector<glm::vec3>&, const std::string&, const std::string&, const bp::dict&>())
     ;
 
     bp::class_<glm::vec2>("Point2", bp::init<float, float>())
@@ -371,8 +397,7 @@ BOOST_PYTHON_MODULE(libPySI)
     bp::scope().attr("SI_STD_NAME_PREVIEW") = SI_NAME_EFFECT_PREVIEW;
     bp::scope().attr("SI_STD_NAME_PALETTE") = SI_NAME_EFFECT_PALETTE;
 
-    bp::class_<PySIEffect, boost::noncopyable>("PySIEffect", bp::init<>())
-        .def("__init__", bp::make_constructor(&PySIEffect::init, bp::default_call_policies(), (bp::arg("shape")=std::vector<glm::vec3>(), bp::arg("uuid")=std::string(), bp::arg("kwargs")=bp::dict())))
+    bp::class_<PySIEffect, boost::noncopyable>("PySIEffect", bp::init<const std::vector<glm::vec3>&, const std::string&, const std::string&, const bp::dict&>())
         .def("__add_data__", &PySIEffect::__add_data__)
         .def("__signal_deletion__", &PySIEffect::__signal_deletion__)
         .def("__show_folder_contents_page__", &PySIEffect::__show_folder_contents__)
@@ -381,6 +406,7 @@ BOOST_PYTHON_MODULE(libPySI)
         .def<void (PySIEffect::*)(const std::vector<glm::vec3>&, const std::string&)>("__create_region__", &PySIEffect::__create_region__)
         .def<void (PySIEffect::*)(const bp::list&, const std::string&)>("__create_region__", &PySIEffect::__create_region__)
         .def("__available_plugins_by_name__", &PySIEffect::__available_plugins_by_name__)
+        .def("__context_dimensions__", &PySIEffect::__context_dimensions__)
 
         .add_property("shape", &PySIEffect::get_shape, &PySIEffect::set_shape)
 

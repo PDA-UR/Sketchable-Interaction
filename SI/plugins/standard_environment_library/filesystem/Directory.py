@@ -2,6 +2,12 @@ from libPySI import PySIEffect
 from plugins.standard_environment_library.filesystem import Entry
 
 
+region_type = PySIEffect.EffectType.SI_DIRECTORY
+region_name = PySIEffect.SI_STD_NAME_DIRECTORY
+region_width = 130
+region_height = 125
+
+
 class Directory(Entry.Entry):
     def __init__(self, shape=PySIEffect.PointVector(), uuid="", kwargs={}):
         super(Directory, self).__init__(shape, uuid, kwargs)
@@ -10,6 +16,8 @@ class Directory(Entry.Entry):
         self.qml_path = "plugins/standard_environment_library/filesystem/Directory.qml"
         self.preview_width = 400
         self.preview_height = 600
+        self.width = region_width
+        self.height = region_height
         self.is_icon_visible = True
         self.is_opened_visible = False
         self.children_paths = list(kwargs["children"]) if len(kwargs.keys()) else []
@@ -46,15 +54,18 @@ class Directory(Entry.Entry):
         self.enable_link_emission(PySIEffect.POSITION, self.position)
 
     def on_child_enter_emit(self, child):
-        if child not in self.children:
-            self.children.append(child)
+        if not self.is_child:
+            if child not in self.children:
+                self.children.append(child)
 
         return self._uuid
 
     def on_child_leave_emit(self, child):
-        index = self.children.index(child)
+        if not self.is_child:
+            if child in self.children:
+                index = self.children.index(child)
 
-        del self.children[index]
+                del self.children[index]
 
         return self._uuid
 
@@ -86,19 +97,17 @@ class Directory(Entry.Entry):
         self.display_folder_contents_page(self.browse_pages[self.current_page], self._uuid, False)
 
     def on_btn_enter_recv(self, cursor_id, link_attrib):
-        return 0
+        pass
 
     def on_btn_continuous_recv(self, cursor_id, value):
         if cursor_id is not "" and value is not "":
             self.on_btn_trigger(cursor_id, value)
 
-        return 0
-
     def on_btn_leave_recv(self, cursor_id, link_attrib):
-        return 0
+        pass
 
     def on_open_entry_enter_recv(self, is_other_controlled):
-        return 0
+        pass
 
     def on_open_entry_continuous_recv(self, is_other_controlled):
         if not self.is_child and not self.is_open_entry_capability_blocked and not self.is_under_user_control and not is_other_controlled:
