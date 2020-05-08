@@ -35,11 +35,6 @@ public:
         return cm.collides_with_aabb(a, b);
     }
 
-    bool cm_is_aabb_enveloped(const std::shared_ptr<Region>& a, const std::shared_ptr<Region>& b)
-    {
-        return cm.is_aabb_enveloped(a, b);
-    }
-
     bool cm_collides_with_mask(const std::shared_ptr<Region>& a, const std::shared_ptr<Region>& b)
     {
         return cm.collides_with_mask(a, b);
