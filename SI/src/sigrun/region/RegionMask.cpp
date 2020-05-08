@@ -299,14 +299,6 @@ void RegionMask::scanlinefill(const std::vector<glm::vec3>& contour, const std::
     max.x = d_brc_aabb_x;
     max.y = d_brc_aabb_y;
 
-    std::for_each(std::execution::par_unseq, contour.begin(), contour.end(), [&](auto& v)
-    {
-        max.x = std::max(max.x, v.x);
-        max.y = std::max(max.y, v.y);
-        min.x = std::min(min.x, v.x);
-        min.y = std::min(min.y, v.y);
-    });
-
     // Bounds check
     if ((max.x < 0) || (min.x > d_canvas_width) || (max.y < 0) || (min.y > d_canvas_height))
         return;

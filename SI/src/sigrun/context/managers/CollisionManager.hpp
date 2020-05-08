@@ -21,7 +21,6 @@ public:
 
 private:
     bool collides_with_aabb(const std::shared_ptr<Region>& a, const std::shared_ptr<Region>& b);
-    bool is_aabb_enveloped(const std::shared_ptr<Region>& a, const std::shared_ptr<Region>& b);
     bool collides_with_mask(const std::shared_ptr<Region>& a, const std::shared_ptr<Region>& b);
     bool has_capabilities_in_common(const std::shared_ptr<Region>& a, const std::shared_ptr<Region>& b);
     bool are_aabbs_equal(const std::shared_ptr<Region>& a, const std::shared_ptr<Region>& b);
