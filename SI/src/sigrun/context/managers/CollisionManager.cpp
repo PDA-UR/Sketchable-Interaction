@@ -20,7 +20,7 @@ void CollisionManager::collide(std::vector<std::shared_ptr<Region>> &regions)
             {
                 if(collides_with_aabb(a, b))
                 {
-                    if(are_aabbs_equal(a, b) || is_aabb_enveloped(a, b) || is_aabb_enveloped(b, a) || collides_with_mask(a, b))
+                    if(are_aabbs_equal(a, b) || collides_with_mask(a, b))
                     {
                         if(std::execution::par_unseq, std::find_if(d_cols.begin(), d_cols.end(), [&](auto& tup)
                         {
@@ -125,46 +125,6 @@ bool CollisionManager::collides_with_aabb(const std::shared_ptr<Region> &a, cons
            a_aabb[3].x > b_aabb[0].x &&
            a_aabb[0].y < b_aabb[1].y &&
            a_aabb[1].y > b_aabb[0].y;
-}
-
-bool CollisionManager::is_aabb_enveloped(const std::shared_ptr<Region>& enveloper, const std::shared_ptr<Region>& enveloped)
-{
-    auto& _a_aabb = enveloper->aabb();
-    auto& _b_aabb = enveloped->aabb();
-
-    std::vector<glm::vec3> a_aabb(_a_aabb.size());
-    std::vector<glm::vec3> b_aabb(_b_aabb.size());
-
-    std::transform(std::execution::seq, _a_aabb.begin(), _a_aabb.end(), a_aabb.begin(), [&](const glm::vec3& p)
-    {
-        auto p_ = p * enveloper->transform();
-
-        return p_ /= p_.z;
-    });
-
-    std::transform(std::execution::par_unseq, _b_aabb.begin(), _b_aabb.end(), b_aabb.begin(), [&](const glm::vec3& p)
-    {
-        auto p_ = p * enveloped->transform();
-
-        return p_ /= p_.z;
-    });
-
-    // claculate areas of aabbs in px^2
-    float area_a_aabb = (a_aabb[3].x - a_aabb[0].x) * (a_aabb[1].y - a_aabb[0].y);
-    float area_b_aabb = (b_aabb[3].x - b_aabb[0].x) * (b_aabb[1].y - b_aabb[0].y);
-
-    // check which area is bigger or whether they are equal in size
-    if(area_a_aabb > area_b_aabb)
-    {
-        bool is_tlc_enveloped = a_aabb[0].x <= b_aabb[0].x && a_aabb[0].y <= b_aabb[0].y;
-        bool is_blc_enveloped = a_aabb[1].x <= b_aabb[1].x && a_aabb[1].y >= b_aabb[1].y;
-        bool is_brc_enveloped = a_aabb[2].x >= b_aabb[2].x && a_aabb[2].y >= b_aabb[2].y;
-        bool is_trc_enveloped = a_aabb[3].x >= b_aabb[3].x && a_aabb[3].y <= b_aabb[3].y;
-
-        return is_tlc_enveloped && is_blc_enveloped && is_brc_enveloped && is_trc_enveloped;
-    }
-
-    return false;
 }
 
 bool CollisionManager::collides_with_mask(const std::shared_ptr<Region> &a, const std::shared_ptr<Region> &b)

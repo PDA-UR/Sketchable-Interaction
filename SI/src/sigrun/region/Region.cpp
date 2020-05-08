@@ -24,8 +24,6 @@ Region::Region(const std::vector<glm::vec3> &contour, const bp::object& effect, 
 
     HANDLE_PYTHON_CALL(
         d_effect = std::make_shared<bp::object>(effect.attr(effect.attr("__si_name__"))(contour, std::string(_UUID_), kwargs));
-//        d_effect->attr("__init__")(contour, std::string(_UUID_), kwargs);
-//        d_effect(contour, std::string(_UUID_), kwargs);
 
         d_py_effect = std::shared_ptr<PySIEffect>(new PySIEffect(bp::extract<PySIEffect>(*d_effect)));
     )
@@ -35,8 +33,6 @@ Region::Region(const std::vector<glm::vec3> &contour, const bp::object& effect, 
         mask_width = Context::SIContext()->width();
         mask_height = Context::SIContext()->height();
     }
-
-//    Print::print(name(), "\n incoming contour:", contour, "\npy contour: ", d_py_effect->contour(), "\n aabb: ", d_py_effect->aabb() , "\n---------------------------------");
 
     uprm = std::make_unique<RegionMask>(mask_width, mask_height, d_py_effect->contour(), d_py_effect->aabb());
 }
@@ -233,6 +229,7 @@ void Region::update()
     if(d_py_effect->d_recompute_mask)
     {
         uprm = std::make_unique<RegionMask>(Context::SIContext()->width(), Context::SIContext()->height(), d_py_effect->contour(), d_py_effect->aabb());
+        uprm->move(glm::vec2(d_last_x, d_last_y));
 
         HANDLE_PYTHON_CALL(
             d_effect->attr("__recompute_collision_mask__") = false;
