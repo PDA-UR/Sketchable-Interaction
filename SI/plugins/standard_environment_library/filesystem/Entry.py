@@ -21,8 +21,8 @@ class Entry(SIEffect.SIEffect):
         self.text_height = 50
         self.color = PySIEffect.Color(255, 10, 0, 0)
         self.text_color = "#FFFFFFFF"
-        self.path = kwargs["cwd"] if len(kwargs.keys()) else ""
-        self.is_child = bool(kwargs["is_child"]) if len(kwargs.keys()) else False
+        self.path = str(kwargs["cwd"]) if len(kwargs.keys()) else ""
+        self.parent = str(kwargs["parent"]) if len(kwargs.keys()) else ""
         self.filename = ""
         self.is_visible = True
         self.is_under_user_control = False
@@ -42,45 +42,32 @@ class Entry(SIEffect.SIEffect):
         self.add_QML_data("name", self.filename, PySIEffect.DataType.STRING)
 
         self.enable_effect(PySIEffect.OPEN_ENTRY, self.RECEPTION, self.on_open_entry_enter_recv, self.on_open_entry_continuous_recv, self.on_open_entry_leave_recv)
+        self.enable_effect(PySIEffect.PARENT, self.RECEPTION, self.on_parent_enter_recv, None, self.on_parent_leave_recv)
 
-        if self.is_child:
-            self.enable_effect(PySIEffect.PARENT, self.RECEPTION, self.on_parent_enter_recv, None, self.on_parent_leave_recv)
-
-    def on_parent_enter_recv(self, parent_id):
-        self.is_child = True
-        self.create_link(parent_id, PySIEffect.POSITION, self._uuid, PySIEffect.POSITION)
-
-    def on_parent_leave_recv(self, parent_id):
-        self.is_child = False
-
-        if self.region_type == int(PySIEffect.EffectType.SI_DIRECTORY):
-            self.enable_effect(PySIEffect.PARENT, self.EMISSION, self.on_child_enter_emit, None, self.on_child_leave_emit)
-
-        self.remove_link(parent_id, PySIEffect.POSITION, self._uuid, PySIEffect.POSITION)
+        if self.parent != "":
+            self.create_link(self.parent, PySIEffect.POSITION, self._uuid, PySIEffect.POSITION)
 
     def on_open_entry_enter_recv(self, is_other_controlled):
         pass
-
+    #
     def on_open_entry_continuous_recv(self, is_other_controlled):
-        if not self.is_child and not self.is_open_entry_capability_blocked and not self.is_under_user_control and not is_other_controlled:
+        if self.parent == "" and not self.is_open_entry_capability_blocked and not self.is_under_user_control and not is_other_controlled:
             self.start_standard_application(self._uuid, self.path)
             self.is_open_entry_capability_blocked = True
 
     def on_open_entry_leave_recv(self, is_other_controlled):
-        if not self.is_child and self.is_open_entry_capability_blocked:
+        if self.parent == "" and self.is_open_entry_capability_blocked:
             self.close_standard_application(self._uuid)
             self.is_open_entry_capability_blocked = False
 
-    def on_child_enter_emit(self, child):
-        if child not in self.children:
-            self.children.append(child)
+    def on_parent_enter_recv(self, _uuid):
+        if _uuid != "":
+            if self.parent == "":
+                self.parent = _uuid
+                self.create_link(_uuid, PySIEffect.POSITION, self._uuid, PySIEffect.POSITION)
 
-        return self._uuid
-
-    def on_child_leave_emit(self, child):
-        if child in self.children:
-            index = self.children.index(child)
-
-            del self.children[index]
-
-        return self._uuid
+    def on_parent_leave_recv(self, _uuid):
+        if _uuid != "":
+            if self.parent == _uuid:
+                self.parent = ""
+                self.remove_link(_uuid, PySIEffect.POSITION, self._uuid, PySIEffect.POSITION)

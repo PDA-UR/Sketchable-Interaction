@@ -178,7 +178,7 @@ void Context::add_directory_region(const std::unique_ptr<bp::object>& directory_
 
         kwargs["cwd"] = cwd;
         kwargs["children"] = children_paths;
-        kwargs["is_child"] = false;
+        kwargs["parent"] = "";
 
         uprm->add_region(dir_contour, *directory_effect, 0, kwargs);
 
@@ -357,6 +357,7 @@ void Context::spawn_folder_contents_buttons_as_regions(std::shared_ptr<Region>& 
 
         bp::dict kwargs;
         kwargs["value"] = false;
+        kwargs["parent"] = parent->uuid();
 
         uprm->query_region_insertion(btn_contour, value, parent, kwargs);
 
@@ -365,6 +366,8 @@ void Context::spawn_folder_contents_buttons_as_regions(std::shared_ptr<Region>& 
                                             glm::vec3(dir_x + btn_width, dir_y + preview_height, 1),
                                             glm::vec3(dir_x + btn_width, dir_y + preview_height - btn_height, 1)};
         bp::dict kwargs2;
+        kwargs2["value"] = true;
+        kwargs2["parent"] = parent->uuid();
 
         uprm->query_region_insertion(btn_contour2, value, parent, kwargs2);
     )
@@ -416,7 +419,7 @@ void Context::spawn_folder_contents_entries_as_regions(std::shared_ptr<Region>& 
                 break;
         }
 
-        kwargs["is_child"] = true;
+        kwargs["parent"] = parent->uuid();
 
         uprm->query_region_insertion(contour, d_plugins[effect_name], parent, kwargs);
 

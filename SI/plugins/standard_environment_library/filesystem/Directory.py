@@ -45,29 +45,12 @@ class Directory(Entry.Entry):
         self.add_QML_data("is_opened_visible", self.is_opened_visible, PySIEffect.DataType.BOOL)
         self.add_QML_data("page_name", "1 / " + str(len(self.browse_pages)), PySIEffect.DataType.STRING)
 
-        if not self.is_child:
-            self.enable_effect(PySIEffect.PARENT, self.EMISSION, self.on_child_enter_emit, None, self.on_child_leave_emit)
+        self.enable_effect(PySIEffect.PARENT, self.EMISSION, self.on_parent_enter_emit, None, self.on_parent_leave_emit)
 
         self.enable_effect(PySIEffect.BTN, self.RECEPTION, self.on_btn_enter_recv, self.on_btn_continuous_recv, self.on_btn_leave_recv)
         self.enable_effect(PySIEffect.OPEN_ENTRY, self.RECEPTION, self.on_open_entry_enter_recv, self.on_open_entry_continuous_recv, self.on_open_entry_leave_recv)
 
         self.enable_link_emission(PySIEffect.POSITION, self.position)
-
-    def on_child_enter_emit(self, child):
-        if not self.is_child:
-            if child not in self.children:
-                self.children.append(child)
-
-        return self._uuid
-
-    def on_child_leave_emit(self, child):
-        if not self.is_child:
-            if child in self.children:
-                index = self.children.index(child)
-
-                del self.children[index]
-
-        return self._uuid
 
     def set_folder_contents_page(self, value):
         self.btn_presses = self.btn_presses - 1 if value else self.btn_presses + 1
@@ -110,7 +93,7 @@ class Directory(Entry.Entry):
         pass
 
     def on_open_entry_continuous_recv(self, is_other_controlled):
-        if not self.is_child and not self.is_open_entry_capability_blocked and not self.is_under_user_control and not is_other_controlled:
+        if self.parent == "" and not self.is_open_entry_capability_blocked and not self.is_under_user_control and not is_other_controlled:
             x = self.aabb[0].x
             y = self.aabb[0].y
 
@@ -132,7 +115,7 @@ class Directory(Entry.Entry):
             self.is_open_entry_capability_blocked = True
 
     def on_open_entry_leave_recv(self, is_other_controlled):
-        if not self.is_child and self.is_open_entry_capability_blocked:
+        if self.parent == "" and self.is_open_entry_capability_blocked:
             x = self.aabb[0].x
             y = self.aabb[0].y
 
@@ -154,3 +137,33 @@ class Directory(Entry.Entry):
                 child.delete()
 
             self.snap_to_mouse()
+
+    def on_parent_enter_emit(self, other):
+        if self.is_open_entry_capability_blocked and self.parent == "" and not other.is_open_entry_capability_blocked:
+            if other not in self.children:
+                self.children.append(other)
+
+            return self._uuid
+
+        return ""
+
+    def on_parent_leave_emit(self, other):
+        if self.is_open_entry_capability_blocked and self.parent == "" and not other.is_open_entry_capability_blocked:
+            if other in self.children:
+                del self.children[self.children.index(other)]
+
+            return self._uuid
+
+        return ""
+
+    def on_parent_enter_recv(self, _uuid):
+        if _uuid != "" and not self.is_open_entry_capability_blocked:
+            if self.parent == "":
+                self.parent = _uuid
+                self.create_link(_uuid, PySIEffect.POSITION, self._uuid, PySIEffect.POSITION)
+
+    def on_parent_leave_recv(self, _uuid):
+        if _uuid != "" and not self.is_open_entry_capability_blocked:
+            if self.parent == _uuid:
+                self.remove_link(self.parent, PySIEffect.POSITION, self._uuid, PySIEffect.POSITION)
+                self.parent = ""

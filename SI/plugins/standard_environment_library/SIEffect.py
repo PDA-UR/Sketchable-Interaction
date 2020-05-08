@@ -286,9 +286,11 @@ class SIEffect(PySIEffect.PySIEffect):
     # @param is_emit the variable depicting if a region emits (True) or receives (False) an effect (bool)
     def disable_effect(self, capability, is_emit):
         if is_emit:
-            del self.cap_emit[capability]
+            if capability in self.cap_emit:
+                del self.cap_emit[capability]
         else:
-            del self.cap_recv[capability]
+            if capability in self.cap_recv:
+                del self.cap_recv[capability]
 
     ## member function for enabling the emission of data in the context of a link event
     #

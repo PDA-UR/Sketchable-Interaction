@@ -210,22 +210,6 @@ void RegionManager::update()
 {
     update_mouse_inputs();
     update_region_deletions();
-    update_region_insertions();
     update_regions();
-}
-
-std::shared_ptr<Region>& RegionManager::region_by_uuid(const std::string& uuid)
-{
-    auto it = std::find_if(std::execution::par_unseq, d_regions.begin(), d_regions.end(), [&](auto& region)
-    {
-        if(!region.get())
-            return false;
-
-        return region->uuid() == uuid;
-    });
-
-    if(it != d_regions.end())
-        return *it;
-
-    ERROR("Region cannot be found via uuid");
+    update_region_insertions();
 }
