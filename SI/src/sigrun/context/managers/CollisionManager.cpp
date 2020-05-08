@@ -62,22 +62,40 @@ void CollisionManager::collide(std::vector<std::shared_ptr<Region>> &regions)
 
 void CollisionManager::handle_event_leave_on_deletion(std::shared_ptr<Region>& deleted_region)
 {
+    auto& regions = Context::SIContext()->region_manager()->regions();
+
     std::for_each(std::execution::seq, d_cols.begin(), d_cols.end(), [&](auto& tuple)
     {
         if(std::get<0>(tuple) == deleted_region->uuid())
         {
-            auto& other_region = Context::SIContext()->region_manager()->region_by_uuid(std::get<1>(tuple));
+            auto it = std::find_if(std::execution::par_unseq, regions.begin(), regions.end(), [&](auto& region)
+            {
+                if(!region)
+                    return false;
 
-            if(other_region)
-                handle_event_leave(deleted_region, other_region);
+                return region->uuid() == std::get<1>(tuple);
+            });
+
+            if(it != regions.end())
+                handle_event_leave(deleted_region, *it);
+
+            return;
         }
 
         if(std::get<1>(tuple) == deleted_region->uuid())
         {
-            auto& other_region = Context::SIContext()->region_manager()->region_by_uuid(std::get<0>(tuple));
+            auto it = std::find_if(std::execution::par_unseq, regions.begin(), regions.end(), [&](auto& region)
+            {
+                if(!region)
+                    return false;
 
-            if(other_region)
-                handle_event_leave(other_region, deleted_region);
+                return region->uuid() == std::get<0>(tuple);
+            });
+
+            if(it != regions.end())
+                handle_event_leave(*it, deleted_region);
+
+            return;
         }
     });
 }
