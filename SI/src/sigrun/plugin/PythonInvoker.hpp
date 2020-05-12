@@ -7,7 +7,11 @@
 
 namespace bp = boost::python;
 
-#define HANDLE_PYTHON_CALL(...) { \
+#define PY_ERROR 0
+#define PY_WARNING 1
+#define PY_INFO 2
+
+#define HANDLE_PYTHON_CALL(flag, additional_msg, ...) { \
     try\
     {\
         __VA_ARGS__\
@@ -28,7 +32,14 @@ namespace bp = boost::python;
         formatted_list = format_exception(hexc, hval, htb);\
         }\
         std::string error = bp::extract<std::string>(bp::str("\n").join(formatted_list));\
-        ERROR(error);\
+        if(flag == PY_ERROR) {\
+        ERROR(error + std::string(additional_msg));\
+        exit(255);\
+        }\
+        else if(flag == PY_WARNING)\
+        WARN(error + std::string(additional_msg));\
+        else\
+        INFO(error + std::string(additional_msg));\
         bp::handle_exception();\
         PyErr_Clear();\
     }\

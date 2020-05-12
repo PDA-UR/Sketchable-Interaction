@@ -5,6 +5,7 @@ from plugins.standard_environment_library import SIEffect
 
 region_type = PySIEffect.EffectType.SI_CUSTOM
 region_name = PySIEffect.SI_STD_NAME_OPEN_ENTRY
+region_display_name = "Open Folder/File"
 
 
 class OpenEntry(SIEffect.SIEffect):

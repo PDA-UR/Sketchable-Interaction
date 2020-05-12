@@ -287,7 +287,7 @@ void PySIEffect::__create_region__(const bp::list& contour, const std::string& n
     std::vector<glm::vec3> _contour;
     _contour.reserve(bp::len(contour));
 
-    HANDLE_PYTHON_CALL(
+    HANDLE_PYTHON_CALL(PY_ERROR, "Passed list is not trivially convertible to SIGRun's internal datastructures. Try [[x1, y1], [x2, y2], ..., [xn, yn]].",
         for(uint32_t i = 0; i < bp::len(contour); ++i)
         {
             float x = bp::extract<float>(contour[i][0]);

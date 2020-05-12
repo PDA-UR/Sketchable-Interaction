@@ -440,7 +440,7 @@ class SIEffect(PySIEffect.PySIEffect):
         self.__create_region__(shape, effect_name)
 
     def available_plugins(self):
-        return self.__available_plugins_by_name__()
+        return list(self.__available_plugins_by_name__())
 
     ## member function for snapping a region's center to the mouse cursor
     #

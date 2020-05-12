@@ -13,16 +13,6 @@ class Palette(SIEffect.SIEffect):
         self.region_type = PySIEffect.EffectType.SI_PALETTE
         self.source = "libStdSI"
         self.qml_path = ""
-        available_plugins = list(self.available_plugins())
+        available_plugins = self.available_plugins()
 
-        # if len(self.aabb):
-        #     self.width = int(self.aabb[3].x - self.aabb[0].x)
-        #     self.height = int(self.aabb[1].y - self.aabb[0].y)
-        #
-        #     x = self.aabb[0].x
-        #     y = self.aabb[0].y
-        #
-        #     print(x)
-        #     print(y)
-        #     print(self.width)
-        #     print(self.height)
+        print(available_plugins)
