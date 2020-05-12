@@ -44,10 +44,7 @@ public:
 
     inline  static V& get(T& x, K const& i)
     {
-        if(x.find(i) != x.end())
-            return x[i];
-
-        KeyError();
+        return x[i];
     }
 
     inline static void set(T& x, K const& i, V const& v)
@@ -59,8 +56,6 @@ public:
     {
         if(x.find(i) != x.end())
             x.erase(i);
-        else
-            KeyError();
     }
 
     constexpr static bool in(T const& x, K const& i)

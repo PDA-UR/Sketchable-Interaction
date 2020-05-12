@@ -16,7 +16,7 @@ namespace bp = boost::python;
 
 Scripting::Scripting()
 {
-    HANDLE_PYTHON_CALL(
+    HANDLE_PYTHON_CALL(PY_ERROR, "Fatal Error.",
         PyImport_AppendInittab((char *) "libPySI", &PyInit_libPySI);
 
         Py_Initialize();

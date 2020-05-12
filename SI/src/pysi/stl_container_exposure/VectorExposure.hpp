@@ -54,10 +54,7 @@ public:
         if(index < 0)
             index += self.size();
 
-        if(index >= 0 && index < self.size())
-            return self[index];
-
-        IndexError();
+        return self[index];
     }
 
     /**
@@ -72,16 +69,7 @@ public:
     {
         T result;
 
-        bp::slice::range<typename T::const_iterator> range;
-
-        try
-        {
-            range = i.get_indices(self.begin(), self.end());
-        }
-        catch (std::invalid_argument)
-        {
-            return result;
-        }
+        bp::slice::range<typename T::const_iterator> range = i.get_indices(self.begin(), self.end());
 
         for (; range.start != range.stop; std::advance(range.start, range.step))
             result.push_back(*range.start);
@@ -105,8 +93,6 @@ public:
 
         if(index >= 0 && index < self.size())
             self[index] = value;
-        else
-            IndexError();
     }
 
     /**
@@ -122,8 +108,6 @@ public:
 
         if(index >= 0 && index < self.size())
             self.erase(self.begin() + index);
-        else
-            IndexError();
     }
 
     /**

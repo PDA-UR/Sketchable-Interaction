@@ -5,7 +5,7 @@ from plugins.standard_environment_library import SIEffect
 
 region_type = PySIEffect.EffectType.SI_CUSTOM
 region_name = PySIEffect.SI_STD_NAME_TAG
-
+region_display_name = "Tag"
 
 class Tag(SIEffect.SIEffect):
     def __init__(self, shape=PySIEffect.PointVector(), uuid="", kwargs={}):

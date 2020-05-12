@@ -5,6 +5,7 @@ from plugins.standard_environment_library import SIEffect
 
 region_type = PySIEffect.EffectType.SI_PREVIEW
 region_name = PySIEffect.SI_STD_NAME_PREVIEW
+region_display_name = "Preview File"
 
 
 class Preview(SIEffect.SIEffect):
