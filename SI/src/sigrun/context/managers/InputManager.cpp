@@ -64,7 +64,7 @@ void InputManager::update()
 
                     if(it2 != regions.end())
                     {
-                        HANDLE_PYTHON_CALL(
+                        HANDLE_PYTHON_CALL(PY_WARNING, it2->get()->name() + " is intended for deletion, however the signal for deletion could not be invoked!",
                             it2->get()->raw_effect().attr("__signal_deletion__")();
                         )
                     }

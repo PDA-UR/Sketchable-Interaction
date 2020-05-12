@@ -22,7 +22,7 @@ Region::Region(const std::vector<glm::vec3> &contour, const bp::object& effect, 
     qRegisterMetaType<bp::object>("bp::object");
     qRegisterMetaType<bp::tuple>("bp::tuple");
 
-    HANDLE_PYTHON_CALL(
+    HANDLE_PYTHON_CALL(PY_ERROR, "Fatal Error. Plugin broken. (could not infer name)",
         d_effect = std::make_shared<bp::object>(effect.attr(effect.attr("__si_name__"))(contour, std::string(_UUID_), kwargs));
 
         d_py_effect = std::shared_ptr<PySIEffect>(new PySIEffect(bp::extract<PySIEffect>(*d_effect)));
@@ -137,7 +137,7 @@ void Region::LINK_SLOT(const std::string& uuid_event, const std::string& uuid_se
 
         std::for_each(std::execution::par_unseq, d_py_effect->attr_link_recv()[source_cap].begin(), d_py_effect->attr_link_recv()[source_cap].end(), [&](auto& pair)
         {
-            HANDLE_PYTHON_CALL(
+            HANDLE_PYTHON_CALL(PY_WARNING, "Failed to extract data to pass to linking target. Desired action did not occur! (" + name() + ")",
                 if(uuid_sender.empty())
                 {
                     pair.second(*args);
@@ -162,7 +162,7 @@ void Region::LINK_SLOT(const std::string& uuid_event, const std::string& uuid_se
 
 void Region::REGION_DATA_CHANGED_SLOT(const QMap<QString, QVariant>& data)
 {
-    HANDLE_PYTHON_CALL(
+    HANDLE_PYTHON_CALL(PY_WARNING, "Unable to reset \'has_data_changed\' flag. Therefore, region data which targets QML widgets can no longer be set (" + name() + ")",
         d_effect->attr("has_data_changed") = false;
     )
 }
@@ -222,7 +222,7 @@ void Region::update()
 {
     d_is_transformed = false;
 
-    HANDLE_PYTHON_CALL(
+    HANDLE_PYTHON_CALL(PY_ERROR, "Fatal Error. Plugin broken. (" + name() + ")",
         d_py_effect = std::shared_ptr<PySIEffect>(new PySIEffect(bp::extract<PySIEffect>(*d_effect)));
     )
 
@@ -231,7 +231,7 @@ void Region::update()
         uprm = std::make_unique<RegionMask>(Context::SIContext()->width(), Context::SIContext()->height(), d_py_effect->contour(), d_py_effect->aabb());
         uprm->move(glm::vec2(d_last_x, d_last_y));
 
-        HANDLE_PYTHON_CALL(
+        HANDLE_PYTHON_CALL(PY_ERROR, "Fatal Error. Region Collision broken (" + name() + ")",
             d_effect->attr("__recompute_collision_mask__") = false;
         )
     }
@@ -255,7 +255,7 @@ void Region::process_canvas_specifics()
             {
                 Context::SIContext()->register_new_region(d_py_effect->partial_region_contours()[candidate], candidate);
 
-                HANDLE_PYTHON_CALL(
+                HANDLE_PYTHON_CALL(PY_ERROR, "Fatal Error while sketching! Cannot unassign current region drawing! (" + name() + " " + candidate + ")",
                     if(bp::len(d_effect->attr("__partial_regions__")))
                         bp::delitem(d_effect->attr("__partial_regions__"), bp::object(candidate));
                 )
@@ -263,7 +263,7 @@ void Region::process_canvas_specifics()
                 return candidate;
             });
 
-            HANDLE_PYTHON_CALL(
+            HANDLE_PYTHON_CALL(PY_ERROR, "Fatal Error while sketching! Unable to remove newly registered regions from the registration list! (" + name() + ")",
                 d_effect->attr("__registered_regions__").attr("clear")();
             )
         }
@@ -290,7 +290,7 @@ uint8_t Region::handle_collision_event(const std::string &function_name, PySIEff
 {
     std::for_each(std::execution::seq, colliding_effect.cap_collision_emit().begin(), colliding_effect.cap_collision_emit().end(), [&](auto& pair)
     {
-        HANDLE_PYTHON_CALL(
+        HANDLE_PYTHON_CALL(PY_ERROR, "Fatal Error. Unable to perform collision event " + function_name + " (" + name() + "other: " + colliding_effect.name() + ")",
             const std::string& capability = pair.first;
             auto& emission_functions = pair.second;
 

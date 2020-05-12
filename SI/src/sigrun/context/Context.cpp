@@ -35,7 +35,7 @@ void Context::add_startup_regions(const std::unordered_map<std::string, std::uni
 {
     std::for_each(std::execution::par_unseq, plugins.begin(), plugins.end(), [&](const auto& plugin)
     {
-        HANDLE_PYTHON_CALL(
+        HANDLE_PYTHON_CALL(PY_WARNING, "Plugin does not have the attribute \'region_type\' on module level and is skipped. Try assigning PySIEffect.EffectType.SI_CUSTOM.",
             switch (bp::extract<int>(plugin.second->attr("region_type")))
             {
                 case SI_TYPE_CANVAS:
@@ -72,7 +72,7 @@ void Context::add_startup_regions(const std::unordered_map<std::string, std::uni
 
     std::for_each(std::execution::seq, plugins.begin(), plugins.end(), [&](const auto& plugin)
     {
-        HANDLE_PYTHON_CALL(
+        HANDLE_PYTHON_CALL(PY_WARNING, "Plugin does not have the attribute \'region_type\' on module level and is skipped. Try assigning PySIEffect.EffectType.SI_CUSTOM.",
             const std::string& key = plugin.first;
             const std::unique_ptr<bp::object>& value = plugin.second;
 
@@ -149,7 +149,7 @@ void Context::add_canvas_region(const std::unique_ptr<bp::object>& canvas_effect
 
 void Context::add_cursor_regions(const std::unique_ptr<bp::object>& cursor_effect)
 {
-    HANDLE_PYTHON_CALL(
+    HANDLE_PYTHON_CALL(PY_ERROR, "Fatal Error. Unable to create a region for the mouse cursor!",
         std::vector<glm::vec3> mouse_contour {glm::vec3(0, 0, 1), glm::vec3(0, 24, 1), glm::vec3(18, 24, 1), glm::vec3(18, 0, 1)};
         uprm->add_region(mouse_contour, *cursor_effect, 0, bp::dict());
         d_mouse_uuid = uprm->regions().back()->uuid();
@@ -168,7 +168,7 @@ void Context::add_directory_region(const std::unique_ptr<bp::object>& directory_
 
     INFO("Creating Region for " + cwd);
 
-    HANDLE_PYTHON_CALL(
+    HANDLE_PYTHON_CALL(PY_ERROR, "Fatal Error. Unable to create a region for tstartup directory " + cwd + ". Try adding the attributes \'region_width\' and \'region_height\' on module level",
         uint32_t width_directory = bp::extract<uint32_t>(directory_effect->attr("region_width"));
         uint32_t height_directory = bp::extract<uint32_t>(directory_effect->attr("region_height"));
 
@@ -286,7 +286,7 @@ void Context::update()
 {
     if(upim->is_key_pressed(SI_KEY_A))
     {
-        HANDLE_PYTHON_CALL(
+        HANDLE_PYTHON_CALL(PY_ERROR, "Unable to browse through available plugins.",
             (++d_selected_effect_index) %= d_available_plugins_names.size();
 
             d_selected_effects_by_id[d_mouse_uuid] = d_available_plugins[d_available_plugins_names[d_selected_effect_index]];
@@ -339,12 +339,30 @@ void Context::register_new_region_via_name(const std::vector<glm::vec3>& contour
 
 std::vector<std::string> Context::available_plugins_names()
 {
-    return d_available_plugins_names;
+    std::vector<std::string> plugin_names;
+    plugin_names.reserve(d_available_plugins_names.size());
+
+    std::transform(d_available_plugins_names.begin(), d_available_plugins_names.end(), std::back_inserter(plugin_names), [&](const std::string& name)
+    {
+        HANDLE_PYTHON_CALL(PY_INFO, "Plugin has no attribute \'region_display_name\' on module level. Assigning default name Unnamed Effect. ",
+            bp::extract<char*> extraction(d_available_plugins[name].attr("region_display_name"));
+
+            if(extraction.check())
+            {
+                char* s = extraction;
+                return std::string(s);
+            }
+        )
+
+        return std::string("Unnamed Effect");
+    });
+
+    return plugin_names;
 }
 
 void Context::spawn_folder_contents_buttons_as_regions(std::shared_ptr<Region>& parent, uint32_t dir_x, uint32_t dir_y, uint32_t preview_width, uint32_t preview_height)
 {
-    HANDLE_PYTHON_CALL(
+    HANDLE_PYTHON_CALL(PY_WARNING, "Unable to add buttons for browsing folder contents to " + parent->name() + ". Try adding the attributes \'region_width\' and \'region_height\' on module level.",
         bp::object value = d_plugins[SI_NAME_EFFECT_BUTTON];
 
         uint32_t btn_width = bp::extract<uint32_t>(value.attr("region_width"));
@@ -443,7 +461,7 @@ void Context::spawn_folder_contents_as_regions(const std::vector<std::string>& c
         const int32_t dir_x = tlc.x + region->transform()[0].z;
         const int32_t dir_y = tlc.y + region->transform()[1].z;
 
-        HANDLE_PYTHON_CALL(
+        HANDLE_PYTHON_CALL(PY_WARNING, "An error occured when spawning the entries of " + region->name() + ". Specify the attributes \'preview_width\', \'preview_height\', \'icon_width\', \'icon_height\' and \'text_height\' on class level in your specific entry classes e.g. TextFile.py",
             const uint32_t preview_width = bp::extract<uint32_t>(region->raw_effect().attr("preview_width"));
             const uint32_t preview_height = bp::extract<uint32_t>(region->raw_effect().attr("preview_height"));
             const uint32_t dir_width = bp::extract<uint32_t>(region->raw_effect().attr("icon_width")) * 2;
@@ -464,8 +482,5 @@ const std::map<std::string, bp::object>& Context::available_plugins() const
 
 const bp::object& Context::plugin_by_name(const std::string& name)
 {
-    if(MAP_HAS_KEY(d_plugins, name))
-        return d_plugins[name];
-
-    return bp::object();
+    return d_plugins[name];
 }
