@@ -57,6 +57,7 @@ target_precompile_headers(PySI
         SI/src/pysi/PySIEffect.hpp
         SI/src/sigrun/plugin/PythonInvoker.hpp
         SI/src/sigrun/SITypes.hpp
+        SI/src/sigrun/SIConstants.hpp
         )
 
 # SI RUNTIME LIBRARY
@@ -145,6 +146,7 @@ target_precompile_headers(SIGeneralRuntime
         SI/src/sigrun/util/Util.hpp
         SI/src/pysi/PySIEffect.hpp
         SI/src/sigrun/plugin/PythonInvoker.hpp
+        SI/src/sigrun/SIConstants.hpp
         )
 
 set_target_properties(SIGeneralRuntime PROPERTIES AUTOMOC TRUE)

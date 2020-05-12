@@ -97,7 +97,7 @@ void FileSystem::set_cwd(const fs::path &path)
 
     if (fs::exists(path) && fs::is_directory(path))
     {
-        for (const auto& entry : fs::directory_iterator(path))
+        for(const auto& entry : fs::directory_iterator(path))
         {
             if (fs::is_directory(entry.status()))
             {

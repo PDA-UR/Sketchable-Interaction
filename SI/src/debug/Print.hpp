@@ -15,6 +15,7 @@
 #include <QVariant>
 #include <glm/glm.hpp>
 #include <pysi/PySIEffect.hpp>
+#include <sigrun/SIConstants.hpp>
 
 namespace bp = boost::python;
 
@@ -89,13 +90,13 @@ public:
 
     inline static std::string _print(const QVariant& qv)
     {
-        if(std::string(qv.typeName()) == "int")
+        if(std::string(qv.typeName()) == SI_DATA_TYPE_NAME_INTEGER)
             return std::to_string(qv.value<int>());
 
-        if(std::string(qv.typeName()) == "float")
+        if(std::string(qv.typeName()) == SI_DATA_TYPE_NAME_FLOAT)
             return std::to_string(qv.value<float>());
 
-        if(std::string(qv.typeName()) == "QString")
+        if(std::string(qv.typeName()) == SI_DATA_TYPE_NAME_QString)
             return _print(qv.value<QString>());
     }
 

@@ -27,27 +27,67 @@ void MainWindow::loop(double delta, uint32_t fps)
 {
     auto& regions = Context::SIContext()->region_manager()->regions();
 
-    std::for_each(std::execution::par_unseq, d_region_representations.begin(), d_region_representations.end(), [&](auto& representation)
+    d_reg_reps.erase(std::remove_if(std::execution::seq, d_reg_reps.begin(), d_reg_reps.end(), [&](auto& rep)
     {
-        if(std::find_if(std::execution::par_unseq, regions.begin(), regions.end(), [&](const auto& region)
+        return std::find_if(std::execution::par_unseq, regions.begin(), regions.end(), [&](auto& reg)
         {
-            return representation.first == region->uuid();
-        }) == regions.end())
-            d_region_representations.erase(representation.first);
-    });
+            return reg->uuid() == rep->uuid();
+        }) == regions.end();
+    }), d_reg_reps.end());
 
-    std::for_each(std::execution::seq, regions.begin(), regions.end(), [&](auto& region)
+    std::for_each(std::execution::seq, regions.begin(), regions.end(), [&](std::shared_ptr<Region>& reg)
     {
-        if(d_region_representations.find(region->uuid()) == d_region_representations.end())
-            d_region_representations[region->uuid()] = std::make_unique<RegionRepresentation>(this, region);
+        auto it = std::find_if(std::execution::par_unseq, d_reg_reps.begin(), d_reg_reps.end(), [&](std::unique_ptr<RegionRepresentation>& rep)
+        {
+            return reg->uuid() == rep->uuid();
+        });
+
+        if(it == d_reg_reps.end())
+        {
+            d_reg_reps.push_back(std::make_unique<RegionRepresentation>(this, reg));
+
+            switch (d_reg_reps.back()->type())
+            {
+                // automatically created first and therefore last in the widget stack
+                case SI_TYPE_CANVAS:
+                    break;
+
+                // automatically visualized ontop due to use of OS cursor
+                case SI_TYPE_CURSOR:
+                case SI_TYPE_MOUSE_CURSOR:
+                    break;
+
+                // except for cursors, these effect type are intended to be the highest placed widgets in the widget stack
+                case SI_TYPE_ENTRY:
+                case SI_TYPE_DIRECTORY:
+                case SI_TYPE_TEXT_FILE:
+                case SI_TYPE_IMAGE_FILE:
+                case SI_TYPE_UNKNOWN_FILE:
+                    break;
+
+                // case for regularly drawn regions
+                default:
+                {
+                    // look for a file
+                    auto it = std::find_if(std::execution::seq, d_reg_reps.begin(), d_reg_reps.end(), [&](auto& rep)
+                    {
+                        return rep->type() == SI_TYPE_ENTRY
+                               || rep->type() == SI_TYPE_DIRECTORY
+                               || rep->type() == SI_TYPE_TEXT_FILE
+                               || rep->type() == SI_TYPE_IMAGE_FILE
+                               || rep->type() == SI_TYPE_UNKNOWN_FILE;
+                    });
+
+                    if(it != d_reg_reps.end())
+                        d_reg_reps.back()->stackUnder(it->get());
+
+                    break;
+                }
+            }
+        }
         else
-            d_region_representations[region->uuid()]->update(region);
+            it->get()->update(reg);
     });
 
     Context::SIContext()->update();
-}
-
-void MainWindow::set_is_running(bool running)
-{
-
 }

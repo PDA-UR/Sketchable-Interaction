@@ -50,9 +50,7 @@ void Log::log(const std::string& origin, const std::string &what, uint16_t level
             if(type.find(s) != std::string::npos)
                 return;
 
-        std::string message =
-                origin + "\t" + Log::time() + "\t" + Log::log_level(level) + " [" + type + "] " + what + ".\t" + file +
-                "\t" + func + "\t" + line;
+        std::string message = origin + "\t" + Log::time() + "\t" + Log::log_level(level) + " [" + type + "] " + what + ".\t" + file + "\t" + func + "\t" + line;
 
         if (Log::WHERE & Log::MODE::FILE)
         {

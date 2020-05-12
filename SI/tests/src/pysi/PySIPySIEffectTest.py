@@ -11,10 +11,13 @@ def inner_test():
 def inner_test2():
     return 0
 
+region_name = "TEST_CASES"
+region_type = -1
+
 
 class TestClass(PySIEffect.PySIEffect):
-    def __init__(self, shape=PySIEffect.PointVector(), aabb=PySIEffect.PointVector(), uuid="", kwargs={}):
-        super(TestClass, self).__init__()
+    def __init__(self, shape=PySIEffect.PointVector(), uuid="", kwargs={}):
+        super(TestClass, self).__init__(shape, uuid, "", kwargs)
 
 
 class PySIPySIEffectTest(unittest.TestCase):
@@ -468,8 +471,6 @@ class PySIPySIEffectTest(unittest.TestCase):
         self.assertNotEqual(pyeff.link_relations, None)
         self.assertNotEqual(pyeff.shape, None)
         self.assertNotEqual(pyeff.aabb, None)
-        self.assertNotEqual(pyeff.has_shape_changed, None)
-        self.assertNotEqual(pyeff.require_resample, None)
         self.assertNotEqual(pyeff.has_data_changed, None)
         self.assertNotEqual(pyeff.mouse_wheel_angle_px, None)
         self.assertNotEqual(pyeff.mouse_wheel_angle_degrees, None)
@@ -479,15 +480,15 @@ class PySIPySIEffectTest(unittest.TestCase):
 
         self.assertNotEqual(pyeff.__init__, None)
         self.assertNotEqual(pyeff.__add_data__, None)
-        self.assertNotEqual(pyeff.__notify_shape_changed__, None)
         self.assertNotEqual(pyeff.__signal_deletion__, None)
         self.assertNotEqual(pyeff.__show_folder_contents_page__, None)
         self.assertNotEqual(pyeff.__embed_file_standard_appliation_into_context__, None)
         self.assertNotEqual(pyeff.__destroy_embedded_window__, None)
 
-
     @staticmethod
     def start():
         utest = unittest.TextTestRunner(stream=sys.stdout, verbosity=2).run(unittest.TestLoader().loadTestsFromTestCase(PySIPySIEffectTest))
+
+        print(utest.failures)
 
         return utest.wasSuccessful()

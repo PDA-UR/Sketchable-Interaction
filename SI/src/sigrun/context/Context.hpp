@@ -44,24 +44,25 @@ public:
     uint32_t height();
 
     void register_new_region(const std::vector<glm::vec3>& contour, const std::string& uuid);
+    void register_new_region_via_name(const std::vector<glm::vec3>& contour, const std::string& name);
 
     void spawn_folder_contents_as_regions(const std::vector<std::string>& children_paths, const std::string& uuid, const bool with_btns);
     void spawn_folder_contents_buttons_as_regions(std::shared_ptr<Region>& parent, uint32_t dir_x, uint32_t dir_y, uint32_t preview_width, uint32_t preview_height);
     void spawn_folder_contents_entries_as_regions(std::shared_ptr<Region>& parent, const std::vector<std::string>& children_paths, uint32_t dir_x, uint32_t dir_y, uint32_t dir_width, uint32_t dir_height, uint32_t preview_width, uint32_t preview_height);
-    void spawn_folder_contents_entry_as_region(const std::vector<glm::vec3>& contour, std::shared_ptr<Region>& parent, const std::string& effect_type, const bp::dict& kwargs);
 
     const std::map<std::string, bp::object>& available_plugins() const;
     const bp::object& plugin_by_name(const std::string& name);
+
+    std::vector<std::string> available_plugins_names();
 
 private:
     static Context* self;
     Context();
 
     void add_startup_regions(const std::unordered_map<std::string, std::unique_ptr<bp::object>>& plugins);
-    void add_canvas_region(const std::unordered_map<std::string, std::unique_ptr<bp::object>>& plugins);
+    void add_canvas_region(const std::unique_ptr<bp::object>& plugins);
     void add_cursor_regions(const std::unique_ptr<bp::object>& cursor_effect);
     void add_directory_region(const std::unique_ptr<bp::object>& effect);
-
 
     std::vector<std::string> d_available_plugins_names;
     std::map<std::string, bp::object> d_available_plugins;

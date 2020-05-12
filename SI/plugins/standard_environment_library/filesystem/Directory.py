@@ -1,15 +1,23 @@
 from libPySI import PySIEffect
-import Entry
+from plugins.standard_environment_library.filesystem import Entry
+
+
+region_type = PySIEffect.EffectType.SI_DIRECTORY
+region_name = PySIEffect.SI_STD_NAME_DIRECTORY
+region_width = 130
+region_height = 125
 
 
 class Directory(Entry.Entry):
-    def __init__(self, shape=PySIEffect.PointVector(), aabb=PySIEffect.PointVector(), uuid="", kwargs={}):
-        super(Directory, self).__init__(shape, aabb, uuid, kwargs)
+    def __init__(self, shape=PySIEffect.PointVector(), uuid="", kwargs={}):
+        super(Directory, self).__init__(shape, uuid, kwargs)
         self.name = PySIEffect.SI_STD_NAME_DIRECTORY
         self.region_type = PySIEffect.EffectType.SI_DIRECTORY
         self.qml_path = "plugins/standard_environment_library/filesystem/Directory.qml"
         self.preview_width = 400
         self.preview_height = 600
+        self.width = region_width
+        self.height = region_height
         self.is_icon_visible = True
         self.is_opened_visible = False
         self.children_paths = list(kwargs["children"]) if len(kwargs.keys()) else []
@@ -28,7 +36,6 @@ class Directory(Entry.Entry):
 
         self.btn_presses = 0
 
-        self.add_QML_data("text_height", self.text_height, PySIEffect.DataType.INT)
         self.add_QML_data("container_width", self.width, PySIEffect.DataType.INT)
         self.add_QML_data("container_height", self.height, PySIEffect.DataType.INT)
         self.add_QML_data("img_path", "res/dir.png", PySIEffect.DataType.STRING)
@@ -38,26 +45,12 @@ class Directory(Entry.Entry):
         self.add_QML_data("is_opened_visible", self.is_opened_visible, PySIEffect.DataType.BOOL)
         self.add_QML_data("page_name", "1 / " + str(len(self.browse_pages)), PySIEffect.DataType.STRING)
 
-        if not self.is_child:
-            self.enable_effect(PySIEffect.PARENT, self.EMISSION, self.on_child_enter_emit, None, self.on_child_leave_emit)
+        self.enable_effect(PySIEffect.PARENT, self.EMISSION, self.on_parent_enter_emit, None, self.on_parent_leave_emit)
 
         self.enable_effect(PySIEffect.BTN, self.RECEPTION, self.on_btn_enter_recv, self.on_btn_continuous_recv, self.on_btn_leave_recv)
         self.enable_effect(PySIEffect.OPEN_ENTRY, self.RECEPTION, self.on_open_entry_enter_recv, self.on_open_entry_continuous_recv, self.on_open_entry_leave_recv)
 
         self.enable_link_emission(PySIEffect.POSITION, self.position)
-
-    def on_child_enter_emit(self, child):
-        if child not in self.children:
-            self.children.append(child)
-
-        return self._uuid
-
-    def on_child_leave_emit(self, child):
-        index = self.children.index(child)
-
-        del self.children[index]
-
-        return self._uuid
 
     def set_folder_contents_page(self, value):
         self.btn_presses = self.btn_presses - 1 if value else self.btn_presses + 1
@@ -80,29 +73,27 @@ class Directory(Entry.Entry):
 
         for child in self.children:
             if child.region_type is not int(PySIEffect.EffectType.SI_BUTTON):
-                child.__signal_deletion__()
+                child.delete()
 
         self.add_QML_data("page_name", str(self.current_page + 1) + "/" + str(len(self.browse_pages)), PySIEffect.DataType.STRING)
 
         self.display_folder_contents_page(self.browse_pages[self.current_page], self._uuid, False)
 
     def on_btn_enter_recv(self, cursor_id, link_attrib):
-        return 0
+        pass
 
     def on_btn_continuous_recv(self, cursor_id, value):
         if cursor_id is not "" and value is not "":
             self.on_btn_trigger(cursor_id, value)
 
-        return 0
-
     def on_btn_leave_recv(self, cursor_id, link_attrib):
-        return 0
+        pass
 
     def on_open_entry_enter_recv(self, is_other_controlled):
-        return 0
+        pass
 
     def on_open_entry_continuous_recv(self, is_other_controlled):
-        if not self.is_child and not self.is_open_entry_capability_blocked and not self.is_under_user_control and not is_other_controlled:
+        if self.parent == "" and not self.is_open_entry_capability_blocked and not self.is_under_user_control and not is_other_controlled:
             x = self.aabb[0].x
             y = self.aabb[0].y
 
@@ -110,7 +101,6 @@ class Directory(Entry.Entry):
             self.height = self.preview_height
 
             self.shape = PySIEffect.PointVector([[x, y], [x, y + self.height], [x + self.width, y + self.height], [x + self.width, y]])
-            self.register_shape_change(self.RESAMPLING)
 
             self.is_icon_visible = False
             self.is_opened_visible = True
@@ -124,10 +114,8 @@ class Directory(Entry.Entry):
 
             self.is_open_entry_capability_blocked = True
 
-        return 0
-
     def on_open_entry_leave_recv(self, is_other_controlled):
-        if not self.is_child and self.is_open_entry_capability_blocked:
+        if self.parent == "" and self.is_open_entry_capability_blocked:
             x = self.aabb[0].x
             y = self.aabb[0].y
 
@@ -135,7 +123,6 @@ class Directory(Entry.Entry):
             self.height = self.icon_height + self.text_height
 
             self.shape = PySIEffect.PointVector([[x, y], [x, y + self.height], [x + self.width, y + self.height], [x + self.width, y]])
-            self.register_shape_change(self.RESAMPLING)
 
             self.is_icon_visible = True
             self.is_opened_visible = False
@@ -147,6 +134,36 @@ class Directory(Entry.Entry):
             self.is_open_entry_capability_blocked = False
 
             for child in self.children:
-                child.__signal_deletion__()
+                child.delete()
 
-        return 0
+            self.snap_to_mouse()
+
+    def on_parent_enter_emit(self, other):
+        if self.is_open_entry_capability_blocked and self.parent == "" and not other.is_open_entry_capability_blocked:
+            if other not in self.children:
+                self.children.append(other)
+
+            return self._uuid
+
+        return ""
+
+    def on_parent_leave_emit(self, other):
+        if self.is_open_entry_capability_blocked and self.parent == "" and not other.is_open_entry_capability_blocked:
+            if other in self.children:
+                del self.children[self.children.index(other)]
+
+            return self._uuid
+
+        return ""
+
+    def on_parent_enter_recv(self, _uuid):
+        if _uuid != "" and not self.is_open_entry_capability_blocked:
+            if self.parent == "":
+                self.parent = _uuid
+                self.create_link(_uuid, PySIEffect.POSITION, self._uuid, PySIEffect.POSITION)
+
+    def on_parent_leave_recv(self, _uuid):
+        if _uuid != "" and not self.is_open_entry_capability_blocked:
+            if self.parent == _uuid:
+                self.remove_link(self.parent, PySIEffect.POSITION, self._uuid, PySIEffect.POSITION)
+                self.parent = ""

@@ -14,7 +14,7 @@ TEST_F(SIGRunScriptingTest, load_plugin_source)
 {
     Scripting script;
 
-    const std::string rel_path = "res/scripting";
+    const std::string rel_path = "tests/res/scripting";
     std::vector<std::tuple<std::string, std::string>> files;
     std::vector<std::string> classes;
 
@@ -29,7 +29,7 @@ TEST_F(SIGRunScriptingTest, load_class_names)
 {
     Scripting script;
 
-    const std::string rel_path = "res/scripting";
+    const std::string rel_path = "tests/res/scripting";
     std::vector<std::tuple<std::string, std::string>> files;
     std::vector<std::string> classes;
 
@@ -45,32 +45,4 @@ TEST_F(SIGRunScriptingTest, load_class_names)
 
     EXPECT_TRUE(classes.size());
     EXPECT_TRUE(classes[0] == "Test");
-}
-
-TEST_F(SIGRunScriptingTest, import)
-{
-    Scripting script;
-
-    const std::string rel_path = "res/scripting";
-    std::vector<std::tuple<std::string, std::string>> files;
-    std::vector<std::string> classes;
-    PluginCollector().collect("/" + rel_path, files);
-
-    const std::string& full_path = std::get<0>(files[0]);
-    const std::string& name = std::get<1>(files[0]);
-
-    std::string module_name = name.substr(0, name.find_last_of('.'));
-    std::string rpath = full_path.substr(full_path.find(rel_path)) + "/" + name;
-
-    script.load_class_names(classes, rpath);
-
-    EXPECT_NO_FATAL_FAILURE(script.import(module_name, rpath));
-
-    auto x = script.import(module_name, rpath);
-    ASSERT_TRUE(&x);
-
-    EXPECT_NO_FATAL_FAILURE(x.attr(classes[0].c_str()));
-
-    auto d = x.attr(classes[0].c_str());
-    ASSERT_TRUE(&d);
 }

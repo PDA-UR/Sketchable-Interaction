@@ -9,7 +9,7 @@ namespace bp = boost::python;
 
 TEST_F(SIGRunRegionResamplerTest, resample)
 {
-    std::string path = "res/region";
+    std::string path = "tests/res/region";
 
     std::vector<std::tuple<std::string, std::string>> files;
     std::vector<std::string> classes;
@@ -52,8 +52,8 @@ TEST_F(SIGRunRegionResamplerTest, resample)
     EXPECT_NO_FATAL_FAILURE(RegionResampler::resample(resample_a, contour1));
     EXPECT_NO_FATAL_FAILURE(RegionResampler::resample(resample_b, contour2));
 
-    ASSERT_EQ(64, resample_a.size());
-    ASSERT_EQ(64, resample_b.size());
+    ASSERT_EQ(STEPCOUNT, resample_a.size());
+    ASSERT_EQ(STEPCOUNT, resample_b.size());
 }
 
 TEST_F(SIGRunRegionResamplerTest, distance)

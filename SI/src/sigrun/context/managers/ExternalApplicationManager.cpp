@@ -5,6 +5,7 @@
 #include <QObject>
 #include <sigrun/log/Log.hpp>
 #include <sigrun/context/Context.hpp>
+#include <sigrun/SIConstants.hpp>
 
 ExternalApplicationManager::ExternalApplicationManager(double process_winid_fetch_sleep_time_ms, double process_winid_fetch_timeout_ms):
     d_process_winid_fetch_sleep_time_ms(process_winid_fetch_sleep_time_ms),
@@ -28,8 +29,8 @@ void ExternalApplicationManager::launch_application(const std::string &file_regi
 
 void ExternalApplicationManager::launch_standard_application(const std::string &file_region_uuid, const std::string &file_path)
 {
-    QProcess::startDetached("xdg-open", QStringList() << file_path.c_str(), QString(""));
-    process_wmctrl_command_output(generate_wmctrl_command_output(generate_wmctrl_command(file_path)), file_region_uuid, file_path);
+//    QProcess::startDetached(SI_LINUX_XDG_OPEN.c_str(), QStringList() << file_path.c_str(), QString(""));
+//    process_wmctrl_command_output(generate_wmctrl_command_output(generate_wmctrl_command(file_path)), file_region_uuid, file_path);
 }
 
 void ExternalApplicationManager::terminate_application(const std::string &uuid)
@@ -68,7 +69,7 @@ uint32_t ExternalApplicationManager::process_winid_fetch_iterations()
 
 QString ExternalApplicationManager::generate_wmctrl_command(const std::string &file_path)
 {
-    return "wmctrl -lp | grep -i \'" + QString(file_path.substr(file_path.find_last_of('/') + 1, std::string::npos).c_str()) + "\'";
+    return QString((SI_LINUX_WMCTRL +  " " + SI_LINUX_LP_FLAG + " " + SI_LINUX_PIPE + " " + SI_LINUX_GREP + " " + SI_LINUX_I_FLAG).c_str()) + " \'" + QString(file_path.substr(file_path.find_last_of('/') + 1, std::string::npos).c_str()) + "\'";
 }
 
 QString ExternalApplicationManager::generate_wmctrl_command_output(const QString &cmd)
@@ -81,7 +82,7 @@ QString ExternalApplicationManager::generate_wmctrl_command_output(const QString
     do
     {
         usleep(d_process_winid_fetch_sleep_time_ms * 1000);
-        process.start("bash", QStringList() << "-c" << cmd);
+        process.start(SI_LINUX_BASH.c_str(), QStringList() << SI_LINUX_C_FLAG.c_str() << cmd);
         process.waitForFinished();
         output = QString(process.readAllStandardOutput());
     } while(++i < d_process_winid_fetch_iterations && output.isEmpty());
@@ -121,7 +122,7 @@ void ExternalApplicationManager::register_new_application_container(QMainWindow 
     window->setGeometry(20, 20, Context::SIContext()->width() * 0.3 - 40, Context::SIContext()->height() * 0.3 - 40);
     window->setWindowFlags(Qt::WindowStaysOnTopHint);
     window->setWindowFlags(Qt::ForeignWindow);
-    window->setWindowTitle("(SI)" + window_name);
+    window->setWindowTitle(QString(SI_LINUX_DEFAULT_SI_APP_OPENING.c_str()) + window_name);
 
     if(window->x() <= Context::SIContext()->main_window()->x())
         window->move(Context::SIContext()->main_window()->x(), 0);

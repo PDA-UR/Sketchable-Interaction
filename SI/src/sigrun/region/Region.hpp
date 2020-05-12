@@ -40,11 +40,9 @@ public:
     const std::vector<glm::vec3>& aabb();
     const std::vector<glm::vec3>& contour();
 
-    void set_aabb();
-
     const std::string& qml_path() const;
 
-    void move(int32_t x, int32_t y);
+    void move();
 
     const glm::mat3x3& transform() const;
 
@@ -79,7 +77,6 @@ public:
 private:
     void process_canvas_specifics();
     void process_linking_relationships();
-    void process_contour_change();
 
     std::shared_ptr<PySIEffect> d_py_effect;
     std::shared_ptr<bp::object> d_effect;

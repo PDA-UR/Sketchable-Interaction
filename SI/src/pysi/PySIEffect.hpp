@@ -15,25 +15,28 @@
 #include <sigrun/log/Log.hpp>
 #include <sigrun/context/managers/helpers/linking/LinkCandidate.hpp>
 
-
-#define PYSI_DEBUG(what) Log::log("PySI", what, Log::LOG_LEVEL::DEBUG_LEVEL, "PySIEffect",__FILENAME__, __FUNCTION__, std::to_string(__LINE__))
-#define PYSI_INFO(what) Log::log("PySI", what, Log::LOG_LEVEL::INFO_LEVEL, "PySIEffect",__FILENAME__, __FUNCTION__, std::to_string(__LINE__))
-
-#define REQUIRES_NEW_SHAPE 0b01
-#define REQUIRES_RESAMPLE 0b10
-
 namespace bp = boost::python;
 
 class PySIEffect: public SIObject
 { PYSI
 public:
-    void init(const std::vector<glm::vec3>& contour, const std::vector<glm::vec3>& aabb, const std::string& uuid, const bp::dict& kwargs);
+    PySIEffect(const std::vector<glm::vec3>& contour, const std::string& uuid, const std::string& tex_path, const bp::dict& kwargs);
+
     void __add_data__(const std::string& key, const bp::object& value, const uint32_t type);
-    void notify_shape_changed(bool resample=false);
     void __show_folder_contents__(const std::vector<std::string>& page_contents, const std::string& uuid, const bool with_btns=false);
     void __embed_file_standard_appliation_into_context__(const std::string& uuid, const std::string& path);
     void __destroy_embedded_file_standard_appliation_in_context__(const std::string& uuid);
-    void signal_deletion();
+    void __signal_deletion__();
+
+    void __create_region__(const std::vector<glm::vec3>& contour, const std::string& name);
+    void __create_region__(const bp::list& contour, const std::string& name);
+
+    bp::tuple __context_dimensions__();
+
+    std::vector<std::string> __available_plugins_by_name__();
+
+    std::vector<glm::vec3> get_shape();
+    void set_shape(const std::vector<glm::vec3>& shape);
 
     float d_x = 0;
     float d_y = 0;
@@ -65,6 +68,8 @@ public:
     bool d_is_right_mouse_clicked = false;
     bool d_is_middle_mouse_clicked = false;
 
+    bool d_recompute_mask = false;
+
     float mouse_wheel_angle_degrees = 0.0;
     float mouse_wheel_angle_px = 0.0;
 
@@ -73,9 +78,6 @@ public:
 
     bool d_flagged_for_deletion = false;
     bool is_flagged_for_deletion();
-
-    bool d_has_shape_changed = false;
-    uint32_t has_shape_changed();
 
     const bool has_data_changed() const;
 
@@ -109,7 +111,6 @@ public:
 
     const QMap<QString, QVariant>& data();
     bool d_data_changed;
-    bool d_require_resample;
 
 private:
     QMap<QString, QVariant> d_data;

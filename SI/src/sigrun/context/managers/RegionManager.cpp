@@ -158,18 +158,21 @@ void RegionManager::toggle_mouse_region_wheel_scrolled(float angle_px, float ang
 
     if(it != d_regions.end())
     {
-        it->get()->raw_effect().attr("mouse_wheel_angle_px") = angle_px;
-        it->get()->raw_effect().attr("mouse_wheel_angle_degrees") = angle_degrees;
+        HANDLE_PYTHON_CALL(
+            it->get()->raw_effect().attr("mouse_wheel_angle_px") = angle_px;
+            it->get()->raw_effect().attr("mouse_wheel_angle_degrees") = angle_degrees;
+        )
     }
 }
 
 void RegionManager::update_region_deletions()
 {
-    d_regions.erase(std::remove_if(std::execution::seq, d_regions.begin(), d_regions.end(), [&](auto& region) -> bool
+    d_regions.erase(std::remove_if(std::execution::seq, d_regions.begin(), d_regions.end(), [&](std::shared_ptr<Region>& region) -> bool
     {
         if(!region->effect().is_flagged_for_deletion())
             return false;
 
+        Context::SIContext()->collision_manager()->handle_event_leave_on_deletion(region);
         Context::SIContext()->linking_manager()->remove_all_partaking_linking_relations(region->uuid());
 
         return true;
@@ -178,12 +181,16 @@ void RegionManager::update_region_deletions()
 
 void RegionManager::update_region_insertions()
 {
-    std::transform(d_region_insertion_queries.begin(), d_region_insertion_queries.end(), std::back_inserter(d_regions), [](const auto& query) -> std::shared_ptr<Region>
+    std::transform(d_region_insertion_queries.begin(), d_region_insertion_queries.end(), std::back_inserter(d_regions), [&](const auto& query) -> std::shared_ptr<Region>
     {
         auto region = std::make_shared<Region>(std::get<0>(query), std::get<1>(query), 0, 0, std::get<2>(query));
 
-        if(std::get<3>(query).get())
-            std::get<3>(query)->raw_effect().attr("children").attr("append")(region->raw_effect());
+        HANDLE_PYTHON_CALL(
+            if(std::get<3>(query).get())
+            {
+                std::get<3>(query)->raw_effect().attr("children").attr("append")(region->raw_effect());
+            }
+        )
 
         return region;
     });
@@ -203,15 +210,6 @@ void RegionManager::update()
 {
     update_mouse_inputs();
     update_region_deletions();
-    update_region_insertions();
     update_regions();
+    update_region_insertions();
 }
-
-std::shared_ptr<Region>& RegionManager::region_by_uuid(const std::string& uuid)
-{
-    return *std::find_if(std::execution::par_unseq, d_regions.begin(), d_regions.end(), [&](auto& region)
-    {
-        return region->uuid() == uuid;
-    });
-}
-

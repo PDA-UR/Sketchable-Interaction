@@ -39,14 +39,17 @@ class SIEffect(PySIEffect.PySIEffect):
     # @param uuid the universally unique identifier of the drawn region (str)
     # @param texture_path the path to an image intended to be used as an icon for the drawn region (str)
     # @param kwargs keyworded arguments which may necessary for more specific implementations of region effects (dict)
-    def __init__(self, shape=PySIEffect.PointVector(), aabb=PySIEffect.PointVector(), uuid="", texture_path="", kwargs={}):
-        super(SIEffect, self).__init__()
+    def __init__(self, shape, uuid, texture_path, kwargs):
+        super(SIEffect, self).__init__(shape, uuid, texture_path, kwargs)
 
         ## member attribute variable containing the shape (contour) of a drawn region as a PySIEffect.PointVector
         self.shape = shape
 
         ## member attribute variable containing the axis-aligned bounding-box (aabb) of a drawn region as a PySIEffect.PointVector
-        self.aabb = aabb
+        #
+        # This variable is automatically computed when shape is changed.
+        # It is recommended to use this variable read-only.
+        self.aabb
 
         ## member attribute variable containing the universally unique identifier (uuid) of a drawn region as a str
         self._uuid = uuid
@@ -164,7 +167,6 @@ class SIEffect(PySIEffect.PySIEffect):
         # Therefore, this example emits some data of the region to a linked region based on the capability
         self.cap_link_emit = PySIEffect.String2FunctionMap()
 
-
         ## member attribute variable storing keys to functions which are called when linking events occur for emitting data to receiving regions
         #
         # This variable is a PySIEffect.String2_String2FunctionMap_Map (c++-bindings) and uses linking event capability names (str) as keys to the inner String2FunctionMap.
@@ -182,6 +184,12 @@ class SIEffect(PySIEffect.PySIEffect):
         # self.cap_link_recv[<name of emission capability>][<name of reception capability>] = self.<corresponding function>
         # Therefore, this example receives some data of a linked region and can apply this data to other categories of data according to the linking relationship .
         self.cap_link_recv = PySIEffect.String2_String2FunctionMap_Map()
+
+        ## member attribute variable storing the x position of the mouse cursor
+        self.mouse_x = 0
+
+        ## member attribute variable storing the y position of the mouse cursor
+        self.mouse_y = 0
 
         self.enable_effect(PySIEffect.MOVE, self.RECEPTION, self.on_move_enter_recv, self.on_move_continuous_recv, self.on_move_leave_recv)
         self.enable_effect(PySIEffect.DELETION, self.RECEPTION, None, None, None)
@@ -201,8 +209,14 @@ class SIEffect(PySIEffect.PySIEffect):
         self.x += rel_x
         self.y += rel_y
 
-        self.last_delta_x = rel_x
-        self.last_delta_y = rel_y
+        self.delta_x, self.delta_y = rel_x, rel_y
+
+        if self.is_under_user_control:
+            self.mouse_x = abs_x
+            self.mouse_y = abs_y
+        else:
+            self.mouse_x = 0
+            self.mouse_y = 0
 
     ## member function for receiving data from the PySIEffect.MOVE capability for the PySIEffect.ON_ENTER collision event
     #
@@ -272,9 +286,11 @@ class SIEffect(PySIEffect.PySIEffect):
     # @param is_emit the variable depicting if a region emits (True) or receives (False) an effect (bool)
     def disable_effect(self, capability, is_emit):
         if is_emit:
-            del self.cap_emit[capability]
+            if capability in self.cap_emit:
+                del self.cap_emit[capability]
         else:
-            del self.cap_recv[capability]
+            if capability in self.cap_recv:
+                del self.cap_recv[capability]
 
     ## member function for enabling the emission of data in the context of a link event
     #
@@ -354,17 +370,6 @@ class SIEffect(PySIEffect.PySIEffect):
     def add_QML_data(self, key, value, datatype):
         self.__add_data__(key, value, datatype)
 
-    ## member function for signaling that the shape of a region has changed
-    #
-    # @param self the object pointer
-    # @param with_resampling a flag depicting whether SIGRun shall resample the newly specified shape (bool)
-    #
-    # This function should be used cautiously, especially when resampling is intended, for saving performance and user experience.
-    # If this function is not called after changing the shape of a region, SIGRun will IGNORE that change.
-    # Therefore, this may lead to breaking mental models of end-users and unexpected behaviour.
-    def register_shape_change(self, with_resampling=True):
-        self.__notify_shape_changed__(with_resampling)
-
     ## member function for adding a point to a region drawing based on a cursor id.
     #
     # @param self the object pointer
@@ -424,3 +429,25 @@ class SIEffect(PySIEffect.PySIEffect):
     # This function calls self.__show_folder_contents_page__ (c++-bindings)
     def display_folder_contents_page(self, page, source_uuid, with_buttons=True):
         self.__show_folder_contents_page__(page, source_uuid, with_buttons)
+
+    ## member function for deleting a region
+    #
+    # @param self the object pointer
+    def delete(self):
+        self.__signal_deletion__()
+
+    def create_region(self, shape, effect_name):
+        self.__create_region__(shape, effect_name)
+
+    def available_plugins(self):
+        return self.__available_plugins_by_name__()
+
+    ## member function for snapping a region's center to the mouse cursor
+    #
+    # @param self the object pointer
+    def snap_to_mouse(self):
+        self.x = self.mouse_x - self.aabb[0].x - self.width / 2
+        self.y = self.mouse_y - self.aabb[0].y - self.height / 2
+
+    def context_dimensions(self):
+        return self.__context_dimensions__

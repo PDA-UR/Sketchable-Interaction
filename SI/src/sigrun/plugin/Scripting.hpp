@@ -23,8 +23,6 @@ public:
 
     void load_class_names(std::vector<std::string> &classes, const std::string &path);
 
-    bp::object import(const std::string &module, const std::string &path);
-
     friend std::ostream &operator<<(std::ostream &os, const Scripting &scripting);
 
 private:

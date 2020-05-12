@@ -4,6 +4,7 @@
 
 #include <glm/glm.hpp>
 #include <sigrun/region/Region.hpp>
+#include <sigrun/region/RegionResampler.hpp>
 #include <boost/python.hpp>
 #include <sigrun/plugin/PluginCollector.hpp>
 #include <sigrun/plugin/Scripting.hpp>
@@ -14,7 +15,7 @@ TEST_F(SIGRunRegionTest, construction)
 {
     std::vector<glm::vec3> contour {glm::vec3(100, 100, 1), glm::vec3(100, 600, 1), glm::vec3(600, 600, 1), glm::vec3(600, 100, 1)};
 
-    std::string path = "res/region";
+    std::string path = "tests/res/region";
 
     std::vector<std::tuple<std::string, std::string>> files;
     std::vector<std::string> classes;
@@ -39,7 +40,7 @@ TEST_F(SIGRunRegionTest, aabb)
 {
     std::vector<glm::vec3> contour {glm::vec3(100, 100, 1), glm::vec3(100, 600, 1), glm::vec3(600, 600, 1), glm::vec3(600, 100, 1)};
 
-    std::string path = "res/region";
+    std::string path = "tests/res/region";
 
     std::vector<std::tuple<std::string, std::string>> files;
     std::vector<std::string> classes;
@@ -69,7 +70,7 @@ TEST_F(SIGRunRegionTest, contour)
 {
     std::vector<glm::vec3> contour {glm::vec3(100, 100, 1), glm::vec3(100, 600, 1), glm::vec3(600, 600, 1), glm::vec3(600, 100, 1)};
 
-    std::string path = "res/region";
+    std::string path = "tests/res/region";
 
     std::vector<std::tuple<std::string, std::string>> files;
     std::vector<std::string> classes;
@@ -89,12 +90,12 @@ TEST_F(SIGRunRegionTest, contour)
     Region r(contour, *o, 1920, 1080);
 
     ASSERT_EQ(contour.size(), 4);
-    ASSERT_EQ(r.contour().size(), 64);
+    ASSERT_EQ(r.contour().size(), STEPCOUNT);
 }
 
 TEST_F(SIGRunRegionTest, on_enter)
 {
-    std::string path = "res/region";
+    std::string path = "tests/res/region";
 
     std::vector<std::tuple<std::string, std::string>> files;
     std::vector<std::string> classes;
@@ -127,15 +128,14 @@ TEST_F(SIGRunRegionTest, on_enter)
     std::vector<glm::vec3> contour {glm::vec3(100, 100, 1), glm::vec3(100, 600, 1), glm::vec3(600, 600, 1), glm::vec3(600, 100, 1)};
 
     Region r(contour, *o, 1920, 1080);
+    Region rt(contour, *t, 1920, 1080);
 
-    PySIEffect te = bp::extract<PySIEffect>(*t);
-
-    EXPECT_NO_FATAL_FAILURE(r.on_enter(te));
+    EXPECT_NO_FATAL_FAILURE(r.on_enter(rt.effect()));
 }
 
 TEST_F(SIGRunRegionTest, on_continuous)
 {
-    std::string path = "res/region";
+    std::string path = "tests/res/region";
 
     std::vector<std::tuple<std::string, std::string>> files;
     std::vector<std::string> classes;
@@ -168,15 +168,14 @@ TEST_F(SIGRunRegionTest, on_continuous)
     std::vector<glm::vec3> contour {glm::vec3(100, 100, 1), glm::vec3(100, 600, 1), glm::vec3(600, 600, 1), glm::vec3(600, 100, 1)};
 
     Region r(contour, *o, 1920, 1080);
+    Region rt(contour, *t, 1920, 1080);
 
-    PySIEffect te = bp::extract<PySIEffect>(*t);
-
-    EXPECT_NO_FATAL_FAILURE(r.on_continuous(te));
+    EXPECT_NO_FATAL_FAILURE(r.on_continuous(rt.effect()));
 }
 
 TEST_F(SIGRunRegionTest, on_leave)
 {
-    std::string path = "res/region";
+    std::string path = "tests/res/region";
 
     std::vector<std::tuple<std::string, std::string>> files;
     std::vector<std::string> classes;
@@ -209,8 +208,7 @@ TEST_F(SIGRunRegionTest, on_leave)
     std::vector<glm::vec3> contour {glm::vec3(100, 100, 1), glm::vec3(100, 600, 1), glm::vec3(600, 600, 1), glm::vec3(600, 100, 1)};
 
     Region r(contour, *o, 1920, 1080);
+    Region rt(contour, *t, 1920, 1080);
 
-    PySIEffect te = bp::extract<PySIEffect>(*t);
-
-    EXPECT_NO_FATAL_FAILURE(r.on_leave(te));
+    EXPECT_NO_FATAL_FAILURE(r.on_leave(rt.effect()));
 }
