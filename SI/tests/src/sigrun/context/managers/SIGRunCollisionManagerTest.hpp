@@ -40,11 +40,6 @@ public:
         return cm.collides_with_mask(a, b);
     }
 
-    bool cm_are_aabbs_equal(const std::shared_ptr<Region>& a, const std::shared_ptr<Region>& b)
-    {
-        return cm.are_aabbs_equal(a, b);
-    }
-
     void cm_handle_event_continuous(const std::shared_ptr<Region>& a, const std::shared_ptr<Region>& b)
     {
         cm.handle_event_continuous(a, b);

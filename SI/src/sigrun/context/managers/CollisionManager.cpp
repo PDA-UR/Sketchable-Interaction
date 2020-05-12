@@ -20,7 +20,7 @@ void CollisionManager::collide(std::vector<std::shared_ptr<Region>> &regions)
             {
                 if(collides_with_aabb(a, b))
                 {
-                    if(are_aabbs_equal(a, b) || collides_with_mask(a, b))
+                    if(collides_with_mask(a, b))
                     {
                         if(std::execution::par_unseq, std::find_if(d_cols.begin(), d_cols.end(), [&](auto& tup)
                         {
@@ -166,30 +166,6 @@ bool CollisionManager::has_capabilities_in_common(const std::shared_ptr<Region>&
             return true;
 
     return false;
-}
-
-bool CollisionManager::are_aabbs_equal(const std::shared_ptr<Region> &a, const std::shared_ptr<Region> &b)
-{
-    bool are_aabb_same_size_and_spot = true;
-
-    std::vector<glm::vec3> a_aabb(a->aabb().size());
-    std::vector<glm::vec3> b_aabb(b->aabb().size());
-
-    std::transform(std::execution::seq, a->aabb().begin(), a->aabb().end(), a_aabb.begin(), [&](const glm::vec3& p)
-    {
-        auto p_ = p * a->transform();
-
-        return p_ /= p_.z;
-    });
-
-    std::transform(std::execution::seq, b->aabb().begin(), b->aabb().end(), b_aabb.begin(), [&](const glm::vec3& p)
-    {
-        auto p_ = p * b->transform();
-
-        return p_ /= p_.z;
-    });
-
-    return std::equal(a_aabb.begin(), a_aabb.end(), b_aabb.begin());
 }
 
 void CollisionManager::handle_event_leave(const std::shared_ptr<Region>& a, const std::shared_ptr<Region>& b)

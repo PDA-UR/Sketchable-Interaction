@@ -9,11 +9,11 @@
 namespace bp = boost::python;
 
 PySIEffect::PySIEffect(const std::vector<glm::vec3>& contour, const std::string& uuid, const std::string& tex_path, const bp::dict& kwargs)
-    : d_data_changed(false)
+    : d_data_changed(false), d_uuid(uuid)
 {
     d_regions_marked_for_registration.reserve(10);
     d_link_relations.reserve(100);
-    d_contour.reserve(64);
+    d_contour.reserve(STEPCOUNT);
     d_aabb.reserve(4);
 
     RegionResampler::resample(d_contour, contour);
@@ -37,8 +37,6 @@ PySIEffect::PySIEffect(const std::vector<glm::vec3>& contour, const std::string&
     {
         tlc, blc, brc, trc
     };
-
-    d_uuid = uuid;
 }
 
 void PySIEffect::__signal_deletion__()

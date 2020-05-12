@@ -4,6 +4,7 @@
 
 #include <glm/glm.hpp>
 #include <sigrun/region/Region.hpp>
+#include <sigrun/region/RegionResampler.hpp>
 #include <boost/python.hpp>
 #include <sigrun/plugin/PluginCollector.hpp>
 #include <sigrun/plugin/Scripting.hpp>
@@ -89,7 +90,7 @@ TEST_F(SIGRunRegionTest, contour)
     Region r(contour, *o, 1920, 1080);
 
     ASSERT_EQ(contour.size(), 4);
-    ASSERT_EQ(r.contour().size(), 64);
+    ASSERT_EQ(r.contour().size(), STEPCOUNT);
 }
 
 TEST_F(SIGRunRegionTest, on_enter)

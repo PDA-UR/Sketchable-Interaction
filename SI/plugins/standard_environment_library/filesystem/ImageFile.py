@@ -27,7 +27,7 @@ class ImageFile(Entry.Entry):
         self.cap_recv[PySIEffect.PREVIEW] = {PySIEffect.ON_ENTER: self.on_preview_enter_recv, PySIEffect.ON_CONTINUOUS: self.on_preview_continuous_recv, PySIEffect.ON_LEAVE: self.on_preview_leave_recv}
 
     def on_preview_enter_recv(self):
-        if not self.is_in_preview and not self.is_child:
+        if not self.is_in_preview and self.parent == "":
             self.color = PySIEffect.Color(10, 0, 0, 255)
 
             self.is_in_preview = True
@@ -53,7 +53,7 @@ class ImageFile(Entry.Entry):
         pass
 
     def on_preview_leave_recv(self):
-        if self.is_in_preview and not self.is_child:
+        if self.is_in_preview and self.parent == "":
             self.color = PySIEffect.Color(10, 0, 0, 0)
 
             self.is_in_preview = False

@@ -290,9 +290,6 @@ void RegionMask::scanlinefill(const std::vector<glm::vec3>& contour, const std::
     static glm::vec2 min, max;
     unsigned int polysize = contour.size();
 
-    constexpr uint8_t gap = 1;
-    double y;
-
     min.x = d_tlc_aabb_x;
     min.y = d_tlc_aabb_y;
 
@@ -314,11 +311,8 @@ void RegionMask::scanlinefill(const std::vector<glm::vec3>& contour, const std::
     min.x -= 1;
     max.x += 1;
 
-    // Initialise starting conditions
-    y = min.y;
-
     // Go through each scan line iteratively, jumping by 'gap' pixels each time
-    while (y < max.y)
+    for(int y = min.y; y < max.y; ++y)
     {
         scan_hits.clear();
 
@@ -356,7 +350,7 @@ void RegionMask::scanlinefill(const std::vector<glm::vec3>& contour, const std::
         }
 
         // Sort the scan hits by X, so we have a proper left->right ordering
-        std::sort(std::execution::par_unseq, scan_hits.begin(), scan_hits.end(), [&](glm::vec2 const &a, glm::vec2 const &b)
+        std::sort(scan_hits.begin(), scan_hits.end(), [&](glm::vec2 const &a, glm::vec2 const &b)
         {
             return a.x < b.x;
         });
@@ -367,8 +361,6 @@ void RegionMask::scanlinefill(const std::vector<glm::vec3>& contour, const std::
         for (int32_t i = 0; i < l; i += 2)
             for(int32_t x = scan_hits[i].x; x < scan_hits[i + 1].x; x++)
                 this->set_bit(glm::vec3(x, y, 1));
-
-        y += gap;
     }
 
     scan_hits.clear();

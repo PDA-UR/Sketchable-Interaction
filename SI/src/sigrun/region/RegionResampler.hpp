@@ -6,10 +6,12 @@
 #include <vector>
 #include <glm/glm.hpp>
 
+#define STEPCOUNT 128
+
 class RegionResampler
 {
 public:
-    static void resample(std::vector<glm::vec3>& out, const std::vector<glm::vec3>& in, int step_count=64);
+    static void resample(std::vector<glm::vec3>& out, const std::vector<glm::vec3>& in, int step_count=STEPCOUNT);
 
 private:
     static float distance(const glm::vec3& p, const glm::vec3& q);

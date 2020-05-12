@@ -95,10 +95,10 @@ void Context::add_startup_regions(const std::unordered_map<std::string, std::uni
 
                         uint32_t x = s_width / 2 - width / 2;
 
-                        std::vector<glm::vec3> contour{glm::vec3(x, 1, 1),
-                                                       glm::vec3(x, height, 1),
-                                                       glm::vec3(x + width, height - 1, 1),
-                                                       glm::vec3(x + width, 1, 1)};
+                        std::vector<glm::vec3> contour{glm::vec3(x, 75, 1),
+                                                       glm::vec3(x, 75 + height, 1),
+                                                       glm::vec3(x + width, 75 + height - 1, 1),
+                                                       glm::vec3(x + width, 75, 1)};
 
                         uprm->add_region(contour, *value, 0);
                         d_notification_uuid = uprm->regions().back()->uuid();
@@ -120,10 +120,10 @@ void Context::add_startup_regions(const std::unordered_map<std::string, std::uni
 
                     case SI_TYPE_PALETTE:
                     {
-                        std::vector<glm::vec3> contour{glm::vec3(s_width - 300, 50, 1),
-                                                       glm::vec3(s_width - 300, 450, 1),
-                                                       glm::vec3(s_width - 100, 450, 1),
-                                                       glm::vec3(s_width - 100, 50, 1)};
+                        std::vector<glm::vec3> contour{glm::vec3(s_width - 300, 75, 1),
+                                                       glm::vec3(s_width - 300, 475, 1),
+                                                       glm::vec3(s_width - 100, 475, 1),
+                                                       glm::vec3(s_width - 100, 75, 1)};
 
                         uprm->add_region(contour, *value, 0);
                         break;
@@ -172,7 +172,7 @@ void Context::add_directory_region(const std::unique_ptr<bp::object>& directory_
         uint32_t width_directory = bp::extract<uint32_t>(directory_effect->attr("region_width"));
         uint32_t height_directory = bp::extract<uint32_t>(directory_effect->attr("region_height"));
 
-        std::vector<glm::vec3> dir_contour {glm::vec3(0, 0, 1), glm::vec3(0, height_directory, 1), glm::vec3(width_directory, height_directory, 1), glm::vec3(width_directory, 0, 1) };
+        std::vector<glm::vec3> dir_contour {glm::vec3(0, 75, 1), glm::vec3(0, 75 + height_directory, 1), glm::vec3(width_directory, 75 + height_directory, 1), glm::vec3(width_directory, 75, 1) };
 
         bp::dict kwargs;
 
