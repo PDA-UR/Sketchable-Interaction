@@ -15,14 +15,6 @@
 namespace bp = boost::python;
 
 /**
- * \brief global helper function to display a key error
- */
-void KeyError()
-{
-    PyErr_SetString(PyExc_KeyError, "Key not found");
-}
-
-/**
  * \class MapExposure
  * \brief MapExposure class providing the interface for exposing STL maps to the python3 bindings (PySI) in a pythonic way
  * @tparam T the STL map to be exposed

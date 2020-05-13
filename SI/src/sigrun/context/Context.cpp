@@ -8,6 +8,7 @@
 #include <boost/python.hpp>
 #include <pysi/PySIEffect.hpp>
 #include <sigrun/util/Util.hpp>
+#include <sigrun/plugin/Scripting.hpp>
 
 namespace bp = boost::python;
 
@@ -29,6 +30,11 @@ Context::Context()
     uprcm = std::unique_ptr<CollisionManager>(new CollisionManager);
     upfs = std::unique_ptr<FileSystem>(new FileSystem);
     upeam = std::unique_ptr<ExternalApplicationManager>(new ExternalApplicationManager);
+}
+
+void Context::test()
+{
+    DEBUG("READY");
 }
 
 void Context::add_startup_regions(const std::unordered_map<std::string, std::unique_ptr<bp::object>>& plugins)
@@ -222,6 +228,10 @@ void Context::begin(const std::unordered_map<std::string, std::unique_ptr<bp::ob
             ERROR("Main Window could not be created!");
             exit(69);
         }
+
+        HANDLE_PYTHON_CALL(PY_ERROR, "Could not load startup file! A python file called \'StartSIGRun\' is required to be present in plugins folder!",
+            bp::import("plugins.StartSIGRun");
+        )
 
         add_startup_regions(plugins);
 
