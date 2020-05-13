@@ -10,11 +10,6 @@
 
 namespace bp = boost::python;
 
-TEST_F(PySIVectorExposureTest, IndexError)
-{
-    EXPECT_NO_FATAL_FAILURE(IndexError());
-}
-
 TEST_F(PySIVectorExposureTest, get)
 {
     std::vector<int32_t> test
