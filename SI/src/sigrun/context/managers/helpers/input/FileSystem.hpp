@@ -49,9 +49,9 @@ public:
     FileSystemObject(const fs::path& path, uint32_t type);
     ~FileSystemObject();
 
-    const std::string& path();
-    const std::string& filename();
-    const std::string& extension();
+    const std::string path();
+    const std::string filename();
+    const std::string extension();
 
 private:
     uint32_t d_type;

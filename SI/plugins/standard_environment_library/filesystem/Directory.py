@@ -94,8 +94,8 @@ class Directory(Entry.Entry):
 
     def on_open_entry_continuous_recv(self, is_other_controlled):
         if self.parent == "" and not self.is_open_entry_capability_blocked and not self.is_under_user_control and not is_other_controlled:
-            x = self.aabb[0].x
-            y = self.aabb[0].y
+            x = self.x_pos()
+            y = self.y_pos()
 
             self.width = self.preview_width
             self.height = self.preview_height
@@ -116,8 +116,8 @@ class Directory(Entry.Entry):
 
     def on_open_entry_leave_recv(self, is_other_controlled):
         if self.parent == "" and self.is_open_entry_capability_blocked:
-            x = self.aabb[0].x
-            y = self.aabb[0].y
+            x = self.x_pos()
+            y = self.y_pos()
 
             self.width = self.icon_width * 2
             self.height = self.icon_height + self.text_height

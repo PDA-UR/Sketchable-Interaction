@@ -104,7 +104,7 @@ void Core::retrieve_available_plugins(std::unordered_map<std::string, std::uniqu
             {
                 bp::object obj = script.si_plugin(module_name, rpath, clazz);
 
-                HANDLE_PYTHON_CALL(PY_INFO, "The found plugin does not contain the attribute \'region_name\' on module level. Therefore, the plugin is skipped and not available for use. Assign a str-value to it.",
+                HANDLE_PYTHON_CALL(PY_WARNING, "The found plugin does not contain the attribute \'region_name\' on module level. Therefore, the plugin is skipped and not available for use. Assign a str-value to it.",
                     plugins[std::string(bp::extract<char*>(obj.attr("region_name")))] = std::make_unique<bp::object>(obj);
                 )
             });

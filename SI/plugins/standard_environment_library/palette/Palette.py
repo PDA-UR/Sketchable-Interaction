@@ -15,4 +15,34 @@ class Palette(SIEffect.SIEffect):
         self.qml_path = ""
         available_plugins = self.available_plugins()
 
-        print(available_plugins)
+        self.disable_effect(PySIEffect.DELETION, self.RECEPTION)
+        self.as_selector = True
+        self.num_selectors_per_row = int(len(available_plugins) / 3) + 1
+
+        if len(available_plugins) % self.num_selectors_per_row == 0:
+            self.num_rows = len(available_plugins) / self.num_selectors_per_row
+        else:
+            self.num_rows = int(len(available_plugins) / self.num_selectors_per_row) + 1
+
+        self.x_offset = 5
+        self.y_offset = 5
+
+        self.selector_width = self.region_width() / self.num_selectors_per_row - self.x_offset * self.num_selectors_per_row
+        self.selector_height = self.region_height() / self.num_rows - self.y_offset * self.num_rows
+
+        y = -1
+        x = 1
+
+        for i in range(len(available_plugins)):
+            if i % self.num_selectors_per_row:
+                x += 1
+            else:
+                x = x - self.num_selectors_per_row - 1 if x - self.num_selectors_per_row - 1 >= 0 else 0
+                y += 1
+
+            shape = [[((self.x_offset + self.selector_width) * x) + (self.x_pos() + self.x_offset), ((self.y_offset + self.selector_height) * y) + (self.y_pos() + self.y_offset)],
+                     [((self.x_offset + self.selector_width) * x) + (self.x_pos() + self.x_offset), ((self.y_offset + self.selector_height) * y) + (self.y_pos() + self.y_offset + self.selector_height)],
+                     [((self.x_offset + self.selector_width) * x) + (self.x_pos() + self.x_offset + self.selector_width), ((self.y_offset + self.selector_height) * y) + (self.y_pos() + self.y_offset + self.selector_height)],
+                     [((self.x_offset + self.selector_width) * x) + (self.x_pos() + self.x_offset + self.selector_width), ((self.y_offset + self.selector_height) * y) + (self.y_pos() + self.y_offset)]]
+
+            self.create_region(shape, available_plugins[i], self.as_selector, {})
