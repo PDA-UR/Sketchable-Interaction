@@ -27,9 +27,10 @@ public:
     void __embed_file_standard_appliation_into_context__(const std::string& uuid, const std::string& path);
     void __destroy_embedded_file_standard_appliation_in_context__(const std::string& uuid);
     void __signal_deletion__();
+    void __assign_effect__(const std::string& sender, const std::string& effect_name, const std::string& effect_display_name, bp::dict& kwargs);
 
-    void __create_region__(const std::vector<glm::vec3>& contour, const std::string& name);
-    void __create_region__(const bp::list& contour, const std::string& name);
+    void __create_region__(const std::vector<glm::vec3>& contour, const std::string& name, bool as_selector, bp::dict& kwargs);
+    void __create_region__(const bp::list& contour, const std::string& name, bool as_selector, bp::dict& kwargs);
 
     bp::tuple __context_dimensions__();
 
