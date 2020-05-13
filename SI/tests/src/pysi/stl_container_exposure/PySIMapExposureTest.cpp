@@ -10,11 +10,6 @@
 
 namespace bp = boost::python;
 
-TEST_F(PySIMapExposureTest, KeyError)
-{
-    EXPECT_NO_FATAL_FAILURE(KeyError());
-}
-
 TEST_F(PySIMapExposureTest, get)
 {
     std::map<int32_t, float> map

@@ -24,7 +24,7 @@ class ImageFile(Entry.Entry):
         self.add_QML_data("is_visible", self.is_visible, PySIEffect.DataType.BOOL)
         self.add_QML_data("is_in_preview", self.is_in_preview, PySIEffect.DataType.BOOL)
 
-        self.cap_recv[PySIEffect.PREVIEW] = {PySIEffect.ON_ENTER: self.on_preview_enter_recv, PySIEffect.ON_CONTINUOUS: self.on_preview_continuous_recv, PySIEffect.ON_LEAVE: self.on_preview_leave_recv}
+        self.enable_effect(PySIEffect.PREVIEW, self.RECEPTION, self.on_preview_enter_recv, self.on_preview_continuous_recv, self.on_preview_leave_recv)
 
     def on_preview_enter_recv(self):
         if not self.is_in_preview and self.parent == "":

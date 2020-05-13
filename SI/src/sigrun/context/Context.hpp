@@ -43,6 +43,9 @@ public:
     uint32_t width();
     uint32_t height();
 
+    void test();
+
+
     void set_effect(const std::string& target_uuid, const std::string& effect_name, const std::string& effect_display_name, bp::dict& kwargs);
 
     void register_new_region(const std::vector<glm::vec3>& contour, const std::string& uuid);
