@@ -14,6 +14,7 @@ class MouseCursor(SIEffect.SIEffect):
         self.source = "libstdSI"
         self.qml_path = "plugins/standard_environment_library/cursor/Cursor.qml"
         self.color = PySIEffect.Color(0, 0, 0, 0)
+        self.assigned_effect = ""
 
         self.width = 18
         self.height = 24
@@ -25,9 +26,14 @@ class MouseCursor(SIEffect.SIEffect):
 
         self.parent_canvas = None
         self.move_target = None
-        self.btn_taget = None
+        self.btn_target = None
+
+        self.left_mouse_active = False
+        self.right_mouse_active = False
 
         self.disable_effect(PySIEffect.DELETION, self.RECEPTION)
+
+        self.enable_effect(PySIEffect.ASSIGN, self.RECEPTION, None, self.on_assign_continuous_recv, None)
 
         self.enable_link_emission(PySIEffect.POSITION, self.position)
         self.enable_link_reception(PySIEffect.POSITION, PySIEffect.POSITION, self.set_position_from_position)
@@ -72,17 +78,19 @@ class MouseCursor(SIEffect.SIEffect):
         return "", ""
 
     def on_btn_press_enter_emit(self, other):
-        if self.btn_taget is None:
-            self.btn_taget = other
+        if self.btn_target is None:
+            self.btn_target = other
 
     def on_btn_press_continuous_emit(self, other):
         pass
 
     def on_btn_press_leave_emit(self, other):
-        if self.btn_taget is other:
-            self.btn_taget = None
+        if self.btn_target is other:
+            self.btn_target = None
 
     def on_left_mouse_click(self, is_active):
+        self.left_mouse_active = is_active
+
         if is_active:
             if PySIEffect.CLICK not in self.cap_emit.keys():
                 self.enable_effect(PySIEffect.CLICK, True, self.on_btn_press_enter_emit, self.on_btn_press_continuous_emit, self.on_btn_press_leave_emit)
@@ -99,10 +107,12 @@ class MouseCursor(SIEffect.SIEffect):
 
             if PySIEffect.CLICK in self.cap_emit.keys():
                 self.disable_effect(PySIEffect.CLICK, True)
-                if self.btn_taget is not None:
-                    self.btn_taget.on_click_leave_recv()
+                if self.btn_target is not None:
+                    self.btn_target.on_click_leave_recv()
 
     def on_right_mouse_click(self, is_active):
+        self.right_mouse_active = is_active
+
         if is_active:
             if PySIEffect.MOVE not in self.cap_emit.keys():
                 self.enable_effect(PySIEffect.MOVE, True, self.on_move_enter_emit, self.on_move_continuous_emit, self.on_move_leave_emit)
@@ -110,3 +120,9 @@ class MouseCursor(SIEffect.SIEffect):
             self.disable_effect(PySIEffect.MOVE, True)
             if self.move_target is not None:
                 self.move_target.on_move_leave_recv(*self.on_move_leave_emit(self.move_target))
+
+    def on_assign_continuous_recv(self, effect_to_assign, effect_display_name, kwargs):
+        if self.left_mouse_active:
+            if self.assigned_effect != effect_to_assign:
+                self.assigned_effect = effect_to_assign
+                self.assign_effect(self.assigned_effect, effect_display_name, kwargs)

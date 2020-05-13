@@ -49,7 +49,7 @@ class Entry(SIEffect.SIEffect):
 
     def on_open_entry_enter_recv(self, is_other_controlled):
         pass
-    #
+
     def on_open_entry_continuous_recv(self, is_other_controlled):
         if self.parent == "" and not self.is_open_entry_capability_blocked and not self.is_under_user_control and not is_other_controlled:
             self.start_standard_application(self._uuid, self.path)

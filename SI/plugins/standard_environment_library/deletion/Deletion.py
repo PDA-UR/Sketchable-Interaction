@@ -7,6 +7,7 @@ region_type = PySIEffect.EffectType.SI_DELETION
 region_name = PySIEffect.SI_STD_NAME_DELETION
 region_display_name = "Deletion"
 
+
 class Deletion(SIEffect.SIEffect):
     def __init__(self, shape=PySIEffect.PointVector(), uuid="", kwargs={}):
         super(Deletion, self).__init__(shape, uuid, "res/deletion.png", kwargs)

@@ -277,12 +277,12 @@ void PySIEffect::set_shape(const std::vector<glm::vec3>& shape)
     }
 }
 
-void PySIEffect::__create_region__(const std::vector<glm::vec3>& contour, const std::string& name)
+void PySIEffect::__create_region__(const std::vector<glm::vec3>& contour, const std::string& name, bool as_selector, bp::dict& kwargs)
 {
-    Context::SIContext()->register_new_region_via_name(contour, name);
+    Context::SIContext()->register_new_region_via_name(contour, name, as_selector, kwargs);
 }
 
-void PySIEffect::__create_region__(const bp::list& contour, const std::string& name)
+void PySIEffect::__create_region__(const bp::list& contour, const std::string& name, bool as_selector, bp::dict& kwargs)
 {
     std::vector<glm::vec3> _contour;
     _contour.reserve(bp::len(contour));
@@ -298,20 +298,22 @@ void PySIEffect::__create_region__(const bp::list& contour, const std::string& n
     )
 
     if(!_contour.empty())
-        __create_region__(_contour, name);
+        __create_region__(_contour, name, as_selector, kwargs);
 }
 
 std::vector<std::string> PySIEffect::__available_plugins_by_name__()
 {
-    if(Context::SIContext())
-        return Context::SIContext()->available_plugins_names();
-
-    return std::vector<std::string>();
+    return Context::SIContext()->available_plugins_names();
 }
 
 bp::tuple PySIEffect::__context_dimensions__()
 {
     return bp::make_tuple(Context::SIContext()->width(), Context::SIContext()->height());
+}
+
+void PySIEffect::__assign_effect__(const std::string& sender, const std::string& effect_name, const std::string& effect_display_name, bp::dict& kwargs)
+{
+    Context::SIContext()->set_effect(sender, effect_name, effect_display_name, kwargs);
 }
 
 BOOST_PYTHON_MODULE(libPySI)
@@ -371,6 +373,7 @@ BOOST_PYTHON_MODULE(libPySI)
     bp::scope().attr("CLICK") = SI_CAPABILITY_COLLISION_CLICK;
     bp::scope().attr("DELETION") = SI_CAPABILITY_COLLISION_DELETION;
     bp::scope().attr("PREVIEW") = SI_CAPABILITY_COLLISION_PREVIEW;
+    bp::scope().attr("ASSIGN") = SI_CAPABILITY_COLLISION_ASSIGN;
 
     bp::scope().attr("POSITION") = SI_CAPABILITY_LINK_POSITION;
     bp::scope().attr("ROTATION") = SI_CAPABILITY_LINK_ROTATION;
@@ -394,6 +397,7 @@ BOOST_PYTHON_MODULE(libPySI)
     bp::scope().attr("SI_STD_NAME_PLACEHOLDER") = SI_NAME_EFFECT_PLACEHOLDER;
     bp::scope().attr("SI_STD_NAME_PREVIEW") = SI_NAME_EFFECT_PREVIEW;
     bp::scope().attr("SI_STD_NAME_PALETTE") = SI_NAME_EFFECT_PALETTE;
+    bp::scope().attr("SI_STD_NAME_SELECTOR") = SI_NAME_EFFECT_SELECTOR;
 
     bp::class_<PySIEffect, boost::noncopyable>("PySIEffect", bp::init<const std::vector<glm::vec3>&, const std::string&, const std::string&, const bp::dict&>())
         .def("__add_data__", &PySIEffect::__add_data__)
@@ -401,16 +405,17 @@ BOOST_PYTHON_MODULE(libPySI)
         .def("__show_folder_contents_page__", &PySIEffect::__show_folder_contents__)
         .def("__embed_file_standard_appliation_into_context__", &PySIEffect::__embed_file_standard_appliation_into_context__)
         .def("__destroy_embedded_window__", &PySIEffect::__destroy_embedded_file_standard_appliation_in_context__)
-        .def<void (PySIEffect::*)(const std::vector<glm::vec3>&, const std::string&)>("__create_region__", &PySIEffect::__create_region__)
-        .def<void (PySIEffect::*)(const bp::list&, const std::string&)>("__create_region__", &PySIEffect::__create_region__)
+        .def<void (PySIEffect::*)(const std::vector<glm::vec3>&, const std::string&, bool, bp::dict&)>("__create_region__", &PySIEffect::__create_region__)
+        .def<void (PySIEffect::*)(const bp::list&, const std::string&, bool, bp::dict&)>("__create_region__", &PySIEffect::__create_region__)
         .def("__available_plugins_by_name__", &PySIEffect::__available_plugins_by_name__)
         .def("__context_dimensions__", &PySIEffect::__context_dimensions__)
+        .def("__assign_effect__", &PySIEffect::__assign_effect__)
 
         .add_property("shape", &PySIEffect::get_shape, &PySIEffect::set_shape)
 
         .def_readonly("aabb", &PySIEffect::d_aabb)
-        .def_readwrite("__recompute_collision_mask__", &PySIEffect::d_recompute_mask)
 
+        .def_readwrite("__recompute_collision_mask__", &PySIEffect::d_recompute_mask)
         .def_readwrite("__partial_regions__", &PySIEffect::d_partial_regions)
         .def_readwrite("__registered_regions__", &PySIEffect::d_regions_marked_for_registration)
         .def_readwrite("cap_emit", &PySIEffect::d_cap_collision_emit)
@@ -466,6 +471,7 @@ BOOST_PYTHON_MODULE(libPySI)
         .value("SI_ENTRY", SI_TYPE_ENTRY)
         .value("SI_PREVIEW", SI_TYPE_PREVIEW)
         .value("SI_PALETTE", SI_TYPE_PALETTE)
+        .value("SI_SELECTOR", SI_TYPE_SELECTOR)
 
         .export_values()
         ;

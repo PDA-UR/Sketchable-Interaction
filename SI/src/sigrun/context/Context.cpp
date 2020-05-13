@@ -50,6 +50,7 @@ void Context::add_startup_regions(const std::unordered_map<std::string, std::uni
                 case SI_TYPE_CURSOR:
                 case SI_TYPE_ENTRY:
                 case SI_TYPE_PALETTE:
+                case SI_TYPE_SELECTOR:
                     break;
 
                 default:
@@ -70,7 +71,7 @@ void Context::add_startup_regions(const std::unordered_map<std::string, std::uni
         });
     }
 
-    std::for_each(std::execution::seq, plugins.begin(), plugins.end(), [&](const auto& plugin)
+    std::for_each(plugins.begin(), plugins.end(), [&](const auto& plugin)
     {
         HANDLE_PYTHON_CALL(PY_WARNING, "Plugin does not have the attribute \'region_type\' on module level and is skipped. Try assigning PySIEffect.EffectType.SI_CUSTOM.",
             const std::string& key = plugin.first;
@@ -116,6 +117,7 @@ void Context::add_startup_regions(const std::unordered_map<std::string, std::uni
                     case SI_TYPE_UNKNOWN_FILE:
                     case SI_TYPE_CURSOR:
                     case SI_TYPE_ENTRY:
+                    case SI_TYPE_SELECTOR:
                         break;
 
                     case SI_TYPE_PALETTE:
@@ -284,20 +286,6 @@ QMainWindow* Context::main_window() const
  */
 void Context::update()
 {
-    if(upim->is_key_pressed(SI_KEY_A))
-    {
-        HANDLE_PYTHON_CALL(PY_ERROR, "Unable to browse through available plugins.",
-            (++d_selected_effect_index) %= d_available_plugins_names.size();
-
-            d_selected_effects_by_id[d_mouse_uuid] = d_available_plugins[d_available_plugins_names[d_selected_effect_index]];
-
-            (*std::find_if(std::execution::par_unseq, uprm->regions().begin(), uprm->regions().end(), [&](auto& region)
-            {
-                return region->type() == SI_TYPE_NOTIFICATION;
-            }))->raw_effect().attr("update_message")("Mouse Cursor set to " + d_available_plugins_names[d_selected_effect_index]);
-        )
-    }
-
     upim->update();
     uprcm->collide(uprm->regions());
     uprm->update();
@@ -311,6 +299,32 @@ uint32_t Context::width()
 uint32_t Context::height()
 {
     return s_height;
+    return s_height;
+}
+
+void Context::set_effect(const std::string& target_uuid, const std::string& effect_name, const std::string& effect_display_name, bp::dict& kwargs)
+{
+    auto it = std::find_if(std::execution::seq, uprm->regions().begin(), uprm->regions().end(), [&](auto& region)
+    {
+        return region->uuid() == target_uuid;
+    });
+
+    if(it != uprm->regions().end())
+    {
+        if (it->get()->type() == SI_TYPE_MOUSE_CURSOR)
+        {
+            d_selected_effects_by_id[target_uuid] = d_available_plugins[effect_name];
+
+            (*std::find_if(std::execution::par_unseq, uprm->regions().begin(), uprm->regions().end(), [&](auto& region)
+            {
+                return region->type() == SI_TYPE_NOTIFICATION;
+            }))->raw_effect().attr("update_message")("Mouse Cursor set to " + effect_display_name);
+        }
+        else
+        {
+            it->get()->set_effect(d_available_plugins[effect_name], kwargs);
+        }
+    }
 }
 
 void Context::enable(uint32_t what)
@@ -325,39 +339,39 @@ void Context::disable(uint32_t what)
 
 void Context::register_new_region(const std::vector<glm::vec3>& contour, const std::string& uuid)
 {
-    if(contour.size() > 10)
+    if(contour.size() > 2)
     {
         std::shared_ptr<Region> t(nullptr);
         uprm->query_region_insertion(contour, d_selected_effects_by_id[uuid], t);
     }
 }
 
-void Context::register_new_region_via_name(const std::vector<glm::vec3>& contour, const std::string& name)
+void Context::register_new_region_via_name(const std::vector<glm::vec3>& contour, const std::string& effect_name, bool as_selector, bp::dict& kwargs)
 {
+    if(as_selector)
+    {
+        HANDLE_PYTHON_CALL(PY_WARNING, "The plugin effect for which a selector effect is to be created does not have the attribute \'region_display_name\' on module level.",
+            const auto& selector = d_plugins[SI_NAME_EFFECT_SELECTOR];
 
+            Region temp(contour, d_available_plugins[effect_name]);
+
+            kwargs["target_color"] = temp.color();
+            kwargs["target_texture"] = temp.raw_effect().attr("texture_path");
+            kwargs["target_display_name"] = d_available_plugins[effect_name].attr("region_display_name");
+            kwargs["target_name"] = effect_name;
+
+            uprm->add_region(contour, selector, 0, kwargs);
+        )
+    }
+    else
+    {
+        uprm->add_region(contour, d_available_plugins[effect_name], 0, kwargs);
+    }
 }
 
-std::vector<std::string> Context::available_plugins_names()
+const std::vector<std::string>& Context::available_plugins_names()
 {
-    std::vector<std::string> plugin_names;
-    plugin_names.reserve(d_available_plugins_names.size());
-
-    std::transform(d_available_plugins_names.begin(), d_available_plugins_names.end(), std::back_inserter(plugin_names), [&](const std::string& name)
-    {
-        HANDLE_PYTHON_CALL(PY_INFO, "Plugin has no attribute \'region_display_name\' on module level. Assigning default name Unnamed Effect. ",
-            bp::extract<char*> extraction(d_available_plugins[name].attr("region_display_name"));
-
-            if(extraction.check())
-            {
-                char* s = extraction;
-                return std::string(s);
-            }
-        )
-
-        return std::string("Unnamed Effect");
-    });
-
-    return plugin_names;
+    return d_available_plugins_names;
 }
 
 void Context::spawn_folder_contents_buttons_as_regions(std::shared_ptr<Region>& parent, uint32_t dir_x, uint32_t dir_y, uint32_t preview_width, uint32_t preview_height)

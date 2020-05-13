@@ -22,11 +22,7 @@ Region::Region(const std::vector<glm::vec3> &contour, const bp::object& effect, 
     qRegisterMetaType<bp::object>("bp::object");
     qRegisterMetaType<bp::tuple>("bp::tuple");
 
-    HANDLE_PYTHON_CALL(PY_ERROR, "Fatal Error. Plugin broken. (could not infer name)",
-        d_effect = std::make_shared<bp::object>(effect.attr(effect.attr("__si_name__"))(contour, std::string(_UUID_), kwargs));
-
-        d_py_effect = std::shared_ptr<PySIEffect>(new PySIEffect(bp::extract<PySIEffect>(*d_effect)));
-    )
+    set_effect(contour, effect, std::string(_UUID_), kwargs);
 
     if(!mask_width && !mask_height)
     {
@@ -60,6 +56,24 @@ void Region::move()
 
         d_is_transformed = true;
     }
+}
+
+void Region::set_effect(const bp::object& effect, const bp::dict& kwargs)
+{
+    HANDLE_PYTHON_CALL(PY_ERROR, "Fatal Error. Plugin broken.",
+        d_effect = std::make_shared<bp::object>(effect.attr(effect.attr("__si_name__"))(d_py_effect->contour(), d_py_effect->uuid(), kwargs));
+
+        d_py_effect = std::shared_ptr<PySIEffect>(new PySIEffect(bp::extract<PySIEffect>(*d_effect)));
+    )
+}
+
+void Region::set_effect(const std::vector<glm::vec3>& contour, const bp::object& effect, const std::string& uuid, const bp::dict& kwargs)
+{
+    HANDLE_PYTHON_CALL(PY_ERROR, "Fatal Error. Plugin broken.",
+       d_effect = std::make_shared<bp::object>(effect.attr(effect.attr("__si_name__"))(contour, uuid, kwargs));
+
+       d_py_effect = std::shared_ptr<PySIEffect>(new PySIEffect(bp::extract<PySIEffect>(*d_effect)));
+    )
 }
 
 bool Region::is_transformed() const

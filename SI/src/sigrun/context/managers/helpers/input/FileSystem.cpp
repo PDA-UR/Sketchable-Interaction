@@ -11,17 +11,17 @@ FileSystemObject::FileSystemObject(const fs::path &path, uint32_t type):
 
 FileSystemObject::~FileSystemObject() = default;
 
-const std::string &FileSystemObject::path()
+const std::string FileSystemObject::path()
 {
     return d_path.string();
 }
 
-const std::string &FileSystemObject::filename()
+const std::string FileSystemObject::filename()
 {
     return d_path.filename().string();
 }
 
-const std::string &FileSystemObject::extension()
+const std::string FileSystemObject::extension()
 {
     return d_path.extension().string();
 }

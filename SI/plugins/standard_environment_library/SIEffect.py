@@ -1,10 +1,19 @@
 from libPySI import PySIEffect
 
-
 ## @package SIEffect
 # Documentation for this module / class
 #
 # Used as central entry point for all SIGRun plugins
+# Each plugin is required to contain these module level attributes region_name, region_display_name, region_type
+
+## the internal name of the region
+region_name = ""
+
+## the name of the region to show to users
+region_display_name = ""
+
+## the type of the region - if the region has a type pre-registered to SIGRun the use of that type is required else PySIEffect.EffectType.SI_CUSTOM is to be used
+region_type = PySIEffect.EffectType.SI_CUSTOM
 
 
 ## Super Class from which all subsequent plugins are derived
@@ -51,6 +60,16 @@ class SIEffect(PySIEffect.PySIEffect):
         # It is recommended to use this variable read-only.
         self.aabb
 
+        ## member variable containing the maximum width of the region
+        #
+        # computed via aabb
+        self.width = int(self.region_width())
+
+        ## member variable containing the maximum height of the region
+        #
+        # computed via aabb
+        self.height = int(self.region_height())
+
         ## member attribute variable containing the universally unique identifier (uuid) of a drawn region as a str
         self._uuid = uuid
 
@@ -95,20 +114,10 @@ class SIEffect(PySIEffect.PySIEffect):
         ## member attribute variable storing the uuids of present cursors once a region drawing is to be registered as a PySIEffect.StringVector
         self.__registered_regions__ = PySIEffect.StringVector()
 
-        ## member attribute variable storing the width of a region drawing as a float
-        #
-        # Default is 0!
-        # Has to be set manually to self.aabb[3].x - self.aabb[0].x!
-        self.width = 0
+        ## member attribute variable storing the path to the image file used as texture for a region
+        self.texture_path = texture_path
 
-        ## member attribute variable storing the width of a region drawing as a float
-        #
-        # Default is 0!
-        # Has to be set manually to self.aabb[1].y - self.aabb[0].y!
-        self.height = 0
-
-        if texture_path != "":
-
+        if self.texture_path != "":
             ## member attribute variable storing the width of a texture of a region drawing as a float
             #
             # This value is only set if texture_path is a valid path
@@ -121,14 +130,9 @@ class SIEffect(PySIEffect.PySIEffect):
 
             self.__add_data__("img_width", self.texture_width, PySIEffect.DataType.INT)
             self.__add_data__("img_heaight", self.texture_height, PySIEffect.DataType.INT)
-            self.__add_data__("img_path", texture_path, PySIEffect.DataType.STRING)
-
-            if len(self.aabb):
-                if len(self.aabb):
-                    self.width = int(self.aabb[3].x - self.aabb[0].x)
-                    self.height = int(self.aabb[1].y - self.aabb[0].y)
-                self.__add_data__("widget_width", self.width, PySIEffect.DataType.FLOAT)
-                self.__add_data__("widget_height", self.height, PySIEffect.DataType.FLOAT)
+            self.__add_data__("img_path", self.texture_path, PySIEffect.DataType.STRING)
+            self.__add_data__("widget_width", self.width, PySIEffect.DataType.FLOAT)
+            self.__add_data__("widget_height", self.height, PySIEffect.DataType.FLOAT)
 
         ## member attribute variable storing keys to functions which are called when collision events occur for emitting data to receiving regions
         #
@@ -196,6 +200,14 @@ class SIEffect(PySIEffect.PySIEffect):
 
         self.enable_link_reception(PySIEffect.POSITION, PySIEffect.POSITION, self.set_position_from_position)
 
+    ## member function for retrieving the maximum width of a region
+    def region_width(self):
+        return self.aabb[3].x - self.aabb[0].x
+
+    ## member function for retrieving the maximum height of a region
+    def region_height(self):
+        return self.aabb[1].y - self.aabb[0].y
+
     ## member function for setting the position of a region based on the positional data of another region.
     #
     # This function is used as a reception function for linking events where positional data is emitted by another region and applied to the position of a region.
@@ -217,6 +229,18 @@ class SIEffect(PySIEffect.PySIEffect):
         else:
             self.mouse_x = 0
             self.mouse_y = 0
+
+    ## member function forgetting the x coordinate of the parent region's top left corner
+    #
+    # @param self the object pointer
+    def x_pos(self):
+        return self.aabb[0].x
+
+    ## member function forgetting the y coordinate of the parent region's top left corner
+    #
+    # @param self the object pointer
+    def y_pos(self):
+        return self.aabb[0].y
 
     ## member function for receiving data from the PySIEffect.MOVE capability for the PySIEffect.ON_ENTER collision event
     #
@@ -264,6 +288,12 @@ class SIEffect(PySIEffect.PySIEffect):
            self.cap_emit[capability] = {PySIEffect.ON_ENTER: on_enter, PySIEffect.ON_CONTINUOUS: on_continuous, PySIEffect.ON_LEAVE: on_leave}
        else:
            self.cap_recv[capability] = {PySIEffect.ON_ENTER: on_enter, PySIEffect.ON_CONTINUOUS: on_continuous, PySIEffect.ON_LEAVE: on_leave}
+
+    def is_effect_enabled(self, capability, is_emit):
+        if is_emit:
+            return capability in self.cap_emit
+        else:
+            return capability in self.cap_recv
 
     ## member function for overriding the emission or reception of an effect
     #
@@ -436,9 +466,18 @@ class SIEffect(PySIEffect.PySIEffect):
     def delete(self):
         self.__signal_deletion__()
 
-    def create_region(self, shape, effect_name):
-        self.__create_region__(shape, effect_name)
+    ## member function for creating a new region
+    #
+    # @param self the object pointer
+    # @param shape the shape / contour of the region as a PySIEffect.PointVector or list [[x1, x1], [x2, y2], ... [xn, yn]]
+    # @param effect_name the name (region_name) of the effect which shall be assigned to the region (region_display_name does not work)
+    def create_region(self, shape, effect_name, as_selector=False, kwargs={}):
+        self.__create_region__(shape, effect_name, as_selector, kwargs)
 
+    ## member function for retrieving the plugins which are available for sketching as a dict of names.
+    # This dict of names uses region_name attributes as keys and region_display_name attributes as values
+    #
+    # @param self the object pointer
     def available_plugins(self):
         return list(self.__available_plugins_by_name__())
 
@@ -446,8 +485,14 @@ class SIEffect(PySIEffect.PySIEffect):
     #
     # @param self the object pointer
     def snap_to_mouse(self):
-        self.x = self.mouse_x - self.aabb[0].x - self.width / 2
-        self.y = self.mouse_y - self.aabb[0].y - self.height / 2
+        self.x = self.mouse_x - self.x_pos() - self.width / 2
+        self.y = self.mouse_y - self.y_pos() - self.height / 2
 
+    ## member function for retrieving the dimensions of the active SI-Context (width in px, and height in px)
+    #
+    # @param self the object pointer
     def context_dimensions(self):
         return self.__context_dimensions__
+
+    def assign_effect(self, effect_name_to_assign, effect_display_name, kwargs):
+        self.__assign_effect__(self._uuid, effect_name_to_assign, effect_display_name, kwargs)

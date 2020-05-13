@@ -32,8 +32,8 @@ class ImageFile(Entry.Entry):
 
             self.is_in_preview = True
 
-            x = self.aabb[0].x
-            y = self.aabb[0].y
+            x = self.x_pos()
+            y = self.y_pos()
 
             self.width = int(self.img_height / 2 * (self.img_width / self.img_height))
             self.height = int(self.img_height / 2)
@@ -58,8 +58,8 @@ class ImageFile(Entry.Entry):
 
             self.is_in_preview = False
 
-            x = self.aabb[0].x
-            y = self.aabb[0].y
+            x = self.x_pos()
+            y = self.y_pos()
 
             self.width = self.icon_width * 2
             self.height = self.icon_height + self.text_height
