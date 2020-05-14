@@ -7,21 +7,22 @@
 BOOST_PYTHON_MODULE(libPySI)
 {
     { // scope opened for everything which shall be part of effect_scope
-        bp::scope effect_scope = bp::class_<PySIEffect>("PySIEffect",
-                                                        bp::init<const std::vector<glm::vec3> &, const std::string &, const std::string &, const bp::dict &>());
+        bp::scope effect_scope = bp::class_<PySIEffect>("PySIEffect",bp::init<const std::vector<glm::vec3> &, const std::string &, const std::string &, const bp::dict &>());
 
         bp::class_<glm::vec2>("Point2", bp::init<float, float>())
                 .def_readwrite("x", &glm::vec2::x)
                 .def_readwrite("y", &glm::vec2::y)
 
-                .enable_pickling();
+                .enable_pickling()
+                ;
 
         bp::class_<glm::vec3>("Point3", bp::init<float, float, float>())
                 .def_readwrite("x", &glm::vec3::x)
                 .def_readwrite("y", &glm::vec3::y)
                 .def_readwrite("z", &glm::vec3::z)
 
-                .enable_pickling();
+                .enable_pickling()
+                ;
 
         bp::class_<glm::vec4>("Color", bp::init<float, float, float, float>())
                 .def_readwrite("r", &glm::vec4::r)
@@ -29,24 +30,24 @@ BOOST_PYTHON_MODULE(libPySI)
                 .def_readwrite("b", &glm::vec4::b)
                 .def_readwrite("a", &glm::vec4::a)
 
-                .enable_pickling();
+                .enable_pickling()
+                ;
 
-        bp::class_<LinkCandidate>("LinkRelation",
-                                  bp::init<const std::string &, const std::string &, const std::string &, const std::string &>())
+        bp::class_<LinkCandidate>("LinkRelation",bp::init<const std::string &, const std::string &, const std::string &, const std::string &>())
                 .def_readwrite("sender", &LinkCandidate::sender)
                 .def_readwrite("sender_attrib", &LinkCandidate::sender_attrib)
                 .def_readwrite("recv", &LinkCandidate::recv)
                 .def_readwrite("recv_attrib", &LinkCandidate::recv_attrib)
 
-                .enable_pickling();
+                .enable_pickling()
+                ;
 
         create_vector<VectorExposureVec3, std::vector<glm::vec3>>("PointVector");
         create_vector<VectorExposureLinkRelation, std::vector<LinkCandidate>>("LinkRelationVector");
         create_vector<VectorExposureString, std::vector<std::string>>("StringVector");
         create_map<MapExposurePartialContour, std::map<std::string, std::vector<glm::vec3>>>("PartialContour");
         create_map<MapExposureString2Function, std::map<std::string, bp::object>>("String2FunctionMap");
-        create_map<MapExposureString2_String2FunctionMap_Map, std::map<std::string, std::map<std::string, bp::object>>>(
-                "String2_String2FunctionMap_Map");
+        create_map<MapExposureString2_String2FunctionMap_Map, std::map<std::string, std::map<std::string, bp::object>>>("String2_String2FunctionMap_Map");
 
         effect_scope.attr("ON_ENTER") = SI_COLLISION_EVENT_ON_ENTER;
         effect_scope.attr("ON_CONTINUOUS") = SI_COLLISION_EVENT_ON_CONTINUOUS;
@@ -86,19 +87,14 @@ BOOST_PYTHON_MODULE(libPySI)
         effect_scope.attr("SI_STD_NAME_PALETTE") = SI_NAME_EFFECT_PALETTE;
         effect_scope.attr("SI_STD_NAME_SELECTOR") = SI_NAME_EFFECT_SELECTOR;
 
-        bp::class_<PySIEffect, boost::noncopyable>("PySIEffect",
-                                                   bp::init<const std::vector<glm::vec3> &, const std::string &, const std::string &, const bp::dict &>())
+        bp::class_<PySIEffect, boost::noncopyable>("PySIEffect",bp::init<const std::vector<glm::vec3> &, const std::string &, const std::string &, const bp::dict &>())
                 .def("__add_data__", &PySIEffect::__add_data__)
                 .def("__signal_deletion__", &PySIEffect::__signal_deletion__)
                 .def("__show_folder_contents_page__", &PySIEffect::__show_folder_contents__)
-                .def("__embed_file_standard_appliation_into_context__",
-                     &PySIEffect::__embed_file_standard_appliation_into_context__)
-                .def("__destroy_embedded_window__",
-                     &PySIEffect::__destroy_embedded_file_standard_appliation_in_context__)
-                .def < void(PySIEffect::*)(const std::vector<glm::vec3>&, const std::string&, bool, bp::dict &)>
-        ("__create_region__", &PySIEffect::__create_region__)
-                .def < void(PySIEffect::*)(const bp::list&, const std::string&, bool,
-                bp::dict &)>("__create_region__", &PySIEffect::__create_region__)
+                .def("__embed_file_standard_appliation_into_context__", &PySIEffect::__embed_file_standard_appliation_into_context__)
+                .def("__destroy_embedded_window__", &PySIEffect::__destroy_embedded_file_standard_appliation_in_context__)
+                .def < void(PySIEffect::*)(const std::vector<glm::vec3>&, const std::string&, bool, bp::dict &)>("__create_region__", &PySIEffect::__create_region__)
+                .def < void(PySIEffect::*)(const bp::list&, const std::string&, bool,bp::dict &)>("__create_region__", &PySIEffect::__create_region__)
                 .def("__available_plugins_by_name__", &PySIEffect::__available_plugins_by_name__)
                 .def("__context_dimensions__", &PySIEffect::__context_dimensions__)
                 .def("__assign_effect__", &PySIEffect::__assign_effect__)
@@ -134,7 +130,8 @@ BOOST_PYTHON_MODULE(libPySI)
                 .def_readwrite("mouse_wheel_angle_px", &PySIEffect::mouse_wheel_angle_px)
                 .def_readwrite("mouse_wheel_angle_degrees", &PySIEffect::mouse_wheel_angle_degrees)
 
-                .enable_pickling();
+                .enable_pickling()
+                ;
 
 
         bp::enum_<uint32_t>("DataType")
@@ -143,7 +140,8 @@ BOOST_PYTHON_MODULE(libPySI)
                 .value("BOOL", SI_DATA_TYPE_BOOL)
                 .value("STRING", SI_DATA_TYPE_STRING)
 
-                .export_values();
+                .export_values()
+                ;
 
         bp::enum_<uint32_t>("EffectType")
                 .value("SI_CANVAS", SI_TYPE_CANVAS)
@@ -163,12 +161,20 @@ BOOST_PYTHON_MODULE(libPySI)
                 .value("SI_PALETTE", SI_TYPE_PALETTE)
                 .value("SI_SELECTOR", SI_TYPE_SELECTOR)
 
-                .export_values();
+                .export_values()
+                ;
     } // scope ended for everything which shall be part of effect_scope
 
     { // scope opened for everything which shall be part of startup_scope
-        bp::scope startup_scope = bp::class_<PySIStartup>("PySIStartup", bp::init<>());
+        bp::scope startup_scope = bp::class_<PySIStartup>("PySIStartup", bp::init<>())
+                ;
 
-        startup_scope.attr("test") = &PySIStart::test;
+        bp::class_<PySIStartup, boost::noncopyable>("PySIStartup", bp::init<>())
+                .def("create_region_by_id", &PySIStartup::create_region_by_id).staticmethod("create_region_by_id")
+                .def("context_dimensions", &PySIStartup::context_dimensions).staticmethod("context_dimensions")
+
+                .enable_pickling()
+                ;
+
     } // scope ended for everything which shall be part of startup_scope
 }
