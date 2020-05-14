@@ -43,13 +43,11 @@ public:
     uint32_t width();
     uint32_t height();
 
-    void test();
-
-
     void set_effect(const std::string& target_uuid, const std::string& effect_name, const std::string& effect_display_name, bp::dict& kwargs);
 
     void register_new_region(const std::vector<glm::vec3>& contour, const std::string& uuid);
     void register_new_region_via_name(const std::vector<glm::vec3>& contour, const std::string& name, bool as_selector, bp::dict& kwargs);
+    void register_new_region_via_type(const std::vector<glm::vec3>& contour, int type, bp::dict& kwargs);
 
     void spawn_folder_contents_as_regions(const std::vector<std::string>& children_paths, const std::string& uuid, const bool with_btns);
     void spawn_folder_contents_buttons_as_regions(std::shared_ptr<Region>& parent, uint32_t dir_x, uint32_t dir_y, uint32_t preview_width, uint32_t preview_height);
@@ -64,19 +62,10 @@ private:
     static Context* self;
     Context();
 
-    void add_startup_regions(const std::unordered_map<std::string, std::unique_ptr<bp::object>>& plugins);
-    void add_canvas_region(const std::unique_ptr<bp::object>& plugins);
-    void add_cursor_regions(const std::unique_ptr<bp::object>& cursor_effect);
-    void add_directory_region(const std::unique_ptr<bp::object>& effect);
-
     std::vector<std::string> d_available_plugins_names;
     std::map<std::string, bp::object> d_available_plugins;
     std::unordered_map<std::string, bp::object> d_plugins;
     std::unordered_map<std::string, bp::object> d_selected_effects_by_id;
-
-    std::string d_mouse_uuid;
-    std::string d_canvas_uuid;
-    std::string d_notification_uuid;
 
     std::unique_ptr<RegionManager> uprm;
     std::unique_ptr<LinkingManager> uplm;
@@ -84,8 +73,6 @@ private:
     std::unique_ptr<CollisionManager> uprcm;
     std::unique_ptr<FileSystem> upfs;
     std::unique_ptr<ExternalApplicationManager> upeam;
-
-    int d_selected_effect_index = 0;
 
     uint32_t s_width = 0;
     uint32_t s_height = 0;

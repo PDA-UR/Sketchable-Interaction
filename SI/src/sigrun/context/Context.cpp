@@ -32,168 +32,6 @@ Context::Context()
     upeam = std::unique_ptr<ExternalApplicationManager>(new ExternalApplicationManager);
 }
 
-void Context::test()
-{
-    DEBUG("READY");
-}
-
-void Context::add_startup_regions(const std::unordered_map<std::string, std::unique_ptr<bp::object>>& plugins)
-{
-    std::for_each(std::execution::par_unseq, plugins.begin(), plugins.end(), [&](const auto& plugin)
-    {
-        HANDLE_PYTHON_CALL(PY_WARNING, "Plugin does not have the attribute \'region_type\' on module level and is skipped. Try assigning PySIEffect.EffectType.SI_CUSTOM.",
-            switch (bp::extract<int>(plugin.second->attr("region_type")))
-            {
-                case SI_TYPE_CANVAS:
-                case SI_TYPE_MOUSE_CURSOR:
-                case SI_TYPE_NOTIFICATION:
-                case SI_TYPE_DIRECTORY:
-                case SI_TYPE_BUTTON:
-                case SI_TYPE_EXTERNAL_APPLICATION_CONTAINER:
-                case SI_TYPE_TEXT_FILE:
-                case SI_TYPE_IMAGE_FILE:
-                case SI_TYPE_UNKNOWN_FILE:
-                case SI_TYPE_CURSOR:
-                case SI_TYPE_ENTRY:
-                case SI_TYPE_PALETTE:
-                case SI_TYPE_SELECTOR:
-                    break;
-
-                default:
-                    d_available_plugins[plugin.first] = *plugin.second;
-                    break;
-            }
-        )
-    });
-
-    if(!d_available_plugins.empty())
-    {
-        d_available_plugins_names.reserve(d_available_plugins.size());
-
-        // needs to be this way to function, no idea why. parallelizing attempts are a waste of time
-        std::transform(d_available_plugins.begin(), d_available_plugins.end(), std::back_inserter(d_available_plugins_names), [&](const auto& pair)
-        {
-            return pair.first;
-        });
-    }
-
-    std::for_each(plugins.begin(), plugins.end(), [&](const auto& plugin)
-    {
-        HANDLE_PYTHON_CALL(PY_WARNING, "Plugin does not have the attribute \'region_type\' on module level and is skipped. Try assigning PySIEffect.EffectType.SI_CUSTOM.",
-            const std::string& key = plugin.first;
-            const std::unique_ptr<bp::object>& value = plugin.second;
-
-            if(!value->is_none())
-            {
-                switch (bp::extract<int>(value->attr("region_type")))
-                {
-                    case SI_TYPE_CANVAS:
-                        add_canvas_region(value);
-                        break;
-
-                    case SI_TYPE_MOUSE_CURSOR:
-                        add_cursor_regions(value);
-                        break;
-
-                    case SI_TYPE_NOTIFICATION:
-                    {
-                        const int& width = bp::extract<int>(value->attr("region_width"));
-                        const int& height = bp::extract<int>(value->attr("region_height"));
-
-                        uint32_t x = s_width / 2 - width / 2;
-
-                        std::vector<glm::vec3> contour{glm::vec3(x, 75, 1),
-                                                       glm::vec3(x, 75 + height, 1),
-                                                       glm::vec3(x + width, 75 + height - 1, 1),
-                                                       glm::vec3(x + width, 75, 1)};
-
-                        uprm->add_region(contour, *value, 0);
-                        d_notification_uuid = uprm->regions().back()->uuid();
-                    }
-                        break;
-
-                    case SI_TYPE_DIRECTORY:
-                        add_directory_region(value);
-                        break;
-
-                    case SI_TYPE_BUTTON:
-                    case SI_TYPE_EXTERNAL_APPLICATION_CONTAINER:
-                    case SI_TYPE_TEXT_FILE:
-                    case SI_TYPE_IMAGE_FILE:
-                    case SI_TYPE_UNKNOWN_FILE:
-                    case SI_TYPE_CURSOR:
-                    case SI_TYPE_ENTRY:
-                    case SI_TYPE_SELECTOR:
-                        break;
-
-                    case SI_TYPE_PALETTE:
-                    {
-                        std::vector<glm::vec3> contour{glm::vec3(s_width - 300, 75, 1),
-                                                       glm::vec3(s_width - 300, 475, 1),
-                                                       glm::vec3(s_width - 100, 475, 1),
-                                                       glm::vec3(s_width - 100, 75, 1)};
-
-                        uprm->add_region(contour, *value, 0);
-                        break;
-                    }
-                    default:
-                        d_available_plugins[key] = *value;
-                        break;
-                }
-            }
-        )
-    });
-}
-
-void Context::add_canvas_region(const std::unique_ptr<bp::object>& canvas_effect)
-{
-    std::vector<glm::vec3> canvas_contour{glm::vec3(1, 1, 1), glm::vec3(1, s_height - 1, 1),
-                                          glm::vec3(s_width - 1, s_height - 1, 1),
-                                          glm::vec3(s_width - 1, 1, 1)};
-
-    uprm->add_region(canvas_contour, *canvas_effect, 0);
-    d_canvas_uuid = uprm->regions().back()->uuid();
-}
-
-void Context::add_cursor_regions(const std::unique_ptr<bp::object>& cursor_effect)
-{
-    HANDLE_PYTHON_CALL(PY_ERROR, "Fatal Error. Unable to create a region for the mouse cursor!",
-        std::vector<glm::vec3> mouse_contour {glm::vec3(0, 0, 1), glm::vec3(0, 24, 1), glm::vec3(18, 24, 1), glm::vec3(18, 0, 1)};
-        uprm->add_region(mouse_contour, *cursor_effect, 0, bp::dict());
-        d_mouse_uuid = uprm->regions().back()->uuid();
-
-        upim->external_objects()[d_mouse_uuid] = std::make_shared<ExternalObject>(ExternalObject::ExternalObjectType::MOUSE);
-        uplm->add_link(Context::SIContext()->input_manager()->external_objects()[uprm->regions().back()->uuid()], uprm->regions().back(), SI_CAPABILITY_LINK_POSITION, SI_CAPABILITY_LINK_POSITION);
-
-        INFO("Plugin available for drawing");
-    )
-}
-
-void Context::add_directory_region(const std::unique_ptr<bp::object>& directory_effect)
-{
-    const std::string& cwd = upfs->cwd();
-    const std::vector<std::string> children_paths = upfs->cwd_contents_paths(cwd);
-
-    INFO("Creating Region for " + cwd);
-
-    HANDLE_PYTHON_CALL(PY_ERROR, "Fatal Error. Unable to create a region for tstartup directory " + cwd + ". Try adding the attributes \'region_width\' and \'region_height\' on module level",
-        uint32_t width_directory = bp::extract<uint32_t>(directory_effect->attr("region_width"));
-        uint32_t height_directory = bp::extract<uint32_t>(directory_effect->attr("region_height"));
-
-        std::vector<glm::vec3> dir_contour {glm::vec3(0, 75, 1), glm::vec3(0, 75 + height_directory, 1), glm::vec3(width_directory, 75 + height_directory, 1), glm::vec3(width_directory, 75, 1) };
-
-        bp::dict kwargs;
-
-        kwargs["cwd"] = cwd;
-        kwargs["children"] = children_paths;
-        kwargs["parent"] = "";
-
-        uprm->add_region(dir_contour, *directory_effect, 0, kwargs);
-
-        INFO("Region for " + cwd + " created");
-    )
-}
-
 void Context::begin(const std::unordered_map<std::string, std::unique_ptr<bp::object>>& plugins, IRenderEngine* ire, int argc, char** argv)
 {
     if(ire)
@@ -229,14 +67,47 @@ void Context::begin(const std::unordered_map<std::string, std::unique_ptr<bp::ob
             exit(69);
         }
 
-        HANDLE_PYTHON_CALL(PY_ERROR, "Could not load startup file! A python file called \'StartSIGRun\' is required to be present in plugins folder!",
-            bp::import("plugins.StartSIGRun");
-        )
+        std::for_each(std::execution::par_unseq, plugins.begin(), plugins.end(), [&](const auto& plugin)
+        {
+            HANDLE_PYTHON_CALL(PY_WARNING, "Plugin does not have the attribute \'region_type\' on module level and is skipped. Try assigning PySIEffect.EffectType.SI_CUSTOM.",
+                               switch (bp::extract<int>(plugin.second->attr("region_type")))
+                               {
+                                   case SI_TYPE_CANVAS:
+                                   case SI_TYPE_MOUSE_CURSOR:
+                                   case SI_TYPE_NOTIFICATION:
+                                   case SI_TYPE_DIRECTORY:
+                                   case SI_TYPE_BUTTON:
+                                   case SI_TYPE_EXTERNAL_APPLICATION_CONTAINER:
+                                   case SI_TYPE_TEXT_FILE:
+                                   case SI_TYPE_IMAGE_FILE:
+                                   case SI_TYPE_UNKNOWN_FILE:
+                                   case SI_TYPE_CURSOR:
+                                   case SI_TYPE_ENTRY:
+                                   case SI_TYPE_PALETTE:
+                                   case SI_TYPE_SELECTOR:
+                                       break;
 
-        add_startup_regions(plugins);
+                                   default:
+                                       d_available_plugins[plugin.first] = *plugin.second;
+                                       break;
+                               }
+            )
+        });
 
         if(!d_available_plugins.empty())
-            d_selected_effects_by_id[d_mouse_uuid] = d_available_plugins[d_available_plugins_names[d_selected_effect_index]];
+        {
+            d_available_plugins_names.reserve(d_available_plugins.size());
+
+            // needs to be this way to function, no idea why. parallelizing attempts are a waste of time
+            std::transform(d_available_plugins.begin(), d_available_plugins.end(), std::back_inserter(d_available_plugins_names), [&](const auto& pair)
+            {
+                return pair.first;
+            });
+        }
+
+        HANDLE_PYTHON_CALL(PY_ERROR, "Could not load startup file! A python file called \'StartSIGRun\' is required to be present in plugins folder!",
+            bp::import("plugins.StartSIGRun").attr("on_startup")();
+        )
 
         d_app.exec();
         INFO("QT5 Application terminated!");
@@ -376,6 +247,44 @@ void Context::register_new_region_via_name(const std::vector<glm::vec3>& contour
     else
     {
         uprm->add_region(contour, d_available_plugins[effect_name], 0, kwargs);
+    }
+}
+
+void Context::register_new_region_via_type(const std::vector<glm::vec3>& contour, int id, bp::dict& kwargs)
+{
+    auto effect = std::find_if(std::execution::par_unseq, d_plugins.begin(), d_plugins.end(), [&id](auto& pair)
+    {
+       return  pair.second.attr("region_type") == id;
+    });
+
+    if(effect != d_plugins.end())
+    {
+        if(id == SI_TYPE_DIRECTORY)
+        {
+            std::string k_cwd = std::string(bp::extract<char*>(kwargs["cwd"]));
+
+            if(!k_cwd.empty())
+                upfs->set_cwd(k_cwd);
+
+            const std::string& cwd = upfs->cwd();
+            const std::vector<std::string> children_paths = upfs->cwd_contents_paths(cwd);
+
+            kwargs["cwd"] = cwd;
+            kwargs["children"] = children_paths;
+            kwargs["parent"] = "";
+
+            INFO("Region for " + cwd + " created");
+        }
+
+        uprm->add_region(contour, effect->second, 0, kwargs);
+
+        if(id == SI_TYPE_MOUSE_CURSOR)
+        {
+            upim->external_objects()[uprm->regions().back()->uuid()] = std::make_shared<ExternalObject>(ExternalObject::ExternalObjectType::MOUSE);
+            uplm->add_link(Context::SIContext()->input_manager()->external_objects()[uprm->regions().back()->uuid()], uprm->regions().back(), SI_CAPABILITY_LINK_POSITION, SI_CAPABILITY_LINK_POSITION);
+
+            INFO("Plugin available for drawing");
+        }
     }
 }
 
