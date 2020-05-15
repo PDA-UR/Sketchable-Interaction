@@ -54,7 +54,6 @@ class Directory(Entry.Entry):
         self.enable_link_emission(PySIEffect.POSITION, self.position)
         self.is_open_entry_capability_blocked = False
 
-
     def set_folder_contents_page(self, value):
         self.btn_presses = self.btn_presses - 1 if value else self.btn_presses + 1
         self.current_page = self.btn_presses % len(self.browse_pages)
@@ -96,8 +95,8 @@ class Directory(Entry.Entry):
 
     def on_open_entry_continuous_recv(self, is_other_controlled):
         if self.parent == "" and not self.is_open_entry_capability_blocked and not self.is_under_user_control and not is_other_controlled:
-            x = self.x_pos()
-            y = self.y_pos()
+            x = self.relative_x_pos()
+            y = self.relative_y_pos()
 
             self.width = self.preview_width
             self.height = self.preview_height
@@ -119,8 +118,8 @@ class Directory(Entry.Entry):
 
     def on_open_entry_leave_recv(self, is_other_controlled):
         if self.parent == "" and self.is_open_entry_capability_blocked:
-            x = self.x_pos()
-            y = self.y_pos()
+            x = self.relative_x_pos()
+            y = self.relative_y_pos()
 
             self.width = self.icon_width * 2
             self.height = self.icon_height + self.text_height
@@ -172,8 +171,8 @@ class Directory(Entry.Entry):
                 self.parent = ""
 
     def show_current_folder_contents_page(self):
-        dir_x = self.x + self.x_pos()
-        dir_y = self.y + self.y_pos()
+        dir_x = self.absolute_x_pos()
+        dir_y = self.absolute_y_pos()
 
         self.add_child_entries(dir_x, dir_y)
         self.add_child_buttons(dir_x, dir_y)

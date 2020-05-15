@@ -70,40 +70,34 @@ void Context::begin(const std::unordered_map<std::string, std::unique_ptr<bp::ob
         std::for_each(std::execution::par_unseq, plugins.begin(), plugins.end(), [&](const auto& plugin)
         {
             HANDLE_PYTHON_CALL(PY_WARNING, "Plugin does not have the attribute \'region_type\' on module level and is skipped. Try assigning PySIEffect.EffectType.SI_CUSTOM.",
-                               switch (bp::extract<int>(plugin.second->attr("region_type")))
-                               {
-                                   case SI_TYPE_CANVAS:
-                                   case SI_TYPE_MOUSE_CURSOR:
-                                   case SI_TYPE_NOTIFICATION:
-                                   case SI_TYPE_DIRECTORY:
-                                   case SI_TYPE_BUTTON:
-                                   case SI_TYPE_EXTERNAL_APPLICATION_CONTAINER:
-                                   case SI_TYPE_TEXT_FILE:
-                                   case SI_TYPE_IMAGE_FILE:
-                                   case SI_TYPE_UNKNOWN_FILE:
-                                   case SI_TYPE_CURSOR:
-                                   case SI_TYPE_ENTRY:
-                                   case SI_TYPE_PALETTE:
-                                   case SI_TYPE_SELECTOR:
-                                       break;
+                switch (bp::extract<int>(plugin.second->attr("region_type")))
+                {
+                    case SI_TYPE_CANVAS:
+                    case SI_TYPE_MOUSE_CURSOR:
+                    case SI_TYPE_NOTIFICATION:
+                    case SI_TYPE_DIRECTORY:
+                    case SI_TYPE_BUTTON:
+                    case SI_TYPE_EXTERNAL_APPLICATION_CONTAINER:
+                    case SI_TYPE_TEXT_FILE:
+                    case SI_TYPE_IMAGE_FILE:
+                    case SI_TYPE_UNKNOWN_FILE:
+                    case SI_TYPE_CURSOR:
+                    case SI_TYPE_ENTRY:
+                    case SI_TYPE_PALETTE:
+                    case SI_TYPE_SELECTOR:
+                        break;
 
-                                   default:
-                                       d_available_plugins[plugin.first] = *plugin.second;
-                                       break;
-                               }
+                    default:
+                        d_available_plugins[plugin.first] = *plugin.second;
+                        break;
+                }
             )
         });
 
-        if(!d_available_plugins.empty())
+        std::transform(d_available_plugins.begin(), d_available_plugins.end(), std::back_inserter(d_available_plugins_names), [&](const auto& pair)
         {
-            d_available_plugins_names.reserve(d_available_plugins.size());
-
-            // needs to be this way to function, no idea why. parallelizing attempts are a waste of time
-            std::transform(d_available_plugins.begin(), d_available_plugins.end(), std::back_inserter(d_available_plugins_names), [&](const auto& pair)
-            {
-                return pair.first;
-            });
-        }
+            return pair.first;
+        });
 
         HANDLE_PYTHON_CALL(PY_ERROR, "Could not load startup file! A python file called \'StartSIGRun\' is required to be present in plugins folder!",
             bp::import("plugins.StartSIGRun").attr("on_startup")();
