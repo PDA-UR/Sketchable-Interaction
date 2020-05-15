@@ -11,16 +11,11 @@
 
 RegionManager::RegionManager()
 {
-    d_region_insertion_queries.reserve(15);
+
 }
 
 RegionManager::~RegionManager()
 {
-}
-
-void RegionManager::query_region_insertion(const std::vector<glm::vec3> &contour, const bp::object& effect, std::shared_ptr<Region>& parent, const bp::dict& kwargs)
-{
-    d_region_insertion_queries.emplace_back(contour, effect, kwargs, parent);
 }
 
 void RegionManager::add_region(const std::vector<glm::vec3> &contour, const bp::object &effect, uint32_t region_uuid, const bp::dict& kwargs)
@@ -179,30 +174,14 @@ void RegionManager::update_region_deletions()
     }), d_regions.end());
 }
 
-void RegionManager::update_region_insertions()
-{
-    std::transform(d_region_insertion_queries.begin(), d_region_insertion_queries.end(), std::back_inserter(d_regions), [&](const auto& query) -> std::shared_ptr<Region>
-    {
-        auto region = std::make_shared<Region>(std::get<0>(query), std::get<1>(query), 0, 0, std::get<2>(query));
-
-        HANDLE_PYTHON_CALL(PY_WARNING, "Cannot apply " + region->name() + " as a child to " + std::get<3>(query)->name(),
-            if(std::get<3>(query).get())
-            {
-                std::get<3>(query)->raw_effect().attr("children").attr("append")(region->raw_effect());
-            }
-        )
-
-        return region;
-    });
-
-    d_region_insertion_queries.clear();
-}
-
 void RegionManager::update_regions()
 {
     std::for_each(std::execution::seq, d_regions.rbegin(), d_regions.rend(), [](auto& region)
     {
-        region->update();
+        if(region->is_new())
+            region->set_is_new(false);
+        else
+            region->update();
     });
 }
 
@@ -211,5 +190,4 @@ void RegionManager::update()
     update_mouse_inputs();
     update_region_deletions();
     update_regions();
-    update_region_insertions();
 }

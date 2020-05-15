@@ -300,6 +300,16 @@ const glm::vec4& Region::color() const
     return d_py_effect->color();
 }
 
+bool Region::is_new()
+{
+    return d_is_new;
+}
+
+void Region::set_is_new(bool toggle)
+{
+    d_is_new = toggle;
+}
+
 uint8_t Region::handle_collision_event(const std::string &function_name, PySIEffect &colliding_effect)
 {
     std::for_each(std::execution::seq, colliding_effect.cap_collision_emit().begin(), colliding_effect.cap_collision_emit().end(), [&](auto& pair)

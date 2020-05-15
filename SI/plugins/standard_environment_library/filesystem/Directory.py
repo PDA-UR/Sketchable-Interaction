@@ -46,7 +46,6 @@ class Directory(Entry.Entry):
         self.add_QML_data("page_name", "1 / " + str(len(self.browse_pages)), PySIEffect.DataType.STRING)
 
         self.enable_effect(PySIEffect.PARENT, self.EMISSION, self.on_parent_enter_emit, None, self.on_parent_leave_emit)
-
         self.enable_effect(PySIEffect.BTN, self.RECEPTION, self.on_btn_enter_recv, self.on_btn_continuous_recv, self.on_btn_leave_recv)
         self.enable_effect(PySIEffect.OPEN_ENTRY, self.RECEPTION, self.on_open_entry_enter_recv, self.on_open_entry_continuous_recv, self.on_open_entry_leave_recv)
 

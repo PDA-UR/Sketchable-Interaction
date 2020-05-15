@@ -47,7 +47,7 @@ class Palette(SIEffect.SIEffect):
                      [((self.x_offset + self.selector_width) * x) + (self.x_pos() + self.x_offset + self.selector_width), ((self.y_offset + self.selector_height) * y) + (self.y_pos() + self.y_offset + self.selector_height)],
                      [((self.x_offset + self.selector_width) * x) + (self.x_pos() + self.x_offset + self.selector_width), ((self.y_offset + self.selector_height) * y) + (self.y_pos() + self.y_offset)]]
 
-            self.create_region(shape, available_plugins[i], self.as_selector, {"parent": self._uuid})
+            self.create_region_via_name(shape, available_plugins[i], self.as_selector, {"parent": self._uuid})
 
     def position(self):
         x = self.x - self.last_x

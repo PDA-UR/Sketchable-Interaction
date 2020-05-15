@@ -222,8 +222,7 @@ void Context::register_new_region(const std::vector<glm::vec3>& contour, const s
 {
     if(contour.size() > 2)
     {
-        std::shared_ptr<Region> t(nullptr);
-        uprm->query_region_insertion(contour, d_selected_effects_by_id[uuid], t);
+        uprm->add_region(contour, d_selected_effects_by_id[uuid], 0);
     }
 }
 
@@ -293,9 +292,9 @@ const std::vector<std::string>& Context::available_plugins_names()
     return d_available_plugins_names;
 }
 
-void Context::spawn_folder_contents_buttons_as_regions(std::shared_ptr<Region>& parent, uint32_t dir_x, uint32_t dir_y, uint32_t preview_width, uint32_t preview_height)
+void Context::spawn_folder_contents_buttons_as_regions(const std::string& parent, uint32_t dir_x, uint32_t dir_y, uint32_t preview_width, uint32_t preview_height)
 {
-    HANDLE_PYTHON_CALL(PY_WARNING, "Unable to add buttons for browsing folder contents to " + parent->name() + ". Try adding the attributes \'region_width\' and \'region_height\' on module level.",
+    HANDLE_PYTHON_CALL(PY_WARNING, "Unable to add buttons for browsing folder contents. Try adding the attributes \'region_width\' and \'region_height\' on module level.",
         bp::object value = d_plugins[SI_NAME_EFFECT_BUTTON];
 
         uint32_t btn_width = bp::extract<uint32_t>(value.attr("region_width"));
@@ -308,9 +307,9 @@ void Context::spawn_folder_contents_buttons_as_regions(std::shared_ptr<Region>& 
 
         bp::dict kwargs;
         kwargs["value"] = false;
-        kwargs["parent"] = parent->uuid();
+        kwargs["parent"] = parent;
 
-        uprm->query_region_insertion(btn_contour, value, parent, kwargs);
+        uprm->add_region(btn_contour, value, 0, kwargs);
 
         std::vector<glm::vec3> btn_contour2{glm::vec3(dir_x, dir_y + preview_height - btn_height, 1),
                                             glm::vec3(dir_x, dir_y + preview_height, 1),
@@ -318,13 +317,13 @@ void Context::spawn_folder_contents_buttons_as_regions(std::shared_ptr<Region>& 
                                             glm::vec3(dir_x + btn_width, dir_y + preview_height - btn_height, 1)};
         bp::dict kwargs2;
         kwargs2["value"] = true;
-        kwargs2["parent"] = parent->uuid();
+        kwargs2["parent"] = parent;
 
-        uprm->query_region_insertion(btn_contour2, value, parent, kwargs2);
+        uprm->add_region(btn_contour2, value, 0, kwargs2);
     )
 }
 
-void Context::spawn_folder_contents_entries_as_regions(std::shared_ptr<Region>& parent, const std::vector<std::string>& children_paths, uint32_t dir_x, uint32_t dir_y, uint32_t dir_width, uint32_t dir_height, uint32_t preview_width, uint32_t preview_height)
+void Context::spawn_folder_contents_entries_as_regions(const std::string& parent, const std::vector<std::string>& children_paths, uint32_t dir_x, uint32_t dir_y, uint32_t dir_width, uint32_t dir_height, uint32_t preview_width, uint32_t preview_height)
 {
     uint32_t x_offset = preview_width / 10;
     uint32_t y_offset = preview_height / 6;
@@ -334,7 +333,7 @@ void Context::spawn_folder_contents_entries_as_regions(std::shared_ptr<Region>& 
     int32_t y = -1;
     int32_t x = 1;
 
-    std::for_each(std::execution::seq, children_paths.begin(), children_paths.end(), [&](auto& child_path)
+    std::for_each(children_paths.begin(), children_paths.end(), [&](auto& child_path)
     {
         if(i & 1)
             ++x;
@@ -370,9 +369,9 @@ void Context::spawn_folder_contents_entries_as_regions(std::shared_ptr<Region>& 
                 break;
         }
 
-        kwargs["parent"] = parent->uuid();
+        kwargs["parent"] = parent;
 
-        uprm->query_region_insertion(contour, d_plugins[effect_name], parent, kwargs);
+        uprm->add_region(contour, d_plugins[effect_name], 0, kwargs);
 
         ++i;
     });
@@ -387,23 +386,23 @@ void Context::spawn_folder_contents_as_regions(const std::vector<std::string>& c
 
     if(it != uprm->regions().end())
     {
-        auto& region = *it;
+        HANDLE_PYTHON_CALL(PY_WARNING, "An error occured when spawning the entries of " + (*it)->name() + ". Specify the attributes \'preview_width\', \'preview_height\', \'icon_width\', \'icon_height\' and \'text_height\' on class level in your specific entry classes e.g. TextFile.py",
+            auto& region = *it;
 
-        const glm::vec3& tlc = region->aabb()[0];
+            const glm::vec3& tlc = region->aabb()[0];
 
-        const int32_t dir_x = tlc.x + region->transform()[0].z;
-        const int32_t dir_y = tlc.y + region->transform()[1].z;
+            const int32_t dir_x = tlc.x + region->transform()[0].z;
+            const int32_t dir_y = tlc.y + region->transform()[1].z;
 
-        HANDLE_PYTHON_CALL(PY_WARNING, "An error occured when spawning the entries of " + region->name() + ". Specify the attributes \'preview_width\', \'preview_height\', \'icon_width\', \'icon_height\' and \'text_height\' on class level in your specific entry classes e.g. TextFile.py",
             const uint32_t preview_width = bp::extract<uint32_t>(region->raw_effect().attr("preview_width"));
             const uint32_t preview_height = bp::extract<uint32_t>(region->raw_effect().attr("preview_height"));
             const uint32_t dir_width = bp::extract<uint32_t>(region->raw_effect().attr("icon_width")) * 2;
             const uint32_t dir_height = bp::extract<uint32_t>(region->raw_effect().attr("icon_height")) + bp::extract<uint32_t>(region->raw_effect().attr("text_height"));
 
             if(with_btns)
-                spawn_folder_contents_buttons_as_regions(region, dir_x, dir_y, preview_width, preview_height);
+                spawn_folder_contents_buttons_as_regions(region->uuid(), dir_x, dir_y, preview_width, preview_height);
 
-            spawn_folder_contents_entries_as_regions(region, children_paths, dir_x, dir_y, dir_width, dir_height, preview_width, preview_height);
+            spawn_folder_contents_entries_as_regions(region->uuid(), children_paths, dir_x, dir_y, dir_width, dir_height, preview_width, preview_height);
         )
     }
 }

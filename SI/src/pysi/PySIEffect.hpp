@@ -31,6 +31,7 @@ public:
 
     void __create_region__(const std::vector<glm::vec3>& contour, const std::string& name, bool as_selector, bp::dict& kwargs);
     void __create_region__(const bp::list& contour, const std::string& name, bool as_selector, bp::dict& kwargs);
+    void __create_region__(const bp::list& contour, int effect_type, bp::dict& kwargs);
 
     bp::tuple __context_dimensions__();
 

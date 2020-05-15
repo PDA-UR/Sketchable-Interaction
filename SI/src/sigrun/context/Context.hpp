@@ -50,8 +50,8 @@ public:
     void register_new_region_via_type(const std::vector<glm::vec3>& contour, int type, bp::dict& kwargs);
 
     void spawn_folder_contents_as_regions(const std::vector<std::string>& children_paths, const std::string& uuid, const bool with_btns);
-    void spawn_folder_contents_buttons_as_regions(std::shared_ptr<Region>& parent, uint32_t dir_x, uint32_t dir_y, uint32_t preview_width, uint32_t preview_height);
-    void spawn_folder_contents_entries_as_regions(std::shared_ptr<Region>& parent, const std::vector<std::string>& children_paths, uint32_t dir_x, uint32_t dir_y, uint32_t dir_width, uint32_t dir_height, uint32_t preview_width, uint32_t preview_height);
+    void spawn_folder_contents_buttons_as_regions(const std::string& parent, uint32_t dir_x, uint32_t dir_y, uint32_t preview_width, uint32_t preview_height);
+    void spawn_folder_contents_entries_as_regions(const std::string& parent, const std::vector<std::string>& children_paths, uint32_t dir_x, uint32_t dir_y, uint32_t dir_width, uint32_t dir_height, uint32_t preview_width, uint32_t preview_height);
 
     const std::map<std::string, bp::object>& available_plugins() const;
     const bp::object& plugin_by_name(const std::string& name);
