@@ -19,8 +19,8 @@ class SimpleNotification(SIEffect.SIEffect):
         self.color = PySIEffect.Color(255, 255, 255, 255)
         self.message = "Hello World"
 
-        self.width = 800
-        self.height = 75
+        self.width = region_width
+        self.height = region_height
 
         self.add_QML_data("rect_width", self.width, PySIEffect.DataType.INT)
         self.add_QML_data("rect_height", self.height, PySIEffect.DataType.INT)

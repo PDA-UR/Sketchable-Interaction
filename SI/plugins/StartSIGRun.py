@@ -41,7 +41,7 @@ def add_palette():
 def add_start_directory():
     directory_path = "" # if empty, the Desktop will be used
 
-    directory_shape = [[0, 75,],
+    directory_shape = [[0, 75],
                        [0, 75 + Directory.region_height],
                        [Directory.region_width, 75 + Directory.region_height],
                        [Directory.region_width, 75]]
@@ -50,6 +50,10 @@ def add_start_directory():
     PySIStartup.PySIStartup.create_region_by_id(directory_shape, PySIEffect.EffectType.SI_DIRECTORY, kwargs)
 
 def on_startup():
+    PySIStartup.PySIStartup.logger_log(True)
+    PySIStartup.PySIStartup.logger_set_log_output(PySIStartup.SI_LOG_SHOW_ALL)
+    PySIStartup.PySIStartup.logger_quench_messages_from_class("linkingmanager")
+
     add_canvas()
     add_mouse_cursor()
     add_simple_notification()

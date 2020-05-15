@@ -218,8 +218,7 @@ class SIEffect(PySIEffect.PySIEffect):
     # @param abs_x the absolute position on the x axis (float)
     # @param abs_y the absolute position on the y axis (float)
     def set_position_from_position(self, rel_x, rel_y, abs_x, abs_y):
-        self.x += rel_x
-        self.y += rel_y
+        self.move(self.x + rel_x, self.y + rel_y)
 
         self.delta_x, self.delta_y = rel_x, rel_y
 
@@ -230,17 +229,29 @@ class SIEffect(PySIEffect.PySIEffect):
             self.mouse_x = 0
             self.mouse_y = 0
 
-    ## member function forgetting the x coordinate of the parent region's top left corner
+    ## member function for getting the relative x coordinate of the parent region's top left corner
     #
     # @param self the object pointer
-    def x_pos(self):
+    def relative_x_pos(self):
         return self.aabb[0].x
 
-    ## member function forgetting the y coordinate of the parent region's top left corner
+    ## member function for getting the relative y coordinate of the parent region's top left corner
     #
     # @param self the object pointer
-    def y_pos(self):
+    def relative_y_pos(self):
         return self.aabb[0].y
+
+    ## member function for getting the absolute x coordinate of the parent region's top left corner
+    #
+    # @param self the object pointer
+    def absolute_x_pos(self):
+        return self.x + self.relative_x_pos()
+
+    ## member function for getting the absolute y coordinate of the parent region's top left corner
+    #
+    # @param self the object pointer
+    def absolute_y_pos(self):
+        return self.y + self.relative_y_pos()
 
     ## member function for receiving data from the PySIEffect.MOVE capability for the PySIEffect.ON_ENTER collision event
     #
@@ -493,8 +504,8 @@ class SIEffect(PySIEffect.PySIEffect):
     #
     # @param self the object pointer
     def snap_to_mouse(self):
-        self.x = self.mouse_x - self.x_pos() - self.width / 2
-        self.y = self.mouse_y - self.y_pos() - self.height / 2
+        self.x = self.mouse_x - self.relative_x_pos() - self.width / 2
+        self.y = self.mouse_y - self.relative_y_pos() - self.height / 2
 
     ## member function for retrieving the dimensions of the active SI-Context (width in px, and height in px)
     #
@@ -511,3 +522,7 @@ class SIEffect(PySIEffect.PySIEffect):
     # @param kwargs key-worded arguments containing specifics of certain regions
     def assign_effect(self, effect_name_to_assign, effect_display_name, kwargs):
         self.__assign_effect__(self._uuid, effect_name_to_assign, effect_display_name, kwargs)
+
+    def move(self, x, y):
+        self.x = x
+        self.y = y

@@ -98,16 +98,19 @@ void Core::retrieve_available_plugins(std::unordered_map<std::string, std::uniqu
             std::string module_name = name.substr(0, name.find_last_of('.'));
             std::string rpath = full_path.substr(full_path.find(plugin_path)) + "/" + name;
 
-            script.load_class_names(classes, rpath);
-
-            std::for_each(std::execution::par_unseq, classes.begin(), classes.end(), [&](auto& clazz)
+            if(module_name != "StartSIGRun" && module_name.substr(0, 2) != "__")
             {
-                bp::object obj = script.si_plugin(module_name, rpath, clazz);
+                script.load_class_names(classes, rpath);
 
-                HANDLE_PYTHON_CALL(PY_WARNING, "The found plugin does not contain the attribute \'region_name\' on module level. Therefore, the plugin is skipped and not available for use. Assign a str-value to it.",
-                    plugins[std::string(bp::extract<char*>(obj.attr("region_name")))] = std::make_unique<bp::object>(obj);
-                )
-            });
+                std::for_each(classes.begin(), classes.end(), [&](auto& clazz)
+                {
+                    bp::object obj = script.si_plugin(module_name, rpath, clazz);
+
+                    HANDLE_PYTHON_CALL(PY_WARNING, "The found plugin does not contain the attribute \'region_name\' on module level. Therefore, the plugin is skipped and not available for use. Assign a str-value to it.",
+                        plugins[std::string(bp::extract<char*>(obj.attr("region_name")))] = std::make_unique<bp::object>(obj);
+                    )
+                });
+            }
         )
     });
 }

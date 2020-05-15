@@ -172,9 +172,21 @@ BOOST_PYTHON_MODULE(libPySI)
         bp::class_<PySIStartup, boost::noncopyable>("PySIStartup", bp::init<>())
                 .def("create_region_by_id", &PySIStartup::create_region_by_id).staticmethod("create_region_by_id")
                 .def("context_dimensions", &PySIStartup::context_dimensions).staticmethod("context_dimensions")
-
+                .def("logger_quench_messages_from_class", &PySIStartup::logger_quench_messages_from_class).staticmethod("logger_quench_messages_from_class")
+                .def("logger_unquench_messages_from_class", &PySIStartup::logger_unquench_messages_from_class).staticmethod("logger_unquench_messages_from_class")
+                .def("logger_log", &PySIStartup::logger_log)
+                .def("logger_set_log_output", &PySIStartup::logger_set_log_output)
                 .enable_pickling()
                 ;
+
+        startup_scope.attr("SI_LOG_SHOW_ALL") = (int32_t) LOG_SHOW_ALL;
+        startup_scope.attr("SI_LOG_SHOW_NONE") = (int32_t) LOG_SHOW_NONE;
+        startup_scope.attr("SI_LOG_SHOW_INFO") = (int32_t) LOG_SHOW_INFO;
+        startup_scope.attr("SI_LOG_SHOW_WARN") = (int32_t) LOG_SHOW_WARN;
+        startup_scope.attr("SI_LOG_SHOW_ERROR") = (int32_t) LOG_SHOW_ERROR;
+        startup_scope.attr("SI_LOG_SHOW_DEBUG") = (int32_t) LOG_SHOW_DEBUG;
+        startup_scope.attr("SI_LOG_NONE") = (int32_t) LOG_NONE;
+        startup_scope.attr("SI_LOG_FILE") = (int32_t) LOG_FILE;
 
     } // scope ended for everything which shall be part of startup_scope
 }

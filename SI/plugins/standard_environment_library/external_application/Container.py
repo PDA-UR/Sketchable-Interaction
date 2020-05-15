@@ -22,8 +22,7 @@ class Container(SIEffect.SIEffect):
 
     def set_geometry_from_geometry(self, abs_x, abs_y, width, height):
         if self.width == width and self.height == height:
-            self.x = abs_x
-            self.y = abs_y
+            self.move(abs_x, abs_y)
 
             self.width = width
             self.height = height

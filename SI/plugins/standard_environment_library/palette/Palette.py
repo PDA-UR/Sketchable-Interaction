@@ -42,10 +42,10 @@ class Palette(SIEffect.SIEffect):
                 x = x - self.num_selectors_per_row - 1 if x - self.num_selectors_per_row - 1 >= 0 else 0
                 y += 1
 
-            shape = [[((self.x_offset + self.selector_width) * x) + (self.x_pos() + self.x_offset), ((self.y_offset + self.selector_height) * y) + (self.y_pos() + self.y_offset)],
-                     [((self.x_offset + self.selector_width) * x) + (self.x_pos() + self.x_offset), ((self.y_offset + self.selector_height) * y) + (self.y_pos() + self.y_offset + self.selector_height)],
-                     [((self.x_offset + self.selector_width) * x) + (self.x_pos() + self.x_offset + self.selector_width), ((self.y_offset + self.selector_height) * y) + (self.y_pos() + self.y_offset + self.selector_height)],
-                     [((self.x_offset + self.selector_width) * x) + (self.x_pos() + self.x_offset + self.selector_width), ((self.y_offset + self.selector_height) * y) + (self.y_pos() + self.y_offset)]]
+            shape = [[((self.x_offset + self.selector_width) * x) + (self.relative_x_pos() + self.x_offset), ((self.y_offset + self.selector_height) * y) + (self.relative_y_pos() + self.y_offset)],
+                     [((self.x_offset + self.selector_width) * x) + (self.relative_x_pos() + self.x_offset), ((self.y_offset + self.selector_height) * y) + (self.relative_y_pos() + self.y_offset + self.selector_height)],
+                     [((self.x_offset + self.selector_width) * x) + (self.relative_x_pos() + self.x_offset + self.selector_width), ((self.y_offset + self.selector_height) * y) + (self.relative_y_pos() + self.y_offset + self.selector_height)],
+                     [((self.x_offset + self.selector_width) * x) + (self.relative_x_pos() + self.x_offset + self.selector_width), ((self.y_offset + self.selector_height) * y) + (self.relative_y_pos() + self.y_offset)]]
 
             self.create_region_via_name(shape, available_plugins[i], self.as_selector, {"parent": self._uuid})
 

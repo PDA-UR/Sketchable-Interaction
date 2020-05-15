@@ -45,8 +45,8 @@ class MouseCursor(SIEffect.SIEffect):
     def set_position_from_position(self, rel_x, rel_y, abs_x, abs_y):
         self.last_x = self.x
         self.last_y = self.y
-        self.x = abs_x
-        self.y = abs_y
+
+        self.move(abs_x, abs_y)
 
     def self_on_sketch_enter_emit(self, other):
         self.parent_canvas = other

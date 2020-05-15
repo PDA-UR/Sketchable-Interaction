@@ -1,5 +1,7 @@
 from libPySI import PySIEffect
 from plugins.standard_environment_library.filesystem import Entry
+
+
 from PIL import Image
 
 
@@ -32,8 +34,8 @@ class ImageFile(Entry.Entry):
 
             self.is_in_preview = True
 
-            x = self.x_pos()
-            y = self.y_pos()
+            x = self.relative_x_pos()
+            y = self.relative_y_pos()
 
             self.width = int(self.img_height / 2 * (self.img_width / self.img_height))
             self.height = int(self.img_height / 2)
@@ -58,8 +60,8 @@ class ImageFile(Entry.Entry):
 
             self.is_in_preview = False
 
-            x = self.x_pos()
-            y = self.y_pos()
+            x = self.relative_x_pos()
+            y = self.relative_y_pos()
 
             self.width = self.icon_width * 2
             self.height = self.icon_height + self.text_height
