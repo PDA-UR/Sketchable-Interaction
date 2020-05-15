@@ -71,6 +71,19 @@ const std::vector<std::string> FileSystem::cwd_contents_paths(const std::string&
     return ret;
 }
 
+const std::vector<int> FileSystem::cwd_contents_types(const std::vector<std::string>& contents)
+{
+    std::vector<int> types;
+    types.reserve(contents.size());
+
+    std::transform(contents.begin(), contents.end(), std::back_inserter(types), [&](auto& path)
+    {
+        return entry_type(path);
+    });
+
+    return types;
+}
+
 uint32_t FileSystem::entry_type(const std::string& _path)
 {
     fs::path path(_path);

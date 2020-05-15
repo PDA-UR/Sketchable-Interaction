@@ -16,14 +16,6 @@
 namespace bp = boost::python;
 
 /**
- * \brief global helper function to display an index error
- */
-void IndexError()
-{
-    PyErr_SetString(PyExc_IndexError, "Index out of range");
-}
-
-/**
  * \class VectorExposure
  * \brief VectorExposure class providing the interface for exposing STL vectors to the python3 bindings (PySI) in a pythonic way
  * @tparam T the STL vector to be exposed
@@ -225,8 +217,6 @@ public:
 
             self[index] = glm::vec3(x, y, 1);
         }
-        else
-            IndexError();
     }
 
     /**
@@ -321,8 +311,6 @@ public:
 
         if(index >= 0 && index < self.size())
             self[index] = s;
-        else
-            IndexError();
     }
 
     /**
@@ -417,8 +405,6 @@ public:
                 self[index] = LinkCandidate(sender, sender_attrib, recv, recv_attrib);
             }
         }
-        else
-            IndexError();
     }
 
     /**

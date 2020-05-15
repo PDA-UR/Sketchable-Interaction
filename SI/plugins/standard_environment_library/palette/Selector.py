@@ -23,5 +23,9 @@ class Selector(SIEffect.SIEffect):
         self.disable_effect(PySIEffect.MOVE, self.RECEPTION)
         self.enable_effect(PySIEffect.ASSIGN, self.EMISSION, None, self.on_assign_continuous_emit, None)
 
+        self.parent = kwargs["parent"]
+
+        self.create_link(self.parent, PySIEffect.POSITION, self._uuid, PySIEffect.POSITION)
+
     def on_assign_continuous_emit(self, other):
         return self.target_name, self.target_display_name, {}

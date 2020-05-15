@@ -4,7 +4,8 @@ from plugins.standard_environment_library import SIEffect
 
 region_type = PySIEffect.EffectType.SI_MOUSE_CURSOR
 region_name = PySIEffect.SI_STD_NAME_MOUSE_CURSOR
-
+region_width = 18
+region_height = 24
 
 class MouseCursor(SIEffect.SIEffect):
     def __init__(self, shape=PySIEffect.PointVector(), uuid="", kwargs={}):
@@ -16,8 +17,8 @@ class MouseCursor(SIEffect.SIEffect):
         self.color = PySIEffect.Color(0, 0, 0, 0)
         self.assigned_effect = ""
 
-        self.width = 18
-        self.height = 24
+        self.width = region_width
+        self.height = region_height
 
         self.clicks = 0
 
@@ -44,8 +45,8 @@ class MouseCursor(SIEffect.SIEffect):
     def set_position_from_position(self, rel_x, rel_y, abs_x, abs_y):
         self.last_x = self.x
         self.last_y = self.y
-        self.x = abs_x
-        self.y = abs_y
+
+        self.move(abs_x, abs_y)
 
     def self_on_sketch_enter_emit(self, other):
         self.parent_canvas = other
@@ -95,8 +96,9 @@ class MouseCursor(SIEffect.SIEffect):
             if PySIEffect.CLICK not in self.cap_emit.keys():
                 self.enable_effect(PySIEffect.CLICK, True, self.on_btn_press_enter_emit, self.on_btn_press_continuous_emit, self.on_btn_press_leave_emit)
 
-            if PySIEffect.SKETCH not in self.cap_emit.keys():
-                self.enable_effect(PySIEffect.SKETCH, True, self.self_on_sketch_enter_emit, self.on_sketch_continuous_emit, self.on_sketch_leave_emit)
+            if self.assigned_effect != "":
+                if PySIEffect.SKETCH not in self.cap_emit.keys():
+                    self.enable_effect(PySIEffect.SKETCH, True, self.self_on_sketch_enter_emit, self.on_sketch_continuous_emit, self.on_sketch_leave_emit)
         else:
             if PySIEffect.SKETCH in self.cap_emit.keys():
                 self.disable_effect(PySIEffect.SKETCH, True)

@@ -77,7 +77,12 @@ public:
     const int32_t last_delta_x() const;
     const int32_t last_delta_y() const;
 
+    bool is_new();
+    void set_is_new(bool toggle);
+
 private:
+    bool d_is_new = true;
+
     void process_canvas_specifics();
     void process_linking_relationships();
 

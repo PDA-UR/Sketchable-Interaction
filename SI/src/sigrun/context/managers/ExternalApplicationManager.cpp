@@ -29,8 +29,8 @@ void ExternalApplicationManager::launch_application(const std::string &file_regi
 
 void ExternalApplicationManager::launch_standard_application(const std::string &file_region_uuid, const std::string &file_path)
 {
-//    QProcess::startDetached(SI_LINUX_XDG_OPEN.c_str(), QStringList() << file_path.c_str(), QString(""));
-//    process_wmctrl_command_output(generate_wmctrl_command_output(generate_wmctrl_command(file_path)), file_region_uuid, file_path);
+    QProcess::startDetached(SI_LINUX_XDG_OPEN.c_str(), QStringList() << file_path.c_str(), QString(""));
+    process_wmctrl_command_output(generate_wmctrl_command_output(generate_wmctrl_command(file_path)), file_region_uuid, file_path);
 }
 
 void ExternalApplicationManager::terminate_application(const std::string &uuid)

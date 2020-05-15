@@ -10,54 +10,64 @@ CollisionManager::~CollisionManager() = default;
 
 void CollisionManager::collide(std::vector<std::shared_ptr<Region>> &regions)
 {
-    int i = 0;
-
-    std::for_each(std::execution::seq, regions.rbegin(), regions.rend(), [&](auto& a)
+    for(int32_t i = regions.size() - 1; i >= 0; --i)
     {
-        std::for_each(std::execution::seq, regions.rbegin() + (++i), regions.rend(), [&](auto& b)
+        if(!regions[i].get())
+            continue;
+
+        if(regions[i]->is_new())
+            continue;
+
+        for(int32_t k = i - 1; k >= 0; --k)
         {
-            if(has_capabilities_in_common(a, b))
+            if(!regions[k].get())
+                continue;
+
+            if (regions[k]->is_new())
+                continue;
+
+            if(has_capabilities_in_common(regions[i], regions[k]))
             {
-                if(collides_with_aabb(a, b))
+                if(collides_with_aabb(regions[i], regions[k]))
                 {
-                    if(collides_with_mask(a, b))
+                    if(collides_with_mask(regions[i], regions[k]))
                     {
                         if(std::execution::par_unseq, std::find_if(d_cols.begin(), d_cols.end(), [&](auto& tup)
                         {
-                            return std::get<0>(tup) == a->uuid() && std::get<1>(tup) == b->uuid();
+                            return std::get<0>(tup) == regions[i]->uuid() && std::get<1>(tup) == regions[k]->uuid();
                         }) != d_cols.end())
-                            handle_event_continuous(a, b);
+                            handle_event_continuous(regions[i], regions[k]);
                         else
-                            handle_event_enter(a, b);
+                            handle_event_enter(regions[i], regions[k]);
                     }
                     else
                     {
                         if(std::find_if(std::execution::par_unseq, d_cols.begin(), d_cols.end(), [&](auto& tup)
                         {
-                            return std::get<0>(tup) == a->uuid() && std::get<1>(tup) == b->uuid();
+                            return std::get<0>(tup) == regions[i]->uuid() && std::get<1>(tup) == regions[k]->uuid();
                         }) != d_cols.end())
-                            handle_event_leave(a, b);
+                            handle_event_leave(regions[i], regions[k]);
                     }
                 }
                 else
                 {
                     if(std::find_if(std::execution::par_unseq, d_cols.begin(), d_cols.end(), [&](auto& tup)
                     {
-                        return std::get<0>(tup) == a->uuid() && std::get<1>(tup) == b->uuid();
+                        return std::get<0>(tup) == regions[i]->uuid() && std::get<1>(tup) == regions[k]->uuid();
                     }) != d_cols.end())
-                        handle_event_leave(a, b);
+                        handle_event_leave(regions[i], regions[k]);
                 }
             }
             else
             {
                 if(std::find_if(std::execution::par_unseq, d_cols.begin(), d_cols.end(), [&](auto& tup)
                 {
-                    return std::get<0>(tup) == a->uuid() && std::get<1>(tup) == b->uuid();
+                    return std::get<0>(tup) == regions[i]->uuid() && std::get<1>(tup) == regions[k]->uuid();
                 }) != d_cols.end())
-                    handle_event_leave(a, b);
+                    handle_event_leave(regions[i], regions[k]);
             }
-        });
-    });
+        }
+    }
 }
 
 void CollisionManager::handle_event_leave_on_deletion(std::shared_ptr<Region>& deleted_region)
@@ -138,16 +148,16 @@ bool CollisionManager::collides_with_mask(const std::shared_ptr<Region> &a, cons
     float area_b_aabb = (b_aabb[3].x - b_aabb[0].x) * (b_aabb[1].y - b_aabb[0].y);
 
     return area_a_aabb > area_b_aabb ?  std::find_if(std::execution::par_unseq, b->contour().begin(), b->contour().end(), [&](const glm::vec3& p)
-                                        {
-                                            glm::vec3 p__ = p * b->transform();
-                                            return (*a_mask)[p__ /= p__.z];
-                                        }) != b->contour().end()
-                                        :
-                                        std::find_if(std::execution::par_unseq, a->contour().begin(), a->contour().end(), [&](const glm::vec3& p)
-                                        {
-                                            glm::vec3 p__ = p * a->transform();
-                                            return (*a_mask)[p__ /= p__.z];
-                                        }) != a->contour().end();
+    {
+        glm::vec3 p__ = p * b->transform();
+        return (*a_mask)[p__ /= p__.z];
+    }) != b->contour().end()
+                                     :
+           std::find_if(std::execution::par_unseq, a->contour().begin(), a->contour().end(), [&](const glm::vec3& p)
+           {
+               glm::vec3 p__ = p * a->transform();
+               return (*a_mask)[p__ /= p__.z];
+           }) != a->contour().end();
 }
 
 bool CollisionManager::has_capabilities_in_common(const std::shared_ptr<Region>& a, const std::shared_ptr<Region>& b)
