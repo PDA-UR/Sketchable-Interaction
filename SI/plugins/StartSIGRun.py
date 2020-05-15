@@ -46,7 +46,8 @@ def add_start_directory():
                        [Directory.region_width, 75 + Directory.region_height],
                        [Directory.region_width, 75]]
 
-    PySIStartup.PySIStartup.create_region_by_id(directory_shape, PySIEffect.EffectType.SI_DIRECTORY, {"cwd": directory_path})
+    kwargs = {"cwd": directory_path, "parent": ""}
+    PySIStartup.PySIStartup.create_region_by_id(directory_shape, PySIEffect.EffectType.SI_DIRECTORY, kwargs)
 
 def on_startup():
     add_canvas()

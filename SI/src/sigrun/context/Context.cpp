@@ -251,160 +251,50 @@ void Context::register_new_region_via_name(const std::vector<glm::vec3>& contour
 
 void Context::register_new_region_via_type(const std::vector<glm::vec3>& contour, int id, bp::dict& kwargs)
 {
-    auto effect = std::find_if(std::execution::par_unseq, d_plugins.begin(), d_plugins.end(), [&id](auto& pair)
-    {
-       return  pair.second.attr("region_type") == id;
-    });
-
-    if(effect != d_plugins.end())
-    {
-        if(id == SI_TYPE_DIRECTORY)
+    HANDLE_PYTHON_CALL(PY_ERROR, "Error. Could not add region!.",
+        auto effect = std::find_if(std::execution::par_unseq, d_plugins.begin(), d_plugins.end(), [&id](auto& pair)
         {
-            std::string k_cwd = std::string(bp::extract<char*>(kwargs["cwd"]));
+           return  pair.second.attr("region_type") == id;
+        });
 
-            if(!k_cwd.empty())
-                upfs->set_cwd(k_cwd);
-
-            const std::string& cwd = upfs->cwd();
-            const std::vector<std::string> children_paths = upfs->cwd_contents_paths(cwd);
-
-            kwargs["cwd"] = cwd;
-            kwargs["children"] = children_paths;
-            kwargs["parent"] = "";
-
-            INFO("Region for " + cwd + " created");
-        }
-
-        uprm->add_region(contour, effect->second, 0, kwargs);
-
-        if(id == SI_TYPE_MOUSE_CURSOR)
+        if(effect != d_plugins.end())
         {
-            upim->external_objects()[uprm->regions().back()->uuid()] = std::make_shared<ExternalObject>(ExternalObject::ExternalObjectType::MOUSE);
-            uplm->add_link(Context::SIContext()->input_manager()->external_objects()[uprm->regions().back()->uuid()], uprm->regions().back(), SI_CAPABILITY_LINK_POSITION, SI_CAPABILITY_LINK_POSITION);
+            if(id == SI_TYPE_DIRECTORY)
+            {
+                std::string k_cwd = std::string(bp::extract<char*>(kwargs["cwd"]));
 
-            INFO("Plugin available for drawing");
+                if(!k_cwd.empty())
+                    upfs->set_cwd(k_cwd);
+
+                const std::string& cwd = upfs->cwd();
+                const std::vector<std::string> children_paths = upfs->cwd_contents_paths(cwd);
+                const std::vector<int> children_types = upfs->cwd_contents_types(children_paths);
+
+                bp::list children;
+
+                for(int32_t i = 0; i < children_paths.size(); ++i)
+                    children.append(bp::make_tuple(children_paths[i], children_types[i]));
+
+                kwargs["cwd"] = cwd;
+                kwargs["children"] = children;
+            }
+
+            uprm->add_region(contour, effect->second, 0, kwargs);
+
+            if(id == SI_TYPE_MOUSE_CURSOR)
+            {
+                upim->external_objects()[uprm->regions().back()->uuid()] = std::make_shared<ExternalObject>(ExternalObject::ExternalObjectType::MOUSE);
+                uplm->add_link(Context::SIContext()->input_manager()->external_objects()[uprm->regions().back()->uuid()], uprm->regions().back(), SI_CAPABILITY_LINK_POSITION, SI_CAPABILITY_LINK_POSITION);
+
+                INFO("Plugin available for drawing");
+            }
         }
-    }
+    )
 }
 
 const std::vector<std::string>& Context::available_plugins_names()
 {
     return d_available_plugins_names;
-}
-
-void Context::spawn_folder_contents_buttons_as_regions(const std::string& parent, uint32_t dir_x, uint32_t dir_y, uint32_t preview_width, uint32_t preview_height)
-{
-    HANDLE_PYTHON_CALL(PY_WARNING, "Unable to add buttons for browsing folder contents. Try adding the attributes \'region_width\' and \'region_height\' on module level.",
-        bp::object value = d_plugins[SI_NAME_EFFECT_BUTTON];
-
-        uint32_t btn_width = bp::extract<uint32_t>(value.attr("region_width"));
-        uint32_t btn_height = bp::extract<uint32_t>(value.attr("region_height"));
-
-        std::vector<glm::vec3> btn_contour{glm::vec3(dir_x + preview_width - btn_width, dir_y + preview_height - btn_height, 1),
-                                           glm::vec3(dir_x + preview_width - btn_width, dir_y + preview_height, 1),
-                                           glm::vec3(dir_x + preview_width, dir_y + preview_height, 1),
-                                           glm::vec3(dir_x + preview_width, dir_y + preview_height - btn_height, 1)};
-
-        bp::dict kwargs;
-        kwargs["value"] = false;
-        kwargs["parent"] = parent;
-
-        uprm->add_region(btn_contour, value, 0, kwargs);
-
-        std::vector<glm::vec3> btn_contour2{glm::vec3(dir_x, dir_y + preview_height - btn_height, 1),
-                                            glm::vec3(dir_x, dir_y + preview_height, 1),
-                                            glm::vec3(dir_x + btn_width, dir_y + preview_height, 1),
-                                            glm::vec3(dir_x + btn_width, dir_y + preview_height - btn_height, 1)};
-        bp::dict kwargs2;
-        kwargs2["value"] = true;
-        kwargs2["parent"] = parent;
-
-        uprm->add_region(btn_contour2, value, 0, kwargs2);
-    )
-}
-
-void Context::spawn_folder_contents_entries_as_regions(const std::string& parent, const std::vector<std::string>& children_paths, uint32_t dir_x, uint32_t dir_y, uint32_t dir_width, uint32_t dir_height, uint32_t preview_width, uint32_t preview_height)
-{
-    uint32_t x_offset = preview_width / 10;
-    uint32_t y_offset = preview_height / 6;
-    uint32_t y_offset2 = dir_height / 8;
-
-    uint32_t i = 0;
-    int32_t y = -1;
-    int32_t x = 1;
-
-    std::for_each(children_paths.begin(), children_paths.end(), [&](auto& child_path)
-    {
-        if(i & 1)
-            ++x;
-        else
-        {
-            --x;
-            ++y;
-        }
-
-        std::vector<glm::vec3> contour {glm::vec3(((x_offset + dir_width) * x) + (dir_x + x_offset), ((y_offset2 + dir_height) * y) + (dir_y + y_offset), 1),
-                                        glm::vec3(((x_offset + dir_width) * x) + (dir_x + x_offset), ((y_offset2 + dir_height) * y) + (dir_y + y_offset + dir_height), 1),
-                                        glm::vec3(((x_offset + dir_width) * x) + (dir_x + x_offset + dir_width), ((y_offset2 + dir_height) * y) + (dir_y + y_offset + dir_height), 1),
-                                        glm::vec3(((x_offset + dir_width) * x) + (dir_x + x_offset + dir_width), ((y_offset2 + dir_height) * y) + (dir_y + y_offset), 1)};
-
-        bp::dict kwargs;
-        std::string effect_name;
-
-        switch (upfs->entry_type(child_path))
-        {
-            case SI_TYPE_DIRECTORY:
-                kwargs["cwd"] = child_path;
-                kwargs["children"] = upfs->cwd_contents_paths(child_path);
-                effect_name = SI_NAME_EFFECT_DIRECTORY;
-                break;
-            case SI_TYPE_IMAGE_FILE:
-                effect_name = SI_NAME_EFFECT_IMAGEFILE;
-                kwargs["cwd"] = child_path;
-                break;
-            case SI_TYPE_UNKNOWN_FILE:
-            case SI_TYPE_TEXT_FILE:
-                effect_name = SI_NAME_EFFECT_TEXTFILE;
-                kwargs["cwd"] = child_path;
-                break;
-        }
-
-        kwargs["parent"] = parent;
-
-        uprm->add_region(contour, d_plugins[effect_name], 0, kwargs);
-
-        ++i;
-    });
-}
-
-void Context::spawn_folder_contents_as_regions(const std::vector<std::string>& children_paths, const std::string& uuid, const bool with_btns)
-{
-    auto it = std::find_if(std::execution::par_unseq, uprm->regions().begin(), uprm->regions().end(), [&uuid](auto& region)
-    {
-        return region->uuid() == uuid;
-    });
-
-    if(it != uprm->regions().end())
-    {
-        HANDLE_PYTHON_CALL(PY_WARNING, "An error occured when spawning the entries of " + (*it)->name() + ". Specify the attributes \'preview_width\', \'preview_height\', \'icon_width\', \'icon_height\' and \'text_height\' on class level in your specific entry classes e.g. TextFile.py",
-            auto& region = *it;
-
-            const glm::vec3& tlc = region->aabb()[0];
-
-            const int32_t dir_x = tlc.x + region->transform()[0].z;
-            const int32_t dir_y = tlc.y + region->transform()[1].z;
-
-            const uint32_t preview_width = bp::extract<uint32_t>(region->raw_effect().attr("preview_width"));
-            const uint32_t preview_height = bp::extract<uint32_t>(region->raw_effect().attr("preview_height"));
-            const uint32_t dir_width = bp::extract<uint32_t>(region->raw_effect().attr("icon_width")) * 2;
-            const uint32_t dir_height = bp::extract<uint32_t>(region->raw_effect().attr("icon_height")) + bp::extract<uint32_t>(region->raw_effect().attr("text_height"));
-
-            if(with_btns)
-                spawn_folder_contents_buttons_as_regions(region->uuid(), dir_x, dir_y, preview_width, preview_height);
-
-            spawn_folder_contents_entries_as_regions(region->uuid(), children_paths, dir_x, dir_y, dir_width, dir_height, preview_width, preview_height);
-        )
-    }
 }
 
 const std::map<std::string, bp::object>& Context::available_plugins() const
