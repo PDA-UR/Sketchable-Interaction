@@ -68,6 +68,7 @@ public:
     const std::string& cwd() const;
     const std::vector<std::shared_ptr<FileSystemObject>>& cwd_contents();
     const std::vector<std::string> cwd_contents_paths(const std::string& cwd);
+    const std::vector<int> cwd_contents_types(const std::vector<std::string>& contents);
 
     uint32_t entry_type(const std::string& path);
 

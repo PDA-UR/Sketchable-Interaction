@@ -14,49 +14,61 @@ void CollisionManager::collide(std::vector<std::shared_ptr<Region>> &regions)
 
     std::for_each(std::execution::seq, regions.rbegin(), regions.rend(), [&](auto& a)
     {
-        std::for_each(std::execution::seq, regions.rbegin() + (++i), regions.rend(), [&](auto& b)
+        if(a.get())
         {
-            if(has_capabilities_in_common(a, b))
+            if(!a->is_new())
             {
-                if(collides_with_aabb(a, b))
+                std::for_each(std::execution::seq, regions.rbegin() + (++i), regions.rend(), [&](auto& b)
                 {
-                    if(collides_with_mask(a, b))
+                    if(b.get())
                     {
-                        if(std::execution::par_unseq, std::find_if(d_cols.begin(), d_cols.end(), [&](auto& tup)
+                        if(!b->is_new())
                         {
-                            return std::get<0>(tup) == a->uuid() && std::get<1>(tup) == b->uuid();
-                        }) != d_cols.end())
-                            handle_event_continuous(a, b);
-                        else
-                            handle_event_enter(a, b);
+                            if(has_capabilities_in_common(a, b))
+                            {
+                                if(collides_with_aabb(a, b))
+                                {
+                                    if(collides_with_mask(a, b))
+                                    {
+                                        if(std::execution::par_unseq, std::find_if(d_cols.begin(), d_cols.end(), [&](auto& tup)
+                                        {
+                                            return std::get<0>(tup) == a->uuid() && std::get<1>(tup) == b->uuid();
+                                        }) != d_cols.end())
+                                            handle_event_continuous(a, b);
+                                        else
+                                            handle_event_enter(a, b);
+                                    }
+                                    else
+                                    {
+                                        if(std::find_if(std::execution::par_unseq, d_cols.begin(), d_cols.end(), [&](auto& tup)
+                                        {
+                                            return std::get<0>(tup) == a->uuid() && std::get<1>(tup) == b->uuid();
+                                        }) != d_cols.end())
+                                            handle_event_leave(a, b);
+                                    }
+                                }
+                                else
+                                {
+                                    if(std::find_if(std::execution::par_unseq, d_cols.begin(), d_cols.end(), [&](auto& tup)
+                                    {
+                                        return std::get<0>(tup) == a->uuid() && std::get<1>(tup) == b->uuid();
+                                    }) != d_cols.end())
+                                        handle_event_leave(a, b);
+                                }
+                            }
+                            else
+                            {
+                                if(std::find_if(std::execution::par_unseq, d_cols.begin(), d_cols.end(), [&](auto& tup)
+                                {
+                                    return std::get<0>(tup) == a->uuid() && std::get<1>(tup) == b->uuid();
+                                }) != d_cols.end())
+                                    handle_event_leave(a, b);
+                            }
+                        }
                     }
-                    else
-                    {
-                        if(std::find_if(std::execution::par_unseq, d_cols.begin(), d_cols.end(), [&](auto& tup)
-                        {
-                            return std::get<0>(tup) == a->uuid() && std::get<1>(tup) == b->uuid();
-                        }) != d_cols.end())
-                            handle_event_leave(a, b);
-                    }
-                }
-                else
-                {
-                    if(std::find_if(std::execution::par_unseq, d_cols.begin(), d_cols.end(), [&](auto& tup)
-                    {
-                        return std::get<0>(tup) == a->uuid() && std::get<1>(tup) == b->uuid();
-                    }) != d_cols.end())
-                        handle_event_leave(a, b);
-                }
+                });
             }
-            else
-            {
-                if(std::find_if(std::execution::par_unseq, d_cols.begin(), d_cols.end(), [&](auto& tup)
-                {
-                    return std::get<0>(tup) == a->uuid() && std::get<1>(tup) == b->uuid();
-                }) != d_cols.end())
-                    handle_event_leave(a, b);
-            }
-        });
+        }
     });
 }
 

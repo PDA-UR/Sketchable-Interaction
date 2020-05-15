@@ -471,8 +471,16 @@ class SIEffect(PySIEffect.PySIEffect):
     # @param self the object pointer
     # @param shape the shape / contour of the region as a PySIEffect.PointVector or list [[x1, x1], [x2, y2], ... [xn, yn]]
     # @param effect_name the name (region_name) of the effect which shall be assigned to the region (region_display_name does not work)
-    def create_region(self, shape, effect_name, as_selector=False, kwargs={}):
+    def create_region_via_name(self, shape, effect_name, as_selector=False, kwargs={}):
         self.__create_region__(shape, effect_name, as_selector, kwargs)
+
+    ## member function for creating a new region
+    #
+    # @param self the object pointer
+    # @param shape the shape / contour of the region as a PySIEffect.PointVector or list [[x1, x1], [x2, y2], ... [xn, yn]]
+    # @param effect_name the name (region_name) of the effect which shall be assigned to the region (region_display_name does not work)
+    def create_region_via_id(self, shape, effect_type, kwargs={}):
+        self.__create_region__(shape, effect_type, kwargs)
 
     ## member function for retrieving the plugins which are available for sketching as a dict of names.
     # This dict of names uses region_name attributes as keys and region_display_name attributes as values
@@ -494,5 +502,12 @@ class SIEffect(PySIEffect.PySIEffect):
     def context_dimensions(self):
         return self.__context_dimensions__
 
+    ## member function for assigning a new effect to a region
+    # if the region is a cursor, the effect that cursor can draw is changed instead!
+    #
+    # @param self the object pointer
+    # @param effect_name_to_assign the name of the effect which is intended to be written to a region
+    # @param effect_display_name the name of the effect which is intended to be visible to a user
+    # @param kwargs key-worded arguments containing specifics of certain regions
     def assign_effect(self, effect_name_to_assign, effect_display_name, kwargs):
         self.__assign_effect__(self._uuid, effect_name_to_assign, effect_display_name, kwargs)
