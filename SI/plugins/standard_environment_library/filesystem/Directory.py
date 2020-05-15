@@ -1,5 +1,6 @@
 from libPySI import PySIEffect
 from plugins.standard_environment_library.filesystem import Entry
+from plugins.standard_environment_library.button import Button
 
 
 region_type = PySIEffect.EffectType.SI_DIRECTORY
@@ -20,19 +21,20 @@ class Directory(Entry.Entry):
         self.height = region_height
         self.is_icon_visible = True
         self.is_opened_visible = False
-        self.children_paths = list(kwargs["children"]) if len(kwargs.keys()) else []
+        self.children_paths_and_types = [(t[0], t[1] if t[1] != int(PySIEffect.EffectType.SI_UNKNOWN_FILE) else int(PySIEffect.EffectType.SI_TEXT_FILE)) for t in kwargs["children"]]
+
         self.children = []
         self.num_children_per_page = 6
 
-        self.children_paths.sort()
+        self.children_paths_and_types.sort()
         self.current_page = 0
 
         self.browse_pages = []
-        for i in range(len(self.children_paths)):
+        for i in range(len(self.children_paths_and_types)):
             if i % self.num_children_per_page == 0:
-                self.browse_pages.append(PySIEffect.StringVector())
+                self.browse_pages.append([])
 
-            self.browse_pages[-1].append(self.children_paths[i])
+            self.browse_pages[-1].append(self.children_paths_and_types[i])
 
         self.btn_presses = 0
 
@@ -50,6 +52,8 @@ class Directory(Entry.Entry):
         self.enable_effect(PySIEffect.OPEN_ENTRY, self.RECEPTION, self.on_open_entry_enter_recv, self.on_open_entry_continuous_recv, self.on_open_entry_leave_recv)
 
         self.enable_link_emission(PySIEffect.POSITION, self.position)
+        self.is_open_entry_capability_blocked = False
+
 
     def set_folder_contents_page(self, value):
         self.btn_presses = self.btn_presses - 1 if value else self.btn_presses + 1
@@ -71,12 +75,11 @@ class Directory(Entry.Entry):
         self.set_folder_contents_page(value)
 
         for child in self.children:
-            if child.region_type is not int(PySIEffect.EffectType.SI_BUTTON):
-                child.delete()
+            child.delete()
 
         self.add_QML_data("page_name", str(self.current_page + 1) + "/" + str(len(self.browse_pages)), PySIEffect.DataType.STRING)
 
-        self.display_folder_contents_page(self.browse_pages[self.current_page], self._uuid, False)
+        self.show_current_folder_contents_page()
 
     def on_btn_enter_recv(self, cursor_id, link_attrib):
         pass
@@ -109,7 +112,8 @@ class Directory(Entry.Entry):
             self.add_QML_data("container_height", self.height, PySIEffect.DataType.INT)
             self.add_QML_data("is_icon_visible", self.is_icon_visible, PySIEffect.DataType.BOOL)
             self.add_QML_data("is_opened_visible", self.is_opened_visible, PySIEffect.DataType.BOOL)
-            self.display_folder_contents_page(self.browse_pages[self.current_page], self._uuid)
+
+            self.show_current_folder_contents_page()
 
             self.is_open_entry_capability_blocked = True
 
@@ -166,3 +170,68 @@ class Directory(Entry.Entry):
             if self.parent == _uuid:
                 self.remove_link(self.parent, PySIEffect.POSITION, self._uuid, PySIEffect.POSITION)
                 self.parent = ""
+
+    def show_current_folder_contents_page(self):
+        dir_x = self.x + self.x_pos()
+        dir_y = self.y + self.y_pos()
+
+        self.add_child_entries(dir_x, dir_y)
+        self.add_child_buttons(dir_x, dir_y)
+
+    def add_child_entries(self, dir_x, dir_y):
+        dir_width = self.icon_width * 2
+        dir_height = self.icon_height + self.text_height
+        x_offset = self.preview_width / 10
+        y_offset = self.preview_height / 6
+        y_offset2 = dir_height / 8
+
+        i = 0
+        y = -1
+        x = 1
+
+        for i in range(len(self.browse_pages[self.current_page])):
+            entry = self.browse_pages[self.current_page][i]
+
+            if i & 1:
+                x += 1
+            else:
+                x -= 1
+                y += 1
+
+            entry_shape = [[((x_offset + dir_width) * x) + (dir_x + x_offset), ((y_offset2 + dir_height) * y) + (dir_y + y_offset)],
+                           [((x_offset + dir_width) * x) + (dir_x + x_offset), ((y_offset2 + dir_height) * y) + (dir_y + y_offset + dir_height)],
+                           [((x_offset + dir_width) * x) + (dir_x + x_offset + dir_width), ((y_offset2 + dir_height) * y) + (dir_y + y_offset + dir_height)],
+                           [((x_offset + dir_width) * x) + (dir_x + x_offset + dir_width), ((y_offset2 + dir_height) * y) + (dir_y + y_offset)]]
+
+            kwargs = {}
+
+            kwargs["parent"] = self._uuid
+            kwargs["cwd"] = entry[0]
+
+            self.create_region_via_id(entry_shape, entry[1], kwargs)
+
+    def add_child_buttons(self, dir_x, dir_y):
+        btn_width = Button.region_width
+        btn_height = Button.region_height
+
+        shape_btn1 = [[dir_x + self.preview_width - btn_width, dir_y + self.preview_height - btn_height],
+                      [dir_x + self.preview_width - btn_width, dir_y + self.preview_height],
+                      [dir_x + self.preview_width, dir_y + self.preview_height],
+                      [dir_x + self.preview_width, dir_y + self.preview_height - btn_height]]
+
+        kwargs_btn1 = {}
+        kwargs_btn1["parent"] = self._uuid
+        kwargs_btn1["value"] = False
+
+        self.create_region_via_id(shape_btn1, PySIEffect.EffectType.SI_BUTTON, kwargs_btn1)
+
+        shape_btn2 = [[dir_x, dir_y + self.preview_height - btn_height],
+                      [dir_x, dir_y + self.preview_height],
+                      [dir_x + btn_width, dir_y + self.preview_height],
+                      [dir_x + btn_width, dir_y + self.preview_height - btn_height]]
+
+        kwargs_btn2 = {}
+        kwargs_btn2["parent"] = self._uuid
+        kwargs_btn2["value"] = True
+
+        self.create_region_via_id(shape_btn2, PySIEffect.EffectType.SI_BUTTON, kwargs_btn2)

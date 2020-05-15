@@ -70,25 +70,6 @@ TEST_F(PySIPySIEffectTest, signal_deletion)
     EXPECT_NO_FATAL_FAILURE(pysie.__signal_deletion__());
 }
 
-TEST_F(PySIPySIEffectTest, show_folder_contents_page)
-{
-    std::vector<std::string> strs {"test1", "test2"};
-    std::string uuid = _UUID_;
-
-
-    std::vector<glm::vec3> contour {
-            glm::vec3(1, 1, 1),
-            glm::vec3(1, 5, 1),
-            glm::vec3(5, 5, 1),
-            glm::vec3(5, 1, 1),
-    };
-
-    PySIEffect pysie(contour, _UUID_, "", bp::dict());
-
-    EXPECT_NO_FATAL_FAILURE(pysie.__show_folder_contents__(strs, uuid, false));
-    EXPECT_NO_FATAL_FAILURE(pysie.__show_folder_contents__(strs, uuid, true));
-}
-
 TEST_F(PySIPySIEffectTest, embed_file_standard_appliation_into_context)
 {
     std::vector<glm::vec3> contour {
