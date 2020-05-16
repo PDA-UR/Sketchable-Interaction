@@ -102,8 +102,8 @@ jobs:
       if: success()
       run: |
         if [[ "${{ github.event.head_commit.message }}" != *"[NO CI]"* ]]; then
-          cmake . -DBUILD_DOCS:BOOL=True &&
-          cmake --build  /home/runner/work/Sketchable-Interaction/Sketchable-Interaction --target all -j 8
+          cmake .
+          cmake --build  /home/runner/work/Sketchable-Interaction/Sketchable-Interaction --target run_unit_tests -j 8
         fi
         
     - name: Test SI
