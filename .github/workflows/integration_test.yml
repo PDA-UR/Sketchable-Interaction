@@ -103,7 +103,7 @@ jobs:
       run: |
         if [[ "${{ github.event.head_commit.message }}" != *"[NO CI]"* ]]; then
           #sed -i "s@set(BUILD_DOCS FALSE)@set(BUILD_DOCS TRUE)@" /home/runner/work/Sketchable-Interaction/Sketchable-Interaction/CMakeLists.txt &&
-          cmake . -DBUILD_DOCS=True &&
+          cmake . -DBUILD_DOCS:BOOL=True &&
           cmake --build  /home/runner/work/Sketchable-Interaction/Sketchable-Interaction --target run_unit_tests -j 8
         fi
         
