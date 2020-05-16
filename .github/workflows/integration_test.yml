@@ -54,16 +54,8 @@ jobs:
     - name: Set C++ Compiler
       run: |
         sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-9 90
-      
-    #- name: Cache Local Libraries
-    #  id: cache-locals
-    #  uses: actions/cache@v1
-    #  with:
-    #    path: /usr/local/lib
-    #    key: ${{ runner.os }}-locals
 
     - name: Install Boost with components System, Python and Filesystem 
-      #if: steps.cache-locals.outputs.cache-hit != 'true'
       run: |
         mkdir temp &&
         cd temp &&
@@ -89,6 +81,7 @@ jobs:
     - name: Install PythonLibs 3.7
       run: |
         sudo apt-get install python3.7-dev
+        
     - name: Install tbb
       run: |
         if [[ "${{ github.event.head_commit.message }}" != *"[NO CI]"* ]]; then
@@ -97,13 +90,19 @@ jobs:
           sudo apt-get install libtbb-dev -qq > /dev/null
         fi
         
+    - name: Install Doxygen
+      run: |
+        if [[ "${{ github.event.head_commit.message }}" != *"[NO CI]"* ]]; then
+          sudo apt-get install doxygen graphviz 
+        fi
+                
     - name: Compile SI
       env:
         CC: gcc
       if: success()
       run: |
         if [[ "${{ github.event.head_commit.message }}" != *"[NO CI]"* ]]; then
-          cmake . 
+          cmake .
           cmake --build  /home/runner/work/Sketchable-Interaction/Sketchable-Interaction --target run_unit_tests -j 8
         fi
         
