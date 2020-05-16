@@ -523,6 +523,11 @@ class SIEffect(PySIEffect.PySIEffect):
     def assign_effect(self, effect_name_to_assign, effect_display_name, kwargs):
         self.__assign_effect__(self._uuid, effect_name_to_assign, effect_display_name, kwargs)
 
+    ## member function for moving the effect's associated region to the point (x, y)
+    #
+    # @param self the object pointer
+    # @param x the absolute x coordinate of the point
+    # @param y the absolute y coordinate of the point
     def move(self, x, y):
         self.x = x
         self.y = y
