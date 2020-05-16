@@ -54,16 +54,8 @@ jobs:
     - name: Set C++ Compiler
       run: |
         sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-9 90
-      
-    #- name: Cache Local Libraries
-    #  id: cache-locals
-    #  uses: actions/cache@v1
-    #  with:
-    #    path: /usr/local/lib
-    #    key: ${{ runner.os }}-locals
 
     - name: Install Boost with components System, Python and Filesystem 
-      #if: steps.cache-locals.outputs.cache-hit != 'true'
       run: |
         mkdir temp &&
         cd temp &&
@@ -110,6 +102,7 @@ jobs:
       if: success()
       run: |
         if [[ "${{ github.event.head_commit.message }}" != *"[NO CI]"* ]]; then
+          sed -i "s@set(BUILD_DOCS FALSE)@set(BUILD_DOCS TRUE)@" /home/runner/work/Sketchable-Interaction/Sketchable-Interaction/SI/CMakeLists.txt
           cmake . 
           cmake --build  /home/runner/work/Sketchable-Interaction/Sketchable-Interaction --target run_unit_tests -j 8
         fi
