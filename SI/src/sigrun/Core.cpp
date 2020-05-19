@@ -55,7 +55,6 @@ void Core::start(char** argv, int argc, IRenderEngine* ire)
 
     upctx->begin(plugins, ire, argc, argv);
     INFO("Context closed");
-
 }
 
 /**

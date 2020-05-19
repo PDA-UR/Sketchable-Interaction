@@ -1,7 +1,7 @@
 
-from libPySI import PySIEffect
+from libPySI import PySI
 
 
-class Test(PySIEffect):
+class Test(PySI.PySI):
     def __init__(self):
         self.x = 5

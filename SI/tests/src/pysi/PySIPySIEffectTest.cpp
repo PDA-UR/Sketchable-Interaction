@@ -1,10 +1,8 @@
 
 
 #include "PySIPySIEffectTest.hpp"
-#include <QProcess>
 #include <boost/python.hpp>
 #include <sigrun/plugin/Scripting.hpp>
-#include <sigrun/plugin/PythonInvoker.hpp>
 #include <sigrun/plugin/PluginCollector.hpp>
 
 TEST_F(PySIPySIEffectTest, PySIEffect_Python_Side)
@@ -22,7 +20,9 @@ TEST_F(PySIPySIEffectTest, PySIEffect_Python_Side)
             glm::vec3(5, 1, 1),
     };
 
-    ASSERT_TRUE(bp::extract<bool>(script.si_plugin(module, path, clazz).attr(clazz.c_str())().attr("start")()));
+    bp::object o = script.si_plugin(module, path, clazz).attr(clazz.c_str())().attr("start")();
+
+    ASSERT_TRUE(bp::extract<bool>(o));
 }
 
 TEST_F(PySIPySIEffectTest, init)
