@@ -36,7 +36,7 @@ RegionRepresentation::RegionRepresentation(QWidget *parent, const std::shared_pt
     d_view->setAttribute(Qt::WA_NoSystemBackground);
     d_view->setClearColor(Qt::transparent);
 
-    if(region->effect().has_data_changed())
+    if(region->effect()->has_data_changed())
         Q_EMIT dataChanged(region->data());
 
     setParent(parent);
@@ -84,7 +84,7 @@ void RegionRepresentation::perform_transform_update(const std::shared_ptr<Region
 
 void RegionRepresentation::perform_data_update(const std::shared_ptr<Region> &region)
 {
-    if (region->effect().has_data_changed())
+    if (region->effect()->has_data_changed())
     {
         resize(region->aabb()[3].x - region->aabb()[0].x, region->aabb()[1].y - region->aabb()[0].y);
 

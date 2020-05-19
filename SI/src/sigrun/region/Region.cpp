@@ -63,7 +63,7 @@ void Region::set_effect(const bp::object& effect, const bp::dict& kwargs)
     HANDLE_PYTHON_CALL(PY_ERROR, "Fatal Error. Plugin broken.",
         d_effect = std::make_shared<bp::object>(effect.attr(effect.attr("__si_name__"))(d_py_effect->contour(), d_py_effect->uuid(), kwargs));
 
-        d_py_effect = std::shared_ptr<PySIEffect>(new PySIEffect(bp::extract<PySIEffect>(*d_effect)));
+        d_py_effect = bp::extract<PySIEffect*>(*d_effect);
     )
 }
 
@@ -72,7 +72,7 @@ void Region::set_effect(const std::vector<glm::vec3>& contour, const bp::object&
     HANDLE_PYTHON_CALL(PY_ERROR, "Fatal Error. Plugin broken.",
        d_effect = std::make_shared<bp::object>(effect.attr(effect.attr("__si_name__"))(contour, uuid, kwargs));
 
-       d_py_effect = std::shared_ptr<PySIEffect>(new PySIEffect(bp::extract<PySIEffect>(*d_effect)));
+       d_py_effect = bp::extract<PySIEffect*>(*d_effect);
     )
 }
 
@@ -91,9 +91,9 @@ const std::string& Region::uuid() const
     return d_py_effect->uuid();
 }
 
-PySIEffect &Region::effect()
+PySIEffect* Region::effect()
 {
-    return *d_py_effect;
+    return d_py_effect;
 }
 
 bp::object &Region::raw_effect()
@@ -126,17 +126,17 @@ const glm::mat3x3& Region::transform() const
     return uprt->transform();
 }
 
-uint8_t Region::on_enter(PySIEffect& colliding_effect)
+uint8_t Region::on_enter(PySIEffect* colliding_effect)
 {
     return handle_collision_event(SI_COLLISION_EVENT_ON_ENTER, colliding_effect);
 }
 
-uint8_t Region::on_continuous(PySIEffect& colliding_effect)
+uint8_t Region::on_continuous(PySIEffect* colliding_effect)
 {
     return handle_collision_event(SI_COLLISION_EVENT_ON_CONTINUOUS, colliding_effect);
 }
 
-uint8_t Region::on_leave(PySIEffect& colliding_effect)
+uint8_t Region::on_leave(PySIEffect* colliding_effect)
 {
     return handle_collision_event(SI_COLLISION_EVENT_ON_LEAVE, colliding_effect);
 }
@@ -236,10 +236,6 @@ void Region::update()
 {
     d_is_transformed = false;
 
-    HANDLE_PYTHON_CALL(PY_ERROR, "Fatal Error. Plugin broken. (" + name() + ")",
-        d_py_effect = std::shared_ptr<PySIEffect>(new PySIEffect(bp::extract<PySIEffect>(*d_effect)));
-    )
-
     if(d_py_effect->d_recompute_mask)
     {
         uprm = std::make_unique<RegionMask>(Context::SIContext()->width(), Context::SIContext()->height(), d_py_effect->contour(), d_py_effect->aabb());
@@ -254,6 +250,16 @@ void Region::update()
 
     process_canvas_specifics();
     process_linking_relationships();
+}
+
+int32_t Region::x()
+{
+    return d_last_x;
+}
+
+int32_t Region::y()
+{
+    return d_last_y;
 }
 
 
@@ -310,11 +316,11 @@ void Region::set_is_new(bool toggle)
     d_is_new = toggle;
 }
 
-uint8_t Region::handle_collision_event(const std::string &function_name, PySIEffect &colliding_effect)
+uint8_t Region::handle_collision_event(const std::string &function_name, PySIEffect* colliding_effect)
 {
-    std::for_each(std::execution::seq, colliding_effect.cap_collision_emit().begin(), colliding_effect.cap_collision_emit().end(), [&](auto& pair)
+    std::for_each(std::execution::seq, colliding_effect->cap_collision_emit().begin(), colliding_effect->cap_collision_emit().end(), [&](auto& pair)
     {
-        HANDLE_PYTHON_CALL(PY_ERROR, "Fatal Error. Unable to perform collision event " + function_name + " (" + name() + "other: " + colliding_effect.name() + ")",
+        HANDLE_PYTHON_CALL(PY_ERROR, "Fatal Error. Unable to perform collision event " + function_name + " (" + name() + "other: " + colliding_effect->name() + ")",
             const std::string& capability = pair.first;
             auto& emission_functions = pair.second;
 

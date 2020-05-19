@@ -35,7 +35,7 @@ public:
     void set_effect(const bp::object& effect, const bp::dict& kwargs);
     void set_effect(const std::vector<glm::vec3>& contour, const bp::object& effect, const std::string& uuid, const bp::dict& kwargs);
 
-    PySIEffect& effect();
+    PySIEffect* effect();
     bp::object& raw_effect();
 
     const std::unique_ptr<RegionMask>& mask() const;
@@ -49,9 +49,9 @@ public:
 
     const glm::mat3x3& transform() const;
 
-    uint8_t on_enter(PySIEffect& other);
-    uint8_t on_continuous(PySIEffect& other);
-    uint8_t on_leave(PySIEffect& other);
+    uint8_t on_enter(PySIEffect* other);
+    uint8_t on_continuous(PySIEffect* other);
+    uint8_t on_leave(PySIEffect* other);
 
     Q_SIGNAL void LINK_SIGNAL(const std::string& uuid_event, const std::string& uuid_sender, const std::string& source_cap, const bp::tuple& args);
     Q_SLOT void LINK_SLOT(const std::string& uuid_event, const std::string& uuid_sender, const std::string& source_cap, const bp::tuple& args);
@@ -69,7 +69,7 @@ public:
     const uint32_t width() const;
     const uint32_t height() const;
 
-    uint8_t handle_collision_event(const std::string& function_name, PySIEffect& colliding_effect);
+    uint8_t handle_collision_event(const std::string& function_name, PySIEffect* colliding_effect);
 
     void update();
     const QMap<QString, QVariant>& data() const;
@@ -80,13 +80,16 @@ public:
     bool is_new();
     void set_is_new(bool toggle);
 
+    int32_t x();
+    int32_t y();
+
 private:
     bool d_is_new = true;
 
     void process_canvas_specifics();
     void process_linking_relationships();
 
-    std::shared_ptr<PySIEffect> d_py_effect;
+    PySIEffect* d_py_effect;
     std::shared_ptr<bp::object> d_effect;
 
     std::vector<glm::vec3> d_contour;

@@ -49,6 +49,25 @@ def add_start_directory():
     kwargs = {"cwd": directory_path, "parent": ""}
     PySIStartup.PySIStartup.create_region_by_id(directory_shape, PySI.EffectType.SI_DIRECTORY, kwargs)
 
+import math
+
+## Author: RW
+def add_many_regions(num = 100, area_width= 1200, area_height=600):
+    left = (PySIStartup.PySIStartup.context_dimensions()[0] - area_width) // 2
+    top = (PySIStartup.PySIStartup.context_dimensions()[1] - area_height) // 2
+    num_h = math.ceil(math.sqrt(num / (area_width/area_height)))
+    num_w = math.floor(num/num_h)
+    # print(f"creating region matrix: {num_w}, {num_h}")
+    for i in range(num):
+        row = i // num_w
+        col = i % num_w
+        # print(f"Creating region {i}: row {row}, col {col}")
+        x = col * (area_width // num_w) + left
+        y = row * (area_height // num_h) + top
+        w = int(area_width // num_w * 0.9)
+        h = int(area_height // num_h * 0.9)
+        r_shape = [[x,y], [x, y+h], [x+w, y+h], [x+w, y]]
+        PySIStartup.PySIStartup.create_region_by_id(r_shape, PySI.EffectType.SI_DELETION, {})
 
 def on_startup():
     PySIStartup.PySIStartup.logger_log(True)
@@ -60,3 +79,5 @@ def on_startup():
     add_simple_notification()
     add_palette()
     add_start_directory()
+
+    add_many_regions(250)

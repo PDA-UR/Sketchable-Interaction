@@ -33,8 +33,8 @@ bool LinkingManager::add_link(const std::shared_ptr<Region> &ra, const std::stri
 
         INFO("Requested linking relationship is not already present!");
         INFO("Checking if requested linking relationship (" + aa + "|" + ab + "as " + "unidirectional link) is defined...");
-        auto& dra = ra->effect().attr_link_emit();
-        auto& drb = rb->effect().attr_link_recv();
+        auto& dra = ra->effect()->attr_link_emit();
+        auto& drb = rb->effect()->attr_link_recv();
 
         if(dra.count(aa) && drb.count(aa))
         {
@@ -257,7 +257,7 @@ void LinkingManager::emit_link_event(std::shared_ptr<Region> &a, const std::stri
 {
     const std::string uuid_event = _UUID_;
 
-    const bp::tuple &args = bp::extract<bp::tuple>(a->effect().attr_link_emit()[attr_a]());
+    const bp::tuple &args = bp::extract<bp::tuple>(a->effect()->attr_link_emit()[attr_a]());
 
     a->register_link_event({uuid_event, attr_a});
 
@@ -360,7 +360,7 @@ void LinkingManager::create_linking_relations(std::vector<LinkCandidate> &candid
             {
                 d_links_in_ctx[source].push_back(std::make_shared<UnidirectionalLink>(*sender, *receiver, relation.sender_attrib, relation.recv_attrib));
 
-                Q_EMIT (*sender)->LINK_SIGNAL(_UUID_, (*sender)->uuid(), relation.sender_attrib, bp::extract<bp::tuple>((*sender)->effect().attr_link_emit()[relation.sender_attrib]()));
+                Q_EMIT (*sender)->LINK_SIGNAL(_UUID_, (*sender)->uuid(), relation.sender_attrib, bp::extract<bp::tuple>((*sender)->effect()->attr_link_emit()[relation.sender_attrib]()));
             }
         }
     });

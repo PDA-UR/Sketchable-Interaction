@@ -25,7 +25,7 @@ public:
     std::vector<std::shared_ptr<Region>>& regions();
     std::map<std::string, std::vector<glm::vec3>>& partial_regions();
 
-    void set_partial_regions(std::map<std::string, std::vector<glm::vec3>>& partials);
+    void set_partial_regions(const std::map<std::string, std::vector<glm::vec3>>& partials);
 
     void update();
 
