@@ -1,17 +1,17 @@
-from libPySI import PySIEffect
+from libPySI import PySI
 
 from plugins.standard_environment_library import SIEffect
 
 
-region_type = PySIEffect.EffectType.SI_CUSTOM
-region_name = PySIEffect.SI_STD_NAME_TAG
+region_type = PySI.EffectType.SI_CUSTOM
+region_name = PySI.EffectName.SI_STD_NAME_TAG
 region_display_name = "Tag"
 
 class Tag(SIEffect.SIEffect):
-    def __init__(self, shape=PySIEffect.PointVector(), uuid="", kwargs={}):
+    def __init__(self, shape=PySI.PointVector(), uuid="", kwargs={}):
         super(Tag, self).__init__(shape, uuid, "res/tag.png", kwargs)
-        self.name = PySIEffect.SI_STD_NAME_TAG
-        self.region_type = PySIEffect.EffectType.SI_CUSTOM
+        self.name = PySI.EffectName.SI_STD_NAME_TAG
+        self.region_type = PySI.EffectType.SI_CUSTOM
         self.source = "libstdSI"
         self.qml_path = "plugins/standard_environment_library/tag/Tag.qml"
-        self.color = PySIEffect.Color(255, 0, 0, 255)
+        self.color = PySI.Color(255, 0, 0, 255)

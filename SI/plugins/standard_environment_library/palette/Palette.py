@@ -1,23 +1,23 @@
-from libPySI import PySIEffect
+from libPySI import PySI
 from plugins.standard_environment_library import SIEffect
 
 
-region_type = PySIEffect.EffectType.SI_PALETTE
-region_name = PySIEffect.SI_STD_NAME_PALETTE
+region_type = PySI.EffectType.SI_PALETTE
+region_name = PySI.EffectName.SI_STD_NAME_PALETTE
 
 
 class Palette(SIEffect.SIEffect):
-    def __init__(self, shape=PySIEffect.PointVector(), uuid="", kwargs={}):
+    def __init__(self, shape=PySI.PointVector(), uuid="", kwargs={}):
         super(Palette, self).__init__(shape=shape, uuid=uuid, texture_path="", kwargs=kwargs)
-        self.name = PySIEffect.SI_STD_NAME_PALETTE
-        self.region_type = PySIEffect.EffectType.SI_PALETTE
+        self.name = PySI.EffectName.SI_STD_NAME_PALETTE
+        self.region_type = PySI.EffectType.SI_PALETTE
         self.source = "libStdSI"
         self.qml_path = ""
         available_plugins = self.available_plugins()
 
-        self.enable_link_emission(PySIEffect.POSITION, self.position)
+        self.enable_link_emission(PySI.LinkingCapability.POSITION, self.position)
 
-        self.disable_effect(PySIEffect.DELETION, self.RECEPTION)
+        self.disable_effect(PySI.CollisionCapability.DELETION, self.RECEPTION)
         self.as_selector = True
         self.num_selectors_per_row = int(len(available_plugins) / 3) + 1
 

@@ -1,19 +1,19 @@
-from libPySI import PySIEffect
+from libPySI import PySI
 from plugins.standard_environment_library.filesystem import Entry
 from plugins.standard_environment_library.button import Button
 
 
-region_type = PySIEffect.EffectType.SI_DIRECTORY
-region_name = PySIEffect.SI_STD_NAME_DIRECTORY
+region_type = PySI.EffectType.SI_DIRECTORY
+region_name = PySI.EffectName.SI_STD_NAME_DIRECTORY
 region_width = 130
 region_height = 125
 
 
 class Directory(Entry.Entry):
-    def __init__(self, shape=PySIEffect.PointVector(), uuid="", kwargs={}):
+    def __init__(self, shape=PySI.PointVector(), uuid="", kwargs={}):
         super(Directory, self).__init__(shape, uuid, kwargs)
-        self.name = PySIEffect.SI_STD_NAME_DIRECTORY
-        self.region_type = PySIEffect.EffectType.SI_DIRECTORY
+        self.name = PySI.EffectName.SI_STD_NAME_DIRECTORY
+        self.region_type = PySI.EffectType.SI_DIRECTORY
         self.qml_path = "plugins/standard_environment_library/filesystem/Directory.qml"
         self.preview_width = 400
         self.preview_height = 600
@@ -21,7 +21,7 @@ class Directory(Entry.Entry):
         self.height = region_height
         self.is_icon_visible = True
         self.is_opened_visible = False
-        self.children_paths_and_types = [(t[0], t[1] if t[1] != int(PySIEffect.EffectType.SI_UNKNOWN_FILE) else int(PySIEffect.EffectType.SI_TEXT_FILE)) for t in kwargs["children"]]
+        self.children_paths_and_types = [(t[0], t[1] if t[1] != int(PySI.EffectType.SI_UNKNOWN_FILE) else int(PySI.EffectType.SI_TEXT_FILE)) for t in kwargs["children"]]
 
         self.children = []
         self.num_children_per_page = 6
@@ -38,20 +38,20 @@ class Directory(Entry.Entry):
 
         self.btn_presses = 0
 
-        self.add_QML_data("container_width", self.width, PySIEffect.DataType.INT)
-        self.add_QML_data("container_height", self.height, PySIEffect.DataType.INT)
-        self.add_QML_data("img_path", "res/dir.png", PySIEffect.DataType.STRING)
-        self.add_QML_data("fullname", self.path, PySIEffect.DataType.STRING)
-        self.add_QML_data("is_visible", self.is_visible, PySIEffect.DataType.BOOL)
-        self.add_QML_data("is_icon_visible", self.is_icon_visible, PySIEffect.DataType.BOOL)
-        self.add_QML_data("is_opened_visible", self.is_opened_visible, PySIEffect.DataType.BOOL)
-        self.add_QML_data("page_name", "1 / " + str(len(self.browse_pages)), PySIEffect.DataType.STRING)
+        self.add_QML_data("container_width", self.width, PySI.DataType.INT)
+        self.add_QML_data("container_height", self.height, PySI.DataType.INT)
+        self.add_QML_data("img_path", "res/dir.png", PySI.DataType.STRING)
+        self.add_QML_data("fullname", self.path, PySI.DataType.STRING)
+        self.add_QML_data("is_visible", self.is_visible, PySI.DataType.BOOL)
+        self.add_QML_data("is_icon_visible", self.is_icon_visible, PySI.DataType.BOOL)
+        self.add_QML_data("is_opened_visible", self.is_opened_visible, PySI.DataType.BOOL)
+        self.add_QML_data("page_name", "1 / " + str(len(self.browse_pages)), PySI.DataType.STRING)
 
-        self.enable_effect(PySIEffect.PARENT, self.EMISSION, self.on_parent_enter_emit, None, self.on_parent_leave_emit)
-        self.enable_effect(PySIEffect.BTN, self.RECEPTION, self.on_btn_enter_recv, self.on_btn_continuous_recv, self.on_btn_leave_recv)
-        self.enable_effect(PySIEffect.OPEN_ENTRY, self.RECEPTION, self.on_open_entry_enter_recv, self.on_open_entry_continuous_recv, self.on_open_entry_leave_recv)
+        self.enable_effect(PySI.CollisionCapability.PARENT, self.EMISSION, self.on_parent_enter_emit, None, self.on_parent_leave_emit)
+        self.enable_effect(PySI.CollisionCapability.BTN, self.RECEPTION, self.on_btn_enter_recv, self.on_btn_continuous_recv, self.on_btn_leave_recv)
+        self.enable_effect(PySI.CollisionCapability.OPEN_ENTRY, self.RECEPTION, self.on_open_entry_enter_recv, self.on_open_entry_continuous_recv, self.on_open_entry_leave_recv)
 
-        self.enable_link_emission(PySIEffect.POSITION, self.position)
+        self.enable_link_emission(PySI.LinkingCapability.POSITION, self.position)
         self.is_open_entry_capability_blocked = False
 
     def set_folder_contents_page(self, value):
@@ -76,7 +76,7 @@ class Directory(Entry.Entry):
         for child in self.children:
             child.delete()
 
-        self.add_QML_data("page_name", str(self.current_page + 1) + "/" + str(len(self.browse_pages)), PySIEffect.DataType.STRING)
+        self.add_QML_data("page_name", str(self.current_page + 1) + "/" + str(len(self.browse_pages)), PySI.DataType.STRING)
 
         self.show_current_folder_contents_page()
 
@@ -101,16 +101,16 @@ class Directory(Entry.Entry):
             self.width = self.preview_width
             self.height = self.preview_height
 
-            self.shape = PySIEffect.PointVector([[x, y], [x, y + self.height], [x + self.width, y + self.height], [x + self.width, y]])
+            self.shape = PySI.PointVector([[x, y], [x, y + self.height], [x + self.width, y + self.height], [x + self.width, y]])
 
             self.is_icon_visible = False
             self.is_opened_visible = True
 
-            self.color = PySIEffect.Color(10, 0, 0, 255)
-            self.add_QML_data("container_width", self.width, PySIEffect.DataType.INT)
-            self.add_QML_data("container_height", self.height, PySIEffect.DataType.INT)
-            self.add_QML_data("is_icon_visible", self.is_icon_visible, PySIEffect.DataType.BOOL)
-            self.add_QML_data("is_opened_visible", self.is_opened_visible, PySIEffect.DataType.BOOL)
+            self.color = PySI.Color(10, 0, 0, 255)
+            self.add_QML_data("container_width", self.width, PySI.DataType.INT)
+            self.add_QML_data("container_height", self.height, PySI.DataType.INT)
+            self.add_QML_data("is_icon_visible", self.is_icon_visible, PySI.DataType.BOOL)
+            self.add_QML_data("is_opened_visible", self.is_opened_visible, PySI.DataType.BOOL)
 
             self.show_current_folder_contents_page()
 
@@ -124,15 +124,15 @@ class Directory(Entry.Entry):
             self.width = self.icon_width * 2
             self.height = self.icon_height + self.text_height
 
-            self.shape = PySIEffect.PointVector([[x, y], [x, y + self.height], [x + self.width, y + self.height], [x + self.width, y]])
+            self.shape = PySI.PointVector([[x, y], [x, y + self.height], [x + self.width, y + self.height], [x + self.width, y]])
 
             self.is_icon_visible = True
             self.is_opened_visible = False
-            self.color = PySIEffect.Color(25, 0, 0, 0)
-            self.add_QML_data("container_width", self.width, PySIEffect.DataType.INT)
-            self.add_QML_data("container_height", self.height, PySIEffect.DataType.INT)
-            self.add_QML_data("is_icon_visible", self.is_icon_visible, PySIEffect.DataType.BOOL)
-            self.add_QML_data("is_opened_visible", self.is_opened_visible, PySIEffect.DataType.BOOL)
+            self.color = PySI.Color(25, 0, 0, 0)
+            self.add_QML_data("container_width", self.width, PySI.DataType.INT)
+            self.add_QML_data("container_height", self.height, PySI.DataType.INT)
+            self.add_QML_data("is_icon_visible", self.is_icon_visible, PySI.DataType.BOOL)
+            self.add_QML_data("is_opened_visible", self.is_opened_visible, PySI.DataType.BOOL)
             self.is_open_entry_capability_blocked = False
 
             for child in self.children:
@@ -162,12 +162,12 @@ class Directory(Entry.Entry):
         if _uuid != "" and not self.is_open_entry_capability_blocked:
             if self.parent == "":
                 self.parent = _uuid
-                self.create_link(_uuid, PySIEffect.POSITION, self._uuid, PySIEffect.POSITION)
+                self.create_link(_uuid, PySI.LinkingCapability.POSITION, self._uuid, PySI.LinkingCapability.POSITION)
 
     def on_parent_leave_recv(self, _uuid):
         if _uuid != "" and not self.is_open_entry_capability_blocked:
             if self.parent == _uuid:
-                self.remove_link(self.parent, PySIEffect.POSITION, self._uuid, PySIEffect.POSITION)
+                self.remove_link(self.parent, PySI.LinkingCapability.POSITION, self._uuid, PySI.LinkingCapability.POSITION)
                 self.parent = ""
 
     def show_current_folder_contents_page(self):
@@ -222,7 +222,7 @@ class Directory(Entry.Entry):
         kwargs_btn1["parent"] = self._uuid
         kwargs_btn1["value"] = False
 
-        self.create_region_via_id(shape_btn1, PySIEffect.EffectType.SI_BUTTON, kwargs_btn1)
+        self.create_region_via_id(shape_btn1, PySI.EffectType.SI_BUTTON, kwargs_btn1)
 
         shape_btn2 = [[dir_x, dir_y + self.preview_height - btn_height],
                       [dir_x, dir_y + self.preview_height],
@@ -233,4 +233,4 @@ class Directory(Entry.Entry):
         kwargs_btn2["parent"] = self._uuid
         kwargs_btn2["value"] = True
 
-        self.create_region_via_id(shape_btn2, PySIEffect.EffectType.SI_BUTTON, kwargs_btn2)
+        self.create_region_via_id(shape_btn2, PySI.EffectType.SI_BUTTON, kwargs_btn2)

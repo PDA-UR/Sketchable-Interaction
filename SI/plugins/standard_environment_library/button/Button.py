@@ -1,22 +1,22 @@
-from libPySI import PySIEffect
+from libPySI import PySI
 from plugins.standard_environment_library import SIEffect
 
 
-region_type = PySIEffect.EffectType.SI_BUTTON
-region_name = PySIEffect.SI_STD_NAME_BUTTON
+region_type = PySI.EffectType.SI_BUTTON
+region_name = PySI.EffectName.SI_STD_NAME_BUTTON
 region_width = 100
 region_height = 100
 
 
 class Button(SIEffect.SIEffect):
-    def __init__(self, shape=PySIEffect.PointVector(), uuid="", kwargs={}):
+    def __init__(self, shape=PySI.PointVector(), uuid="", kwargs={}):
         super(Button, self).__init__(shape, uuid, "res/next.png", kwargs)
-        self.name = PySIEffect.SI_STD_NAME_BUTTON
-        self.region_type = PySIEffect.EffectType.SI_BUTTON
+        self.name = PySI.EffectName.SI_STD_NAME_BUTTON
+        self.region_type = PySI.EffectType.SI_BUTTON
         self.qml_path = "plugins/standard_environment_library/button/Button.qml"
-        self.color = PySIEffect.Color(192, 192, 192, 0)
+        self.color = PySI.Color(192, 192, 192, 0)
 
-        self.disable_effect(PySIEffect.MOVE, False)
+        self.disable_effect(PySI.CollisionCapability.MOVE, False)
 
         self.value = kwargs["value"] if len(kwargs.keys()) else False
         self.parent = str(kwargs["parent"]) if len(kwargs.keys()) else ""
@@ -29,12 +29,12 @@ class Button(SIEffect.SIEffect):
         self.width = region_width
         self.height = region_height
 
-        self.add_QML_data("icon_width", self.icon_width, PySIEffect.DataType.INT)
-        self.add_QML_data("icon_height", self.icon_height, PySIEffect.DataType.INT)
+        self.add_QML_data("icon_width", self.icon_width, PySI.DataType.INT)
+        self.add_QML_data("icon_height", self.icon_height, PySI.DataType.INT)
 
-        self.enable_effect(PySIEffect.BTN, self.EMISSION, self.on_btn_enter_emit, self.on_btn_continuous_emit, self.on_btn_leave_emit)
-        self.enable_effect(PySIEffect.CLICK, self.RECEPTION, self.on_click_enter_recv, self.on_click_continuous_recv, self.on_click_leave_recv)
-        self.enable_effect(PySIEffect.PARENT, self.RECEPTION, self.on_parent_enter_recv, None, self.on_parent_leave_recv)
+        self.enable_effect(PySI.CollisionCapability.BTN, self.EMISSION, self.on_btn_enter_emit, self.on_btn_continuous_emit, self.on_btn_leave_emit)
+        self.enable_effect(PySI.CollisionCapability.CLICK, self.RECEPTION, self.on_click_enter_recv, self.on_click_continuous_recv, self.on_click_leave_recv)
+        self.enable_effect(PySI.CollisionCapability.PARENT, self.RECEPTION, self.on_parent_enter_recv, None, self.on_parent_leave_recv)
         self.parent = ""
         self.is_open_entry_capability_blocked = False
 
@@ -68,8 +68,8 @@ class Button(SIEffect.SIEffect):
     def on_parent_enter_recv(self, parent_id):
         if self.parent == "":
             self.parent = parent_id
-            self.create_link(parent_id, PySIEffect.POSITION, self._uuid, PySIEffect.POSITION)
+            self.create_link(parent_id, PySI.LinkingCapability.POSITION, self._uuid, PySI.LinkingCapability.POSITION)
 
     def on_parent_leave_recv(self, parent_id):
         if self.parent == parent_id:
-            self.remove_link(parent_id, PySIEffect.POSITION, self._uuid, PySIEffect.POSITION)
+            self.remove_link(parent_id, PySI.LinkingCapability.POSITION, self._uuid, PySI.LinkingCapability.POSITION)
