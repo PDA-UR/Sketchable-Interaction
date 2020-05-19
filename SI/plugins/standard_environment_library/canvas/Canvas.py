@@ -2,8 +2,6 @@ from libPySI import PySI
 
 from plugins.standard_environment_library import SIEffect
 
-print(PySI.EffectName.SI_STD_NAME_CANVAS)
-
 region_type = PySI.EffectType.SI_CANVAS
 region_name = PySI.EffectName.SI_STD_NAME_CANVAS
 

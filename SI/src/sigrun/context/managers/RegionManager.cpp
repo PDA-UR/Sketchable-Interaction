@@ -32,12 +32,12 @@ void RegionManager::activate_mouse_region_button_down(uint32_t mouse_btn)
 {
     auto it = std::find_if(std::execution::par_unseq, d_regions.begin(), d_regions.end(), [&](auto& region)
     {
-        return region->effect().effect_type() == SI_TYPE_MOUSE_CURSOR && !region->effect().has_mouse_pressed_capability(mouse_btn);
+        return region->effect()->effect_type() == SI_TYPE_MOUSE_CURSOR && !region->effect()->has_mouse_pressed_capability(mouse_btn);
     });
 
     if(it != d_regions.end())
     {
-        it->get()->effect().set_mouse_pressed_capability(mouse_btn, true);
+        it->get()->effect()->set_mouse_pressed_capability(mouse_btn, true);
 
         switch(mouse_btn)
         {
@@ -74,12 +74,12 @@ void RegionManager::deactivate_mouse_region_button_down(uint32_t mouse_btn)
 {
     auto it = std::find_if(std::execution::par_unseq, d_regions.begin(), d_regions.end(), [&](auto& region)
     {
-        return region->effect().effect_type() == SI_TYPE_MOUSE_CURSOR && region->effect().has_mouse_pressed_capability(mouse_btn);
+        return region->effect()->effect_type() == SI_TYPE_MOUSE_CURSOR && region->effect()->has_mouse_pressed_capability(mouse_btn);
     });
 
     if(it != d_regions.end())
     {
-        it->get()->effect().set_mouse_pressed_capability(mouse_btn, false);
+        it->get()->effect()->set_mouse_pressed_capability(mouse_btn, false);
 
         switch(mouse_btn)
         {
@@ -112,7 +112,7 @@ void RegionManager::deactivate_mouse_region_button_down(uint32_t mouse_btn)
     }
 }
 
-void RegionManager::set_partial_regions(std::map<std::string, std::vector<glm::vec3>>& partials)
+void RegionManager::set_partial_regions(const std::map<std::string, std::vector<glm::vec3>>& partials)
 {
     d_partial_regions = partials;
 }
@@ -148,7 +148,7 @@ void RegionManager::toggle_mouse_region_wheel_scrolled(float angle_px, float ang
 {
     auto it = std::find_if(std::execution::par_unseq, d_regions.begin(), d_regions.end(), [angle_px, angle_degrees](auto& region)
     {
-        return region->effect().effect_type() == SI_TYPE_MOUSE_CURSOR;
+        return region->effect()->effect_type() == SI_TYPE_MOUSE_CURSOR;
     });
 
     if(it != d_regions.end())
@@ -164,7 +164,7 @@ void RegionManager::update_region_deletions()
 {
     d_regions.erase(std::remove_if(std::execution::seq, d_regions.begin(), d_regions.end(), [&](std::shared_ptr<Region>& region) -> bool
     {
-        if(!region->effect().is_flagged_for_deletion())
+        if(!region->effect()->is_flagged_for_deletion())
             return false;
 
         Context::SIContext()->collision_manager()->handle_event_leave_on_deletion(region);

@@ -27,7 +27,7 @@ void MainWindow::loop(double delta, uint32_t fps)
 {
     auto& regions = Context::SIContext()->region_manager()->regions();
 
-    d_reg_reps.erase(std::remove_if(std::execution::seq, d_reg_reps.begin(), d_reg_reps.end(), [&](auto& rep)
+    d_reg_reps.erase(std::remove_if(d_reg_reps.begin(), d_reg_reps.end(), [&](auto& rep)
     {
         return std::find_if(std::execution::par_unseq, regions.begin(), regions.end(), [&](auto& reg)
         {
@@ -69,7 +69,7 @@ void MainWindow::loop(double delta, uint32_t fps)
                 default:
                 {
                     // look for a file
-                    auto it = std::find_if(std::execution::seq, d_reg_reps.begin(), d_reg_reps.end(), [&](auto& rep)
+                    auto it = std::find_if(std::execution::par_unseq, d_reg_reps.begin(), d_reg_reps.end(), [&](auto& rep)
                     {
                         return rep->type() == SI_TYPE_ENTRY
                                || rep->type() == SI_TYPE_DIRECTORY
