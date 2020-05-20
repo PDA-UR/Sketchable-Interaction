@@ -38,10 +38,8 @@ void Context::begin(const std::unordered_map<std::string, std::unique_ptr<bp::ob
     {
         d_ire = ire;
 
-        std::for_each(std::execution::par_unseq, plugins.begin(), plugins.end(), [&](auto& plugin)
-        {
-           d_plugins[plugin.first] = *plugin.second;
-        });
+        for(const auto& [k, v]: plugins)
+            d_plugins[k] = *v;
 
         INFO("Creating Qt5 Application...");
         QApplication d_app(argc, argv);
@@ -67,7 +65,7 @@ void Context::begin(const std::unordered_map<std::string, std::unique_ptr<bp::ob
             exit(69);
         }
 
-        std::for_each(std::execution::par_unseq, plugins.begin(), plugins.end(), [&](const auto& plugin)
+        for(const auto& plugin: plugins)
         {
             HANDLE_PYTHON_CALL(PY_WARNING, "Plugin does not have the attribute \'region_type\' on module level and is skipped. Try assigning PySIEffect.EffectType.SI_CUSTOM.",
                 switch (bp::extract<int>(plugin.second->attr("region_type")))
@@ -92,12 +90,10 @@ void Context::begin(const std::unordered_map<std::string, std::unique_ptr<bp::ob
                         break;
                 }
             )
-        });
+        }
 
-        std::transform(d_available_plugins.begin(), d_available_plugins.end(), std::back_inserter(d_available_plugins_names), [&](const auto& pair)
-        {
-            return pair.first;
-        });
+        for(const auto& [k, v]: d_available_plugins)
+            d_available_plugins_names.push_back(k);
 
         HANDLE_PYTHON_CALL(PY_ERROR, "Could not load startup file! A python file called \'StartSIGRun\' is required to be present in plugins folder!",
             bp::import("plugins.StartSIGRun").attr("on_startup")();
@@ -174,12 +170,11 @@ uint32_t Context::width()
 uint32_t Context::height()
 {
     return s_height;
-    return s_height;
 }
 
 void Context::set_effect(const std::string& target_uuid, const std::string& effect_name, const std::string& effect_display_name, bp::dict& kwargs)
 {
-    auto it = std::find_if(std::execution::seq, uprm->regions().begin(), uprm->regions().end(), [&](auto& region)
+    auto it = std::find_if(uprm->regions().begin(), uprm->regions().end(), [&](auto& region)
     {
         return region->uuid() == target_uuid;
     });
@@ -190,7 +185,7 @@ void Context::set_effect(const std::string& target_uuid, const std::string& effe
         {
             d_selected_effects_by_id[target_uuid] = d_available_plugins[effect_name];
 
-            (*std::find_if(std::execution::par_unseq, uprm->regions().begin(), uprm->regions().end(), [&](auto& region)
+            (*std::find_if(uprm->regions().begin(), uprm->regions().end(), [&](auto& region)
             {
                 return region->type() == SI_TYPE_NOTIFICATION;
             }))->raw_effect().attr("update_message")("Mouse Cursor set to " + effect_display_name);
@@ -215,9 +210,7 @@ void Context::disable(uint32_t what)
 void Context::register_new_region(const std::vector<glm::vec3>& contour, const std::string& uuid)
 {
     if(contour.size() > 2)
-    {
         uprm->add_region(contour, d_selected_effects_by_id[uuid], 0);
-    }
 }
 
 void Context::register_new_region_via_name(const std::vector<glm::vec3>& contour, const std::string& effect_name, bool as_selector, bp::dict& kwargs)
@@ -246,7 +239,7 @@ void Context::register_new_region_via_name(const std::vector<glm::vec3>& contour
 void Context::register_new_region_via_type(const std::vector<glm::vec3>& contour, int id, bp::dict& kwargs)
 {
     HANDLE_PYTHON_CALL(PY_ERROR, "Error. Could not add region!.",
-        auto effect = std::find_if(std::execution::par_unseq, d_plugins.begin(), d_plugins.end(), [&id](auto& pair)
+        auto effect = std::find_if(d_plugins.begin(), d_plugins.end(), [&id](auto& pair)
         {
            return  pair.second.attr("region_type") == id;
         });

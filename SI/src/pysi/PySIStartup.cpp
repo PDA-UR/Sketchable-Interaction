@@ -34,7 +34,7 @@ void PySIStartup::logger_quench_messages_from_class(const std::string &class_nam
 {
     std::string to_quench = class_name;
 
-    std::transform(std::execution::par, to_quench.begin(), to_quench.end(), to_quench.begin(), ::toupper);
+    std::transform(to_quench.begin(), to_quench.end(), to_quench.begin(), ::toupper);
 
     Log::quench(to_quench);
 }
@@ -43,7 +43,7 @@ void PySIStartup::logger_unquench_messages_from_class(const std::string &class_n
 {
     std::string to_unquench = class_name;
 
-    std::transform(std::execution::par, to_unquench.begin(), to_unquench.end(), to_unquench.begin(), ::toupper);
+    std::transform(to_unquench.begin(), to_unquench.end(), to_unquench.begin(), ::toupper);
 
     Log::unquench(to_unquench);
 }

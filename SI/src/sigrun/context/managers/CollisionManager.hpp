@@ -20,7 +20,7 @@ public:
     void handle_event_leave_on_deletion(std::shared_ptr<Region>& deleted_region);
 
 private:
-    bool collides_with_aabb(const std::shared_ptr<Region>& a, const std::shared_ptr<Region>& b);
+    bool collides_with_aabb(const std::vector<glm::vec3>& a_aabb, int32_t ax, int32_t ay, const std::vector<glm::vec3>& b_aabb, int32_t bx, int32_t by);
     bool collides_with_mask(const std::shared_ptr<Region>& a, const std::shared_ptr<Region>& b);
     bool has_capabilities_in_common(const std::shared_ptr<Region>& a, const std::shared_ptr<Region>& b);
 

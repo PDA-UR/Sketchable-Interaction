@@ -20,7 +20,7 @@ RegionRepresentation::RegionRepresentation(QWidget *parent, const std::shared_pt
 
     d_fill.moveTo(region->contour()[0].x - region->aabb()[0].x, region->contour()[0].y - region->aabb()[0].y);
 
-    std::for_each(std::execution::seq, region->contour().begin() + 1, region->contour().end(), [&](auto& point)
+    std::for_each(region->contour().begin() + 1, region->contour().end(), [&](auto& point)
     {
         d_fill.lineTo(point.x - region->aabb()[0].x, point.y - region->aabb()[0].y);
     });
@@ -94,7 +94,7 @@ void RegionRepresentation::perform_data_update(const std::shared_ptr<Region> &re
 
         d_fill.moveTo(region->contour()[0].x - region->aabb()[0].x, region->contour()[0].y - region->aabb()[0].y);
 
-        std::for_each(std::execution::seq, region->contour().begin() + 1, region->contour().end(), [&](auto& point)
+        std::for_each(region->contour().begin() + 1, region->contour().end(), [&](auto& point)
         {
             d_fill.lineTo(point.x - region->aabb()[0].x, point.y - region->aabb()[0].y);
         });
@@ -113,17 +113,15 @@ void RegionRepresentation::paintEvent(QPaintEvent *event)
         const auto& partial_regions = Context::SIContext()->region_manager()->partial_regions();
         up_qp.setBrush(QColor(255, 255, 255));
 
-        std::for_each(std::execution::par_unseq, partial_regions.begin(), partial_regions.end(), [&](auto& pair)
+        for(const auto& [k, v]: partial_regions)
         {
             QPolygonF partial_poly;
 
-            std::for_each(std::execution::seq, pair.second.begin(), pair.second.end(), [&partial_poly](auto& p)
-            {
+            for(const auto& p: v)
                 partial_poly << QPointF(p.x, p.y);
-            });
 
             up_qp.drawPolyline(partial_poly);
-        });
+        }
     }
 
     up_qp.end();

@@ -21,7 +21,7 @@ PySIEffect::PySIEffect(const std::vector<glm::vec3>& contour, const std::string&
     int32_t y_min = std::numeric_limits<int32_t>::max();
     int32_t y_max = std::numeric_limits<int32_t>::min();
 
-    std::for_each(std::execution::par_unseq, d_contour.begin(), d_contour.end(), [&](auto& v)
+    std::for_each(d_contour.begin(), d_contour.end(), [&](auto& v)
     {
         x_max = v.x > x_max ? v.x : x_max;
         y_max = v.y > y_max ? v.y : y_max;
@@ -251,7 +251,7 @@ void PySIEffect::set_shape(const std::vector<glm::vec3>& shape)
         int32_t y_min = std::numeric_limits<int32_t>::max();
         int32_t y_max = std::numeric_limits<int32_t>::min();
 
-        std::for_each(std::execution::par_unseq, d_contour.begin(), d_contour.end(), [&](auto& v)
+        std::for_each(d_contour.begin(), d_contour.end(), [&](auto& v)
         {
             x_max = v.x > x_max ? v.x : x_max;
             y_max = v.y > y_max ? v.y : y_max;
