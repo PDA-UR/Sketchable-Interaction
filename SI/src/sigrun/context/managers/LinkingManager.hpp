@@ -12,7 +12,8 @@
 #include "sigrun/context/managers/helpers/linking/Link.hpp"
 
 Q_DECLARE_METATYPE (std::string)
-//Q_DECLARE_METATYPE (boost::python::object)
+Q_DECLARE_METATYPE (boost::python::object)
+Q_DECLARE_METATYPE (bp::tuple)
 
 class LinkingManager: public QObject, public SIObject
 { Q_OBJECT SIGRUN

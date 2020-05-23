@@ -4,6 +4,7 @@
 #define SITEST_MAINWINDOW_HPP
 
 #include <memory>
+#include <queue>
 #include <SI/SI.hpp>
 #include <QMainWindow>
 #include <QGraphicsAnchorLayout>

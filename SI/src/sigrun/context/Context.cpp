@@ -9,6 +9,8 @@
 #include <pysi/PySIEffect.hpp>
 #include <sigrun/util/Util.hpp>
 #include <sigrun/plugin/Scripting.hpp>
+#include <thread>
+#include <mutex>
 
 namespace bp = boost::python;
 
@@ -95,9 +97,12 @@ void Context::begin(const std::unordered_map<std::string, std::unique_ptr<bp::ob
         for(const auto& [k, v]: d_available_plugins)
             d_available_plugins_names.push_back(k);
 
-        HANDLE_PYTHON_CALL(PY_ERROR, "Could not load startup file! A python file called \'StartSIGRun\' is required to be present in plugins folder!",
-            bp::import("plugins.StartSIGRun").attr("on_startup")();
-        )
+        tbb::task_group().run_and_wait([&]
+        {
+            HANDLE_PYTHON_CALL(PY_ERROR, "Could not load startup file! A python file called \'StartSIGRun\' is required to be present in plugins folder!",
+                bp::import("plugins.StartSIGRun").attr("on_startup")();
+            )
+        });
 
         d_app.exec();
         INFO("QT5 Application terminated!");
@@ -210,7 +215,9 @@ void Context::disable(uint32_t what)
 void Context::register_new_region(const std::vector<glm::vec3>& contour, const std::string& uuid)
 {
     if(contour.size() > 2)
+    {
         uprm->add_region(contour, d_selected_effects_by_id[uuid], 0);
+    }
 }
 
 void Context::register_new_region_via_name(const std::vector<glm::vec3>& contour, const std::string& effect_name, bool as_selector, bp::dict& kwargs)

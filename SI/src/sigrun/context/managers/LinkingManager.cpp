@@ -9,6 +9,8 @@
 LinkingManager::LinkingManager()
 {
     qRegisterMetaType<std::string>("std::string");
+    qRegisterMetaType<bp::object>("bp::object");
+    qRegisterMetaType<bp::tuple>("bp::tuple");
 }
 
 LinkingManager::~LinkingManager()

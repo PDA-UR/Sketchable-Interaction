@@ -86,7 +86,7 @@ void Core::retrieve_available_plugins(std::unordered_map<std::string, std::uniqu
 
     PluginCollector().collect("/" + plugin_path, files);
 
-    std::for_each(files.begin(), files.end(), [&](auto& file)
+    for(const auto& file: files)
     {
         HANDLE_PYTHON_CALL(PY_ERROR, "Unknown Error.",
             std::vector<std::string> classes;
@@ -101,15 +101,15 @@ void Core::retrieve_available_plugins(std::unordered_map<std::string, std::uniqu
             {
                 script.load_class_names(classes, rpath);
 
-                std::for_each(classes.begin(), classes.end(), [&](auto& clazz)
+                for(auto& clazz: classes)
                 {
                     bp::object obj = script.si_plugin(module_name, rpath, clazz);
 
                     HANDLE_PYTHON_CALL(PY_WARNING, "The found plugin does not contain the attribute \'region_name\' on module level. Therefore, the plugin is skipped and not available for use. Assign a str-value to it.",
                         plugins[std::string(bp::extract<char*>(obj.attr("region_name")))] = std::make_unique<bp::object>(obj);
                     )
-                });
+                }
             }
         )
-    });
+    }
 }

@@ -312,7 +312,7 @@ void RegionMask::scanlinefill(const std::vector<glm::vec3>& contour, const std::
     max.x += 1;
 
     // Go through each scan line iteratively, jumping by 'gap' pixels each time
-    for(int y = min.y; y < max.y; ++y)
+    for(int32_t y = min.y; y < max.y; ++y)
     {
         scan_hits.clear();
 

@@ -21,13 +21,13 @@ PySIEffect::PySIEffect(const std::vector<glm::vec3>& contour, const std::string&
     int32_t y_min = std::numeric_limits<int32_t>::max();
     int32_t y_max = std::numeric_limits<int32_t>::min();
 
-    std::for_each(d_contour.begin(), d_contour.end(), [&](auto& v)
+    for(const auto& v: d_contour)
     {
         x_max = v.x > x_max ? v.x : x_max;
         y_max = v.y > y_max ? v.y : y_max;
         x_min = v.x < x_min ? v.x : x_min;
         y_min = v.y < y_min ? v.y : y_min;
-    });
+    }
 
     glm::vec3 tlc(x_min, y_min, 1), blc(x_min, y_max, 1), brc(x_max, y_max, 1), trc(x_max, y_min, 1);
 
@@ -251,13 +251,13 @@ void PySIEffect::set_shape(const std::vector<glm::vec3>& shape)
         int32_t y_min = std::numeric_limits<int32_t>::max();
         int32_t y_max = std::numeric_limits<int32_t>::min();
 
-        std::for_each(d_contour.begin(), d_contour.end(), [&](auto& v)
+        for(const auto& v: d_contour)
         {
             x_max = v.x > x_max ? v.x : x_max;
             y_max = v.y > y_max ? v.y : y_max;
             x_min = v.x < x_min ? v.x : x_min;
             y_min = v.y < y_min ? v.y : y_min;
-        });
+        }
 
         glm::vec3 tlc(x_min, y_min, 1), blc(x_min, y_max, 1), brc(x_max, y_max, 1), trc(x_max, y_min, 1);
 
