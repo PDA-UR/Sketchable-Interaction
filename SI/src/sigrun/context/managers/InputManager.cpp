@@ -26,15 +26,11 @@ InputManager::InputManager():
 
 void InputManager::update()
 {
-    std::for_each(std::execution::par_unseq, d_key_map.begin(), d_key_map.end(), [&](auto& pair)
-    {
-        d_previous_key_map[pair.first] = pair.second;
-    });
+    for(const auto& [k, v]: d_key_map)
+        d_previous_key_map[k] = v;
 
-    std::for_each(std::execution::par_unseq, d_button_map.begin(), d_button_map.end(), [&](auto& pair)
-    {
-        d_previous_button_map[pair.first] = pair.second;
-    });
+    for(const auto& [k, v]: d_previous_button_map)
+        d_previous_button_map[k] = v;
 
     for(auto it = deo.begin(); it != deo.end();)
     {
@@ -57,7 +53,7 @@ void InputManager::update()
 
                     auto& regions = Context::SIContext()->region_manager()->regions();
 
-                    auto it2 = std::find_if(std::execution::par_unseq, regions.begin(), regions.end(), [&](auto& region)
+                    auto it2 = std::find_if(regions.begin(), regions.end(), [&](auto& region)
                     {
                        return region->uuid() == it->first;
                     });
@@ -298,14 +294,14 @@ void InputManager::register_external_application(const std::string& file_uuid, Q
 
 void InputManager::unregister_external_application(const std::string& file_uuid)
 {
-    auto it = std::find_if(std::execution::par_unseq, deo.begin(), deo.end(), [&file_uuid](const auto& pair) -> bool
+    auto it = std::find_if(deo.begin(), deo.end(), [&file_uuid](const auto& pair) -> bool
     {
         return std::get<1>(pair)->type() == ExternalObject::APPLICATION && std::get<1>(pair)->embedded_object.external_application.file_uuid == file_uuid;
     });
 
     if(it != deo.end())
     {
-        auto it2 = std::find_if(std::execution::par_unseq, Context::SIContext()->region_manager()->regions().begin(), Context::SIContext()->region_manager()->regions().end(), [&it](auto& region)
+        auto it2 = std::find_if(Context::SIContext()->region_manager()->regions().begin(), Context::SIContext()->region_manager()->regions().end(), [&it](auto& region)
         {
             return region->uuid() == it->first;
         });

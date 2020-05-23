@@ -30,7 +30,7 @@ std::vector<std::shared_ptr<Region>> &RegionManager::regions()
 
 void RegionManager::activate_mouse_region_button_down(uint32_t mouse_btn)
 {
-    auto it = std::find_if(std::execution::par_unseq, d_regions.begin(), d_regions.end(), [&](auto& region)
+    auto it = std::find_if(d_regions.begin(), d_regions.end(), [&](auto& region)
     {
         return region->effect()->effect_type() == SI_TYPE_MOUSE_CURSOR && !region->effect()->has_mouse_pressed_capability(mouse_btn);
     });
@@ -72,7 +72,7 @@ void RegionManager::activate_mouse_region_button_down(uint32_t mouse_btn)
 
 void RegionManager::deactivate_mouse_region_button_down(uint32_t mouse_btn)
 {
-    auto it = std::find_if(std::execution::par_unseq, d_regions.begin(), d_regions.end(), [&](auto& region)
+    auto it = std::find_if(d_regions.begin(), d_regions.end(), [&](auto& region)
     {
         return region->effect()->effect_type() == SI_TYPE_MOUSE_CURSOR && region->effect()->has_mouse_pressed_capability(mouse_btn);
     });
@@ -146,7 +146,7 @@ void RegionManager::update_mouse_inputs()
 
 void RegionManager::toggle_mouse_region_wheel_scrolled(float angle_px, float angle_degrees)
 {
-    auto it = std::find_if(std::execution::par_unseq, d_regions.begin(), d_regions.end(), [angle_px, angle_degrees](auto& region)
+    auto it = std::find_if(d_regions.begin(), d_regions.end(), [angle_px, angle_degrees](auto& region)
     {
         return region->effect()->effect_type() == SI_TYPE_MOUSE_CURSOR;
     });
@@ -162,7 +162,7 @@ void RegionManager::toggle_mouse_region_wheel_scrolled(float angle_px, float ang
 
 void RegionManager::update_region_deletions()
 {
-    d_regions.erase(std::remove_if(std::execution::seq, d_regions.begin(), d_regions.end(), [&](std::shared_ptr<Region>& region) -> bool
+    d_regions.erase(std::remove_if(d_regions.begin(), d_regions.end(), [&](std::shared_ptr<Region>& region) -> bool
     {
         if(!region->effect()->is_flagged_for_deletion())
             return false;
@@ -176,13 +176,13 @@ void RegionManager::update_region_deletions()
 
 void RegionManager::update_regions()
 {
-    std::for_each(std::execution::seq, d_regions.rbegin(), d_regions.rend(), [](auto& region)
+    for(auto it = d_regions.rbegin(); it != d_regions.rend(); ++it)
     {
-        if(region->is_new())
-            region->set_is_new(false);
+        if((*it)->is_new())
+            (*it)->set_is_new(false);
         else
-            region->update();
-    });
+            (*it)->update();
+    }
 }
 
 void RegionManager::update()

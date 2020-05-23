@@ -19,9 +19,6 @@ Region::Region(const std::vector<glm::vec3> &contour, const bp::object& effect, 
     d_last_delta_x(0),
     d_last_delta_y(0)
 {
-    qRegisterMetaType<bp::object>("bp::object");
-    qRegisterMetaType<bp::tuple>("bp::tuple");
-
     set_effect(contour, effect, std::string(_UUID_), kwargs);
 
     if(!mask_width && !mask_height)
@@ -149,28 +146,28 @@ void Region::LINK_SLOT(const std::string& uuid_event, const std::string& uuid_se
     {
         register_link_event(event);
 
-        std::for_each(std::execution::par_unseq, d_py_effect->attr_link_recv()[source_cap].begin(), d_py_effect->attr_link_recv()[source_cap].end(), [&](auto& pair)
+        for(auto& [k, v]: d_py_effect->attr_link_recv()[source_cap])
         {
             HANDLE_PYTHON_CALL(PY_WARNING, "Failed to extract data to pass to linking target. Desired action did not occur! (" + name() + ")",
                 if(uuid_sender.empty())
                 {
-                    pair.second(*args);
+                    v(*args);
 
-                    if(d_py_effect->attr_link_emit().find(pair.first) != d_py_effect->attr_link_emit().end())
-                        Q_EMIT LINK_SIGNAL(uuid_event, this->uuid(), pair.first, bp::extract<bp::tuple>(d_py_effect->attr_link_emit()[pair.first]()));
+                    if(d_py_effect->attr_link_emit().find(k) != d_py_effect->attr_link_emit().end())
+                        Q_EMIT LINK_SIGNAL(uuid_event, uuid(), k, bp::extract<bp::tuple>(d_py_effect->attr_link_emit()[k]()));
                 }
                 else
                 {
-                    if(Context::SIContext()->linking_manager()->is_linked(uuid_sender, source_cap, this->uuid(), pair.first, ILink::UD))
+                    if(Context::SIContext()->linking_manager()->is_linked(uuid_sender, source_cap, uuid(), k, ILink::UD))
                     {
-                        pair.second(*args);
+                        v(*args);
 
-                        if(d_py_effect->attr_link_emit().find(pair.first) != d_py_effect->attr_link_emit().end())
-                            Q_EMIT LINK_SIGNAL(uuid_event, this->uuid(), pair.first, bp::extract<bp::tuple>(d_py_effect->attr_link_emit()[pair.first]()));
+                        if(d_py_effect->attr_link_emit().find(k) != d_py_effect->attr_link_emit().end())
+                            Q_EMIT LINK_SIGNAL(uuid_event, uuid(), k, bp::extract<bp::tuple>(d_py_effect->attr_link_emit()[k]()));
                     }
                 }
             )
-        });
+        }
     }
 }
 
@@ -271,7 +268,7 @@ void Region::process_canvas_specifics()
 
         if(!d_py_effect->regions_for_registration().empty())
         {
-            std::transform(std::execution::par_unseq, d_py_effect->regions_for_registration().begin(), d_py_effect->regions_for_registration().end(), d_py_effect->regions_for_registration().begin(), [&](auto& candidate)
+            for(const auto& candidate: d_py_effect->regions_for_registration())
             {
                 Context::SIContext()->register_new_region(d_py_effect->partial_region_contours()[candidate], candidate);
 
@@ -279,9 +276,7 @@ void Region::process_canvas_specifics()
                     if(bp::len(d_effect->attr("__partial_regions__")))
                         bp::delitem(d_effect->attr("__partial_regions__"), bp::object(candidate));
                 )
-
-                return candidate;
-            });
+            }
 
             HANDLE_PYTHON_CALL(PY_ERROR, "Fatal Error while sketching! Unable to remove newly registered regions from the registration list! (" + name() + ")",
                 d_effect->attr("__registered_regions__").attr("clear")();
@@ -318,12 +313,9 @@ void Region::set_is_new(bool toggle)
 
 uint8_t Region::handle_collision_event(const std::string &function_name, PySIEffect* colliding_effect)
 {
-    std::for_each(std::execution::seq, colliding_effect->cap_collision_emit().begin(), colliding_effect->cap_collision_emit().end(), [&](auto& pair)
+    for(auto& [capability, emission_functions]: colliding_effect->cap_collision_emit())
     {
         HANDLE_PYTHON_CALL(PY_ERROR, "Fatal Error. Unable to perform collision event " + function_name + " (" + name() + "other: " + colliding_effect->name() + ")",
-            const std::string& capability = pair.first;
-            auto& emission_functions = pair.second;
-
             if (d_py_effect->cap_collision_recv().find(capability) != d_py_effect->cap_collision_recv().end())
             {
                 if(!emission_functions[function_name].is_none())
@@ -348,7 +340,7 @@ uint8_t Region::handle_collision_event(const std::string &function_name, PySIEff
                 }
             }
         )
-    });
+    }
 
     return 0;
 }

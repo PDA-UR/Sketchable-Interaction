@@ -4,6 +4,7 @@
 #define SITEST_MAINWINDOW_HPP
 
 #include <memory>
+#include <queue>
 #include <SI/SI.hpp>
 #include <QMainWindow>
 #include <QGraphicsAnchorLayout>
@@ -23,7 +24,7 @@ public:
 private:
     Q_SLOT void loop(double delta, uint32_t fps);
 
-    std::vector<std::unique_ptr<RegionRepresentation>> d_reg_reps;
+    std::vector<RegionRepresentation*> d_reg_reps;
 
     UpdateWorker up_update_worker;
 

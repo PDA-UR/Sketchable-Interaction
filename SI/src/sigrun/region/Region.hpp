@@ -18,9 +18,6 @@
 
 namespace bp = boost::python;
 
-Q_DECLARE_METATYPE (bp::object)
-Q_DECLARE_METATYPE (bp::tuple)
-
 
 class Region: public QObject, public SIObject
 { Q_OBJECT SIGRUN
@@ -91,9 +88,6 @@ private:
 
     PySIEffect* d_py_effect;
     std::shared_ptr<bp::object> d_effect;
-
-    std::vector<glm::vec3> d_contour;
-    std::vector<glm::vec3> d_aabb;
 
     RingBuffer<std::tuple<std::string, std::string>> d_link_events;
 

@@ -96,7 +96,7 @@ void ExternalApplicationManager::process_wmctrl_command_output(const QString &in
     {
         const auto& vec = input.split(' ', QString::SkipEmptyParts).toVector().toStdVector();
 
-        QString window_name = QString(std::transform_reduce(std::execution::par_unseq, vec.begin() + 4, vec.end(), std::string(""), [](const std::string& a, const std::string& b)
+        QString window_name = QString(std::transform_reduce(vec.begin() + 4, vec.end(), std::string(""), [](const std::string& a, const std::string& b)
         {
             return a + " " + b;
         }, [](auto& qstr)
