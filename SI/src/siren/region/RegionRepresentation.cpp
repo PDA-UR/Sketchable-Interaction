@@ -6,24 +6,18 @@
 #include <execution>
 #include <algorithm>
 #include <numeric>
+#include <thread>
 #include <QQmlContext>
 
 RegionRepresentation::RegionRepresentation(QWidget *parent, const std::shared_ptr<Region>& region):
     d_color(QColor(region->color().r, region->color().g, region->color().b, region->color().a)),
     d_qml_path(region->qml_path()),
-    d_view(std::make_unique<QQuickWidget>(parent)),
+    d_view(new QQuickWidget(parent)),
     d_type(region->type()),
     d_uuid(region->uuid()),
     d_name(region->name())
 {
     d_region_connection = connect(this, &RegionRepresentation::dataChanged, region.get(), &Region::REGION_DATA_CHANGED_SLOT);
-
-    d_fill.moveTo(region->contour()[0].x - region->aabb()[0].x, region->contour()[0].y - region->aabb()[0].y);
-
-    std::for_each(region->contour().begin() + 1, region->contour().end(), [&](auto& point)
-    {
-        d_fill.lineTo(point.x - region->aabb()[0].x, point.y - region->aabb()[0].y);
-    });
 
     d_view->engine()->rootContext()->setContextProperty("Region", this);
 
@@ -36,13 +30,23 @@ RegionRepresentation::RegionRepresentation(QWidget *parent, const std::shared_pt
     d_view->setAttribute(Qt::WA_NoSystemBackground);
     d_view->setClearColor(Qt::transparent);
 
-    if(region->effect()->has_data_changed())
-        Q_EMIT dataChanged(region->data());
-
     setParent(parent);
     setGeometry(region->aabb()[0].x, region->aabb()[0].y, region->aabb()[3].x - region->aabb()[0].x, region->aabb()[1].y - region->aabb()[0].y);
 
-    show();
+    if(region->effect()->has_data_changed())
+            Q_EMIT dataChanged(region->data());
+
+    d_fill.moveTo(region->contour()[0].x - region->aabb()[0].x, region->contour()[0].y - region->aabb()[0].y);
+
+    std::for_each(region->contour().begin() + 1, region->contour().end(), [&](auto& point)
+    {
+        d_fill.lineTo(point.x - region->aabb()[0].x, point.y - region->aabb()[0].y);
+    });
+
+    std::thread([&]
+    {
+        QMetaObject::invokeMethod(this, "show");
+    }).detach();
 }
 
 RegionRepresentation::~RegionRepresentation()
@@ -98,9 +102,9 @@ void RegionRepresentation::perform_data_update(const std::shared_ptr<Region> &re
         {
             d_fill.lineTo(point.x - region->aabb()[0].x, point.y - region->aabb()[0].y);
         });
-    }
 
-    Q_EMIT dataChanged(region->data());
+        Q_EMIT dataChanged(region->data());
+    }
 }
 
 void RegionRepresentation::paintEvent(QPaintEvent *event)

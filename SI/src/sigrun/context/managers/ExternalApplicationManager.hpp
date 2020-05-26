@@ -38,9 +38,7 @@ private:
     QString generate_wmctrl_command_output(const QString& cmd);
 
     void process_wmctrl_command_output(const QString& input, const std::string& uuid, const std::string& file_path);
-    void register_new_application_container(QMainWindow* parent, const std::string& source_uuid, uint64_t winid, uint64_t pid, const QString& window_name);
-
-    QMainWindow* retrieve_current_main_window();
+    void register_new_application_container(const std::string& source_uuid, uint64_t winid, uint64_t pid, const QString& window_name);
 
     double d_process_winid_fetch_sleep_time_ms;
     double d_process_winid_fetch_timeout_ms;

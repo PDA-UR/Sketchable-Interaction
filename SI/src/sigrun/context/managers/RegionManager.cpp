@@ -176,12 +176,17 @@ void RegionManager::update_region_deletions()
 
 void RegionManager::update_regions()
 {
-    for(auto it = d_regions.rbegin(); it != d_regions.rend(); ++it)
+    int32_t size = d_regions.size();
+    for (int32_t k = 0; k < size; ++k)
     {
-        if((*it)->is_new())
-            (*it)->set_is_new(false);
-        else
-            (*it)->update();
+        int32_t i = size - k - 1;
+        if(!d_regions[i]->effect()->is_flagged_for_deletion())
+        {
+            if (d_regions[i]->is_new())
+                d_regions[i]->set_is_new(false);
+            else
+                d_regions[i]->update();
+        }
     }
 }
 
