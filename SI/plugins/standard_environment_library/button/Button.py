@@ -32,6 +32,8 @@ class Button(SIEffect.SIEffect):
         self.add_QML_data("icon_width", self.icon_width, PySI.DataType.INT)
         self.add_QML_data("icon_height", self.icon_height, PySI.DataType.INT)
 
+        self.disable_effect(PySI.CollisionCapability.DELETION, self.RECEPTION)
+
         self.enable_effect(PySI.CollisionCapability.BTN, self.EMISSION, self.on_btn_enter_emit, self.on_btn_continuous_emit, self.on_btn_leave_emit)
         self.enable_effect(PySI.CollisionCapability.CLICK, self.RECEPTION, self.on_click_enter_recv, self.on_click_continuous_recv, self.on_click_leave_recv)
         self.enable_effect(PySI.CollisionCapability.PARENT, self.RECEPTION, self.on_parent_enter_recv, None, self.on_parent_leave_recv)

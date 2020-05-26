@@ -39,7 +39,7 @@ private:
     std::string d_uuid;
     std::string d_name;
     QPainterPath d_fill;
-    std::unique_ptr<QQuickWidget> d_view;
+    QQuickWidget* d_view;
     uint32_t d_type;
 
     QMetaObject::Connection d_region_connection;

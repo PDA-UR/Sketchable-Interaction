@@ -117,7 +117,7 @@ class Directory(Entry.Entry):
             self.is_open_entry_capability_blocked = True
 
     def on_open_entry_leave_recv(self, is_other_controlled):
-        if self.parent == "" and self.is_open_entry_capability_blocked:
+        # if self.parent == "" and self.is_open_entry_capability_blocked:
             x = self.relative_x_pos()
             y = self.relative_y_pos()
 

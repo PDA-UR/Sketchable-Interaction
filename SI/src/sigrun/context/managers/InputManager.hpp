@@ -87,11 +87,7 @@ public:
     bool is_mouse_pressed(uint32_t button_id);
 
     const glm::vec2& mouse_coords() const;
-
-    std::unordered_map<std::string, std::shared_ptr<ExternalObject>>& external_objects();
-
-    void register_external_application(const std::string& file_uuid, QWidget* window, uint64_t pid);
-    void unregister_external_application(const std::string& container_uuid);
+    const glm::vec2& previous_mouse_coords() const;
 
     const MouseWheelAngles mouse_wheel_angles();
 

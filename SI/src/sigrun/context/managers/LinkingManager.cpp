@@ -55,7 +55,7 @@ bool LinkingManager::add_link(const std::shared_ptr<Region> &ra, const std::stri
                 //
                 // this note is also present within the unidirectional linking case
                 disconnect(ra.get(), &Region::LINK_SIGNAL, rb.get(), &Region::LINK_SLOT);
-                bool success = connect(ra.get(), &Region::LINK_SIGNAL, rb.get(), &Region::LINK_SLOT, Qt::UniqueConnection);
+                bool success = connect(ra.get(), &Region::LINK_SIGNAL, rb.get(), &Region::LINK_SLOT);
 
                 if(success)
                 {
@@ -104,9 +104,9 @@ void LinkingManager::add_link(std::shared_ptr<ExternalObject>& eo, std::shared_p
         return;
 
     disconnect(eo.get(), &ExternalObject::LINK_SIGNAL, a.get(), &Region::LINK_SLOT);
-    if(connect(eo.get(), &ExternalObject::LINK_SIGNAL, a.get(), &Region::LINK_SLOT, Qt::UniqueConnection))
+    if(connect(eo.get(), &ExternalObject::LINK_SIGNAL, a.get(), &Region::LINK_SLOT))
     {
-        d_links.push_back(std::make_shared<UnidirectionalLink>(Context::SIContext()->input_manager()->external_objects()[a->uuid()], a, ea, aa));
+        d_links.push_back(std::make_shared<UnidirectionalLink>(Context::SIContext()->external_objects()[a->uuid()], a, ea, aa));
 
         INFO("Establishing unidirectional link to external object successfull!");
     }
@@ -203,34 +203,40 @@ bool LinkingManager::is_linked(const std::shared_ptr<Region>& ra, const std::str
 
 bool LinkingManager::is_linked(const std::string& ra_uuid, const std::string& aa, const std::string& rb_uuid, const std::string& ab, const ILink::LINK_TYPE& type)
 {
-    return std::transform_reduce(d_links.begin(), d_links.end(), false, [](bool a, bool b)
-    {
-        return a || b;
-    }, [&](auto& link)
+    for(auto& link: d_links)
     {
         if(link->is_external())
-            return false;
+            continue;
 
-        return type == ILink::LINK_TYPE::UD ? (link->attribute_a() == aa &&
-                                                 link->attribute_b() == ab &&
-                                                 link->sender_a()->uuid() == ra_uuid &&
-                                                 link->receiver_b()->uuid() == rb_uuid &&
-                                                 link->sender_b()->uuid() == rb_uuid &&
-                                                 link->receiver_a()->uuid() == ra_uuid)
-                                                 :
-                                                (link->attribute_a() == aa &&
-                                                 link->attribute_b() == ab &&
-                                                 link->sender_a()->uuid() == ra_uuid &&
-                                                 link->receiver_b()->uuid() == rb_uuid &&
-                                                 link->sender_b()->uuid() == rb_uuid &&
-                                                 link->receiver_a()->uuid() == ra_uuid) ||
-                                                (link->attribute_a() == ab &&
-                                                 link->attribute_b() == aa &&
-                                                 link->sender_a()->uuid() == rb_uuid &&
-                                                 link->receiver_b()->uuid() == ra_uuid &&
-                                                 link->sender_b()->uuid() == ra_uuid &&
-                                                 link->receiver_a()->uuid() == rb_uuid);
-    });
+        if(type == ILink::LINK_TYPE::UD)
+        {
+            if(link->attribute_a() == aa &&
+               link->attribute_b() == ab &&
+               link->sender_a()->uuid() == ra_uuid &&
+               link->receiver_b()->uuid() == rb_uuid &&
+               link->sender_b()->uuid() == rb_uuid &&
+               link->receiver_a()->uuid() == ra_uuid)
+                return true;
+        }
+        else
+        {
+            if((link->attribute_a() == aa &&
+                link->attribute_b() == ab &&
+                link->sender_a()->uuid() == ra_uuid &&
+                link->receiver_b()->uuid() == rb_uuid &&
+                link->sender_b()->uuid() == rb_uuid &&
+                link->receiver_a()->uuid() == ra_uuid) ||
+               (link->attribute_a() == ab &&
+                link->attribute_b() == aa &&
+                link->sender_a()->uuid() == rb_uuid &&
+                link->receiver_b()->uuid() == ra_uuid &&
+                link->sender_b()->uuid() == ra_uuid &&
+                link->receiver_a()->uuid() == rb_uuid))
+                return true;
+        }
+    }
+
+    return false;
 }
 
 bool LinkingManager::is_linked(const std::shared_ptr<ExternalObject> &eo, const std::string &ea, const std::shared_ptr<Region> &ra, const std::string &aa)
@@ -261,9 +267,7 @@ void LinkingManager::emit_link_event(std::shared_ptr<Region> &a, const std::stri
 
     const bp::tuple &args = bp::extract<bp::tuple>(a->effect()->attr_link_emit()[attr_a]());
 
-    a->register_link_event({uuid_event, attr_a});
-
-    Q_EMIT a->LINK_SIGNAL(uuid_event, a->uuid(), attr_a, args);
+    Context::SIContext()->register_link_event_emission(uuid_event, a->uuid(), attr_a, args);
 }
 
 const std::vector<std::shared_ptr<ILink>>& LinkingManager::links() const
@@ -344,7 +348,7 @@ void LinkingManager::create_linking_relations(std::vector<LinkCandidate> &candid
         d_links_in_ctx[source].reserve(candidates.size());
     }
 
-    std::for_each(candidates.begin(), candidates.end(), [&](auto& relation)
+    for(auto& relation: candidates)
     {
         auto sender = std::find_if(Context::SIContext()->region_manager()->regions().begin(), Context::SIContext()->region_manager()->regions().end(), [&relation](auto& region)
         {
@@ -362,8 +366,8 @@ void LinkingManager::create_linking_relations(std::vector<LinkCandidate> &candid
             {
                 d_links_in_ctx[source].push_back(std::make_shared<UnidirectionalLink>(*sender, *receiver, relation.sender_attrib, relation.recv_attrib));
 
-                Q_EMIT (*sender)->LINK_SIGNAL(_UUID_, (*sender)->uuid(), relation.sender_attrib, bp::extract<bp::tuple>((*sender)->effect()->attr_link_emit()[relation.sender_attrib]()));
+                Q_EMIT (*sender)->LINK_SIGNAL(_UUID_, (*sender)->uuid(), relation.sender_attrib, (*sender)->effect()->attr_link_emit()[relation.sender_attrib]());
             }
         }
-    });
+    }
 }

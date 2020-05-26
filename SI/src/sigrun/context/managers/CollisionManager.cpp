@@ -29,15 +29,18 @@ void CollisionManager::perform_collision_check(tbb::concurrent_vector<std::tuple
     {
         tbb::parallel_for(0, i, 1, [&](int32_t k)
         {
-            if (has_capabilities_in_common(in[i], in[k]))
+            if(!in[i]->effect()->is_flagged_for_deletion() && !in[k]->effect()->is_flagged_for_deletion())
             {
-                if (collides_with_aabb(in[i]->aabb(), in[i]->x(), in[i]->y(), in[k]->aabb(), in[k]->x(), in[k]->y()))
-                    out.emplace_back(i, k, collides_with_mask(in[i], in[k]));
+                if (has_capabilities_in_common(in[i], in[k]))
+                {
+                    if (collides_with_aabb(in[i]->aabb(), in[i]->x(), in[i]->y(), in[k]->aabb(), in[k]->x(), in[k]->y()))
+                        out.emplace_back(i, k, collides_with_mask(in[i], in[k]));
+                    else
+                        out.emplace_back(i, k, false);
+                }
                 else
                     out.emplace_back(i, k, false);
             }
-            else
-                out.emplace_back(i, k, false);
         });
     });
 }
@@ -78,6 +81,7 @@ void CollisionManager::perform_collision_events(const tbb::concurrent_vector<std
 
 void CollisionManager::remove_dead_collision_events()
 {
+//    auto tmp = d_cols;
     d_cols.erase(std::remove_if(d_cols.begin(), d_cols.end(), [&](auto &tup)
     {
         return std::get<2>(tup) == false;
@@ -90,33 +94,14 @@ void CollisionManager::handle_event_leave_on_deletion(std::shared_ptr<Region>& d
 
     d_cols.erase(std::remove_if(d_cols.begin(), d_cols.end(), [&](auto& tuple)
     {
-        if(std::get<0>(tuple) == deleted_region->uuid())
+        if(std::get<0>(tuple) == deleted_region->uuid() || std::get<1>(tuple) == deleted_region->uuid())
         {
             auto it = std::find_if(regions.begin(), regions.end(), [&](auto& region)
             {
                 if(!region)
                     return false;
 
-                return region->uuid() == std::get<1>(tuple);
-            });
-
-            if(it != regions.end())
-            {
-                handle_event_leave(deleted_region, *it);
-                return true;
-            }
-
-            return false;
-        }
-
-        if(std::get<1>(tuple) == deleted_region->uuid())
-        {
-            auto it = std::find_if(regions.begin(), regions.end(), [&](auto& region)
-            {
-                if(!region)
-                    return false;
-
-                return region->uuid() == std::get<0>(tuple);
+                return region->uuid() == std::get<1>(tuple) || region->uuid() == std::get<0>(tuple);
             });
 
             if(it != regions.end())
@@ -124,6 +109,7 @@ void CollisionManager::handle_event_leave_on_deletion(std::shared_ptr<Region>& d
                 handle_event_leave(*it, deleted_region);
                 return true;
             }
+
         }
 
         return false;
