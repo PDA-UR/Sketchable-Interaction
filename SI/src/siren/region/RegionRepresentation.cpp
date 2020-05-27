@@ -8,23 +8,20 @@
 #include <numeric>
 #include <thread>
 #include <QQmlContext>
+#include <QQmlProperty>
 
-RegionRepresentation::RegionRepresentation(QWidget *parent, const std::shared_ptr<Region>& region):
+RegionRepresentation::RegionRepresentation(QWidget *parent, QQmlEngine* engine, const std::shared_ptr<Region>& region):
     d_color(QColor(region->color().r, region->color().g, region->color().b, region->color().a)),
     d_qml_path(region->qml_path()),
-    d_view(new QQuickWidget(parent)),
+    d_view(new QQuickWidget(engine, this)),
     d_type(region->type()),
     d_uuid(region->uuid()),
     d_name(region->name())
 {
-    d_region_connection = connect(this, &RegionRepresentation::dataChanged, region.get(), &Region::REGION_DATA_CHANGED_SLOT);
-
-    d_view->engine()->rootContext()->setContextProperty("Region", this);
-
     if(!d_qml_path.empty())
         d_view->setSource(QUrl(QString(d_qml_path.c_str())));
 
-    d_view->setGeometry(0, 0, Context::SIContext()->width(), Context::SIContext()->height());
+    d_view->setGeometry(0, 0, region->aabb()[3].x - region->aabb()[0].x, region->aabb()[1].y - region->aabb()[0].y);
     d_view->setParent(this);
     d_view->setAttribute(Qt::WA_AlwaysStackOnTop);
     d_view->setAttribute(Qt::WA_NoSystemBackground);
@@ -33,25 +30,27 @@ RegionRepresentation::RegionRepresentation(QWidget *parent, const std::shared_pt
     setParent(parent);
     setGeometry(region->aabb()[0].x, region->aabb()[0].y, region->aabb()[3].x - region->aabb()[0].x, region->aabb()[1].y - region->aabb()[0].y);
 
-    if(region->effect()->has_data_changed())
-            Q_EMIT dataChanged(region->data());
-
-    d_fill.moveTo(region->contour()[0].x - region->aabb()[0].x, region->contour()[0].y - region->aabb()[0].y);
-
-    std::for_each(region->contour().begin() + 1, region->contour().end(), [&](auto& point)
+    Context::SIContext()->job_system()->execute([&]
     {
-        d_fill.lineTo(point.x - region->aabb()[0].x, point.y - region->aabb()[0].y);
-    });
+        if(region->effect()->has_data_changed())
+            QMetaObject::invokeMethod(reinterpret_cast<QObject *>(d_view->rootObject()), "updateData", QGenericReturnArgument(), Q_ARG(QVariant, region->data()));
 
-    std::thread([&]
-    {
+        d_fill.moveTo(region->contour()[0].x - region->aabb()[0].x, region->contour()[0].y - region->aabb()[0].y);
+
+        std::for_each(region->contour().begin() + 1, region->contour().end(), [&](auto& point)
+        {
+            d_fill.lineTo(point.x - region->aabb()[0].x, point.y - region->aabb()[0].y);
+        });
+
         QMetaObject::invokeMethod(this, "show");
-    }).detach();
+    });
 }
 
 RegionRepresentation::~RegionRepresentation()
 {
-    QObject::disconnect(d_region_connection);
+    d_view->close();
+    delete d_view;
+    d_view = nullptr;
 }
 
 const uint32_t RegionRepresentation::type() const
@@ -103,7 +102,7 @@ void RegionRepresentation::perform_data_update(const std::shared_ptr<Region> &re
             d_fill.lineTo(point.x - region->aabb()[0].x, point.y - region->aabb()[0].y);
         });
 
-        Q_EMIT dataChanged(region->data());
+        QMetaObject::invokeMethod(reinterpret_cast<QObject *>(d_view->rootObject()), "updateData", QGenericReturnArgument(), Q_ARG(QVariant, region->data()));
     }
 }
 

@@ -142,7 +142,6 @@ bool InputManager::eventFilter(QObject *watched, QEvent *event)
     }
     else if(event->type() == QEvent::MouseMove)
     {
-        DEBUG("mouse move");
         QMouseEvent* mouse_event = (QMouseEvent*) event;
 
         uint32_t x = mouse_event->x();

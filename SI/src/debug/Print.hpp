@@ -74,7 +74,7 @@ public:
     template<typename T1, typename T2>
     inline static std::string _print(const std::map<T1, T2> &map)
     {
-        return std::transform_reduce(std::execution::par_unseq, map.begin(), map.end(), std::string("{"), [](const std::string& a, const std::string& b)
+        return std::transform_reduce(map.begin(), map.end(), std::string("{"), [](const std::string& a, const std::string& b)
         {
             return a + ", " + b;
         }, [](const std::pair<T1, T2>& pair)

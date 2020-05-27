@@ -9,6 +9,7 @@
 #include <QMainWindow>
 #include <QGraphicsAnchorLayout>
 #include <QObject>
+#include <QQmlEngine>
 #include <QMetaMethod>
 #include <QPainter>
 #include "../background/UpdateWorker.hpp"
@@ -29,6 +30,8 @@ private:
     UpdateWorker up_update_worker;
 
     uint32_t d_width, d_height;
+
+    QQmlEngine* engine;
 };
 
 

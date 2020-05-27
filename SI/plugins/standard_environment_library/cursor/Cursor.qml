@@ -2,6 +2,12 @@ import QtQuick 2.7
 
 Item
 {
+    function updateData(data)
+    {
+        cursorImage.width = data.width;
+        cursorImage.height = data.height;
+    }
+
     id: container
 
     width:100
@@ -11,14 +17,5 @@ Item
         id: cursorImage
         anchors.left: parent.left
         anchors.top: parent.top
-    }
-
-    Connections {
-        target: Region
-        onDataChanged: {
-            cursorImage.width = data.width;
-            cursorImage.height = data.height;
-//            cursorImage.source = data.img_path;
-        }
     }
 }

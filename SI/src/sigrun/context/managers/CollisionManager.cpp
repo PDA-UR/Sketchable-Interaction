@@ -29,11 +29,12 @@ void CollisionManager::perform_collision_check(tbb::concurrent_vector<std::tuple
     {
         tbb::parallel_for(0, i, 1, [&](int32_t k)
         {
-            if(!in[i]->effect()->is_flagged_for_deletion() && !in[k]->effect()->is_flagged_for_deletion())
+            if (!in[i]->effect()->is_flagged_for_deletion() && !in[k]->effect()->is_flagged_for_deletion())
             {
                 if (has_capabilities_in_common(in[i], in[k]))
                 {
-                    if (collides_with_aabb(in[i]->aabb(), in[i]->x(), in[i]->y(), in[k]->aabb(), in[k]->x(), in[k]->y()))
+                    if (collides_with_aabb(in[i]->aabb(), in[i]->x(), in[i]->y(), in[k]->aabb(), in[k]->x(),
+                                           in[k]->y()))
                         out.emplace_back(i, k, collides_with_mask(in[i], in[k]));
                     else
                         out.emplace_back(i, k, false);
@@ -136,14 +137,14 @@ bool CollisionManager::collides_with_mask(const std::shared_ptr<Region> &a, cons
 
     if(area_a_aabb > area_b_aabb)
     {
-        return std::find_if(std::execution::par_unseq, b->contour().begin(), b->contour().end(), [&](auto& p)
+        return std::find_if(b->contour().begin(), b->contour().end(), [&](auto& p)
         {
             return ((*a_mask)[glm::vec3(p.x + b->x(), p.y + b->y(), 1)]);
         }) != b->contour().end();
     }
     else
     {
-        return std::find_if(std::execution::par_unseq, a->contour().begin(), a->contour().end(), [&](auto& p)
+        return std::find_if(a->contour().begin(), a->contour().end(), [&](auto& p)
         {
             return ((*b_mask)[glm::vec3(p.x + a->x(), p.y + a->y(), 1)]);
         }) != b->contour().end();

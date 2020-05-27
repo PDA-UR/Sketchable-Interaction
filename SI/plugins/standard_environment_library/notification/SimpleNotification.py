@@ -22,9 +22,9 @@ class SimpleNotification(SIEffect.SIEffect):
         self.width = region_width
         self.height = region_height
 
-        self.add_QML_data("rect_width", self.width, PySI.DataType.INT)
-        self.add_QML_data("rect_height", self.height, PySI.DataType.INT)
-        self.add_QML_data("message", self.message, PySI.DataType.STRING)
+        self.add_QML_data("containerwidth", self.width, PySI.DataType.INT)
+        self.add_QML_data("containerheight", self.height, PySI.DataType.INT)
+        self.add_QML_data("text", self.message, PySI.DataType.STRING)
 
         self.disable_effect(PySI.CollisionCapability.DELETION, self.RECEPTION)
         self.disable_effect(PySI.CollisionCapability.MOVE, self.RECEPTION)

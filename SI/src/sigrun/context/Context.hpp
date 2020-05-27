@@ -64,6 +64,8 @@ public:
 
     std::unordered_map<std::string, std::shared_ptr<ExternalObject>>& external_objects();
 
+    void set_message(const std::string& msg);
+
 private:
     static Context* self;
     Context();

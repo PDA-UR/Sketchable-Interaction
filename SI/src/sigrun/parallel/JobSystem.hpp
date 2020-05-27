@@ -7,6 +7,7 @@
 #include "Job.hpp"
 #include <condition_variable>
 #include <thread>
+#include <functional>
 #include <memory>
 #include <sigrun/parallel/helpers/ThreadSafeRingBuffer.hpp>
 
@@ -19,25 +20,26 @@ public:
     ~JobSystem() = default;
 
     JobSystem():
-        d_num_hardware_threads(std::thread::hardware_concurrency() - 1),
-        d_job_buffer(std::make_unique<ThreadSafeRingBuffer<std::shared_ptr<Job>, pool_size>>())
+        d_num_hardware_threads(std::thread::hardware_concurrency()),
+        d_job_buffer(std::make_unique<ThreadSafeRingBuffer<Job*, pool_size>>())
     {
-        DEBUG(std::thread::hardware_concurrency());
-
         d_finished_label.store(0);
 
         for(uint32_t i = 0; i < d_num_hardware_threads; ++i)
         {
             std::thread worker([&]
             {
-                std::shared_ptr<Job> job;
+                Job* job;
 
-                while (true)
+                while (!d_is_close_requested)
                 {
                     if(d_job_buffer->pop_front(job))
                     {
                         (*job)();
                         d_finished_label.fetch_add(1);
+
+                        delete job;
+                        job = nullptr;
                     }
                     else
                     {
@@ -57,11 +59,16 @@ public:
         std::this_thread::yield();
     }
 
-    void execute(const std::shared_ptr<Job>& job)
+    void stop()
+    {
+        d_is_close_requested = true;
+    }
+
+    void execute(const std::function<void()>& func)
     {
         ++d_current_label;
 
-        while (!d_job_buffer->push_back(job))
+        while (!d_job_buffer->push_back(new Job(func)))
             poll();
 
         d_wake_condition.notify_one();
@@ -78,7 +85,7 @@ public:
             poll();
     }
 
-    void dispatch(uint32_t job_count, uint32_t group_size, const std::shared_ptr<Job>& job)
+    void dispatch(uint32_t job_count, uint32_t group_size, const std::function<void(const JobDispatchArgs& args)>& func)
     {
         if(job_count == 0 || group_size == 0)
             return;
@@ -89,7 +96,7 @@ public:
 
         for(uint32_t i = 0; i < group_count; ++i)
         {
-            const auto& job_group = std::make_shared<Job>([job_count, group_size, job, i]()
+            const auto& job_group = new Job([job_count, group_size, func, i]()
             {
                 const uint32_t group_job_offset = i * group_size;
                 const uint32_t group_job_end = std::min(group_job_offset + group_size, job_count);
@@ -100,7 +107,7 @@ public:
                 for (uint32_t k = group_job_offset; k < group_job_end; ++k)
                 {
                     args.jobIndex = k;
-                    (*job)(args);
+                    func(args);
                 }
             });
 
@@ -112,11 +119,12 @@ public:
     }
 
 private:
+    bool d_is_close_requested = false;
     std::condition_variable d_wake_condition;
 
     std::mutex d_wake_mutex;
 
-    std::unique_ptr<ThreadSafeRingBuffer<std::shared_ptr<Job>, pool_size>> d_job_buffer;
+    std::unique_ptr<ThreadSafeRingBuffer<Job*, pool_size>> d_job_buffer;
 
     uint64_t d_current_label = 0;
 

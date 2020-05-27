@@ -17,6 +17,8 @@
 #include <cstdlib>
 #include <QThread>
 
+#define NEW_REGIONS_PER_FRAME 50
+
 namespace bp = boost::python;
 
 Context* Context::self = nullptr;
@@ -24,6 +26,7 @@ Context* Context::self = nullptr;
 Context::~Context()
 {
     INFO("Destroying Context...");
+    upjs.release();
     INFO("Destroyed Context");
 }
 
@@ -101,12 +104,9 @@ void Context::begin(const std::unordered_map<std::string, std::unique_ptr<bp::ob
             exit(69);
         }
 
-        std::thread([&]
-        {
-            HANDLE_PYTHON_CALL(PY_ERROR, "Could not load startup file! A python file called \'StartSIGRun\' is required to be present in plugins folder!",
-                bp::import("plugins.StartSIGRun").attr("on_startup")();
-            )
-        }).detach();
+        HANDLE_PYTHON_CALL(PY_ERROR, "Could not load startup file! A python file called \'StartSIGRun\' is required to be present in plugins folder!",
+            bp::import("plugins.StartSIGRun").attr("on_startup")();
+        )
 
         d_app.exec();
         INFO("QT5 Application terminated!");
@@ -257,12 +257,12 @@ void Context::update()
         uint32_t height = window->height();
 
         std::vector<glm::vec3> contour
-                {
-                        glm::vec3(x, y, 1),
-                        glm::vec3(x, y + height, 1),
-                        glm::vec3(x + width, y + height, 1),
-                        glm::vec3(x + width, y, 1)
-                };
+        {
+            glm::vec3(x, y, 1),
+            glm::vec3(x, y + height, 1),
+            glm::vec3(x + width, y + height, 1),
+            glm::vec3(x + width, y, 1)
+        };
 
         bp::dict kwargs;
         kwargs[SI_LINUX_PID] = std::get<1>(external_app_container_tuple);
@@ -283,9 +283,9 @@ void Context::update()
 
     int32_t region_queue_size = d_region_insertion_queue.size();
 
-    if(region_queue_size > 50)
+    if(region_queue_size > NEW_REGIONS_PER_FRAME)
     {
-        for(int32_t i = 0; i < 50; ++i)
+        for(int32_t i = 0; i < NEW_REGIONS_PER_FRAME; ++i)
         {
             const auto& region_information_tuple = d_region_insertion_queue.front();
 
@@ -322,31 +322,42 @@ void Context::update()
         }
     }
 
-    int32_t link_queue_size = d_link_emission_queue.size();
+    QApplication::processEvents(QEventLoop::AllEvents);
 
-    for(int32_t i = 0; i < link_queue_size; ++i)
+    upjs->execute([&]
     {
-        const auto& link_tuple = d_link_emission_queue.front();
-        auto it = std::find_if(uprm->regions().begin(), uprm->regions().end(), [&](auto& region)
-        {
-            return region->uuid() == std::get<1>(link_tuple);
-        });
+        int32_t link_queue_size = d_link_emission_queue.size();
 
-        if(it != uprm->regions().end())
+        for(int32_t i = 0; i < link_queue_size; ++i)
         {
-            (*it)->register_link_event({std::get<0>(link_tuple), std::get<2>(link_tuple)});
-            Q_EMIT (*it)->LINK_SIGNAL(std::get<0>(link_tuple), (*it)->uuid(), std::get<2>(link_tuple), std::get<3>(link_tuple));
+            const auto& link_tuple = d_link_emission_queue.front();
+            auto it = std::find_if(uprm->regions().begin(), uprm->regions().end(), [&](auto& region)
+            {
+                return region->uuid() == std::get<1>(link_tuple);
+            });
+
+            if(it != uprm->regions().end())
+            {
+                (*it)->register_link_event({std::get<0>(link_tuple), std::get<2>(link_tuple)});
+                Q_EMIT (*it)->LINK_SIGNAL(std::get<0>(link_tuple), (*it)->uuid(), std::get<2>(link_tuple), std::get<3>(link_tuple));
+            }
+
+            d_link_emission_queue.pop();
         }
+    });
 
-        d_link_emission_queue.pop();
-    }
-
-    std::thread([&]
+    upjs->execute([&]
     {
         upim->update();
+    });
+
+    upjs->execute([&]
+    {
         uprcm->collide(uprm->regions());
         uprm->update();
-    }).join();
+    });
+
+    upjs->wait();
 }
 
 uint32_t Context::width()
@@ -372,10 +383,7 @@ void Context::set_effect(const std::string& target_uuid, const std::string& effe
         {
             d_selected_effects_by_id[target_uuid] = d_available_plugins[effect_name];
 
-            (*std::find_if(uprm->regions().begin(), uprm->regions().end(), [&](auto& region)
-            {
-                return region->type() == SI_TYPE_NOTIFICATION;
-            }))->raw_effect().attr("update_message")("Mouse Cursor set to " + effect_display_name);
+            set_message("Mouse Cursor set to " + effect_display_name);
         }
         else
         {
@@ -509,4 +517,17 @@ const bp::object& Context::plugin_by_name(const std::string& name)
 std::unordered_map<std::string, std::shared_ptr<ExternalObject>> &Context::external_objects()
 {
     return deo;
+}
+
+void Context::set_message(const std::string& msg)
+{
+    auto it = std::find_if(uprm->regions().begin(), uprm->regions().end(), [&](auto& region)
+    {
+        return region->type() == SI_TYPE_NOTIFICATION;
+    });
+
+    if(it != uprm->regions().end())
+    {
+        (*it)->raw_effect().attr("update_message")(msg);
+    }
 }
