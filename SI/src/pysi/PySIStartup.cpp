@@ -57,3 +57,13 @@ void PySIStartup::logger_set_log_output(int32_t flags)
 {
     Log::WHERE = flags;
 }
+
+void PySIStartup::enable(int32_t flags)
+{
+    Context::SIContext()->enable(flags);
+}
+
+void PySIStartup::disable(int32_t flags)
+{
+    Context::SIContext()->disable(flags);
+}

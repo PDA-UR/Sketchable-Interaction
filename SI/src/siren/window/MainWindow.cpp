@@ -101,5 +101,6 @@ void MainWindow::loop(double delta, uint32_t fps)
             (*it)->update(reg);
     }
 
+    update();
     Context::SIContext()->update();
 }

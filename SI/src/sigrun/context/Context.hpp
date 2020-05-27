@@ -19,6 +19,13 @@
 #include <queue>
 #include <sigrun/parallel/JobSystem.hpp>
 
+#define DELAY_PYTHON_GARBAGE_COLLECTION(...) {\
+    up_py_garbage_collector->attr("disable")(); \
+    __VA_ARGS__ \
+    up_py_garbage_collector->attr("enable")(); \
+    up_py_garbage_collector->attr("collect")(2); \
+}
+
 class Context: public SIObject
 { SIGRUN
 
@@ -69,6 +76,17 @@ public:
 private:
     static Context* self;
     Context();
+
+    std::unique_ptr<bp::object> up_py_garbage_collector;
+
+    void perform_external_object_update();
+    void perform_mouse_update(std::unordered_map<std::string, std::shared_ptr<ExternalObject>>::iterator& it);
+    void perform_external_application_update(std::unordered_map<std::string, std::shared_ptr<ExternalObject>>::iterator& it);
+    void perform_external_application_registration();
+    void perform_region_insertion();
+    void perform_link_events();
+    void perform_input_update();
+    void perform_collision_update();
 
     std::unordered_map<std::string, std::shared_ptr<ExternalObject>> deo;
 

@@ -80,4 +80,4 @@ def on_startup():
     add_palette()
     add_start_directory()
 
-    add_many_regions(100)
+    # add_many_regions(1000)

@@ -24,10 +24,11 @@ void CollisionManager::collide(std::vector<std::shared_ptr<Region>> &regions)
 
 void CollisionManager::perform_collision_check(tbb::concurrent_vector<std::tuple<int, int, bool>> &out, const std::vector<std::shared_ptr<Region>>& in)
 {
+    int32_t size = in.size();
 
-    tbb::parallel_for(0, (int32_t) in.size(), 1, [&](int32_t i)
+    for(int32_t i = 0; i < size; ++i)
     {
-        tbb::parallel_for(0, i, 1, [&](int32_t k)
+            for(int32_t k = 0; k < i; ++k)
         {
             if (!in[i]->effect()->is_flagged_for_deletion() && !in[k]->effect()->is_flagged_for_deletion())
             {
@@ -42,8 +43,8 @@ void CollisionManager::perform_collision_check(tbb::concurrent_vector<std::tuple
                 else
                     out.emplace_back(i, k, false);
             }
-        });
-    });
+        }
+    }
 }
 
 void CollisionManager::perform_collision_events(const tbb::concurrent_vector<std::tuple<int, int, bool>> &in, std::vector<std::shared_ptr<Region>>& regions)
@@ -56,6 +57,9 @@ void CollisionManager::perform_collision_events(const tbb::concurrent_vector<std
 
         auto it = std::find_if(d_cols.begin(), d_cols.end(), [&](auto &tup)
         {
+            if(!a || !b)
+                return false;
+
             return std::get<0>(tup) == a->uuid() && std::get<1>(tup) == b->uuid();
         });
 
@@ -82,7 +86,6 @@ void CollisionManager::perform_collision_events(const tbb::concurrent_vector<std
 
 void CollisionManager::remove_dead_collision_events()
 {
-//    auto tmp = d_cols;
     d_cols.erase(std::remove_if(d_cols.begin(), d_cols.end(), [&](auto &tup)
     {
         return std::get<2>(tup) == false;

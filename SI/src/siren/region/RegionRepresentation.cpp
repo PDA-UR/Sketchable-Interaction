@@ -30,20 +30,17 @@ RegionRepresentation::RegionRepresentation(QWidget *parent, QQmlEngine* engine, 
     setParent(parent);
     setGeometry(region->aabb()[0].x, region->aabb()[0].y, region->aabb()[3].x - region->aabb()[0].x, region->aabb()[1].y - region->aabb()[0].y);
 
-    Context::SIContext()->job_system()->execute([&]
+    if(region->effect()->has_data_changed())
+        QMetaObject::invokeMethod(reinterpret_cast<QObject *>(d_view->rootObject()), "updateData", QGenericReturnArgument(), Q_ARG(QVariant, region->data()));
+
+    d_fill.moveTo(region->contour()[0].x - region->aabb()[0].x, region->contour()[0].y - region->aabb()[0].y);
+
+    std::for_each(region->contour().begin() + 1, region->contour().end(), [&](auto& point)
     {
-        if(region->effect()->has_data_changed())
-            QMetaObject::invokeMethod(reinterpret_cast<QObject *>(d_view->rootObject()), "updateData", QGenericReturnArgument(), Q_ARG(QVariant, region->data()));
-
-        d_fill.moveTo(region->contour()[0].x - region->aabb()[0].x, region->contour()[0].y - region->aabb()[0].y);
-
-        std::for_each(region->contour().begin() + 1, region->contour().end(), [&](auto& point)
-        {
-            d_fill.lineTo(point.x - region->aabb()[0].x, point.y - region->aabb()[0].y);
-        });
-
-        QMetaObject::invokeMethod(this, "show");
+        d_fill.lineTo(point.x - region->aabb()[0].x, point.y - region->aabb()[0].y);
     });
+
+    show();
 }
 
 RegionRepresentation::~RegionRepresentation()
