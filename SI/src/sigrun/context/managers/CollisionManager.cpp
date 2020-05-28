@@ -26,9 +26,9 @@ void CollisionManager::perform_collision_check(tbb::concurrent_vector<std::tuple
 {
     int32_t size = in.size();
 
-    for(int32_t i = 0; i < size; ++i)
+    tbb::parallel_for(0, size, 1, [&](int32_t i)
     {
-            for(int32_t k = 0; k < i; ++k)
+        tbb::parallel_for(0, i, 1, [&](int32_t k)
         {
             if (!in[i]->effect()->is_flagged_for_deletion() && !in[k]->effect()->is_flagged_for_deletion())
             {
@@ -43,8 +43,8 @@ void CollisionManager::perform_collision_check(tbb::concurrent_vector<std::tuple
                 else
                     out.emplace_back(i, k, false);
             }
-        }
-    }
+        });
+    });
 }
 
 void CollisionManager::perform_collision_events(const tbb::concurrent_vector<std::tuple<int, int, bool>> &in, std::vector<std::shared_ptr<Region>>& regions)
