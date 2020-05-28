@@ -24,16 +24,18 @@ void CollisionManager::collide(std::vector<std::shared_ptr<Region>> &regions)
 
 void CollisionManager::perform_collision_check(tbb::concurrent_vector<std::tuple<int, int, bool>> &out, const std::vector<std::shared_ptr<Region>>& in)
 {
+    int32_t size = in.size();
 
-    tbb::parallel_for(0, (int32_t) in.size(), 1, [&](int32_t i)
+    for(int32_t i = 0; i < size; ++i)
     {
-        tbb::parallel_for(0, i, 1, [&](int32_t k)
+            for(int32_t k = 0; k < i; ++k)
         {
-            if(!in[i]->effect()->is_flagged_for_deletion() && !in[k]->effect()->is_flagged_for_deletion())
+            if (!in[i]->effect()->is_flagged_for_deletion() && !in[k]->effect()->is_flagged_for_deletion())
             {
                 if (has_capabilities_in_common(in[i], in[k]))
                 {
-                    if (collides_with_aabb(in[i]->aabb(), in[i]->x(), in[i]->y(), in[k]->aabb(), in[k]->x(), in[k]->y()))
+                    if (collides_with_aabb(in[i]->aabb(), in[i]->x(), in[i]->y(), in[k]->aabb(), in[k]->x(),
+                                           in[k]->y()))
                         out.emplace_back(i, k, collides_with_mask(in[i], in[k]));
                     else
                         out.emplace_back(i, k, false);
@@ -41,8 +43,8 @@ void CollisionManager::perform_collision_check(tbb::concurrent_vector<std::tuple
                 else
                     out.emplace_back(i, k, false);
             }
-        });
-    });
+        }
+    }
 }
 
 void CollisionManager::perform_collision_events(const tbb::concurrent_vector<std::tuple<int, int, bool>> &in, std::vector<std::shared_ptr<Region>>& regions)
@@ -55,6 +57,9 @@ void CollisionManager::perform_collision_events(const tbb::concurrent_vector<std
 
         auto it = std::find_if(d_cols.begin(), d_cols.end(), [&](auto &tup)
         {
+            if(!a || !b)
+                return false;
+
             return std::get<0>(tup) == a->uuid() && std::get<1>(tup) == b->uuid();
         });
 
@@ -81,7 +86,6 @@ void CollisionManager::perform_collision_events(const tbb::concurrent_vector<std
 
 void CollisionManager::remove_dead_collision_events()
 {
-//    auto tmp = d_cols;
     d_cols.erase(std::remove_if(d_cols.begin(), d_cols.end(), [&](auto &tup)
     {
         return std::get<2>(tup) == false;
@@ -136,14 +140,14 @@ bool CollisionManager::collides_with_mask(const std::shared_ptr<Region> &a, cons
 
     if(area_a_aabb > area_b_aabb)
     {
-        return std::find_if(std::execution::par_unseq, b->contour().begin(), b->contour().end(), [&](auto& p)
+        return std::find_if(b->contour().begin(), b->contour().end(), [&](auto& p)
         {
             return ((*a_mask)[glm::vec3(p.x + b->x(), p.y + b->y(), 1)]);
         }) != b->contour().end();
     }
     else
     {
-        return std::find_if(std::execution::par_unseq, a->contour().begin(), a->contour().end(), [&](auto& p)
+        return std::find_if(a->contour().begin(), a->contour().end(), [&](auto& p)
         {
             return ((*b_mask)[glm::vec3(p.x + a->x(), p.y + a->y(), 1)]);
         }) != b->contour().end();

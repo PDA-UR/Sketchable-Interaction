@@ -3,14 +3,13 @@ from libPySI import PySI
 from plugins.standard_environment_library import SIEffect
 
 
-region_type = PySI.EffectType.SI_PREVIEW
-region_name = PySI.EffectName.SI_STD_NAME_PREVIEW
-region_display_name = "Preview File"
-
-
 class Preview(SIEffect.SIEffect):
+    regiontype = PySI.EffectType.SI_PREVIEW
+    regionname = PySI.EffectName.SI_STD_NAME_PREVIEW
+    region_display_name = "Preview File"
+
     def __init__(self, shape=PySI.PointVector(), uuid="", kwargs={}):
-        super(Preview, self).__init__(shape, uuid, "res/preview.png", kwargs)
+        super(Preview, self).__init__(shape, uuid, "res/preview.png", Preview.regiontype, Preview.regionname, kwargs)
         self.name = PySI.EffectName.SI_STD_NAME_PREVIEW
         self.region_type = PySI.EffectType.SI_PREVIEW
         self.source = "libStdSI"

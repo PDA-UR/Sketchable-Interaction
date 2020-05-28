@@ -154,8 +154,8 @@ void RegionManager::toggle_mouse_region_wheel_scrolled(float angle_px, float ang
     if(it != d_regions.end())
     {
         HANDLE_PYTHON_CALL(PY_ERROR, "Cannot foward mouse wheel to plugin " + it->get()->name(),
-            it->get()->raw_effect().attr("mouse_wheel_angle_px") = angle_px;
-            it->get()->raw_effect().attr("mouse_wheel_angle_degrees") = angle_degrees;
+            it->get()->effect()->mouse_wheel_angle_px = angle_px;
+            it->get()->effect()->mouse_wheel_angle_degrees = angle_degrees;
         )
     }
 }

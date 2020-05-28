@@ -3,22 +3,21 @@ from plugins.standard_environment_library.filesystem import Entry
 from plugins.standard_environment_library.button import Button
 
 
-region_type = PySI.EffectType.SI_DIRECTORY
-region_name = PySI.EffectName.SI_STD_NAME_DIRECTORY
-region_width = 130
-region_height = 125
-
-
 class Directory(Entry.Entry):
+    regiontype = PySI.EffectType.SI_DIRECTORY
+    regionname = PySI.EffectName.SI_STD_NAME_DIRECTORY
+    region_width = 130
+    region_height = 125
+
     def __init__(self, shape=PySI.PointVector(), uuid="", kwargs={}):
-        super(Directory, self).__init__(shape, uuid, kwargs)
+        super(Directory, self).__init__(shape, uuid, Directory.regiontype, Directory.regionname, kwargs)
         self.name = PySI.EffectName.SI_STD_NAME_DIRECTORY
         self.region_type = PySI.EffectType.SI_DIRECTORY
         self.qml_path = "plugins/standard_environment_library/filesystem/Directory.qml"
         self.preview_width = 400
         self.preview_height = 600
-        self.width = region_width
-        self.height = region_height
+        self.width = Directory.region_width
+        self.height = Directory.region_height
         self.is_icon_visible = True
         self.is_opened_visible = False
         self.children_paths_and_types = [(t[0], t[1] if t[1] != int(PySI.EffectType.SI_UNKNOWN_FILE) else int(PySI.EffectType.SI_TEXT_FILE)) for t in kwargs["children"]]
@@ -117,7 +116,7 @@ class Directory(Entry.Entry):
             self.is_open_entry_capability_blocked = True
 
     def on_open_entry_leave_recv(self, is_other_controlled):
-        # if self.parent == "" and self.is_open_entry_capability_blocked:
+        if self.parent == "" and self.is_open_entry_capability_blocked:
             x = self.relative_x_pos()
             y = self.relative_y_pos()
 
@@ -210,8 +209,8 @@ class Directory(Entry.Entry):
             self.create_region_via_id(entry_shape, entry[1], kwargs)
 
     def add_child_buttons(self, dir_x, dir_y):
-        btn_width = Button.region_width
-        btn_height = Button.region_height
+        btn_width = Button.Button.region_width
+        btn_height = Button.Button.region_height
 
         shape_btn1 = [[dir_x + self.preview_width - btn_width, dir_y + self.preview_height - btn_height],
                       [dir_x + self.preview_width - btn_width, dir_y + self.preview_height],

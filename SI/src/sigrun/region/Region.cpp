@@ -30,7 +30,10 @@ Region::Region(const std::vector<glm::vec3> &contour, const bp::object& effect, 
     uprm = std::make_unique<RegionMask>(mask_width, mask_height, d_py_effect->contour(), d_py_effect->aabb());
 }
 
-Region::~Region()= default;
+Region::~Region()
+{
+
+}
 
 void Region::move()
 {
@@ -143,35 +146,37 @@ uint8_t Region::on_leave(PySIEffect* colliding_effect)
 
 void Region::LINK_SLOT(const std::string& uuid_event, const std::string& uuid_sender, const std::string& source_cap, const bp::object& args)
 {
-    std::tuple<std::string, std::string> event = std::make_tuple(uuid_event, source_cap);
+    HANDLE_PYTHON_CALL(PY_WARNING, "Failed to extract data to pass to linking target. Desired action did not occur! (" + name() + ")",
 
-    if(!is_link_event_registered(event))
-    {
-        register_link_event(event);
+        std::tuple<std::string, std::string> event = std::make_tuple(uuid_event, source_cap);
 
-        for(auto& [k, v]: d_py_effect->attr_link_recv()[source_cap])
+        if(!is_link_event_registered(event))
         {
-            HANDLE_PYTHON_CALL(PY_WARNING, "Failed to extract data to pass to linking target. Desired action did not occur! (" + name() + ")",
-                if(uuid_sender.empty())
-                {
-                    v(*args);
+            register_link_event(event);
 
-                    if(d_py_effect->attr_link_emit().find(k) != d_py_effect->attr_link_emit().end())
-                        Q_EMIT LINK_SIGNAL(uuid_event, uuid(), k, d_py_effect->attr_link_emit()[k]());
-                }
-                else
+                for(auto& [k, v]: d_py_effect->attr_link_recv()[source_cap])
                 {
-                    if(Context::SIContext()->linking_manager()->is_linked(uuid_sender, source_cap, uuid(), k, ILink::UD))
+
+                    if(uuid_sender.empty())
                     {
                         v(*args);
 
                         if(d_py_effect->attr_link_emit().find(k) != d_py_effect->attr_link_emit().end())
                             Q_EMIT LINK_SIGNAL(uuid_event, uuid(), k, d_py_effect->attr_link_emit()[k]());
                     }
+                    else
+                    {
+                        if(Context::SIContext()->linking_manager()->is_linked(uuid_sender, source_cap, uuid(), k, ILink::UD))
+                        {
+                            v(*args);
+
+                            if(d_py_effect->attr_link_emit().find(k) != d_py_effect->attr_link_emit().end())
+                                Q_EMIT LINK_SIGNAL(uuid_event, uuid(), k, d_py_effect->attr_link_emit()[k]());
+                        }
+                    }
                 }
-            )
         }
-    }
+    )
 }
 
 void Region::REGION_DATA_CHANGED_SLOT(const QMap<QString, QVariant>& data)
@@ -315,7 +320,6 @@ void Region::set_is_new(bool toggle)
 
 uint8_t Region::handle_collision_event(const std::string &function_name, PySIEffect* colliding_effect)
 {
-    if(!d_py_effect->is_flagged_for_deletion() && !colliding_effect->is_flagged_for_deletion())
     for(auto& [capability, emission_functions]: colliding_effect->cap_collision_emit())
     {
         HANDLE_PYTHON_CALL(PY_ERROR, "Fatal Error. Unable to perform collision event " + function_name + " (" + name() + "other: " + colliding_effect->name() + ")",

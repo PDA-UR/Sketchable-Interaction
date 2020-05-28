@@ -21,6 +21,9 @@ MainWindow::MainWindow(uint32_t width, uint32_t height):
 
     setWindowFlags(Qt::WindowStaysOnBottomHint);
     setWindowTitle("SI");
+
+    engine = new QQmlEngine(this);
+    engine->setObjectOwnership(engine, QQmlEngine::CppOwnership);
 }
 
 void MainWindow::loop(double delta, uint32_t fps)
@@ -53,7 +56,7 @@ void MainWindow::loop(double delta, uint32_t fps)
 
         if(it == d_reg_reps.end())
         {
-            d_reg_reps.push_back(new RegionRepresentation(this, reg));
+            d_reg_reps.push_back(new RegionRepresentation(this, engine, reg));
 
             switch (d_reg_reps.back()->type())
             {
@@ -98,5 +101,6 @@ void MainWindow::loop(double delta, uint32_t fps)
             (*it)->update(reg);
     }
 
+    update();
     Context::SIContext()->update();
 }

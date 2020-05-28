@@ -3,16 +3,13 @@ from libPySI import PySI
 from plugins.standard_environment_library import SIEffect
 
 
-region_type = PySI.EffectType.SI_DELETION
-region_name = PySI.EffectName.SI_STD_NAME_DELETION
-region_display_name = "Deletion"
-
-
 class Deletion(SIEffect.SIEffect):
+    regiontype = PySI.EffectType.SI_DELETION
+    regionname = PySI.EffectName.SI_STD_NAME_DELETION
+    region_display_name = "Deletion"
+
     def __init__(self, shape=PySI.PointVector(), uuid="", kwargs={}):
-        super(Deletion, self).__init__(shape, uuid, "res/deletion.png", kwargs)
-        self.name = PySI.EffectName.SI_STD_NAME_DELETION
-        self.region_type = PySI.EffectType.SI_DELETION
+        super(Deletion, self).__init__(shape, uuid, "res/deletion.png", Deletion.regiontype, Deletion.regionname, kwargs)
         self.qml_path = "plugins/standard_environment_library/deletion/Deletion.qml"
         self.color = PySI.Color(255, 255, 0, 255)
         self.is_under_user_control = False

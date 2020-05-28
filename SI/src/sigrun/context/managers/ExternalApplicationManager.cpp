@@ -19,12 +19,15 @@ ExternalApplicationManager::~ExternalApplicationManager() = default;
 
 void ExternalApplicationManager::launch_application(const std::string &file_region_uuid, const std::string &file_path, std::shared_ptr<Region>& container, const std::string &application_name)
 {
-    if(application_name.empty())
-        launch_standard_application(file_region_uuid, file_path);
-    else
+    Context::SIContext()->job_system()->execute([&]
     {
-        WARN("SIGRun requires implementation of arbitrary invocation of external applications!");
-    }
+        if(application_name.empty())
+            launch_standard_application(file_region_uuid, file_path);
+        else
+        {
+            WARN("SIGRun requires implementation of arbitrary invocation of external applications!");
+        }
+    });
 }
 
 void ExternalApplicationManager::launch_standard_application(const std::string &file_region_uuid, const std::string &file_path)

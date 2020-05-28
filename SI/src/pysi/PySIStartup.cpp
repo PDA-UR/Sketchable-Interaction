@@ -19,13 +19,13 @@ void PySIStartup::create_region_by_id(const bp::list &contour, int effect_type, 
     std::vector<glm::vec3> _contour;
     _contour.reserve(bp::len(contour));
 
-       for(uint32_t i = 0; i < bp::len(contour); ++i)
-       {
-           float x = bp::extract<float>(contour[i][0]);
-           float y = bp::extract<float>(contour[i][1]);
+    for(uint32_t i = 0; i < bp::len(contour); ++i)
+    {
+        float x = bp::extract<float>(contour[i][0]);
+        float y = bp::extract<float>(contour[i][1]);
 
-           _contour.emplace_back(x, y, 1);
-       }
+        _contour.emplace_back(x, y, 1);
+    }
 
     Context::SIContext()->register_new_region_via_type(_contour, effect_type, kwargs);
 }
@@ -56,4 +56,14 @@ void PySIStartup::logger_log(bool flag)
 void PySIStartup::logger_set_log_output(int32_t flags)
 {
     Log::WHERE = flags;
+}
+
+void PySIStartup::enable(int32_t flags)
+{
+    Context::SIContext()->enable(flags);
+}
+
+void PySIStartup::disable(int32_t flags)
+{
+    Context::SIContext()->disable(flags);
 }

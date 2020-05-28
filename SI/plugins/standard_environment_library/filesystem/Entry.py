@@ -3,15 +3,12 @@ from libPySI import PySI
 from plugins.standard_environment_library import SIEffect
 
 
-region_type = PySI.EffectType.SI_ENTRY
-region_name = PySI.EffectName.SI_STD_NAME_ENTRY
-
-
 class Entry(SIEffect.SIEffect):
-    def __init__(self, shape=PySI.PointVector(), uuid="", kwargs={}):
-        super(Entry, self).__init__(shape, uuid, self.TEXTURE_PATH_NONE, kwargs)
-        self.name = PySI.EffectName.SI_STD_NAME_ENTRY
-        self.region_type = PySI.EffectType.SI_ENTRY
+    regiontype = PySI.EffectType.SI_ENTRY
+    regionname = PySI.EffectName.SI_STD_NAME_ENTRY
+
+    def __init__(self, shape=PySI.PointVector(), uuid="", regiontype=PySI.EffectType.SI_ENTRY, regionname=PySI.EffectName.SI_STD_NAME_ENTRY, kwargs={}):
+        super(Entry, self).__init__(shape, uuid, self.TEXTURE_PATH_NONE, regiontype, regionname, kwargs)
         self.source = "libstdSI"
         self.qml_path = ""
         self.width = 130

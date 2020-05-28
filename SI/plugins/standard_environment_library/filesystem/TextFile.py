@@ -2,13 +2,12 @@ from libPySI import PySI
 from plugins.standard_environment_library.filesystem import Entry
 
 
-region_type = PySI.EffectType.SI_TEXT_FILE
-region_name = PySI.EffectName.SI_STD_NAME_TEXTFILE
-
-
 class TextFile(Entry.Entry):
+    regiontype = PySI.EffectType.SI_TEXT_FILE
+    regionname = PySI.EffectName.SI_STD_NAME_TEXTFILE
+
     def __init__(self, shape=PySI.PointVector(), uuid="", kwargs={}):
-        super(TextFile, self).__init__(shape, uuid, kwargs)
+        super(TextFile, self).__init__(shape, uuid, TextFile.regiontype, TextFile.regionname, kwargs)
         self.name = PySI.EffectName.SI_STD_NAME_TEXTFILE
         self.region_type = PySI.EffectType.SI_TEXT_FILE
         self.qml_path = "plugins/standard_environment_library/filesystem/TextFile.qml"

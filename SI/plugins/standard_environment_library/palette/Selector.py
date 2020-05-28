@@ -2,15 +2,13 @@ from libPySI import PySI
 
 from plugins.standard_environment_library import SIEffect
 
-region_name = PySI.EffectName.SI_STD_NAME_SELECTOR
-region_type = PySI.EffectType.SI_SELECTOR
-
 
 class Selector(SIEffect.SIEffect):
+    regionname = PySI.EffectName.SI_STD_NAME_SELECTOR
+    regiontype = PySI.EffectType.SI_SELECTOR
+
     def __init__(self, shape=PySI.PointVector(), uuid="", kwargs={}):
-        super(Selector, self).__init__(shape, uuid, "", kwargs)
-        self.name = PySI.EffectName.SI_STD_NAME_SELECTOR
-        self.region_type = PySI.EffectType.SI_SELECTOR
+        super(Selector, self).__init__(shape, uuid, "", Selector.regiontype, Selector.regionname, kwargs)
         self.source = "libStdSI"
         self.qml_path = "plugins/standard_environment_library/palette/Selector.qml"
 

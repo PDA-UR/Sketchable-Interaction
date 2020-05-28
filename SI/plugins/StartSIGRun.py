@@ -14,19 +14,19 @@ def add_canvas():
 
 def add_mouse_cursor():
     mouse_shape = [[0, 0],
-                   [0, Cursor.region_height],
-                   [Cursor.region_width, Cursor.region_height],
-                   [Cursor.region_width, 0]]
+                   [0, Cursor.Cursor.region_height],
+                   [Cursor.Cursor.region_width, Cursor.Cursor.region_height],
+                   [Cursor.Cursor.region_width, 0]]
 
     PySIStartup.PySIStartup.create_region_by_id(mouse_shape, PySI.EffectType.SI_MOUSE_CURSOR, {})
 
 def add_simple_notification():
-    x = PySIStartup.PySIStartup.context_dimensions()[0] / 2 - SimpleNotification.region_width / 2
+    x = PySIStartup.PySIStartup.context_dimensions()[0] / 2 - SimpleNotification.SimpleNotification.region_width / 2
 
     simple_notification_shape = [[x, 75],
-                                 [x, 75 + SimpleNotification.region_height],
-                                 [x + SimpleNotification.region_width, 75 + SimpleNotification.region_height],
-                                 [x + SimpleNotification.region_width, 75]]
+                                 [x, 75 + SimpleNotification.SimpleNotification.region_height],
+                                 [x + SimpleNotification.SimpleNotification.region_width, 75 + SimpleNotification.SimpleNotification.region_height],
+                                 [x + SimpleNotification.SimpleNotification.region_width, 75]]
 
     PySIStartup.PySIStartup.create_region_by_id(simple_notification_shape, PySI.EffectType.SI_NOTIFICATION, {})
 
@@ -42,9 +42,9 @@ def add_start_directory():
     directory_path = "" # if empty, the Desktop will be used
 
     directory_shape = [[0, 75],
-                       [0, 75 + Directory.region_height],
-                       [Directory.region_width, 75 + Directory.region_height],
-                       [Directory.region_width, 75]]
+                       [0, 75 + Directory.Directory.region_height],
+                       [Directory.Directory.region_width, 75 + Directory.Directory.region_height],
+                       [Directory.Directory.region_width, 75]]
 
     kwargs = {"cwd": directory_path, "parent": ""}
     PySIStartup.PySIStartup.create_region_by_id(directory_shape, PySI.EffectType.SI_DIRECTORY, kwargs)
@@ -80,4 +80,4 @@ def on_startup():
     add_palette()
     add_start_directory()
 
-    add_many_regions(250)
+    add_many_regions(500)

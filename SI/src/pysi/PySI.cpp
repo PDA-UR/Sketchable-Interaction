@@ -192,6 +192,9 @@ BOOST_PYTHON_MODULE(libPySI)
                 .def("logger_unquench_messages_from_class", &PySIStartup::logger_unquench_messages_from_class).staticmethod("logger_unquench_messages_from_class")
                 .def("logger_log", &PySIStartup::logger_log)
                 .def("logger_set_log_output", &PySIStartup::logger_set_log_output)
+                .def("enable", &PySIStartup::enable)
+                .def("disable", &PySIStartup::disable)
+
                 .enable_pickling()
                 ;
 
