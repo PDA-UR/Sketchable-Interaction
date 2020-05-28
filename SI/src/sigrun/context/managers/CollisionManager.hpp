@@ -34,7 +34,6 @@ private:
     void handle_event_leave(const std::shared_ptr<Region>& a, const std::shared_ptr<Region>& b);
     void handle_event_enter(const std::shared_ptr<Region>& a, const std::shared_ptr<Region>& b);
 
-    // test concurrent vector next
     std::vector<std::tuple<std::string, std::string, bool>> d_cols;
 
     friend class Context;
