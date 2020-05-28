@@ -54,18 +54,16 @@ float RegionResampler::total_length(const std::vector<glm::vec3> &vertices)
 {
     if (!vertices.empty())
     {
+        float d = 0.0f;
         glm::vec3 p0 = vertices[0];
 
-        return std::transform_reduce(std::execution::seq, vertices.begin(), vertices.end(), 0.0, [](float a, float b)
+        for(const auto& p: vertices)
         {
-            return a + b;
-        }, [&p0](auto& p)
-        {
-            float d = distance(p0, p);
+            d += distance(p0, p);
             p0 = p;
+        }
 
-            return d;
-        });
+        return d;
     }
 
     return 0.0f;

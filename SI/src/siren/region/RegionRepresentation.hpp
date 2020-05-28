@@ -7,6 +7,7 @@
 #include <QObject>
 #include <glm/glm.hpp>
 #include <QQuickWidget>
+#include <QQmlEngine>
 #include <QVariant>
 #include <QMatrix4x4>
 #include <memory>
@@ -16,7 +17,7 @@ class RegionRepresentation: public QWidget, public SIObject
 { Q_OBJECT SIREN
 
 public:
-    RegionRepresentation(QWidget* parent, const std::shared_ptr<Region>& region);
+    RegionRepresentation(QWidget* parent, QQmlEngine* engine, const std::shared_ptr<Region>& region);
     ~RegionRepresentation();
 
     void update(const std::shared_ptr<Region>& region);
@@ -39,7 +40,7 @@ private:
     std::string d_uuid;
     std::string d_name;
     QPainterPath d_fill;
-    std::unique_ptr<QQuickWidget> d_view;
+    QQuickWidget* d_view;
     uint32_t d_type;
 
     QMetaObject::Connection d_region_connection;

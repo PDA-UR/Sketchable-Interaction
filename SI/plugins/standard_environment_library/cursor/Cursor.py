@@ -1,29 +1,27 @@
-from libPySI import PySIEffect
+from libPySI import PySI
 from plugins.standard_environment_library import SIEffect
 
 
-region_type = PySIEffect.EffectType.SI_MOUSE_CURSOR
-region_name = PySIEffect.SI_STD_NAME_MOUSE_CURSOR
-region_width = 18
-region_height = 24
+class Cursor(SIEffect.SIEffect):
+    regiontype = PySI.EffectType.SI_MOUSE_CURSOR
+    regionname = PySI.EffectName.SI_STD_NAME_MOUSE_CURSOR
+    region_width = 18
+    region_height = 24
 
-class MouseCursor(SIEffect.SIEffect):
-    def __init__(self, shape=PySIEffect.PointVector(), uuid="", kwargs={}):
-        super(MouseCursor, self).__init__(shape, uuid, "", kwargs)
-        self.name = PySIEffect.SI_STD_NAME_MOUSE_CURSOR
-        self.region_type = PySIEffect.EffectType.SI_MOUSE_CURSOR
+    def __init__(self, shape=PySI.PointVector(), uuid="", kwargs={}):
+        super(Cursor, self).__init__(shape, uuid, "", Cursor.regiontype, Cursor.regionname, kwargs)
         self.source = "libstdSI"
         self.qml_path = "plugins/standard_environment_library/cursor/Cursor.qml"
-        self.color = PySIEffect.Color(0, 0, 0, 0)
+        self.color = PySI.Color(0, 0, 0, 0)
         self.assigned_effect = ""
 
-        self.width = region_width
-        self.height = region_height
+        self.width = Cursor.region_width
+        self.height = Cursor.region_height
 
         self.clicks = 0
 
-        self.add_QML_data("width", self.width, PySIEffect.DataType.INT)
-        self.add_QML_data("height", self.height, PySIEffect.DataType.INT)
+        self.add_QML_data("width", self.width, PySI.DataType.INT)
+        self.add_QML_data("height", self.height, PySI.DataType.INT)
 
         self.parent_canvas = None
         self.move_target = None
@@ -32,12 +30,12 @@ class MouseCursor(SIEffect.SIEffect):
         self.left_mouse_active = False
         self.right_mouse_active = False
 
-        self.disable_effect(PySIEffect.DELETION, self.RECEPTION)
+        self.disable_effect(PySI.CollisionCapability.DELETION, self.RECEPTION)
 
-        self.enable_effect(PySIEffect.ASSIGN, self.RECEPTION, None, self.on_assign_continuous_recv, None)
+        self.enable_effect(PySI.CollisionCapability.ASSIGN, self.RECEPTION, None, self.on_assign_continuous_recv, None)
 
-        self.enable_link_emission(PySIEffect.POSITION, self.position)
-        self.enable_link_reception(PySIEffect.POSITION, PySIEffect.POSITION, self.set_position_from_position)
+        self.enable_link_emission(PySI.LinkingCapability.POSITION, self.position)
+        self.enable_link_reception(PySI.LinkingCapability.POSITION, PySI.LinkingCapability.POSITION, self.set_position_from_position)
 
     def position(self):
         return self.x - self.last_x, self.y - self.last_y, self.x, self.y
@@ -64,7 +62,7 @@ class MouseCursor(SIEffect.SIEffect):
             self.move_target = other
 
         if self.move_target is other:
-            return self._uuid, PySIEffect.POSITION
+            return self._uuid, PySI.LinkingCapability.POSITION
 
         return "", ""
 
@@ -74,7 +72,7 @@ class MouseCursor(SIEffect.SIEffect):
     def on_move_leave_emit(self, other):
         if self.move_target is other:
             self.move_target = None
-            return self._uuid, PySIEffect.POSITION
+            return self._uuid, PySI.LinkingCapability.POSITION
 
         return "", ""
 
@@ -93,22 +91,22 @@ class MouseCursor(SIEffect.SIEffect):
         self.left_mouse_active = is_active
 
         if is_active:
-            if PySIEffect.CLICK not in self.cap_emit.keys():
-                self.enable_effect(PySIEffect.CLICK, True, self.on_btn_press_enter_emit, self.on_btn_press_continuous_emit, self.on_btn_press_leave_emit)
+            if PySI.CollisionCapability.CLICK not in self.cap_emit.keys():
+                self.enable_effect(PySI.CollisionCapability.CLICK, True, self.on_btn_press_enter_emit, self.on_btn_press_continuous_emit, self.on_btn_press_leave_emit)
 
             if self.assigned_effect != "":
-                if PySIEffect.SKETCH not in self.cap_emit.keys():
-                    self.enable_effect(PySIEffect.SKETCH, True, self.self_on_sketch_enter_emit, self.on_sketch_continuous_emit, self.on_sketch_leave_emit)
+                if PySI.CollisionCapability.SKETCH not in self.cap_emit.keys():
+                    self.enable_effect(PySI.CollisionCapability.SKETCH, True, self.self_on_sketch_enter_emit, self.on_sketch_continuous_emit, self.on_sketch_leave_emit)
         else:
-            if PySIEffect.SKETCH in self.cap_emit.keys():
-                self.disable_effect(PySIEffect.SKETCH, True)
+            if PySI.CollisionCapability.SKETCH in self.cap_emit.keys():
+                self.disable_effect(PySI.CollisionCapability.SKETCH, True)
 
                 if self.parent_canvas is not None:
                     self.parent_canvas.on_sketch_leave_recv(*self.on_sketch_leave_emit(self.parent_canvas))
                 self.parent_canvas = None
 
-            if PySIEffect.CLICK in self.cap_emit.keys():
-                self.disable_effect(PySIEffect.CLICK, True)
+            if PySI.CollisionCapability.CLICK in self.cap_emit.keys():
+                self.disable_effect(PySI.CollisionCapability.CLICK, True)
                 if self.btn_target is not None:
                     self.btn_target.on_click_leave_recv()
 
@@ -116,10 +114,10 @@ class MouseCursor(SIEffect.SIEffect):
         self.right_mouse_active = is_active
 
         if is_active:
-            if PySIEffect.MOVE not in self.cap_emit.keys():
-                self.enable_effect(PySIEffect.MOVE, True, self.on_move_enter_emit, self.on_move_continuous_emit, self.on_move_leave_emit)
-        elif PySIEffect.MOVE in self.cap_emit.keys():
-            self.disable_effect(PySIEffect.MOVE, True)
+            if PySI.CollisionCapability.MOVE not in self.cap_emit.keys():
+                self.enable_effect(PySI.CollisionCapability.MOVE, True, self.on_move_enter_emit, self.on_move_continuous_emit, self.on_move_leave_emit)
+        elif PySI.CollisionCapability.MOVE in self.cap_emit.keys():
+            self.disable_effect(PySI.CollisionCapability.MOVE, True)
             if self.move_target is not None:
                 self.move_target.on_move_leave_recv(*self.on_move_leave_emit(self.move_target))
 

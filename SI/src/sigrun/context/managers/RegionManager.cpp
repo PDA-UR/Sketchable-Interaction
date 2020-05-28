@@ -30,14 +30,14 @@ std::vector<std::shared_ptr<Region>> &RegionManager::regions()
 
 void RegionManager::activate_mouse_region_button_down(uint32_t mouse_btn)
 {
-    auto it = std::find_if(std::execution::par_unseq, d_regions.begin(), d_regions.end(), [&](auto& region)
+    auto it = std::find_if(d_regions.begin(), d_regions.end(), [&](auto& region)
     {
-        return region->effect().effect_type() == SI_TYPE_MOUSE_CURSOR && !region->effect().has_mouse_pressed_capability(mouse_btn);
+        return region->effect()->effect_type() == SI_TYPE_MOUSE_CURSOR && !region->effect()->has_mouse_pressed_capability(mouse_btn);
     });
 
     if(it != d_regions.end())
     {
-        it->get()->effect().set_mouse_pressed_capability(mouse_btn, true);
+        it->get()->effect()->set_mouse_pressed_capability(mouse_btn, true);
 
         switch(mouse_btn)
         {
@@ -72,14 +72,14 @@ void RegionManager::activate_mouse_region_button_down(uint32_t mouse_btn)
 
 void RegionManager::deactivate_mouse_region_button_down(uint32_t mouse_btn)
 {
-    auto it = std::find_if(std::execution::par_unseq, d_regions.begin(), d_regions.end(), [&](auto& region)
+    auto it = std::find_if(d_regions.begin(), d_regions.end(), [&](auto& region)
     {
-        return region->effect().effect_type() == SI_TYPE_MOUSE_CURSOR && region->effect().has_mouse_pressed_capability(mouse_btn);
+        return region->effect()->effect_type() == SI_TYPE_MOUSE_CURSOR && region->effect()->has_mouse_pressed_capability(mouse_btn);
     });
 
     if(it != d_regions.end())
     {
-        it->get()->effect().set_mouse_pressed_capability(mouse_btn, false);
+        it->get()->effect()->set_mouse_pressed_capability(mouse_btn, false);
 
         switch(mouse_btn)
         {
@@ -112,7 +112,7 @@ void RegionManager::deactivate_mouse_region_button_down(uint32_t mouse_btn)
     }
 }
 
-void RegionManager::set_partial_regions(std::map<std::string, std::vector<glm::vec3>>& partials)
+void RegionManager::set_partial_regions(const std::map<std::string, std::vector<glm::vec3>>& partials)
 {
     d_partial_regions = partials;
 }
@@ -146,25 +146,25 @@ void RegionManager::update_mouse_inputs()
 
 void RegionManager::toggle_mouse_region_wheel_scrolled(float angle_px, float angle_degrees)
 {
-    auto it = std::find_if(std::execution::par_unseq, d_regions.begin(), d_regions.end(), [angle_px, angle_degrees](auto& region)
+    auto it = std::find_if(d_regions.begin(), d_regions.end(), [angle_px, angle_degrees](auto& region)
     {
-        return region->effect().effect_type() == SI_TYPE_MOUSE_CURSOR;
+        return region->effect()->effect_type() == SI_TYPE_MOUSE_CURSOR;
     });
 
     if(it != d_regions.end())
     {
         HANDLE_PYTHON_CALL(PY_ERROR, "Cannot foward mouse wheel to plugin " + it->get()->name(),
-            it->get()->raw_effect().attr("mouse_wheel_angle_px") = angle_px;
-            it->get()->raw_effect().attr("mouse_wheel_angle_degrees") = angle_degrees;
+            it->get()->effect()->mouse_wheel_angle_px = angle_px;
+            it->get()->effect()->mouse_wheel_angle_degrees = angle_degrees;
         )
     }
 }
 
 void RegionManager::update_region_deletions()
 {
-    d_regions.erase(std::remove_if(std::execution::seq, d_regions.begin(), d_regions.end(), [&](std::shared_ptr<Region>& region) -> bool
+    d_regions.erase(std::remove_if(d_regions.begin(), d_regions.end(), [&](std::shared_ptr<Region>& region) -> bool
     {
-        if(!region->effect().is_flagged_for_deletion())
+        if(!region->effect()->is_flagged_for_deletion())
             return false;
 
         Context::SIContext()->collision_manager()->handle_event_leave_on_deletion(region);
@@ -176,13 +176,18 @@ void RegionManager::update_region_deletions()
 
 void RegionManager::update_regions()
 {
-    std::for_each(std::execution::seq, d_regions.rbegin(), d_regions.rend(), [](auto& region)
+    int32_t size = d_regions.size();
+    for (int32_t k = 0; k < size; ++k)
     {
-        if(region->is_new())
-            region->set_is_new(false);
-        else
-            region->update();
-    });
+        int32_t i = size - k - 1;
+        if(!d_regions[i]->effect()->is_flagged_for_deletion())
+        {
+            if (d_regions[i]->is_new())
+                d_regions[i]->set_is_new(false);
+            else
+                d_regions[i]->update();
+        }
+    }
 }
 
 void RegionManager::update()

@@ -7,7 +7,7 @@
 BOOST_PYTHON_MODULE(libPySI)
 {
     { // scope opened for everything which shall be part of effect_scope
-        bp::scope effect_scope = bp::class_<PySIEffect>("PySIEffect",bp::init<const std::vector<glm::vec3> &, const std::string &, const std::string &, const bp::dict &>());
+        bp::scope effect_scope = bp::class_<PySIEffect>("PySI",bp::init<const std::vector<glm::vec3> &, const std::string &, const std::string &, const bp::dict &>());
 
         bp::class_<glm::vec2>("Point2", bp::init<float, float>())
                 .def_readwrite("x", &glm::vec2::x)
@@ -49,45 +49,7 @@ BOOST_PYTHON_MODULE(libPySI)
         create_map<MapExposureString2Function, std::map<std::string, bp::object>>("String2FunctionMap");
         create_map<MapExposureString2_String2FunctionMap_Map, std::map<std::string, std::map<std::string, bp::object>>>("String2_String2FunctionMap_Map");
 
-        effect_scope.attr("ON_ENTER") = SI_COLLISION_EVENT_ON_ENTER;
-        effect_scope.attr("ON_CONTINUOUS") = SI_COLLISION_EVENT_ON_CONTINUOUS;
-        effect_scope.attr("ON_LEAVE") = SI_COLLISION_EVENT_ON_LEAVE;
-
-        effect_scope.attr("MOVE") = SI_CAPABILITY_COLLISION_MOVE;
-        effect_scope.attr("BTN") = SI_CAPABILITY_COLLISION_BUTTON;
-        effect_scope.attr("OPEN_ENTRY") = SI_CAPABILITY_COLLISION_OPEN_ENTRY;
-        effect_scope.attr("PARENT") = SI_CAPABILITY_COLLISION_PARENT;
-        effect_scope.attr("SKETCH") = SI_CAPABILITY_COLLISION_SKETCH;
-        effect_scope.attr("CLICK") = SI_CAPABILITY_COLLISION_CLICK;
-        effect_scope.attr("DELETION") = SI_CAPABILITY_COLLISION_DELETION;
-        effect_scope.attr("PREVIEW") = SI_CAPABILITY_COLLISION_PREVIEW;
-        effect_scope.attr("ASSIGN") = SI_CAPABILITY_COLLISION_ASSIGN;
-
-        effect_scope.attr("POSITION") = SI_CAPABILITY_LINK_POSITION;
-        effect_scope.attr("ROTATION") = SI_CAPABILITY_LINK_ROTATION;
-        effect_scope.attr("SCALE") = SI_CAPABILITY_LINK_SCALE;
-        effect_scope.attr("COLOR") = SI_CAPABILITY_LINK_COLOR;
-        effect_scope.attr("GEOMETRY") = SI_CAPABILITY_LINK_GEOMETRY;
-
-        effect_scope.attr("SI_STD_NAME_DIRECTORY") = SI_NAME_EFFECT_DIRECTORY;
-        effect_scope.attr("SI_STD_NAME_TEXTFILE") = SI_NAME_EFFECT_TEXTFILE;
-        effect_scope.attr("SI_STD_NAME_IMAGEFILE") = SI_NAME_EFFECT_IMAGEFILE;
-        effect_scope.attr("SI_STD_NAME_UNKNOWNFILE") = SI_NAME_EFFECT_UNKNOWNFILE;
-        effect_scope.attr("SI_STD_NAME_BUTTON") = SI_NAME_EFFECT_BUTTON;
-        effect_scope.attr("SI_STD_NAME_TAG") = SI_NAME_EFFECT_TAG;
-        effect_scope.attr("SI_STD_NAME_DELETION") = SI_NAME_EFFECT_DELETION;
-        effect_scope.attr("SI_STD_NAME_OPEN_ENTRY") = SI_NAME_EFFECT_OPEN_ENTRY;
-        effect_scope.attr("SI_STD_NAME_MOUSE_CURSOR") = SI_NAME_EFFECT_MOUSE_CURSOR;
-        effect_scope.attr("SI_STD_NAME_CANVAS") = SI_NAME_EFFECT_CANVAS;
-        effect_scope.attr("SI_STD_NAME_SIMPLE_NOTIFICATION") = SI_NAME_EFFECT_SIMPLE_NOTIFICATION;
-        effect_scope.attr("SI_STD_NAME_ENTRY") = SI_NAME_EFFECT_ENTRY;
-        effect_scope.attr("SI_STD_NAME_CONTAINER") = SI_NAME_EFFECT_CONTAINER;
-        effect_scope.attr("SI_STD_NAME_PLACEHOLDER") = SI_NAME_EFFECT_PLACEHOLDER;
-        effect_scope.attr("SI_STD_NAME_PREVIEW") = SI_NAME_EFFECT_PREVIEW;
-        effect_scope.attr("SI_STD_NAME_PALETTE") = SI_NAME_EFFECT_PALETTE;
-        effect_scope.attr("SI_STD_NAME_SELECTOR") = SI_NAME_EFFECT_SELECTOR;
-
-        bp::class_<PySIEffect, boost::noncopyable>("PySIEffect",bp::init<const std::vector<glm::vec3> &, const std::string &, const std::string &, const bp::dict &>())
+        bp::class_<PySIEffect, boost::noncopyable>("PySI",bp::init<const std::vector<glm::vec3> &, const std::string &, const std::string &, const bp::dict &>())
                 .def("__add_data__", &PySIEffect::__add_data__)
                 .def("__signal_deletion__", &PySIEffect::__signal_deletion__)
                 .def("__embed_file_standard_appliation_into_context__", &PySIEffect::__embed_file_standard_appliation_into_context__)
@@ -163,6 +125,60 @@ BOOST_PYTHON_MODULE(libPySI)
 
                 .export_values()
                 ;
+
+        {
+            bp::scope effect_name = bp::class_<bp::object, boost::noncopyable>("EffectName", bp::init<>());
+
+            effect_name.attr("SI_STD_NAME_CANVAS") = SI_NAME_EFFECT_CANVAS;
+            effect_name.attr("SI_STD_NAME_DIRECTORY") = SI_NAME_EFFECT_DIRECTORY;
+            effect_name.attr("SI_STD_NAME_TEXTFILE") = SI_NAME_EFFECT_TEXTFILE;
+            effect_name.attr("SI_STD_NAME_IMAGEFILE") = SI_NAME_EFFECT_IMAGEFILE;
+            effect_name.attr("SI_STD_NAME_UNKNOWNFILE") = SI_NAME_EFFECT_UNKNOWNFILE;
+            effect_name.attr("SI_STD_NAME_BUTTON") = SI_NAME_EFFECT_BUTTON;
+            effect_name.attr("SI_STD_NAME_TAG") = SI_NAME_EFFECT_TAG;
+            effect_name.attr("SI_STD_NAME_DELETION") = SI_NAME_EFFECT_DELETION;
+            effect_name.attr("SI_STD_NAME_OPEN_ENTRY") = SI_NAME_EFFECT_OPEN_ENTRY;
+            effect_name.attr("SI_STD_NAME_MOUSE_CURSOR") = SI_NAME_EFFECT_MOUSE_CURSOR;
+            effect_name.attr("SI_STD_NAME_SIMPLE_NOTIFICATION") = SI_NAME_EFFECT_SIMPLE_NOTIFICATION;
+            effect_name.attr("SI_STD_NAME_ENTRY") = SI_NAME_EFFECT_ENTRY;
+            effect_name.attr("SI_STD_NAME_CONTAINER") = SI_NAME_EFFECT_CONTAINER;
+            effect_name.attr("SI_STD_NAME_PLACEHOLDER") = SI_NAME_EFFECT_PLACEHOLDER;
+            effect_name.attr("SI_STD_NAME_PREVIEW") = SI_NAME_EFFECT_PREVIEW;
+            effect_name.attr("SI_STD_NAME_PALETTE") = SI_NAME_EFFECT_PALETTE;
+            effect_name.attr("SI_STD_NAME_SELECTOR") = SI_NAME_EFFECT_SELECTOR;
+        }
+
+        {
+            bp::scope collision_event = bp::class_<bp::object, boost::noncopyable>("CollisionEvent", bp::init<>());
+
+            collision_event.attr("ON_ENTER") = SI_COLLISION_EVENT_ON_ENTER;
+            collision_event.attr("ON_CONTINUOUS") = SI_COLLISION_EVENT_ON_CONTINUOUS;
+            collision_event.attr("ON_LEAVE") = SI_COLLISION_EVENT_ON_LEAVE;
+        }
+
+        {
+            bp::scope collision_capability = bp::class_<bp::object, boost::noncopyable>("CollisionCapability", bp::init<>());
+
+            collision_capability.attr("MOVE") = SI_CAPABILITY_COLLISION_MOVE;
+            collision_capability.attr("BTN") = SI_CAPABILITY_COLLISION_BUTTON;
+            collision_capability.attr("OPEN_ENTRY") = SI_CAPABILITY_COLLISION_OPEN_ENTRY;
+            collision_capability.attr("PARENT") = SI_CAPABILITY_COLLISION_PARENT;
+            collision_capability.attr("SKETCH") = SI_CAPABILITY_COLLISION_SKETCH;
+            collision_capability.attr("CLICK") = SI_CAPABILITY_COLLISION_CLICK;
+            collision_capability.attr("DELETION") = SI_CAPABILITY_COLLISION_DELETION;
+            collision_capability.attr("PREVIEW") = SI_CAPABILITY_COLLISION_PREVIEW;
+            collision_capability.attr("ASSIGN") = SI_CAPABILITY_COLLISION_ASSIGN;
+        }
+
+        {
+            bp::scope linking_capability = bp::class_<bp::object, boost::noncopyable>("LinkingCapability", bp::init<>());
+
+            linking_capability.attr("POSITION") = SI_CAPABILITY_LINK_POSITION;
+            linking_capability.attr("ROTATION") = SI_CAPABILITY_LINK_ROTATION;
+            linking_capability.attr("SCALE") = SI_CAPABILITY_LINK_SCALE;
+            linking_capability.attr("COLOR") = SI_CAPABILITY_LINK_COLOR;
+            linking_capability.attr("GEOMETRY") = SI_CAPABILITY_LINK_GEOMETRY;
+        }
     } // scope ended for everything which shall be part of effect_scope
 
     { // scope opened for everything which shall be part of startup_scope
@@ -176,6 +192,9 @@ BOOST_PYTHON_MODULE(libPySI)
                 .def("logger_unquench_messages_from_class", &PySIStartup::logger_unquench_messages_from_class).staticmethod("logger_unquench_messages_from_class")
                 .def("logger_log", &PySIStartup::logger_log)
                 .def("logger_set_log_output", &PySIStartup::logger_set_log_output)
+                .def("enable", &PySIStartup::enable)
+                .def("disable", &PySIStartup::disable)
+
                 .enable_pickling()
                 ;
 

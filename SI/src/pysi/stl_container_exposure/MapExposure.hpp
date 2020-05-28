@@ -59,7 +59,7 @@ public:
     {
         bp::list t;
 
-        std::for_each(std::execution::par_unseq, x.begin(), x.end(), [&](auto& pair)
+        std::for_each(x.begin(), x.end(), [&](auto& pair)
         {
            t.append(pair.first);
         });
@@ -71,7 +71,7 @@ public:
     {
         bp::list t;
 
-        std::for_each(std::execution::par_unseq, x.begin(), x.end(), [&](auto& pair)
+        std::for_each(x.begin(), x.end(), [&](auto& pair)
         {
             t.append(pair.second);
         });
@@ -83,7 +83,7 @@ public:
     {
         bp::list t;
 
-        std::for_each(std::execution::par_unseq, x.begin(), x.end(), [&](auto& pair)
+        std::for_each(x.begin(), x.end(), [&](auto& pair)
         {
             t.append(bp::make_tuple(pair.first, pair.second));
         });
@@ -126,7 +126,7 @@ public:
 
     static std::string repr(std::map<std::string, std::vector<glm::vec3>>& self)
     {
-        return std::transform_reduce(std::execution::par_unseq, self.begin(), self.end(), std::string("{"), [](const std::string& a, const std::string& b)
+        return std::transform_reduce(self.begin(), self.end(), std::string("{"), [](const std::string& a, const std::string& b)
         {
             return a + ", " + b;
         }, [](const std::pair<std::string, std::vector<glm::vec3>>& pair)
@@ -169,7 +169,7 @@ public:
 
     static std::string repr(std::map<std::string, bp::object>& self)
     {
-        return std::transform_reduce(std::execution::par_unseq, self.begin(), self.end(), std::string("{"), [&](const std::string& a, const std::string& b)
+        return std::transform_reduce(self.begin(), self.end(), std::string("{"), [&](const std::string& a, const std::string& b)
         {
             return a + ", " + b;
         }, [&](const std::pair<std::string, bp::object>& pair)
@@ -228,12 +228,12 @@ public:
 
     static std::string repr(std::map<std::string, std::map<std::string, bp::object>>& self)
     {
-        return std::transform_reduce(std::execution::par_unseq, self.begin(), self.end(), std::string("{"), [&](const std::string& a, const std::string& b)
+        return std::transform_reduce(self.begin(), self.end(), std::string("{"), [&](const std::string& a, const std::string& b)
         {
             return a + ", " + b;
         }, [&](const std::pair<std::string, std::map<std::string, bp::object>>& outer_pair)
         {
-            return outer_pair.first + ": " + std::transform_reduce(std::execution::par_unseq, outer_pair.second.begin(), outer_pair.second.end(), std::string("{"), [&](const std::string& a2, const std::string& b2)
+            return outer_pair.first + ": " + std::transform_reduce(outer_pair.second.begin(), outer_pair.second.end(), std::string("{"), [&](const std::string& a2, const std::string& b2)
             {
                 return a2 + ", " + b2;
             }, [&](const std::pair<std::string, bp::object>& inner_pair)

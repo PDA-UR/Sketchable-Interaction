@@ -2,6 +2,13 @@ import QtQuick 2.7
 
 Item
 {
+    function updateData(data)
+    {
+        image.width = data.icon_width;
+        image.height = data.icon_height;
+        image.source = data.img_path;
+    }
+
     id: container
     visible: true
 
@@ -16,14 +23,5 @@ Item
 
            visible: true
        }
-    }
-
-    Connections {
-        target: Region
-        onDataChanged: {
-            image.width = data.icon_width;
-            image.height = data.icon_height;
-            image.source = data.img_path;
-        }
     }
 }

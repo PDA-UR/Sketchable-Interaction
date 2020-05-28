@@ -37,7 +37,8 @@ add_library(PySI MODULE ${PySISrc})
 target_link_libraries(PySI
         ${PYTHON_LIBRARIES} 
         ${Boost_LIBRARIES}
-        Qt5::Widgets -ltbb)
+        Qt5::Widgets
+        -ltbb)
 
 target_precompile_headers(PySI
         PUBLIC
@@ -107,7 +108,11 @@ set(SIGRunSRC
         SI/src/sigrun/context/managers/helpers/input/FileSystem.cpp
         SI/src/sigrun/context/managers/helpers/input/FileSystem.hpp
         SI/src/sigrun/context/managers/ExternalApplicationManager.cpp
-        SI/src/sigrun/context/managers/ExternalApplicationManager.hpp)
+        SI/src/sigrun/context/managers/ExternalApplicationManager.hpp
+        SI/src/sigrun/parallel/JobSystem.hpp
+        SI/src/sigrun/parallel/Job.cpp
+        SI/src/sigrun/parallel/Job.hpp
+        SI/src/sigrun/parallel/helpers/ThreadSafeRingBuffer.hpp)
 
 ADD_DEFINITIONS(-DQT_NO_KEYWORDS)
 

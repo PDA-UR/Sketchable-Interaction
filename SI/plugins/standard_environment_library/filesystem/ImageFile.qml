@@ -3,6 +3,28 @@ import QtQuick.Controls 2.7
 
 Item
 {
+    function updateData(data)
+    {
+        container.visible = data.is_visible;
+
+        image.width = data.icon_width;
+        image.height = data.icon_height;
+
+        if(data.is_in_preview)
+            image.anchors.leftMargin = 0;
+        else
+            image.anchors.leftMargin = image.width / 2;
+
+        image.source = data.img_path;
+
+        container.width = data.container_width
+        container.height = data.container_height
+
+        filename.color = data.color;
+        filename.text = data.name;
+        filename.visible = !data.is_in_preview;
+    }
+
     id: container
 
     visible: true
@@ -32,30 +54,5 @@ Item
         anchors.leftMargin: -width * 0.25
 
         wrapMode: TextEdit.Wrap
-    }
-
-    Connections {
-        target: Region
-
-        onDataChanged: {
-            container.visible = data.is_visible;
-
-            image.width = data.icon_width;
-            image.height = data.icon_height;
-
-            if(data.is_in_preview)
-                image.anchors.leftMargin = 0;
-            else
-                image.anchors.leftMargin = image.width / 2;
-
-            image.source = data.img_path;
-
-            container.width = data.container_width
-            container.height = data.container_height
-
-            filename.color = data.color;
-            filename.text = data.name;
-            filename.visible = !data.is_in_preview;
-        }
     }
 }

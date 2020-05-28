@@ -1,25 +1,15 @@
-from libPySI import PySIEffect
+from libPySI import PySI
 
 ## @package SIEffect
 # Documentation for this module / class
 #
 # Used as central entry point for all SIGRun plugins
-# Each plugin is required to contain these module level attributes region_name, region_display_name, region_type
-
-## the internal name of the region
-region_name = ""
-
-## the name of the region to show to users
-region_display_name = ""
-
-## the type of the region - if the region has a type pre-registered to SIGRun the use of that type is required else PySIEffect.EffectType.SI_CUSTOM is to be used
-region_type = PySIEffect.EffectType.SI_CUSTOM
 
 
 ## Super Class from which all subsequent plugins are derived
 #
-# This Class itself is derived from PySIEffect written in C++ which is documented separately within SIGRun
-class SIEffect(PySIEffect.PySIEffect):
+# This Class itself is derived from PySI written in C++ which is documented separately within SIGRun
+class SIEffect(PySI.PySI):
 
     ## member constant to mark an effect or link emittable
     EMISSION = True
@@ -43,18 +33,18 @@ class SIEffect(PySIEffect.PySIEffect):
     # Constructs a new SIEffect object based on the given arguments.
     #
     # @param self the object pointer
-    # @param shape the contour of the drawn region (PySIEffect.PointVector)
-    # @param aabb the axis-aligned bounding-box of the drawn region (PySIEffect.PointVector)
+    # @param shape the contour of the drawn region (PySI.PointVector)
+    # @param aabb the axis-aligned bounding-box of the drawn region (PySI.PointVector)
     # @param uuid the universally unique identifier of the drawn region (str)
     # @param texture_path the path to an image intended to be used as an icon for the drawn region (str)
     # @param kwargs keyworded arguments which may necessary for more specific implementations of region effects (dict)
-    def __init__(self, shape, uuid, texture_path, kwargs):
+    def __init__(self, shape, uuid, texture_path, regiontype, regionname, kwargs):
         super(SIEffect, self).__init__(shape, uuid, texture_path, kwargs)
 
-        ## member attribute variable containing the shape (contour) of a drawn region as a PySIEffect.PointVector
+        ## member attribute variable containing the shape (contour) of a drawn region as a PySI.PointVector
         self.shape = shape
 
-        ## member attribute variable containing the axis-aligned bounding-box (aabb) of a drawn region as a PySIEffect.PointVector
+        ## member attribute variable containing the axis-aligned bounding-box (aabb) of a drawn region as a PySI.PointVector
         #
         # This variable is automatically computed when shape is changed.
         # It is recommended to use this variable read-only.
@@ -63,23 +53,23 @@ class SIEffect(PySIEffect.PySIEffect):
         ## member variable containing the maximum width of the region
         #
         # computed via aabb
-        self.width = int(self.region_width())
+        self.width = int(self.get_region_width())
 
         ## member variable containing the maximum height of the region
         #
         # computed via aabb
-        self.height = int(self.region_height())
+        self.height = int(self.get_region_height())
 
         ## member attribute variable containing the universally unique identifier (uuid) of a drawn region as a str
         self._uuid = uuid
 
         ## member attribute variable containing the name of a drawn region as a str
-        self.name = PySIEffect.SI_STD_NAME_PLACEHOLDER
+        self.name = regionname
 
-        ## member attribute variable containing the type of effect of a drawn region as a PySIEffect.EffectType
+        ## member attribute variable containing the type of effect of a drawn region as a PySI.EffectType
         #
         # Effect implementation which are currently not part of the Standard Environment Library of SIGRun are required to be of type SI_CUSTOM
-        self.region_type = PySIEffect.EffectType.SI_CUSTOM
+        self.region_type = regiontype
 
         ## member attribute variable containing the source of effect of a drawn region as a str
         #
@@ -105,14 +95,14 @@ class SIEffect(PySIEffect.PySIEffect):
         ## member attribute variable containing the last absolute y coordinate as a float
         self.last_y = 0
 
-        ## member attribute variable containing the fill color of a region in RGBA as a PySIEffect.Color
-        self.color = PySIEffect.Color(33, 33, 33, 127)
+        ## member attribute variable containing the fill color of a region in RGBA as a PySI.Color
+        self.color = PySI.Color(33, 33, 33, 127)
 
         ## member attribute variable which is true when an user directly controls the region (e.g. moving it around) as a bool
         self.is_under_user_control = False
 
-        ## member attribute variable storing the uuids of present cursors once a region drawing is to be registered as a PySIEffect.StringVector
-        self.__registered_regions__ = PySIEffect.StringVector()
+        ## member attribute variable storing the uuids of present cursors once a region drawing is to be registered as a PySI.StringVector
+        self.__registered_regions__ = PySI.StringVector()
 
         ## member attribute variable storing the path to the image file used as texture for a region
         self.texture_path = texture_path
@@ -128,66 +118,66 @@ class SIEffect(PySIEffect.PySIEffect):
             # This value is only set if texture_path is a valid path
             self.texture_height = 75
 
-            self.__add_data__("img_width", self.texture_width, PySIEffect.DataType.INT)
-            self.__add_data__("img_heaight", self.texture_height, PySIEffect.DataType.INT)
-            self.__add_data__("img_path", self.texture_path, PySIEffect.DataType.STRING)
-            self.__add_data__("widget_width", self.width, PySIEffect.DataType.FLOAT)
-            self.__add_data__("widget_height", self.height, PySIEffect.DataType.FLOAT)
+            self.__add_data__("img_width", self.texture_width, PySI.DataType.INT)
+            self.__add_data__("img_height", self.texture_height, PySI.DataType.INT)
+            self.__add_data__("img_path", self.texture_path, PySI.DataType.STRING)
+            self.__add_data__("widget_width", self.width, PySI.DataType.FLOAT)
+            self.__add_data__("widget_height", self.height, PySI.DataType.FLOAT)
 
         ## member attribute variable storing keys to functions which are called when collision events occur for emitting data to receiving regions
         #
-        # This variable is a PySIEffect.String2_String2FunctionMap_Map (c++-bindings) and uses capabilities (str) as keys to the inner String2FunctionMap.
-        # The inner String2FunctionMap uses collision event names (PySIEffect.ON_ENTER ("on_enter"), PySIEffect:ON_CONTINUOUS ("on_continuous"), PySIEffect.ON_LEAVE ("on_leave")) as keys to their corresponding functions as values
+        # This variable is a PySI.String2_String2FunctionMap_Map (c++-bindings) and uses capabilities (str) as keys to the inner String2FunctionMap.
+        # The inner String2FunctionMap uses collision event names (PySI.ON_ENTER ("on_enter"), PySI:ON_CONTINUOUS ("on_continuous"), PySI.ON_LEAVE ("on_leave")) as keys to their corresponding functions as values
         #
         # Example:
         #
-        # self.cap_emit["CAPABILITY"] = {PySIEffect.ON_ENTER: self.<function_enter>, PySIEffect:ON_CONTINUOUS: self.<function_continuous>, PySIEffect.ON_LEAVE: self.<function_leave>
+        # self.cap_emit["CAPABILITY"] = {PySI.ON_ENTER: self.<function_enter>, PySI:ON_CONTINUOUS: self.<function_continuous>, PySI.ON_LEAVE: self.<function_leave>
         #
         # Therefore, this example allows a region to emit an effect of CAPABILITY once a collision event occurred
-        self.cap_emit = PySIEffect.String2_String2FunctionMap_Map()
+        self.cap_emit = PySI.String2_String2FunctionMap_Map()
 
         ## member attribute variable storing keys to functions which are called when collision events occur for receiving data from emitting regions
         #
-        # This variable is a PySIEffect.String2_String2FunctionMap_Map (c++-bindings) and uses capabilities (str) as keys to the inner String2FunctionMap.
-        # The inner String2FunctionMap uses collision event names (PySIEffect.ON_ENTER ("on_enter"), PySIEffect:ON_CONTINUOUS ("on_continuous"), PySIEffect.ON_LEAVE ("on_leave")) as keys to their corresponding functions as values
+        # This variable is a PySI.String2_String2FunctionMap_Map (c++-bindings) and uses capabilities (str) as keys to the inner String2FunctionMap.
+        # The inner String2FunctionMap uses collision event names (PySI.ON_ENTER ("on_enter"), PySI:ON_CONTINUOUS ("on_continuous"), PySI.ON_LEAVE ("on_leave")) as keys to their corresponding functions as values
         #
         # Example:
         #
-        # self.cap_recv["CAPABILITY"] = {PySIEffect.ON_ENTER: self.<function_enter>, PySIEffect:ON_CONTINUOUS: self.<function_continuous>, PySIEffect.ON_LEAVE: self.<function_leave>
+        # self.cap_recv["CAPABILITY"] = {PySI.ON_ENTER: self.<function_enter>, PySI:ON_CONTINUOUS: self.<function_continuous>, PySI.ON_LEAVE: self.<function_leave>
         #
         # Therefore, this example allows a region to receive an effect of CAPABILITY once a collision event occurred
-        self.cap_recv = PySIEffect.String2_String2FunctionMap_Map()
+        self.cap_recv = PySI.String2_String2FunctionMap_Map()
 
         ## member attribute variable storing keys to functions which are called when linking events occur for emitting data to receiving regions
         #
         # This variable is a String2FunctionMap (c++-bindings) containing capabilities (str) as keys and functions as values
         #
         # Example with SI-integrated linking of positions for emission case:
-        # self.cap_link_emit[PySIEffect.POSITION] = self.<function_position_emit>
+        # self.cap_link_emit[PySI.POSITION] = self.<function_position_emit>
         # Therefore, this example emits the positional data of the region to a linked region.
 
         # Example with custom capability for linking:
         # self.cap_link_emit[<name of capability>] = self.<corresponding function>
         # Therefore, this example emits some data of the region to a linked region based on the capability
-        self.cap_link_emit = PySIEffect.String2FunctionMap()
+        self.cap_link_emit = PySI.String2FunctionMap()
 
         ## member attribute variable storing keys to functions which are called when linking events occur for emitting data to receiving regions
         #
-        # This variable is a PySIEffect.String2_String2FunctionMap_Map (c++-bindings) and uses linking event capability names (str) as keys to the inner String2FunctionMap.
-        # The inner String2FunctionMap uses linking event capability names (PySIEffect.POSITION, <own name as str>) as keys to their corresponding functions as values.
+        # This variable is a PySI.String2_String2FunctionMap_Map (c++-bindings) and uses linking event capability names (str) as keys to the inner String2FunctionMap.
+        # The inner String2FunctionMap uses linking event capability names (PySI.POSITION, <own name as str>) as keys to their corresponding functions as values.
         # The outer key corresponds to the emission capability.
         # The inner key corresponds to the reception capability of the targeted region and points towards the function which is to be called during the linking event
         # Therefore, it is possible to map e.g. incomimg positional data to the color of the receiving region.
         #
         # Example with SI-integrated linking of positions for reception case:
-        # self.cap_link_recv[PySIEffect.POSITION][PySIEffect.POSITION] = self.<function_position_emit>
-        # self.cap_link_recv[PySIEffect.POSITION][PySIEffect.COLOR] = self.<function_color_emit>
+        # self.cap_link_recv[PySI.POSITION][PySI.POSITION] = self.<function_position_emit>
+        # self.cap_link_recv[PySI.POSITION][PySI.COLOR] = self.<function_color_emit>
         # Therefore, this example receives the positional data of a linked region and can apply this data to other categories of data according to the linking relationship.
 
         # Example with custom capability for linking:
         # self.cap_link_recv[<name of emission capability>][<name of reception capability>] = self.<corresponding function>
         # Therefore, this example receives some data of a linked region and can apply this data to other categories of data according to the linking relationship .
-        self.cap_link_recv = PySIEffect.String2_String2FunctionMap_Map()
+        self.cap_link_recv = PySI.String2_String2FunctionMap_Map()
 
         ## member attribute variable storing the x position of the mouse cursor
         self.mouse_x = 0
@@ -195,17 +185,17 @@ class SIEffect(PySIEffect.PySIEffect):
         ## member attribute variable storing the y position of the mouse cursor
         self.mouse_y = 0
 
-        self.enable_effect(PySIEffect.MOVE, self.RECEPTION, self.on_move_enter_recv, self.on_move_continuous_recv, self.on_move_leave_recv)
-        self.enable_effect(PySIEffect.DELETION, self.RECEPTION, None, None, None)
+        self.enable_effect(PySI.CollisionCapability.MOVE, self.RECEPTION, self.on_move_enter_recv, self.on_move_continuous_recv, self.on_move_leave_recv)
+        self.enable_effect(PySI.CollisionCapability.DELETION, self.RECEPTION, None, None, None)
 
-        self.enable_link_reception(PySIEffect.POSITION, PySIEffect.POSITION, self.set_position_from_position)
+        self.enable_link_reception(PySI.LinkingCapability.POSITION, PySI.LinkingCapability.POSITION, self.set_position_from_position)
 
     ## member function for retrieving the maximum width of a region
-    def region_width(self):
+    def get_region_width(self):
         return self.aabb[3].x - self.aabb[0].x
 
     ## member function for retrieving the maximum height of a region
-    def region_height(self):
+    def get_region_height(self):
         return self.aabb[1].y - self.aabb[0].y
 
     ## member function for setting the position of a region based on the positional data of another region.
@@ -253,7 +243,7 @@ class SIEffect(PySIEffect.PySIEffect):
     def absolute_y_pos(self):
         return self.y + self.relative_y_pos()
 
-    ## member function for receiving data from the PySIEffect.MOVE capability for the PySIEffect.ON_ENTER collision event
+    ## member function for receiving data from the PySI.MOVE capability for the PySI.ON_ENTER collision event
     #
     # @param self the object pointer
     # @param cursor_id the cursor which is intended to move the region (str)
@@ -263,13 +253,13 @@ class SIEffect(PySIEffect.PySIEffect):
             self.link_relations.append([cursor_id, link_attrib, self._uuid, link_attrib])
             self.is_under_user_control = True
 
-    ## member function for the PySIEffect.MOVE capability for the PySIEffect.ON_CONTINUOUS collision event
+    ## member function for the PySI.MOVE capability for the PySI.ON_CONTINUOUS collision event
     #
     # @param self the object pointer
     def on_move_continuous_recv(self):
         pass
 
-    ## member function for receiving data from the PySIEffect.MOVE capability for the PySIEffect.ON_LEAVE collision event
+    ## member function for receiving data from the PySI.MOVE capability for the PySI.ON_LEAVE collision event
     #
     # @param self the object pointer
     # @param cursor_id the cursor which is intended to move the region (str)
@@ -277,7 +267,7 @@ class SIEffect(PySIEffect.PySIEffect):
     def on_move_leave_recv(self, cursor_id, link_attrib):
         if not cursor_id is "" and not link_attrib is "":
 
-            lr = PySIEffect.LinkRelation(cursor_id, link_attrib, self._uuid, link_attrib)
+            lr = PySI.LinkRelation(cursor_id, link_attrib, self._uuid, link_attrib)
 
             if lr in self.link_relations:
                 del self.link_relations[self.link_relations.index(lr)]
@@ -291,14 +281,14 @@ class SIEffect(PySIEffect.PySIEffect):
     # @param self the object pointer
     # @param capability the capability of the collision event (str)
     # @param is_emit the variable depicting if a region emits (True) or receives (False) an effect (bool)
-    # @param on_enter the function to be called for the collision event PySIEffect.ON_ENTER
-    # @param on_continuous the function to be called for the collision event PySIEffect.ON_CONTINUOUS
-    # @param on_leave the function to be called for the collision event PySIEffect.ON_LEAVE
+    # @param on_enter the function to be called for the collision event PySI.ON_ENTER
+    # @param on_continuous the function to be called for the collision event PySI.ON_CONTINUOUS
+    # @param on_leave the function to be called for the collision event PySI.ON_LEAVE
     def enable_effect(self, capability, is_emit, on_enter, on_continuous, on_leave):
        if is_emit:
-           self.cap_emit[capability] = {PySIEffect.ON_ENTER: on_enter, PySIEffect.ON_CONTINUOUS: on_continuous, PySIEffect.ON_LEAVE: on_leave}
+           self.cap_emit[capability] = {PySI.CollisionEvent.ON_ENTER: on_enter, PySI.CollisionEvent.ON_CONTINUOUS: on_continuous, PySI.CollisionEvent.ON_LEAVE: on_leave}
        else:
-           self.cap_recv[capability] = {PySIEffect.ON_ENTER: on_enter, PySIEffect.ON_CONTINUOUS: on_continuous, PySIEffect.ON_LEAVE: on_leave}
+           self.cap_recv[capability] = {PySI.CollisionEvent.ON_ENTER: on_enter, PySI.CollisionEvent.ON_CONTINUOUS: on_continuous, PySI.CollisionEvent.ON_LEAVE: on_leave}
 
     def is_effect_enabled(self, capability, is_emit):
         if is_emit:
@@ -311,9 +301,9 @@ class SIEffect(PySIEffect.PySIEffect):
     # @param self the object pointer
     # @param capability the capability of the collision event (str)
     # @param is_emit the variable depicting if a region emits (True) or receives (False) an effect (bool)
-    # @param on_enter the function to be called for the collision event PySIEffect.ON_ENTER
-    # @param on_continuous the function to be called for the collision event PySIEffect.ON_CONTINUOUS
-    # @param on_leave the function to be called for the collision event PySIEffect.ON_LEAVE
+    # @param on_enter the function to be called for the collision event PySI.ON_ENTER
+    # @param on_continuous the function to be called for the collision event PySI.ON_CONTINUOUS
+    # @param on_leave the function to be called for the collision event PySI.ON_LEAVE
     #
     # This function then calls self.enable_effect(capability, is_emit, on_enter, on_continuous, on_leave)
     # @see self.enable_effect(capability, is_emit, on_enter, on_continuous, on_leave)
@@ -395,7 +385,7 @@ class SIEffect(PySIEffect.PySIEffect):
     # @param receiver_attribute the attribute to be linked by the receiving region (str)
     def remove_link(self, sender_uuid, sender_attribute, receiver_uuid, receiver_attribute):
         if sender_uuid is not "" and sender_attribute is not "" and receiver_uuid is not "" and receiver_attribute is not "":
-            lr = PySIEffect.LinkRelation(sender_uuid, sender_attribute, receiver_uuid, receiver_attribute)
+            lr = PySI.LinkRelation(sender_uuid, sender_attribute, receiver_uuid, receiver_attribute)
 
             if lr in self.link_relations:
                 del self.link_relations[self.link_relations.index(lr)]
@@ -405,7 +395,7 @@ class SIEffect(PySIEffect.PySIEffect):
     # @param self the object pointer
     # @param key the variable specified in the qml file (str)
     # @param value the value to set in the variable in the qml file (variant)
-    # @param datatype the data type of the value (PySIEffect.INT, PySIEffect.FLOAT, ...) (int)
+    # @param datatype the data type of the value (PySI.INT, PySI.FLOAT, ...) (int)
     #
     # Calls the function __add_data__ (c++-bindings)
     def add_QML_data(self, key, value, datatype):
@@ -418,14 +408,14 @@ class SIEffect(PySIEffect.PySIEffect):
     # @param y the y coordinate of the cursor (float)
     # @param cursor_id the id of cursor currently drawing (str)
     #
-    # This function is specific to effects of PySIEffect.EffectType.SI_CANVAS.
+    # This function is specific to effects of PySI.EffectType.SI_CANVAS.
     # Therefore, this function does nothing when called with other effect types.
     #
     # This function uses self.__partial_regions__ (c++-bindings)
     def add_point_to_region_drawing(self, x, y, cursor_id):
-        if self.region_type is int(PySIEffect.EffectType.SI_CANVAS):
+        if self.region_type is int(PySI.EffectType.SI_CANVAS):
             if cursor_id not in self.__partial_regions__.keys():
-                self.__partial_regions__[cursor_id] = PySIEffect.PointVector()
+                self.__partial_regions__[cursor_id] = PySI.PointVector()
 
             self.__partial_regions__[cursor_id].append([x, y])
 
@@ -434,12 +424,12 @@ class SIEffect(PySIEffect.PySIEffect):
     # @param self the object pointer
     # @param cursor_id the id of the cursor which is currently drawing (str)
     #
-    # This function is specific to effects of PySIEffect.EffectType.SI_CANVAS.
+    # This function is specific to effects of PySI.EffectType.SI_CANVAS.
     # Therefore, this function does nothing when called with other effect types.
     #
     # This function uses self.__registered_regions__ (c++-bindings)
     def register_region_from_drawing(self, cursor_id):
-        if self.region_type is int(PySIEffect.EffectType.SI_CANVAS):
+        if self.region_type is int(PySI.EffectType.SI_CANVAS):
             self.__registered_regions__.append(cursor_id)
 
     ## member function for starting the standard application of a file given its uuid as a region and its path in the filesystem
@@ -480,7 +470,7 @@ class SIEffect(PySIEffect.PySIEffect):
     ## member function for creating a new region
     #
     # @param self the object pointer
-    # @param shape the shape / contour of the region as a PySIEffect.PointVector or list [[x1, x1], [x2, y2], ... [xn, yn]]
+    # @param shape the shape / contour of the region as a PySI.PointVector or list [[x1, x1], [x2, y2], ... [xn, yn]]
     # @param effect_name the name (region_name) of the effect which shall be assigned to the region (region_display_name does not work)
     def create_region_via_name(self, shape, effect_name, as_selector=False, kwargs={}):
         self.__create_region__(shape, effect_name, as_selector, kwargs)
@@ -488,7 +478,7 @@ class SIEffect(PySIEffect.PySIEffect):
     ## member function for creating a new region
     #
     # @param self the object pointer
-    # @param shape the shape / contour of the region as a PySIEffect.PointVector or list [[x1, x1], [x2, y2], ... [xn, yn]]
+    # @param shape the shape / contour of the region as a PySI.PointVector or list [[x1, x1], [x2, y2], ... [xn, yn]]
     # @param effect_name the name (region_name) of the effect which shall be assigned to the region (region_display_name does not work)
     def create_region_via_id(self, shape, effect_type, kwargs={}):
         self.__create_region__(shape, effect_type, kwargs)

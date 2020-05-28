@@ -19,12 +19,15 @@ ExternalApplicationManager::~ExternalApplicationManager() = default;
 
 void ExternalApplicationManager::launch_application(const std::string &file_region_uuid, const std::string &file_path, std::shared_ptr<Region>& container, const std::string &application_name)
 {
-    if(application_name.empty())
-        launch_standard_application(file_region_uuid, file_path);
-    else
+    Context::SIContext()->job_system()->execute([&]
     {
-        WARN("SIGRun requires implementation of arbitrary invocation of external applications!");
-    }
+        if(application_name.empty())
+            launch_standard_application(file_region_uuid, file_path);
+        else
+        {
+            WARN("SIGRun requires implementation of arbitrary invocation of external applications!");
+        }
+    });
 }
 
 void ExternalApplicationManager::launch_standard_application(const std::string &file_region_uuid, const std::string &file_path)
@@ -35,7 +38,7 @@ void ExternalApplicationManager::launch_standard_application(const std::string &
 
 void ExternalApplicationManager::terminate_application(const std::string &uuid)
 {
-    Context::SIContext()->input_manager()->unregister_external_application(uuid);
+    Context::SIContext()->unregister_external_application(uuid);
 }
 
 void ExternalApplicationManager::set_process_winid_fetch_sleep_time_ms(double time)
@@ -96,7 +99,7 @@ void ExternalApplicationManager::process_wmctrl_command_output(const QString &in
     {
         const auto& vec = input.split(' ', QString::SkipEmptyParts).toVector().toStdVector();
 
-        QString window_name = QString(std::transform_reduce(std::execution::par_unseq, vec.begin() + 4, vec.end(), std::string(""), [](const std::string& a, const std::string& b)
+        QString window_name = QString(std::transform_reduce(vec.begin() + 4, vec.end(), std::string(""), [](const std::string& a, const std::string& b)
         {
             return a + " " + b;
         }, [](auto& qstr)
@@ -108,7 +111,7 @@ void ExternalApplicationManager::process_wmctrl_command_output(const QString &in
         uint64_t _pid = std::stoul(vec[2].toStdString());
 
         if(winid)
-            register_new_application_container(retrieve_current_main_window(), file_region_uuid, winid, _pid, window_name);
+            register_new_application_container(file_region_uuid, winid, _pid, window_name);
         else
             ERROR("Unable to find winid of default app of " + file_path);
     }
@@ -116,23 +119,7 @@ void ExternalApplicationManager::process_wmctrl_command_output(const QString &in
         ERROR("Timeout for finding winid of default app of " + file_path);
 }
 
-void ExternalApplicationManager::register_new_application_container(QMainWindow *parent, const std::string &file_region_uuid, uint64_t winid, uint64_t pid, const QString& window_name)
+void ExternalApplicationManager::register_new_application_container(const std::string &file_region_uuid, uint64_t winid, uint64_t pid, const QString& window_name)
 {
-    QWidget* window = QWidget::createWindowContainer(QWindow::fromWinId(winid));
-    window->setGeometry(20, 20, Context::SIContext()->width() * 0.3 - 40, Context::SIContext()->height() * 0.3 - 40);
-    window->setWindowFlags(Qt::WindowStaysOnTopHint);
-    window->setWindowFlags(Qt::ForeignWindow);
-    window->setWindowTitle(QString(SI_LINUX_DEFAULT_SI_APP_OPENING.c_str()) + window_name);
-
-    if(window->x() <= Context::SIContext()->main_window()->x())
-        window->move(Context::SIContext()->main_window()->x(), 0);
-
-    window->show();
-
-    Context::SIContext()->input_manager()->register_external_application(file_region_uuid, window, pid);
-}
-
-QMainWindow* ExternalApplicationManager::retrieve_current_main_window()
-{
-    return Context::SIContext()->main_window();
+    Context::SIContext()->register_new_application_container(winid, pid, window_name, file_region_uuid);
 }

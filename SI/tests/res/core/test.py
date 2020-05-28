@@ -1,13 +1,12 @@
-from libPySI import PySIEffect
-
-region_name = "Test"
-region_type = 0
+from libPySI import PySI
 
 
-class Test(PySIEffect):
+
+class Test(PySI):
+    regionname = "TESTREGION"
+    regiontype = 0
+
     def __init__(self):
-        self.name = region_name
-        self.type = region_type
 
         self.cap_emit = {
 

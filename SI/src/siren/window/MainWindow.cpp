@@ -21,30 +21,42 @@ MainWindow::MainWindow(uint32_t width, uint32_t height):
 
     setWindowFlags(Qt::WindowStaysOnBottomHint);
     setWindowTitle("SI");
+
+    engine = new QQmlEngine(this);
+    engine->setObjectOwnership(engine, QQmlEngine::CppOwnership);
 }
 
 void MainWindow::loop(double delta, uint32_t fps)
 {
     auto& regions = Context::SIContext()->region_manager()->regions();
 
-    d_reg_reps.erase(std::remove_if(std::execution::seq, d_reg_reps.begin(), d_reg_reps.end(), [&](auto& rep)
+    d_reg_reps.erase(std::remove_if(d_reg_reps.begin(), d_reg_reps.end(), [&](RegionRepresentation* rep)
     {
-        return std::find_if(std::execution::par_unseq, regions.begin(), regions.end(), [&](auto& reg)
+        auto it = std::find_if(regions.begin(), regions.end(), [&](auto& reg)
         {
             return reg->uuid() == rep->uuid();
-        }) == regions.end();
+        });
+
+        if(it == regions.end())
+        {
+            delete rep;
+            rep = nullptr;
+            return true;
+        }
+
+        return false;
     }), d_reg_reps.end());
 
-    std::for_each(std::execution::seq, regions.begin(), regions.end(), [&](std::shared_ptr<Region>& reg)
+    for(auto& reg: regions)
     {
-        auto it = std::find_if(std::execution::par_unseq, d_reg_reps.begin(), d_reg_reps.end(), [&](std::unique_ptr<RegionRepresentation>& rep)
+        auto it = std::find_if(d_reg_reps.begin(), d_reg_reps.end(), [&](RegionRepresentation* rep)
         {
             return reg->uuid() == rep->uuid();
         });
 
         if(it == d_reg_reps.end())
         {
-            d_reg_reps.push_back(std::make_unique<RegionRepresentation>(this, reg));
+            d_reg_reps.push_back(new RegionRepresentation(this, engine, reg));
 
             switch (d_reg_reps.back()->type())
             {
@@ -69,7 +81,7 @@ void MainWindow::loop(double delta, uint32_t fps)
                 default:
                 {
                     // look for a file
-                    auto it = std::find_if(std::execution::seq, d_reg_reps.begin(), d_reg_reps.end(), [&](auto& rep)
+                    auto it2 = std::find_if(d_reg_reps.begin(), d_reg_reps.end(), [&](RegionRepresentation* rep)
                     {
                         return rep->type() == SI_TYPE_ENTRY
                                || rep->type() == SI_TYPE_DIRECTORY
@@ -78,16 +90,17 @@ void MainWindow::loop(double delta, uint32_t fps)
                                || rep->type() == SI_TYPE_UNKNOWN_FILE;
                     });
 
-                    if(it != d_reg_reps.end())
-                        d_reg_reps.back()->stackUnder(it->get());
+                    if(it2 != d_reg_reps.end())
+                        d_reg_reps.back()->stackUnder(*it2);
 
                     break;
                 }
             }
         }
         else
-            it->get()->update(reg);
-    });
+            (*it)->update(reg);
+    }
 
+    update();
     Context::SIContext()->update();
 }

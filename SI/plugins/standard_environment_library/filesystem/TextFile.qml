@@ -3,6 +3,18 @@ import QtQuick.Controls 2.7
 
 Item
 {
+    function updateData(data)
+    {
+        image.width = data.icon_width;
+        image.height = data.icon_height;
+        image.anchors.leftMargin = image.width / 2;
+
+        image.source = data.img_path;
+
+        filename.color = data.color;
+        filename.text = data.name;
+    }
+
     id: container
 
     visible: true
@@ -31,20 +43,5 @@ Item
         anchors.leftMargin: -width * 0.25
 
         wrapMode: TextEdit.Wrap
-    }
-
-    Connections {
-        target: Region
-
-        onDataChanged: {
-            image.width = data.icon_width;
-            image.height = data.icon_height;
-            image.anchors.leftMargin = image.width / 2;
-
-            image.source = data.img_path;
-
-            filename.color = data.color;
-            filename.text = data.name;
-        }
     }
 }
