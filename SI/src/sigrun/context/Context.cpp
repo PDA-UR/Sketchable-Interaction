@@ -62,8 +62,8 @@ void Context::begin(const std::unordered_map<std::string, std::unique_ptr<bp::ob
 
         for(const auto& plugin: plugins)
         {
-            HANDLE_PYTHON_CALL(PY_WARNING, "Plugin does not have the attribute \'region_type\' on module level and is skipped. Try assigning PySIEffect.EffectType.SI_CUSTOM.",
-                switch (bp::extract<int>(plugin.second->attr("region_type")))
+            HANDLE_PYTHON_CALL(PY_WARNING, "Plugin does not have the attribute \'regiontype\' as static class member and is skipped. Try assigning PySIEffect.EffectType.SI_CUSTOM.",
+                switch (bp::extract<int>(plugin.second->attr(plugin.second->attr("__si_name__")).attr("regiontype")))
                 {
                     case SI_TYPE_CANVAS:
                     case SI_TYPE_MOUSE_CURSOR:
@@ -251,12 +251,12 @@ void Context::register_new_region_via_name(const std::vector<glm::vec3>& contour
 {
     if(as_selector)
     {
-        HANDLE_PYTHON_CALL(PY_WARNING, "The plugin effect for which a selector effect is to be created does not have the attribute \'region_display_name\' on module level.",
+        HANDLE_PYTHON_CALL(PY_WARNING, "The plugin effect for which a selector effect is to be created does not have the attribute \'region_display_name\' as a static class member.",
             Region temp(contour, d_available_plugins[effect_name]);
 
             kwargs["target_color"] = temp.color();
             kwargs["target_texture"] = temp.raw_effect().attr("texture_path");
-            kwargs["target_display_name"] = d_available_plugins[effect_name].attr("region_display_name");
+            kwargs["target_display_name"] = d_available_plugins[effect_name].attr(d_available_plugins[effect_name].attr("__si_name__")).attr("region_display_name");
             kwargs["target_name"] = effect_name;
 
             d_region_insertion_queue.emplace(contour, d_plugins[SI_NAME_EFFECT_SELECTOR], 0, -1, kwargs);
@@ -273,7 +273,7 @@ void Context::register_new_region_via_type(const std::vector<glm::vec3>& contour
     HANDLE_PYTHON_CALL(PY_ERROR, "Error. Could not add region!.",
         auto effect = std::find_if(d_plugins.begin(), d_plugins.end(), [&id](auto& pair)
         {
-           return  pair.second.attr("region_type") == id;
+           return  pair.second.attr(pair.second.attr("__si_name__")).attr("regiontype") == id;
         });
 
         if(effect != d_plugins.end())

@@ -2,15 +2,13 @@ from libPySI import PySI
 
 from plugins.standard_environment_library import SIEffect
 
-region_type = PySI.EffectType.SI_CANVAS
-region_name = PySI.EffectName.SI_STD_NAME_CANVAS
-
 
 class Canvas(SIEffect.SIEffect):
+    regiontype = PySI.EffectType.SI_CANVAS
+    regionname = PySI.EffectName.SI_STD_NAME_CANVAS
+
     def __init__(self, shape=PySI.PointVector(), uuid="", kwargs={}):
-        super(Canvas, self).__init__(shape, uuid, "", kwargs)
-        self.name = PySI.EffectName.SI_STD_NAME_CANVAS
-        self.region_type = PySI.EffectType.SI_CANVAS
+        super(Canvas, self).__init__(shape, uuid, "", Canvas.regiontype, Canvas.regionname, kwargs)
         self.source = "libstdSI"
         self.color = PySI.Color(0, 0, 255, 0)
 

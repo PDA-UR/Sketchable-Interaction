@@ -4,16 +4,6 @@ from libPySI import PySI
 # Documentation for this module / class
 #
 # Used as central entry point for all SIGRun plugins
-# Each plugin is required to contain these module level attributes region_name, region_display_name, region_type
-
-## the internal name of the region
-region_name = ""
-
-## the name of the region to show to users
-region_display_name = ""
-
-## the type of the region - if the region has a type pre-registered to SIGRun the use of that type is required else PySI.EffectType.SI_CUSTOM is to be used
-region_type = PySI.EffectType.SI_CUSTOM
 
 
 ## Super Class from which all subsequent plugins are derived
@@ -48,7 +38,7 @@ class SIEffect(PySI.PySI):
     # @param uuid the universally unique identifier of the drawn region (str)
     # @param texture_path the path to an image intended to be used as an icon for the drawn region (str)
     # @param kwargs keyworded arguments which may necessary for more specific implementations of region effects (dict)
-    def __init__(self, shape, uuid, texture_path, kwargs):
+    def __init__(self, shape, uuid, texture_path, regiontype, regionname, kwargs):
         super(SIEffect, self).__init__(shape, uuid, texture_path, kwargs)
 
         ## member attribute variable containing the shape (contour) of a drawn region as a PySI.PointVector
@@ -63,23 +53,23 @@ class SIEffect(PySI.PySI):
         ## member variable containing the maximum width of the region
         #
         # computed via aabb
-        self.width = int(self.region_width())
+        self.width = int(self.get_region_width())
 
         ## member variable containing the maximum height of the region
         #
         # computed via aabb
-        self.height = int(self.region_height())
+        self.height = int(self.get_region_height())
 
         ## member attribute variable containing the universally unique identifier (uuid) of a drawn region as a str
         self._uuid = uuid
 
         ## member attribute variable containing the name of a drawn region as a str
-        self.name = PySI.EffectName.SI_STD_NAME_PLACEHOLDER
+        self.name = regionname
 
         ## member attribute variable containing the type of effect of a drawn region as a PySI.EffectType
         #
         # Effect implementation which are currently not part of the Standard Environment Library of SIGRun are required to be of type SI_CUSTOM
-        self.region_type = PySI.EffectType.SI_CUSTOM
+        self.region_type = regiontype
 
         ## member attribute variable containing the source of effect of a drawn region as a str
         #
@@ -201,11 +191,11 @@ class SIEffect(PySI.PySI):
         self.enable_link_reception(PySI.LinkingCapability.POSITION, PySI.LinkingCapability.POSITION, self.set_position_from_position)
 
     ## member function for retrieving the maximum width of a region
-    def region_width(self):
+    def get_region_width(self):
         return self.aabb[3].x - self.aabb[0].x
 
     ## member function for retrieving the maximum height of a region
-    def region_height(self):
+    def get_region_height(self):
         return self.aabb[1].y - self.aabb[0].y
 
     ## member function for setting the position of a region based on the positional data of another region.

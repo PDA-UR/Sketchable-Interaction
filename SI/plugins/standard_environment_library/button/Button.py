@@ -2,15 +2,14 @@ from libPySI import PySI
 from plugins.standard_environment_library import SIEffect
 
 
-region_type = PySI.EffectType.SI_BUTTON
-region_name = PySI.EffectName.SI_STD_NAME_BUTTON
-region_width = 100
-region_height = 100
-
-
 class Button(SIEffect.SIEffect):
+    regiontype = PySI.EffectType.SI_BUTTON
+    regionname = PySI.EffectName.SI_STD_NAME_BUTTON
+    region_width = 100
+    region_height = 100
+
     def __init__(self, shape=PySI.PointVector(), uuid="", kwargs={}):
-        super(Button, self).__init__(shape, uuid, "res/next.png", kwargs)
+        super(Button, self).__init__(shape, uuid, "res/next.png", Button.regiontype, Button.regionname, kwargs)
         self.name = PySI.EffectName.SI_STD_NAME_BUTTON
         self.region_type = PySI.EffectType.SI_BUTTON
         self.qml_path = "plugins/standard_environment_library/button/Button.qml"
@@ -26,8 +25,8 @@ class Button(SIEffect.SIEffect):
 
         self.icon_width = 100
         self.icon_height = 100
-        self.width = region_width
-        self.height = region_height
+        self.width = Button.region_width
+        self.height = Button.region_height
 
         self.add_QML_data("icon_width", self.icon_width, PySI.DataType.INT)
         self.add_QML_data("icon_height", self.icon_height, PySI.DataType.INT)

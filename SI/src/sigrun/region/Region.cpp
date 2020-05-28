@@ -30,7 +30,10 @@ Region::Region(const std::vector<glm::vec3> &contour, const bp::object& effect, 
     uprm = std::make_unique<RegionMask>(mask_width, mask_height, d_py_effect->contour(), d_py_effect->aabb());
 }
 
-Region::~Region()= default;
+Region::~Region()
+{
+
+}
 
 void Region::move()
 {

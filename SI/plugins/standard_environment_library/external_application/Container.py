@@ -3,13 +3,12 @@ from libPySI import PySI
 from plugins.standard_environment_library import SIEffect
 
 
-region_type = PySI.EffectType.SI_EXTERNAL_APPLICATION_CONTAINER
-region_name = PySI.EffectName.SI_STD_NAME_CONTAINER
-
-
 class Container(SIEffect.SIEffect):
+    regiontype = PySI.EffectType.SI_EXTERNAL_APPLICATION_CONTAINER
+    regionname = PySI.EffectName.SI_STD_NAME_CONTAINER
+
     def __init__(self, shape=PySI.PointVector(), uuid="", kwargs={}):
-        super(Container, self).__init__(shape, uuid, self.TEXTURE_PATH_NONE, kwargs)
+        super(Container, self).__init__(shape, uuid, self.TEXTURE_PATH_NONE, Container.regiontype, Container.regionname, kwargs)
         self.name = PySI.EffectName.SI_STD_NAME_CONTAINER
         self.region_type = PySI.EffectType.SI_EXTERNAL_APPLICATION_CONTAINER
         self.source = "libStdSI"

@@ -4,9 +4,14 @@ Item
 {
     function updateData(data)
     {
-        container.width = data.containerwidth;
-        container.height = data.containerheight;
-        notification.text = data.message;
+        if(data !== undefined)
+        {
+            container.width = data.containerwidth;
+            container.height = data.containerheight;
+
+            if(data.message !== undefined)
+                notification.text = data.message;
+        }
     }
 
     id: container

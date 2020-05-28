@@ -10,5 +10,5 @@ TEST_F(SIGRunCoreTest, retrieve_available_plugins)
     core_retrieve_available_plugins(plugins, path);
 
     ASSERT_EQ(plugins.size(), 1);
-    ASSERT_TRUE(plugins.begin()->first == "Test");
+    ASSERT_EQ(plugins.begin()->first, "TESTREGION");
 }

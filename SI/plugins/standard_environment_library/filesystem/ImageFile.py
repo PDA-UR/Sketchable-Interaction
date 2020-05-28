@@ -5,15 +5,12 @@ from plugins.standard_environment_library.filesystem import Entry
 from PIL import Image
 
 
-region_type = PySI.EffectType.SI_IMAGE_FILE
-region_name = PySI.EffectName.SI_STD_NAME_IMAGEFILE
-
-
 class ImageFile(Entry.Entry):
+    regiontype = PySI.EffectType.SI_IMAGE_FILE
+    regionname = PySI.EffectName.SI_STD_NAME_IMAGEFILE
+
     def __init__(self, shape=PySI.PointVector(), uuid="", kwargs={}):
-        super(ImageFile, self).__init__(shape, uuid, kwargs)
-        self.name = PySI.EffectName.SI_STD_NAME_IMAGEFILE
-        self.region_type = PySI.EffectType.SI_IMAGE_FILE
+        super(ImageFile, self).__init__(shape, uuid, ImageFile.regiontype, ImageFile.regionname, kwargs)
         self.qml_path = "plugins/standard_environment_library/filesystem/ImageFile.qml"
         self.is_in_preview = False
         self.color = PySI.Color(10, 0, 0, 0)

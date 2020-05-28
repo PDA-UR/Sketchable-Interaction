@@ -2,18 +2,16 @@ from libPySI import PySI
 
 from plugins.standard_environment_library import SIEffect
 
-region_type = PySI.EffectType.SI_CUSTOM
-region_name = "Dummy2"
-
 
 class Dummy2(SIEffect.SIEffect):
+    regiontype = PySI.EffectType.SI_CUSTOM
+    regionname = "Dummy2"
+
     def __init__(self, shape=PySI.PointVector(), uuid="", kwargs={}):
-        super(Dummy2, self).__init__(shape, uuid, "", kwargs)
+        super(Dummy2, self).__init__(shape, uuid, "", Dummy2.regiontype, Dummy2.regionname, kwargs)
         self.shape = shape
         self.aabb
         self._uuid = uuid
-        self.name = region_name
-        self.region_type = region_type
         self.source = "testSI"
         self.x = 0
         self.y = 0
