@@ -37,7 +37,8 @@ add_library(PySI MODULE ${PySISrc})
 target_link_libraries(PySI
         ${PYTHON_LIBRARIES} 
         ${Boost_LIBRARIES}
-        Qt5::Widgets)
+        Qt5::Widgets
+        -ltbb)
 
 target_precompile_headers(PySI
         PUBLIC
@@ -169,7 +170,8 @@ target_link_libraries(SIGeneralRuntime
         Qt5::Quick
         Qt5::Core
         Qt5::Widgets
-        Qt5::Qml)
+        Qt5::Qml
+        -ltbb)
 
 if (BUILD_DOCS)
     find_package(Doxygen)
