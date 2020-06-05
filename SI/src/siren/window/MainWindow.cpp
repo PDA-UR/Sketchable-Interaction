@@ -19,7 +19,6 @@ MainWindow::MainWindow(uint32_t width, uint32_t height):
     up_update_worker.start();
     INFO("Update Loop started...");
 
-    setWindowFlags(Qt::WindowStaysOnBottomHint);
     setWindowTitle("SI");
 
     engine = new QQmlEngine(this);
@@ -103,4 +102,9 @@ void MainWindow::loop(double delta, uint32_t fps)
 
     update();
     Context::SIContext()->update();
+}
+
+void MainWindow::pause()
+{
+    WARN("PAUSING OF RENDERING IS UNIMPLEMENTED");
 }

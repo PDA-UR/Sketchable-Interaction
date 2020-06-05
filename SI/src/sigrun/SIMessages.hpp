@@ -1,6 +1,6 @@
 
-#ifndef SITEST_ERROR_HPP
-#define SITEST_ERROR_HPP
+#ifndef SITEST_SIMESSAGES_HPP
+#define SITEST_SIMESSAGES_HPP
 
 #include <map>
 #include <vector>
@@ -15,24 +15,24 @@
 
 #define ERROR_UNKNOWN 900
 
-#define ERRORS_EN \
+#define MESSAGES_EN \
 {\
     {ERROR_PYTHON, "An error with a python plugin occured."},\
     {ERROR_IO, "An error with input/output occured."}\
 }
 
-#define ERRORS_DE \
+#define MESSAGES_DE \
 {\
     {ERROR_PYTHON, "In einem Python-Plugin ist ein Fehler aufgetreten."},\
     {ERROR_IO, "Bei Input/Output ist ein Fehler aufgetreten."}\
 }
 
-uint64_t LANGUAGE = 0;
+uint64_t __SI_SIGRUN_LANGUAGE__ = 0;
 
-std::map<int, std::map<int, std::string>> ERRORS
+std::map<int, std::map<int, std::string>> MESSAGES
 {
-        {EN, ERRORS_EN},
-        {DE, ERRORS_DE}
+        {EN, MESSAGES_EN},
+        {DE, MESSAGES_DE}
 };
 
-#endif //SITEST_ERROR_HPP
+#endif //SITEST_SIMESSAGES_HPP

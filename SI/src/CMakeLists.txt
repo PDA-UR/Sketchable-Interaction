@@ -78,6 +78,7 @@ set(SIGRunSRC
         SI/src/sigrun/plugin/PluginCollector.hpp
         SI/src/sigrun/plugin/Scripting.cpp
         SI/src/sigrun/plugin/Scripting.hpp
+        SI/src/sigrun/plugin/PythonGlobalInterpreterLockGuard.hpp
         SI/src/sigrun/log/Log.cpp
         SI/src/sigrun/log/Log.hpp
         SI/src/sigrun/region/RegionTransform.cpp
@@ -86,7 +87,7 @@ set(SIGRunSRC
         SI/src/sigrun/region/RegionMask.hpp
         SI/src/sigrun/region/Region.cpp
         SI/src/sigrun/region/Region.hpp
-        SI/src/error/Error.hpp
+        SI/src/sigrun/SIMessages.hpp
         SI/src/sigrun/context/managers/CollisionManager.cpp
         SI/src/sigrun/context/managers/CollisionManager.hpp
         SI/src/sigrun/context/Context.cpp
@@ -174,9 +175,9 @@ target_link_libraries(SIGeneralRuntime
         -ltbb)
 
 if (BUILD_DOCS)
-    find_package(Doxygen)
-
     message("Documentation Generation enabled.")
+
+    find_package(Doxygen)
 
     if (DOXYGEN_FOUND)
         message("Generating SIGRun Documentation")
@@ -235,9 +236,13 @@ if (BUILD_DOCS)
         message("Doxygen needs to be installed to generate the doxygen documentation")
     endif (DOXYGEN_FOUND)
 
+    add_custom_target(APIExamplesPDF
+        COMMAND pandoc ${CMAKE_CURRENT_SOURCE_DIR}/SI/docs/api_examples/api_examples.md -o ${CMAKE_CURRENT_SOURCE_DIR}/SI-Doc/si/api_examples/api_examples.pdf
+    )
+
     add_dependencies(SIGRunDocsPDF SIGRunDocs)
     add_dependencies(PySIDocsPDF PySIDocs)
-    add_dependencies(SIGeneralRuntime PySI SIGRunDocsPDF PySIDocsPDF)
+    add_dependencies(SIGeneralRuntime PySI SIGRunDocsPDF PySIDocsPDF APIExamplesPDF)
 
 else (BUILD_DOCS)
     message("Documentation Generation disabled.")

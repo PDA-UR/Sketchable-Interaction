@@ -20,10 +20,10 @@
 #include <sigrun/parallel/JobSystem.hpp>
 
 #define DELAY_PYTHON_GARBAGE_COLLECTION(...) {\
-    up_py_garbage_collector->attr("disable")(); \
+    p_py_garbage_collector->attr("disable")(); \
     __VA_ARGS__ \
-    up_py_garbage_collector->attr("enable")(); \
-    up_py_garbage_collector->attr("collect")(2); \
+    p_py_garbage_collector->attr("enable")(); \
+    p_py_garbage_collector->attr("collect")(2); \
 }
 
 class Context: public SIObject
@@ -64,7 +64,7 @@ public:
     void register_new_application_container(uint64_t winid, uint64_t pid, const QString& window_name, const std::string& file_region_uuid);
     void unregister_external_application(const std::string& file_region_uuid);
 
-    const std::map<std::string, bp::object>& available_plugins() const;
+    const std::unordered_map<std::string, bp::object>& available_plugins() const;
     const bp::object& plugin_by_name(const std::string& name);
 
     const std::vector<std::string>& available_plugins_names();
@@ -77,7 +77,7 @@ private:
     static Context* self;
     Context();
 
-    std::unique_ptr<bp::object> up_py_garbage_collector;
+    bp::object* p_py_garbage_collector;
 
     void perform_external_object_update();
     void perform_mouse_update(std::unordered_map<std::string, std::shared_ptr<ExternalObject>>::iterator& it);
@@ -91,12 +91,11 @@ private:
     std::unordered_map<std::string, std::shared_ptr<ExternalObject>> deo;
 
     std::queue<std::tuple<uint64_t, uint64_t, QString, std::string>> d_external_application_container_insertion_queue;
-    std::queue<std::tuple<std::vector<glm::vec3>, bp::object, int32_t, int32_t, bp::dict>> d_region_insertion_queue;
+    std::queue<std::tuple<std::vector<glm::vec3>, bp::object, int32_t, bp::dict>> d_region_insertion_queue;
     std::queue<std::tuple<std::string, std::string, std::string, bp::object>> d_link_emission_queue;
-    std::queue<std::shared_ptr<Region>> d_region_deletion_queue;
 
     std::vector<std::string> d_available_plugins_names;
-    std::map<std::string, bp::object> d_available_plugins;
+    std::unordered_map<std::string, bp::object> d_available_plugins;
     std::unordered_map<std::string, bp::object> d_plugins;
     std::unordered_map<std::string, bp::object> d_selected_effects_by_id;
 

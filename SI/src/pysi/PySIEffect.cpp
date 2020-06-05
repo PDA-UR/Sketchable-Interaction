@@ -214,10 +214,7 @@ void PySIEffect::__add_data__(const std::string &key, const bp::object &value, c
         break;
 
         case SI_DATA_TYPE_BOOL:
-        {
-            bool b = bp::extract<bool>(value);
-            d_data[QString(key.c_str())] = QVariant(b);
-        }
+            d_data[QString(key.c_str())] = QVariant(bp::extract<bool>(value));
         break;
     }
 

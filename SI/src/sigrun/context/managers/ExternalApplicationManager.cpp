@@ -44,14 +44,12 @@ void ExternalApplicationManager::terminate_application(const std::string &uuid)
 void ExternalApplicationManager::set_process_winid_fetch_sleep_time_ms(double time)
 {
     d_process_winid_fetch_sleep_time_ms = time;
-
-    d_process_winid_fetch_iterations = d_process_winid_fetch_timeout_ms / d_process_winid_fetch_sleep_time_ms / 1000.0;
+    d_process_winid_fetch_iterations = d_process_winid_fetch_timeout_ms / time / 1000.0;
 }
 
 void ExternalApplicationManager::set_process_winid_fetch_timeout_ms(double time)
 {
     d_process_winid_fetch_timeout_ms = time;
-
     d_process_winid_fetch_iterations = d_process_winid_fetch_timeout_ms / d_process_winid_fetch_sleep_time_ms / 1000.0;
 }
 

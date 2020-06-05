@@ -57,10 +57,55 @@
 #define SI_NAME_EFFECT_PALETTE "__SI_PALETTE_NAME__"
 #define SI_NAME_EFFECT_SELECTOR "__SI_SELECTOR_NAME__"
 
+#define SI_INTERNAL_REGION_NAME "regionname"
+#define SI_INTERNAL_REGION_TYPE "regiontype"
+#define SI_INTERNAL_REGION_DISPLAY_NAME "region_display_name"
+#define SI_INTERNAL_REGION_WIDTH "region_width"
+#define SI_INTERNAL_REGION_HEIGHT "region_height"
+#define SI_INTERNAL_NAME "__si_name__"
+
 #define SI_DATA_TYPE_INT 0
 #define SI_DATA_TYPE_FLOAT 1
 #define SI_DATA_TYPE_STRING 2
 #define SI_DATA_TYPE_BOOL 3
+
+#define SI_START_FILE "plugins.StartSIGRun"
+#define SI_START_FUNCTION "on_startup"
+
+#define SI_CWD "cwd"
+#define SI_CHILDREN "children"
+
+#define SI_SELECTOR_TARGET_COLOR "target_color"
+#define SI_SELECTOR_TARGET_TEXTURE "target_texture"
+#define SI_SELECTOR_TARGET_DISPLAY_NAME "target_display_name"
+#define SI_SELECTOR_TARGET_NAME "target_name"
+
+#define SI_PYTHON_GARBAGE_COLLECTOR "gc"
+
+#define SI_CLASS "class"
+
+#define SI_PYCACHE "__pycache__"
+#define SI_PYTHON_INIT_PY "__init__.py"
+#define SI_PYTHON_PY_ENDING ".py"
+#define SI_COLON_CHAR ':'
+#define SI_DOT_CHAR '.'
+#define SI_WHITE_SPACE_CHAR ' '
+#define SI_WHITE_SPACE " "
+#define SI_BRACE_OPEN "("
+#define SI_BRACE_CLOSE ")"
+#define SI_SQUARE_BRACE_OPEN "["
+#define SI_SQUARE_BRACE_CLOSE "]"
+#define SI_CURLY_BRACE_OPEN "{"
+#define SI_CURLY_BRACE_CLOSE "}"
+#define SI_ANGLE_BRACE_OPEN "<"
+#define SI_ANGLE_BRACE_CLOSE ">"
+#define SI_SLASH "/"
+#define SI_SLASH_CHAR '/'
+#define SI_HASHTAG_CHAR '#'
+#define SI_NEW_LINE_CHAR '\n'
+#define SI_DOUBLE_UNDERSCORE "__"
+#define SI_PYTHON_STARTUP_FILE_NAME "StartSIGRun"
+#define SI_PYTHON_SIEFFECT_NAME "SIEffect"
 
 
 #endif // SI_SIGRUN_SITypes

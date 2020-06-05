@@ -5,6 +5,7 @@
 
 #include <chrono>
 #include "../log/Log.hpp"
+#include <sigrun/SITypes.hpp>
 
 #define SI_BENCHMARK(...) { BenchmarkTimer timer; __VA_ARGS__ }
 

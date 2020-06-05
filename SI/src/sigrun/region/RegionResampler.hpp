@@ -6,7 +6,7 @@
 #include <vector>
 #include <glm/glm.hpp>
 
-#define STEPCOUNT 128
+#define STEPCOUNT 100
 
 class RegionResampler
 {

@@ -16,6 +16,7 @@
 #include <csignal>
 #include <cstdlib>
 #include <QThread>
+#include <sigrun/plugin/PythonGlobalInterpreterLockGuard.hpp>
 
 #define NEW_REGIONS_PER_FRAME 50
 
@@ -27,6 +28,8 @@ Context::~Context()
 {
     INFO("Destroying Context...");
     upjs.release();
+    delete p_py_garbage_collector;
+    p_py_garbage_collector = nullptr;
     INFO("Destroyed Context");
 }
 
@@ -42,7 +45,7 @@ Context::Context()
     upeam = std::make_unique<ExternalApplicationManager>();
     upjs = std::make_unique<JobSystem<void, 512>>();
 
-    up_py_garbage_collector = std::make_unique<bp::object>(bp::import("gc"));
+    p_py_garbage_collector = new bp::object(bp::import(SI_PYTHON_GARBAGE_COLLECTOR));
 }
 
 void Context::begin(const std::unordered_map<std::string, std::unique_ptr<bp::object>>& plugins, IRenderEngine* ire, int argc, char** argv)
@@ -60,10 +63,10 @@ void Context::begin(const std::unordered_map<std::string, std::unique_ptr<bp::ob
 
         d_app.installEventFilter(upim.get());
 
-        for(const auto& plugin: plugins)
+        for(const auto& [k, v]: plugins)
         {
             HANDLE_PYTHON_CALL(PY_WARNING, "Plugin does not have the attribute \'regiontype\' as static class member and is skipped. Try assigning PySIEffect.EffectType.SI_CUSTOM.",
-                switch (bp::extract<int>(plugin.second->attr(plugin.second->attr("__si_name__")).attr("regiontype")))
+                switch (bp::extract<int>(v->attr(v->attr(SI_INTERNAL_NAME)).attr(SI_INTERNAL_REGION_TYPE)))
                 {
                     case SI_TYPE_CANVAS:
                     case SI_TYPE_MOUSE_CURSOR:
@@ -81,7 +84,7 @@ void Context::begin(const std::unordered_map<std::string, std::unique_ptr<bp::ob
                         break;
 
                     default:
-                        d_available_plugins[plugin.first] = *plugin.second;
+                        d_available_plugins[k] = *v;
                         break;
                 }
             )
@@ -107,7 +110,7 @@ void Context::begin(const std::unordered_map<std::string, std::unique_ptr<bp::ob
         }
 
         HANDLE_PYTHON_CALL(PY_ERROR, "Could not load startup file! A python file called \'StartSIGRun\' is required to be present in plugins folder!",
-            bp::import("plugins.StartSIGRun").attr("on_startup")();
+           bp::import(SI_START_FILE).attr(SI_START_FUNCTION)();
         )
 
         d_app.exec();
@@ -173,28 +176,26 @@ QMainWindow* Context::main_window() const
  */
 void Context::update()
 {
-    DELAY_PYTHON_GARBAGE_COLLECTION(
-        perform_external_object_update();
-        perform_external_application_registration();
-        perform_region_insertion();
+    perform_external_object_update();
+    perform_external_application_registration();
+    perform_region_insertion();
 
-        upjs->execute([&]
-        {
-            perform_link_events();
-        });
+    upjs->execute([&]
+    {
+        perform_input_update();
+    });
 
-        upjs->execute([&]
-        {
-            perform_input_update();
-        });
+    upjs->execute([&]
+    {
+        perform_link_events();
+    });
 
-        upjs->execute([&]
-        {
-            perform_collision_update();
-        });
+    upjs->execute([&]
+    {
+        perform_collision_update();
+    });
 
-        upjs->wait();
-    )
+    upjs->wait();
 }
 
 uint32_t Context::width()
@@ -243,7 +244,7 @@ void Context::register_new_region(const std::vector<glm::vec3>& contour, const s
 {
     if(contour.size() > 2)
     {
-        d_region_insertion_queue.emplace(contour, d_selected_effects_by_id[uuid], 0, -1, bp::dict());
+        d_region_insertion_queue.emplace(contour, d_selected_effects_by_id[uuid], -1, bp::dict());
     }
 }
 
@@ -254,17 +255,17 @@ void Context::register_new_region_via_name(const std::vector<glm::vec3>& contour
         HANDLE_PYTHON_CALL(PY_WARNING, "The plugin effect for which a selector effect is to be created does not have the attribute \'region_display_name\' as a static class member.",
             Region temp(contour, d_available_plugins[effect_name]);
 
-            kwargs["target_color"] = temp.color();
-            kwargs["target_texture"] = temp.raw_effect().attr("texture_path");
-            kwargs["target_display_name"] = d_available_plugins[effect_name].attr(d_available_plugins[effect_name].attr("__si_name__")).attr("region_display_name");
-            kwargs["target_name"] = effect_name;
+            kwargs[SI_SELECTOR_TARGET_COLOR] = temp.color();
+            kwargs[SI_SELECTOR_TARGET_TEXTURE] = temp.raw_effect().attr("texture_path");
+            kwargs[SI_SELECTOR_TARGET_DISPLAY_NAME] = d_available_plugins[effect_name].attr(d_available_plugins[effect_name].attr(SI_INTERNAL_NAME)).attr(SI_INTERNAL_REGION_DISPLAY_NAME);
+            kwargs[SI_SELECTOR_TARGET_NAME] = effect_name;
 
-            d_region_insertion_queue.emplace(contour, d_plugins[SI_NAME_EFFECT_SELECTOR], 0, -1, kwargs);
+            d_region_insertion_queue.emplace(contour, d_plugins[SI_NAME_EFFECT_SELECTOR], -1, kwargs);
         )
     }
     else
     {
-        d_region_insertion_queue.emplace(contour, d_available_plugins[effect_name], 0, -1, kwargs);
+        d_region_insertion_queue.emplace(contour, d_available_plugins[effect_name], -1, kwargs);
     }
 }
 
@@ -273,14 +274,14 @@ void Context::register_new_region_via_type(const std::vector<glm::vec3>& contour
     HANDLE_PYTHON_CALL(PY_ERROR, "Error. Could not add region!.",
         auto effect = std::find_if(d_plugins.begin(), d_plugins.end(), [&id](auto& pair)
         {
-           return  pair.second.attr(pair.second.attr("__si_name__")).attr("regiontype") == id;
+           return  pair.second.attr(pair.second.attr(SI_INTERNAL_NAME)).attr(SI_INTERNAL_REGION_TYPE) == id;
         });
 
         if(effect != d_plugins.end())
         {
             if(id == SI_TYPE_DIRECTORY)
             {
-                std::string k_cwd = std::string(bp::extract<char*>(kwargs["cwd"]));
+                std::string k_cwd = std::string(bp::extract<char*>(kwargs[SI_CWD]));
 
                 if(!k_cwd.empty())
                     upfs->set_cwd(k_cwd);
@@ -294,11 +295,11 @@ void Context::register_new_region_via_type(const std::vector<glm::vec3>& contour
                 for(int32_t i = 0; i < children_paths.size(); ++i)
                     children.append(bp::make_tuple(children_paths[i], children_types[i]));
 
-                kwargs["cwd"] = cwd;
-                kwargs["children"] = children;
+                kwargs[SI_CWD] = cwd;
+                kwargs[SI_CHILDREN] = children;
             }
 
-            d_region_insertion_queue.emplace(contour, effect->second, 0, id, kwargs);
+            d_region_insertion_queue.emplace(contour, effect->second, id, kwargs);
         }
     )
 }
@@ -341,7 +342,7 @@ const std::vector<std::string>& Context::available_plugins_names()
     return d_available_plugins_names;
 }
 
-const std::map<std::string, bp::object>& Context::available_plugins() const
+const std::unordered_map<std::string, bp::object>& Context::available_plugins() const
 {
     return d_available_plugins;
 }
@@ -431,9 +432,7 @@ void Context::perform_external_application_update(std::unordered_map<std::string
     {
         QWidget* current = it->second->embedded_object.external_application.window;
 
-        bp::tuple args = bp::make_tuple(current->x() - Context::SIContext()->main_window()->x(), current->y(), current->width(), current->height());
-        current->setProperty("is_resizing", QVariant(false));
-        Q_EMIT it->second->LINK_SIGNAL(_UUID_, "", SI_CAPABILITY_LINK_GEOMETRY, args);
+        Q_EMIT it->second->LINK_SIGNAL(_UUID_, "", SI_CAPABILITY_LINK_GEOMETRY, bp::make_tuple(current->x() - Context::SIContext()->main_window()->x(), current->y(), current->width(), current->height()));
     }
 }
 
@@ -472,7 +471,7 @@ void Context::perform_external_application_registration()
         bp::dict kwargs;
         kwargs[SI_LINUX_PID] = std::get<1>(external_app_container_tuple);
 
-        uprm->add_region(contour, d_plugins[SI_NAME_EFFECT_CONTAINER], 0, kwargs);
+        uprm->add_region(contour, d_plugins[SI_NAME_EFFECT_CONTAINER], kwargs);
 
         auto& container = uprm->regions().back();
 
@@ -495,9 +494,9 @@ void Context::perform_region_insertion()
     {
         const auto& region_information_tuple = d_region_insertion_queue.front();
 
-        uprm->add_region(std::get<0>(region_information_tuple), std::get<1>(region_information_tuple), std::get<2>(region_information_tuple), std::get<4>(region_information_tuple));
+        uprm->add_region(std::get<0>(region_information_tuple), std::get<1>(region_information_tuple), std::get<3>(region_information_tuple));
 
-        if(std::get<3>(region_information_tuple) == SI_TYPE_MOUSE_CURSOR)
+        if(std::get<2>(region_information_tuple) == SI_TYPE_MOUSE_CURSOR)
         {
             deo[uprm->regions().back()->uuid()] = std::make_shared<ExternalObject>(ExternalObject::ExternalObjectType::MOUSE);
             uplm->add_link(deo[uprm->regions().back()->uuid()], uprm->regions().back(), SI_CAPABILITY_LINK_POSITION, SI_CAPABILITY_LINK_POSITION);
@@ -513,27 +512,24 @@ void Context::perform_region_insertion()
 
 void Context::perform_link_events()
 {
-    upjs->execute([&]
+    int32_t link_queue_size = d_link_emission_queue.size();
+
+    for(int32_t i = 0; i < link_queue_size; ++i)
     {
-        int32_t link_queue_size = d_link_emission_queue.size();
-
-        for(int32_t i = 0; i < link_queue_size; ++i)
+        const auto& link_tuple = d_link_emission_queue.front();
+        auto it = std::find_if(uprm->regions().begin(), uprm->regions().end(), [&](auto& region)
         {
-            const auto& link_tuple = d_link_emission_queue.front();
-            auto it = std::find_if(uprm->regions().begin(), uprm->regions().end(), [&](auto& region)
-            {
-                return region->uuid() == std::get<1>(link_tuple);
-            });
+            return region->uuid() == std::get<1>(link_tuple);
+        });
 
-            if(it != uprm->regions().end())
-            {
-                (*it)->register_link_event({std::get<0>(link_tuple), std::get<2>(link_tuple)});
-                Q_EMIT (*it)->LINK_SIGNAL(std::get<0>(link_tuple), (*it)->uuid(), std::get<2>(link_tuple), std::get<3>(link_tuple));
-            }
-
-            d_link_emission_queue.pop();
+        if(it != uprm->regions().end())
+        {
+            (*it)->register_link_event({std::get<0>(link_tuple), std::get<2>(link_tuple)});
+            Q_EMIT (*it)->LINK_SIGNAL(std::get<0>(link_tuple), (*it)->uuid(), std::get<2>(link_tuple), std::get<3>(link_tuple));
         }
-    });
+
+        d_link_emission_queue.pop();
+    }
 }
 
 void Context::perform_input_update()

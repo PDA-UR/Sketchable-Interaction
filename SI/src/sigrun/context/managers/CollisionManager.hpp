@@ -22,8 +22,8 @@ public:
     void handle_event_leave_on_deletion(std::shared_ptr<Region>& deleted_region);
 
 private:
-    void perform_collision_check(tbb::concurrent_vector<std::tuple<int, int, bool>>& out, const std::vector<std::shared_ptr<Region>>& in);
-    void perform_collision_events(const tbb::concurrent_vector<std::tuple<int, int, bool>>& in, std::vector<std::shared_ptr<Region>>& regions);
+    void perform_collision_check(std::vector<std::tuple<int, int, bool>>& out, const std::vector<std::shared_ptr<Region>>& in);
+    void perform_collision_events(const std::vector<std::tuple<int, int, bool>>& in, std::vector<std::shared_ptr<Region>>& regions);
     void remove_dead_collision_events();
 
     bool collides_with_aabb(const std::vector<glm::vec3>& a_aabb, int32_t ax, int32_t ay, const std::vector<glm::vec3>& b_aabb, int32_t bx, int32_t by);

@@ -84,7 +84,7 @@ void Core::retrieve_available_plugins(std::unordered_map<std::string, std::uniqu
 
     Scripting script;
 
-    PluginCollector().collect("/" + plugin_path, files);
+    PluginCollector().collect(SI_SLASH + plugin_path, files);
 
     for(const auto& file: files)
     {
@@ -95,9 +95,9 @@ void Core::retrieve_available_plugins(std::unordered_map<std::string, std::uniqu
             const std::string& name = std::get<1>(file);
 
             std::string module_name = name.substr(0, name.find_last_of('.'));
-            std::string rpath = full_path.substr(full_path.find(plugin_path)) + "/" + name;
+            std::string rpath = full_path.substr(full_path.find(plugin_path)) + SI_SLASH + name;
 
-            if(module_name != "StartSIGRun" && module_name.substr(0, 2) != "__")
+            if(module_name != SI_PYTHON_STARTUP_FILE_NAME && module_name.substr(0, 2) != SI_DOUBLE_UNDERSCORE)
             {
                 script.load_class_names(classes, rpath);
 
@@ -106,7 +106,7 @@ void Core::retrieve_available_plugins(std::unordered_map<std::string, std::uniqu
                     bp::object obj = script.si_plugin(module_name, rpath, clazz);
 
                     HANDLE_PYTHON_CALL(PY_WARNING, "The found plugin does not contain the attribute \'regionname\' as a static class member (str-value). Therefore, the plugin is skipped and not available for use.",
-                        plugins[std::string(bp::extract<char*>(obj.attr(obj.attr("__si_name__")).attr("regionname")))] = std::make_unique<bp::object>(obj);
+                        plugins[std::string(bp::extract<char*>(obj.attr(obj.attr(SI_INTERNAL_NAME)).attr(SI_INTERNAL_REGION_NAME)))] = std::make_unique<bp::object>(obj);
                     )
                 }
             }
