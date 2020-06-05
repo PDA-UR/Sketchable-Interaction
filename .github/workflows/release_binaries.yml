@@ -79,6 +79,9 @@ jobs:
         cp -r /usr/local/lib/libboost_filesystem.so.1.69.0 si${{ env.CURRENT_VERSION }} && 
         cp -r /usr/local/lib/libboost_python37.so.1.69.0 si${{ env.CURRENT_VERSION }} && 
         cp -r /usr/local/lib/libboost_system.so.1.69.0 si${{ env.CURRENT_VERSION }} && 
+        cp -r si_test_application si${{ env.CURRENT_VERSION }} &&
+        cp -r libSIGeneralRuntime.so si${{ env.CURRENT_VERSION }} &&
+        cp -r libSIRenderEngine.so libPySI.so si${{ env.CURRENT_VERSION }} &&
         zip -r artifact/si${{ env.CURRENT_VERSION }}.zip si${{ env.CURRENT_VERSION }}
                 
     - name: Create Artifact
