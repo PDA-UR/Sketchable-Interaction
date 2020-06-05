@@ -1,6 +1,7 @@
 
 
 #include "sigrun/plugin/PythonInvoker.hpp"
+#include "sigrun/plugin/PythonGlobalInterpreterLockGuard.hpp"
 #include "Region.hpp"
 
 #include "RegionResampler.hpp"
@@ -60,8 +61,10 @@ void Region::move()
 
 void Region::set_effect(const bp::object& effect, const bp::dict& kwargs)
 {
+    PythonGlobalInterpreterLockGuard g;
+
     HANDLE_PYTHON_CALL(PY_ERROR, "Fatal Error. Plugin broken.",
-        d_effect = std::make_shared<bp::object>(effect.attr(effect.attr("__si_name__"))(d_py_effect->contour(), d_py_effect->uuid(), kwargs));
+        d_effect = std::make_shared<bp::object>(effect.attr(effect.attr(SI_INTERNAL_NAME))(d_py_effect->contour(), d_py_effect->uuid(), kwargs));
 
         d_py_effect = bp::extract<PySIEffect*>(*d_effect);
     )
@@ -69,10 +72,12 @@ void Region::set_effect(const bp::object& effect, const bp::dict& kwargs)
 
 void Region::set_effect(const std::vector<glm::vec3>& contour, const bp::object& effect, const std::string& uuid, const bp::dict& kwargs)
 {
-    if(effect)
+    PythonGlobalInterpreterLockGuard g;
+
+    if(!effect.is_none())
     {
         HANDLE_PYTHON_CALL(PY_ERROR, "Fatal Error. Plugin broken.",
-            d_effect = std::make_shared<bp::object>(effect.attr(effect.attr("__si_name__"))(contour, uuid, kwargs));
+            d_effect = std::make_shared<bp::object>(effect.attr(effect.attr(SI_INTERNAL_NAME))(contour, uuid, kwargs));
 
             d_py_effect = bp::extract<PySIEffect*>(*d_effect);
         )
@@ -154,27 +159,26 @@ void Region::LINK_SLOT(const std::string& uuid_event, const std::string& uuid_se
         {
             register_link_event(event);
 
-                for(auto& [k, v]: d_py_effect->attr_link_recv()[source_cap])
+            for(auto& [k, v]: d_py_effect->attr_link_recv()[source_cap])
+            {
+                if(uuid_sender.empty())
                 {
+                    v(*args);
 
-                    if(uuid_sender.empty())
+                    if(d_py_effect->attr_link_emit().find(k) != d_py_effect->attr_link_emit().end())
+                        Q_EMIT LINK_SIGNAL(uuid_event, uuid(), k, d_py_effect->attr_link_emit()[k]());
+                }
+                else
+                {
+                    if(Context::SIContext()->linking_manager()->is_linked(uuid_sender, source_cap, uuid(), k, ILink::UD))
                     {
                         v(*args);
 
                         if(d_py_effect->attr_link_emit().find(k) != d_py_effect->attr_link_emit().end())
                             Q_EMIT LINK_SIGNAL(uuid_event, uuid(), k, d_py_effect->attr_link_emit()[k]());
                     }
-                    else
-                    {
-                        if(Context::SIContext()->linking_manager()->is_linked(uuid_sender, source_cap, uuid(), k, ILink::UD))
-                        {
-                            v(*args);
-
-                            if(d_py_effect->attr_link_emit().find(k) != d_py_effect->attr_link_emit().end())
-                                Q_EMIT LINK_SIGNAL(uuid_event, uuid(), k, d_py_effect->attr_link_emit()[k]());
-                        }
-                    }
                 }
+            }
         }
     )
 }
@@ -295,7 +299,9 @@ void Region::process_canvas_specifics()
 void Region::process_linking_relationships()
 {
     if(d_py_effect->effect_type() != SI_TYPE_CANVAS)
+    {
         Context::SIContext()->linking_manager()->update_linking_candidates(d_py_effect->link_relations(), d_py_effect->uuid());
+    }
 }
 
 const QMap<QString, QVariant>& Region::data() const

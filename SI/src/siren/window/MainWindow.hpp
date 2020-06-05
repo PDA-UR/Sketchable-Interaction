@@ -22,6 +22,8 @@ public:
     MainWindow(uint32_t width, uint32_t height);
     MainWindow() = default;
 
+    void pause();
+
 private:
     Q_SLOT void loop(double delta, uint32_t fps);
 

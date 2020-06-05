@@ -21,6 +21,7 @@ void RenderEngineQT5::start(uint32_t& width, uint32_t& height)
     d_window = new MainWindow(width, height);
 
     d_window->setGeometry(QApplication::primaryScreen()->availableGeometry());
+
     run();
 }
 
@@ -31,7 +32,7 @@ void RenderEngineQT5::run()
 
 void RenderEngineQT5::pause()
 {
-    // stop update thread
+    d_window->pause();
 }
 
 void RenderEngineQT5::stop()

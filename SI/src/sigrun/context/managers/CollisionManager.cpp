@@ -15,39 +15,35 @@ CollisionManager::~CollisionManager() = default;
 
 void CollisionManager::collide(std::vector<std::shared_ptr<Region>> &regions)
 {
-    tbb::concurrent_vector<std::tuple<int, int, bool>> collisions;
+    std::vector<std::tuple<int, int, bool>> collisions;
 
     perform_collision_check(collisions, regions);
     perform_collision_events(collisions, regions);
     remove_dead_collision_events();
 }
 
-void CollisionManager::perform_collision_check(tbb::concurrent_vector<std::tuple<int, int, bool>> &out, const std::vector<std::shared_ptr<Region>>& in)
+void CollisionManager::perform_collision_check(std::vector<std::tuple<int, int, bool>> &out, const std::vector<std::shared_ptr<Region>>& in)
 {
     int32_t size = in.size();
 
-    tbb::parallel_for(0, size, 1, [&](int32_t i)
+    for(int32_t i = 0; i < size; ++i)
     {
-        tbb::parallel_for(0, i, 1, [&](int32_t k)
+        for(int32_t k = 0; k < i; ++k)
         {
-            if (!in[i]->effect()->is_flagged_for_deletion() && !in[k]->effect()->is_flagged_for_deletion())
+            if (has_capabilities_in_common(in[i], in[k]))
             {
-                if (has_capabilities_in_common(in[i], in[k]))
-                {
-                    if (collides_with_aabb(in[i]->aabb(), in[i]->x(), in[i]->y(), in[k]->aabb(), in[k]->x(),
-                                           in[k]->y()))
-                        out.emplace_back(i, k, collides_with_mask(in[i], in[k]));
-                    else
-                        out.emplace_back(i, k, false);
-                }
+                if (collides_with_aabb(in[i]->aabb(), in[i]->x(), in[i]->y(), in[k]->aabb(), in[k]->x(), in[k]->y()))
+                    out.emplace_back(i, k, collides_with_mask(in[i], in[k]));
                 else
                     out.emplace_back(i, k, false);
             }
-        });
-    });
+            else
+                out.emplace_back(i, k, false);
+        }
+    }
 }
 
-void CollisionManager::perform_collision_events(const tbb::concurrent_vector<std::tuple<int, int, bool>> &in, std::vector<std::shared_ptr<Region>>& regions)
+void CollisionManager::perform_collision_events(const std::vector<std::tuple<int, int, bool>> &in, std::vector<std::shared_ptr<Region>>& regions)
 {
     for(auto elemit = in.rbegin(); elemit != in.rend(); ++elemit)
     {

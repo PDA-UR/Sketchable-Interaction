@@ -17,11 +17,11 @@ class Deletion(SIEffect.SIEffect):
         self.enable_effect(PySI.CollisionCapability.DELETION, True, self.on_deletion_enter_emit, self.on_deletion_continuous_emit, self.on_deletion_enter_emit)
 
     def on_deletion_enter_emit(self, other):
-        if other.region_type is int(PySI.EffectType.SI_DELETION):
+        if other.regiontype is int(PySI.EffectType.SI_DELETION):
             if self.is_under_user_control:
                 other.delete()
 
     def on_deletion_continuous_emit(self, other):
-        if other.region_type is not int(PySI.EffectType.SI_DELETION):
+        if other.regiontype is not int(PySI.EffectType.SI_DELETION):
             if not other.is_under_user_control:
                 other.delete()

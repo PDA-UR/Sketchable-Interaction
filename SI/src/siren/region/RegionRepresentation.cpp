@@ -19,7 +19,7 @@ RegionRepresentation::RegionRepresentation(QWidget *parent, QQmlEngine* engine, 
     d_name(region->name())
 {
     if(!d_qml_path.empty())
-        d_view->setSource(QUrl(QString(d_qml_path.c_str())));
+        d_view->setSource(QUrl::fromLocalFile(QString(d_qml_path.c_str())));
 
     d_view->setGeometry(0, 0, region->aabb()[3].x - region->aabb()[0].x, region->aabb()[1].y - region->aabb()[0].y);
     d_view->setParent(this);
