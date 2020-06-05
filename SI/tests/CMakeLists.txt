@@ -45,8 +45,6 @@ set(SIUnitTestSrc
         SI/tests/src/sigrun/region/SIGRunRegionMaskTest.hpp
         SI/tests/src/sigrun/region/SIGRunRegionTest.cpp
         SI/tests/src/sigrun/region/SIGRunRegionTest.hpp
-        SI/tests/src/error/SIGRunErrorTest.cpp
-        SI/tests/src/error/SIGRunErrorTest.hpp
         SI/tests/src/sigrun/context/managers/SIGRunCollisionManagerTest.cpp
         SI/tests/src/sigrun/context/managers/SIGRunCollisionManagerTest.hpp
         SI/tests/src/sigrun/context/SIGRunContextTest.cpp

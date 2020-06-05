@@ -4,6 +4,7 @@
 #define SI_SIGRUN_JobSystem
 
 #include <sigrun/SIObject.hpp>
+#include <sigrun/plugin/PythonGlobalInterpreterLockGuard.hpp>
 #include "Job.hpp"
 #include <condition_variable>
 #include <thread>

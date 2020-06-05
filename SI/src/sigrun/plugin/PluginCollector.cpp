@@ -4,6 +4,7 @@
 #include <cstring>
 #include "PluginCollector.hpp"
 #include "sigrun/log/Log.hpp"
+#include <sigrun/SITypes.hpp>
 
 void PluginCollector::collect(const std::string &rel_path, std::vector<std::tuple<std::string, std::string>> &files)
 {
@@ -26,17 +27,17 @@ void PluginCollector::grab_plugin_files(const std::string &path, std::vector<std
     {
         while (auto f = readdir(dir))
         {
-            if (f->d_name[0] == '.' || !f->d_name)
+            if (f->d_name[0] == SI_DOT_CHAR || !f->d_name)
                 continue;
 
             if (f->d_type == DT_DIR)
-                if(!strstr(f->d_name, "__pycache__"))
-                    grab_plugin_files(path + "/" + f->d_name, files);
+                if(!strstr(f->d_name, SI_PYCACHE))
+                    grab_plugin_files(path + SI_SLASH + f->d_name, files);
 
             if (f->d_type == DT_REG)
             {
-                if (!strstr(f->d_name, "__init__.py"))
-                    if (strstr(f->d_name, ".py"))
+                if (!strstr(f->d_name, SI_PYTHON_INIT_PY))
+                    if (strstr(f->d_name, SI_PYTHON_PY_ENDING))
                         files.emplace_back(path, f->d_name);
             }
         }

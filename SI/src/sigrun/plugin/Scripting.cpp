@@ -40,10 +40,10 @@ Scripting::~Scripting() = default;
 bp::object Scripting::si_plugin(std::string &module_name, std::string &path, std::string &class_name)
 {
     std::string temp = path.substr(0, path.length() - 3); // -3 removes .py
-    std::replace(temp.begin(), temp.end(), '/', '.');
+    std::replace(temp.begin(), temp.end(), SI_SLASH_CHAR, SI_DOT_CHAR);
 
     bp::object ret = bp::import(bp::str((temp).c_str()));
-    ret.attr("__si_name__") = class_name.c_str();
+    ret.attr(SI_INTERNAL_NAME) = class_name.c_str();
 
     return ret;
 }
@@ -70,10 +70,8 @@ void Scripting::load_class_names(std::vector<std::string> &classes, const std::s
 
     std::string source = load_plugin_source(path.c_str());
 
-    std::string clazz = "class";
-    std::string space = " ";
-    std::string brace = "(";
-    std::string double_underscore = "__";
+    std::string clazz = SI_CLASS;
+    std::string space = SI_WHITE_SPACE;
 
     while (size < source.size())
     {
@@ -81,13 +79,13 @@ void Scripting::load_class_names(std::vector<std::string> &classes, const std::s
 
         if (found != std::string::npos)
         {
-            size_t found2 = source.find(brace, found + 1);
+            size_t found2 = source.find(SI_BRACE_OPEN, found + 1);
 
             if (found2 != std::string::npos)
             {
                 std::string class_name = source.substr(found + clazz.size() + space.size(),found2 - (found + clazz.size() + space.size()));
 
-                if(class_name.substr(0, 2) != double_underscore && class_name != "SIEffect")
+                if(class_name.substr(0, 2) != SI_DOUBLE_UNDERSCORE && class_name != SI_PYTHON_SIEFFECT_NAME)
                     classes.push_back(class_name);
 
                 size += found2;
@@ -110,8 +108,8 @@ std::string Scripting::remove_line_comments(const std::string& source)
 
     do
     {
-        size_t hashtag = temp.find('#');
-        size_t new_line = temp.find('\n', hashtag);
+        size_t hashtag = temp.find(SI_HASHTAG_CHAR);
+        size_t new_line = temp.find(SI_NEW_LINE_CHAR, hashtag);
 
         if(hashtag != std::string::npos && new_line != std::string::npos)
         {

@@ -25,8 +25,6 @@ public:
     const std::string& uuid() const;
     const std::string& name() const;
 
-    Q_SIGNAL void dataChanged(const QMap<QString, QVariant>& data);
-
 protected:
     QPainter up_qp;
     void paintEvent(QPaintEvent *event) override;

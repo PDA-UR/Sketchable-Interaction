@@ -9,16 +9,10 @@
 #include <algorithm>
 #include <execution>
 
-RegionManager::RegionManager()
-{
+RegionManager::RegionManager() = default;
+RegionManager::~RegionManager() = default;
 
-}
-
-RegionManager::~RegionManager()
-{
-}
-
-void RegionManager::add_region(const std::vector<glm::vec3> &contour, const bp::object &effect, uint32_t region_uuid, const bp::dict& kwargs)
+void RegionManager::add_region(const std::vector<glm::vec3> &contour, const bp::object &effect, const bp::dict& kwargs)
 {
     d_regions.push_back(std::make_shared<Region>(contour, effect, 0, 0, kwargs));
 }
@@ -177,9 +171,8 @@ void RegionManager::update_region_deletions()
 void RegionManager::update_regions()
 {
     int32_t size = d_regions.size();
-    for (int32_t k = 0; k < size; ++k)
+    for (int32_t i = size - 1; i > -1; --i)
     {
-        int32_t i = size - k - 1;
         if(!d_regions[i]->effect()->is_flagged_for_deletion())
         {
             if (d_regions[i]->is_new())

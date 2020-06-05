@@ -21,7 +21,6 @@ Item
         id: image
         anchors.left: parent.left
         anchors.top: parent.top
-
         visible: true
     }
 }

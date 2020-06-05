@@ -20,7 +20,7 @@ public:
     RegionManager();
     ~RegionManager();
 
-    void add_region(const std::vector<glm::vec3> &contour, const bp::object &effect, uint32_t region_uuid, const bp::dict& kwargs=bp::dict());
+    void add_region(const std::vector<glm::vec3> &contour, const bp::object &effect, const bp::dict& kwargs=bp::dict());
 
     std::vector<std::shared_ptr<Region>>& regions();
     std::map<std::string, std::vector<glm::vec3>>& partial_regions();

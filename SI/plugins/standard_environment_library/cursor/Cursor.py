@@ -45,9 +45,11 @@ class Cursor(SIEffect.SIEffect):
         self.last_y = self.y
 
         self.move(abs_x, abs_y)
+        # return abs_x, abs_y
 
     def self_on_sketch_enter_emit(self, other):
         self.parent_canvas = other
+
         return 0, 0, self._uuid
 
     def on_sketch_continuous_emit(self, other):
@@ -55,6 +57,7 @@ class Cursor(SIEffect.SIEffect):
 
     def on_sketch_leave_emit(self, other):
         self.parent_canvas = None
+
         return 0, 0, self._uuid
 
     def on_move_enter_emit(self, other):

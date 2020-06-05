@@ -3,6 +3,7 @@
 #define SITEST_SIOBJECT_HPP
 
 #include <string>
+#include <sigrun/SITypes.hpp>
 
 /**
 \brief macro for registering another class as SIObject
@@ -19,8 +20,8 @@
 private:\
     const std::string __s__() \
     {\
-        std::string s = std::string(__PRETTY_FUNCTION__).substr(0, strchr(__PRETTY_FUNCTION__, ':') - __PRETTY_FUNCTION__);\
-        s = s.substr(s.find_last_of(' ') + 1, std::string::npos);\
+        std::string s = std::string(__PRETTY_FUNCTION__).substr(0, strchr(__PRETTY_FUNCTION__, SI_COLON_CHAR) - __PRETTY_FUNCTION__);\
+        s = s.substr(s.find_last_of(SI_WHITE_SPACE_CHAR) + 1, std::string::npos);\
         std::transform(s.begin(), s.end(), s.begin(), ::toupper);\
         return s;\
     }\

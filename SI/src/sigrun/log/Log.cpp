@@ -146,8 +146,7 @@ std::string Log::time()
     time_t now = std::chrono::system_clock::to_time_t(t);
     localtime_r(&now, &localTime);
 
-    const std::chrono::duration<double> tse = t.time_since_epoch();
-    std::chrono::seconds::rep milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(tse).count() % 1000;
+    std::chrono::seconds::rep milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(t.time_since_epoch()).count() % 1000;
 
     std::ostringstream oss;
 
