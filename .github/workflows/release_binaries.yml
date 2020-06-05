@@ -74,13 +74,12 @@ jobs:
     - name: Create SI Archive
       run: |
         mkdir artifact &&
-        cp -r /home/runner/work/Sketchable-Interaction/Sketchable-Interaction/SI/plugins . && 
-        cp -r /usr/local/lib/libboost_filesystem.so.1.69.0 . && 
-        cp -r /usr/local/lib/libboost_python37.so.1.69.0 . && 
-        cp -r /usr/local/lib/libboost_system.so.1.69.0 . && 
-        zip artifact/si${{ env.CURRENT_VERSION }}.zip -j si_test_application libSIGeneralRuntime.so libSIRenderEngine.so libPySI.so libboost_filesystem.so.1.69.0 libboost_python37.so.1.69.0 libboost_system.so.1.69.0 && 
-        zip -ur artifact/si${{ env.CURRENT_VERSION }}.zip plugins && 
-        rm -rf plugins
+        mkdir artifact/si${{ env.CURRENT_VERSION }} &&
+        cp -r /home/runner/work/Sketchable-Interaction/Sketchable-Interaction/SI/plugins artifact/si${{ env.CURRENT_VERSION }} && 
+        cp -r /usr/local/lib/libboost_filesystem.so.1.69.0 artifact/si${{ env.CURRENT_VERSION }} && 
+        cp -r /usr/local/lib/libboost_python37.so.1.69.0 artifact/si${{ env.CURRENT_VERSION }} && 
+        cp -r /usr/local/lib/libboost_system.so.1.69.0 artifact/si${{ env.CURRENT_VERSION }} && 
+        zip artifact/si${{ env.CURRENT_VERSION }}.zip artifact/si${{ env.CURRENT_VERSION }}
                 
     - name: Create Artifact
       uses: actions/upload-artifact@v1
@@ -112,5 +111,5 @@ jobs:
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
         asset_path: artifact/si${{ env.CURRENT_VERSION }}.zip
-        asset_name: si
+        asset_name: si.zip
         asset_content_type: application/zip
