@@ -81,6 +81,8 @@ set(SIGRunSRC
         SI/src/sigrun/plugin/PythonGlobalInterpreterLockGuard.hpp
         SI/src/sigrun/log/Log.cpp
         SI/src/sigrun/log/Log.hpp
+        SI/src/sigrun/log/CrashDump.cpp
+        SI/src/sigrun/log/CrashDump.hpp
         SI/src/sigrun/region/RegionTransform.cpp
         SI/src/sigrun/region/RegionTransform.hpp
         SI/src/sigrun/region/RegionMask.cpp
@@ -172,7 +174,9 @@ target_link_libraries(SIGeneralRuntime
         Qt5::Core
         Qt5::Widgets
         Qt5::Qml
-        -ltbb)
+        -ltbb
+        -ldl
+        -lbacktrace)
 
 if (BUILD_DOCS)
     message("Documentation Generation enabled.")
