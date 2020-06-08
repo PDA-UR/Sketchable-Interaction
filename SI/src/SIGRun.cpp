@@ -1,6 +1,8 @@
 
 #include <memory>
 #include <iostream>
+#include <signal.h>
+#include <sigrun/log/CrashDump.hpp>
 
 #include "SIGRun.hpp"
 #include "debug/Print.hpp"
@@ -18,7 +20,8 @@ std::unique_ptr<Core> SIGRun::up_core(new Core());
 */
 SIGRun::SIGRun()
 {
-
+    signal(SIGSEGV, CrashDump::dump_crash_information);
+    signal(SIGABRT, CrashDump::dump_crash_information);
 }
 
 /**
