@@ -106,7 +106,7 @@ void Context::begin(const std::unordered_map<std::string, std::unique_ptr<bp::ob
         if(!d_main_window)
         {
             ERROR("Main Window could not be created!");
-            exit(69);
+            exit(6);
         }
 
         HANDLE_PYTHON_CALL(PY_ERROR, "Could not load startup file! A python file called \'StartSIGRun\' is required to be present in plugins folder!",
