@@ -3,6 +3,7 @@
 #include "SIGRunRegionTest.hpp"
 
 #include <glm/glm.hpp>
+#include <debug/Print.hpp>
 #include <sigrun/region/Region.hpp>
 #include <sigrun/region/RegionResampler.hpp>
 #include <boost/python.hpp>
@@ -30,6 +31,8 @@ TEST_F(SIGRunRegionTest, construction)
     std::string rpath = full_path.substr(full_path.find(path)) + "/" + name;
 
     script.load_class_names(classes, rpath);
+
+    Print::print(classes[0]);
 
     std::shared_ptr<bp::object> o = std::make_shared<bp::object>(script.si_plugin(module_name, rpath, classes[0]));
 

@@ -40,7 +40,6 @@ void CrashDump::dump_crash_information(int32_t signal)
 
     msg = ERROR_COLOR(std::string("SIGRUN ") + Log::time() + " [INFO] [CRASHDUMP] Crash Report" + SIGRUN_CRASH_NAME_PREFIX + datetime + ".zip in " + boost::filesystem::current_path().string() + "/" + PARENTFOLDERPATH + " created!");
     Print::print(msg);
-
     exit(signal);
 }
 

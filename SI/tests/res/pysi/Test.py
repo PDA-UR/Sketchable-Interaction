@@ -12,16 +12,16 @@ class test(PySI.Effect):
         self.source = ""
         self.qml_path = ""
 
-        self.cap_emit = PySI.String2_String2FunctionMap_Map()
+        self.cap_emit = PySI.String2String2FunctionMapMap()
 
-        self.cap_recv = PySI.String2_String2FunctionMap_Map({
+        self.cap_recv = PySI.String2String2FunctionMapMap({
             "MOVE": {"on_enter": self.on_move_enter_recv, "on_continuous": self.on_move_continuous_recv,
                      "on_leave": self.on_move_leave_recv}
         })
 
         self.cap_link_emit = PySI.String2FunctionMap()
 
-        self.cap_link_recv = PySI.String2_String2FunctionMap_Map({
+        self.cap_link_recv = PySI.String2String2FunctionMapMap({
             "__position__": {"__position__": self.set_position_from_position}
         })
 

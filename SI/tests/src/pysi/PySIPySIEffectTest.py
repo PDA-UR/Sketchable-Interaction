@@ -401,13 +401,13 @@ class PySIPySIEffectTest(unittest.TestCase):
         # String2FunctionMap is write-only from python and used in SIGRun
         # except for set, all other functionality is generic and tested in PartialContour
 
-    def test_scope_datastructure_String2_String2FunctionMap_Map(self):
-        ssfmm = PySI.String2_String2FunctionMap_Map()
+    def test_scope_datastructure_String2String2FunctionMapMap(self):
+        ssfmm = PySI.String2String2FunctionMapMap()
 
         self.assertNotEqual(ssfmm, None)
         self.assertEqual(len(ssfmm), 0)
 
-        ssfmm = PySI.String2_String2FunctionMap_Map({
+        ssfmm = PySI.String2String2FunctionMapMap({
             "TEST": {"TEST1_1": None, "TEST1_2": None, "TEST1_3": None},
             "TEST2": {"TEST2_1": None, "TEST2_2": None, "TEST2_3": None}
         })
