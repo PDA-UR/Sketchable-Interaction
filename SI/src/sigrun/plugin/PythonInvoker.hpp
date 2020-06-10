@@ -4,6 +4,7 @@
 
 #include <boost/python.hpp>
 #include <sigrun/log/Log.hpp>
+#include <csignal>
 
 namespace bp = boost::python;
 
@@ -34,7 +35,7 @@ namespace bp = boost::python;
         std::string error = bp::extract<std::string>(bp::str("\n").join(formatted_list));\
         if(flag == PY_ERROR) {\
         ERROR(error + std::string(additional_msg));\
-        exit(255);\
+        ::raise(SIGABRT);\
         }\
         else if(flag == PY_WARNING)\
         WARN(error + std::string(additional_msg));\

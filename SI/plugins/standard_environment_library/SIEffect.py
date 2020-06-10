@@ -9,7 +9,7 @@ from libPySI import PySI
 ## Super Class from which all subsequent plugins are derived
 #
 # This Class itself is derived from PySI written in C++ which is documented separately within SIGRun
-class SIEffect(PySI.PySI):
+class SIEffect(PySI.Effect):
 
     ## member constant to mark an effect or link emittable
     EMISSION = True
@@ -38,7 +38,8 @@ class SIEffect(PySI.PySI):
     # @param uuid the universally unique identifier of the drawn region (str)
     # @param texture_path the path to an image intended to be used as an icon for the drawn region (str)
     # @param kwargs keyworded arguments which may necessary for more specific implementations of region effects (dict)
-    def __init__(self, shape, uuid, texture_path, regiontype, regionname, kwargs):
+    # @param __source__ the source of the plugin e.g. standard environment library (str)
+    def __init__(self, shape, uuid, texture_path, regiontype, regionname, kwargs, __source__="custom"):
         super(SIEffect, self).__init__(shape, uuid, texture_path, kwargs)
 
         ## member attribute variable containing the shape (contour) of a drawn region as a PySI.PointVector
@@ -134,7 +135,7 @@ class SIEffect(PySI.PySI):
         # self.cap_emit["CAPABILITY"] = {PySI.ON_ENTER: self.<function_enter>, PySI:ON_CONTINUOUS: self.<function_continuous>, PySI.ON_LEAVE: self.<function_leave>
         #
         # Therefore, this example allows a region to emit an effect of CAPABILITY once a collision event occurred
-        self.cap_emit = PySI.String2_String2FunctionMap_Map()
+        self.cap_emit = PySI.String2String2FunctionMapMap()
 
         ## member attribute variable storing keys to functions which are called when collision events occur for receiving data from emitting regions
         #
@@ -146,7 +147,7 @@ class SIEffect(PySI.PySI):
         # self.cap_recv["CAPABILITY"] = {PySI.ON_ENTER: self.<function_enter>, PySI:ON_CONTINUOUS: self.<function_continuous>, PySI.ON_LEAVE: self.<function_leave>
         #
         # Therefore, this example allows a region to receive an effect of CAPABILITY once a collision event occurred
-        self.cap_recv = PySI.String2_String2FunctionMap_Map()
+        self.cap_recv = PySI.String2String2FunctionMapMap()
 
         ## member attribute variable storing keys to functions which are called when linking events occur for emitting data to receiving regions
         #
@@ -177,7 +178,7 @@ class SIEffect(PySI.PySI):
         # Example with custom capability for linking:
         # self.cap_link_recv[<name of emission capability>][<name of reception capability>] = self.<corresponding function>
         # Therefore, this example receives some data of a linked region and can apply this data to other categories of data according to the linking relationship .
-        self.cap_link_recv = PySI.String2_String2FunctionMap_Map()
+        self.cap_link_recv = PySI.String2String2FunctionMapMap()
 
         ## member attribute variable storing the x position of the mouse cursor
         self.mouse_x = 0

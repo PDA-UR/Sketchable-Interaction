@@ -272,3 +272,5 @@ SI-Doc/si/sigrun/html/
 SI-Doc/si/sigrun/latex/
 
 SI/plugins/standard_environment_library/palette/__pycache__/
+
+SI/si_crash_dumps/

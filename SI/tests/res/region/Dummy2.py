@@ -1,9 +1,9 @@
 from libPySI import PySI
 
-from plugins.standard_environment_library import SIEffect
+from plugins.standard_environment_library.SIEffect import SIEffect
 
 
-class Dummy2(SIEffect.SIEffect):
+class Dummy2(SIEffect):
     regiontype = PySI.EffectType.SI_CUSTOM
     regionname = "Dummy2"
 
@@ -16,11 +16,11 @@ class Dummy2(SIEffect.SIEffect):
         self.x = 0
         self.y = 0
 
-        self.cap_emit = PySI.String2_String2FunctionMap_Map({
+        self.cap_emit = PySI.String2String2FunctionMapMap({
             "TEST2": {PySI.CollisionEvent.ON_ENTER: self.test_on_enter_emit, PySI.CollisionEvent.ON_CONTINUOUS: self.test_on_continuous_emit, PySI.CollisionEvent.ON_LEAVE: self.test_on_leave_emit}
         })
 
-        self.cap_recv = PySI.String2_String2FunctionMap_Map({
+        self.cap_recv = PySI.String2String2FunctionMapMap({
             "TEST1": {PySI.CollisionEvent.ON_ENTER: self.test_on_enter_recv, PySI.CollisionEvent.ON_CONTINUOUS: self.test_on_continuous_recv, PySI.CollisionEvent.ON_LEAVE: self.test_on_leave_recv}
         })
 
@@ -30,7 +30,7 @@ class Dummy2(SIEffect.SIEffect):
             PySI.LinkingCapability.ROTATION: self.rotation
         })
 
-        self.cap_link_recv = PySI.String2_String2FunctionMap_Map({
+        self.cap_link_recv = PySI.String2String2FunctionMapMap({
             PySI.LinkingCapability.POSITION: {PySI.LinkingCapability.POSITION: self.set_position_from_position},
             PySI.LinkingCapability.COLOR: {PySI.LinkingCapability.POSITION: self.set_position_from_color},
             PySI.LinkingCapability.ROTATION: {PySI.LinkingCapability.ROTATION: self.set_rotation_from_rotation}

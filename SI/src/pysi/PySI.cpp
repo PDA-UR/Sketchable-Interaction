@@ -3,6 +3,7 @@
 #include "pysi/stl_container_exposure/MapExposure.hpp"
 #include "pysi/stl_container_exposure/VectorExposure.hpp"
 #include "PySIStartup.hpp"
+#include <sigrun/SIConstants.hpp>
 
 BOOST_PYTHON_MODULE(libPySI)
 {
@@ -49,9 +50,9 @@ BOOST_PYTHON_MODULE(libPySI)
         create_vector<VectorExposureString, std::vector<std::string>>("StringVector");
         create_map<MapExposurePartialContour, std::map<std::string, std::vector<glm::vec3>>>("PartialContour");
         create_map<MapExposureString2Function, std::map<std::string, bp::object>>("String2FunctionMap");
-        create_map<MapExposureString2_String2FunctionMap_Map, std::map<std::string, std::map<std::string, bp::object>>>("String2_String2FunctionMap_Map");
+        create_map<MapExposureString2_String2FunctionMap_Map, std::map<std::string, std::map<std::string, bp::object>>>("String2String2FunctionMapMap");
 
-        bp::class_<PySIEffect, boost::noncopyable>("PySI",bp::init<const std::vector<glm::vec3> &, const std::string &, const std::string &, const bp::dict &>())
+        bp::class_<PySIEffect, boost::noncopyable>("Effect",bp::init<const std::vector<glm::vec3> &, const std::string &, const std::string &, const bp::dict &>())
                 .def("__add_data__", &PySIEffect::__add_data__)
                 .def("__signal_deletion__", &PySIEffect::__signal_deletion__)
                 .def("__embed_file_standard_appliation_into_context__", &PySIEffect::__embed_file_standard_appliation_into_context__)
@@ -181,33 +182,43 @@ BOOST_PYTHON_MODULE(libPySI)
             linking_capability.attr("COLOR") = SI_CAPABILITY_LINK_COLOR;
             linking_capability.attr("GEOMETRY") = SI_CAPABILITY_LINK_GEOMETRY;
         }
-    } // scope ended for everything which shall be part of effect_scope
 
-    { // scope opened for everything which shall be part of startup_scope
-        bp::scope startup_scope = bp::class_<PySIStartup>("PySIStartup", bp::init<>())
-                ;
 
-        bp::class_<PySIStartup, boost::noncopyable>("PySIStartup", bp::init<>())
+
+            bp::class_<PySIStartup, boost::noncopyable>("Startup", bp::no_init)
                 .def("create_region_by_id", &PySIStartup::create_region_by_id).staticmethod("create_region_by_id")
                 .def("context_dimensions", &PySIStartup::context_dimensions).staticmethod("context_dimensions")
                 .def("logger_quench_messages_from_class", &PySIStartup::logger_quench_messages_from_class).staticmethod("logger_quench_messages_from_class")
                 .def("logger_unquench_messages_from_class", &PySIStartup::logger_unquench_messages_from_class).staticmethod("logger_unquench_messages_from_class")
-                .def("logger_log", &PySIStartup::logger_log)
-                .def("logger_set_log_output", &PySIStartup::logger_set_log_output)
-                .def("enable", &PySIStartup::enable)
-                .def("disable", &PySIStartup::disable)
+                .def("logger_log", &PySIStartup::logger_log).staticmethod("logger_log")
+                .def("logger_set_log_output", &PySIStartup::logger_set_log_output).staticmethod("logger_set_log_output")
+                .def("enable", &PySIStartup::enable).staticmethod("enable")
+                .def("disable", &PySIStartup::disable).staticmethod("disable")
 
                 .enable_pickling()
                 ;
 
-        startup_scope.attr("SI_LOG_SHOW_ALL") = (int32_t) LOG_SHOW_ALL;
-        startup_scope.attr("SI_LOG_SHOW_NONE") = (int32_t) LOG_SHOW_NONE;
-        startup_scope.attr("SI_LOG_SHOW_INFO") = (int32_t) LOG_SHOW_INFO;
-        startup_scope.attr("SI_LOG_SHOW_WARN") = (int32_t) LOG_SHOW_WARN;
-        startup_scope.attr("SI_LOG_SHOW_ERROR") = (int32_t) LOG_SHOW_ERROR;
-        startup_scope.attr("SI_LOG_SHOW_DEBUG") = (int32_t) LOG_SHOW_DEBUG;
-        startup_scope.attr("SI_LOG_NONE") = (int32_t) LOG_NONE;
-        startup_scope.attr("SI_LOG_FILE") = (int32_t) LOG_FILE;
+        { // scope opened for everything which shall be part of logger_scope
 
-    } // scope ended for everything which shall be part of startup_scope
+            bp::scope logger_scope = bp::class_<PySIStartup>("Logger", bp::no_init);
+
+            logger_scope.attr("SI_LOG_SHOW_ALL") = (int32_t) LOG_SHOW_ALL;
+            logger_scope.attr("SI_LOG_SHOW_NONE") = (int32_t) LOG_SHOW_NONE;
+            logger_scope.attr("SI_LOG_SHOW_INFO") = (int32_t) LOG_SHOW_INFO;
+            logger_scope.attr("SI_LOG_SHOW_WARN") = (int32_t) LOG_SHOW_WARN;
+            logger_scope.attr("SI_LOG_SHOW_ERROR") = (int32_t) LOG_SHOW_ERROR;
+            logger_scope.attr("SI_LOG_SHOW_DEBUG") = (int32_t) LOG_SHOW_DEBUG;
+            logger_scope.attr("SI_LOG_NONE") = (int32_t) LOG_NONE;
+            logger_scope.attr("SI_LOG_FILE") = (int32_t) LOG_FILE;
+
+        } // scope ended for everything which shall be part of startup_scope
+
+        { // scope opened for everything which shall be part of startup_scope
+
+            bp::scope startup_scope = bp::class_<PySIStartup>("Configuration", bp::no_init);
+
+            startup_scope.attr("SI_CRASH_DUMP") = (int32_t) SI_CRASH_DUMP_FLAG;
+
+        } // scope ended for everything which shall be part of startup_scope
+    } // scope ended for everything which shall be part of effect_scope
 }

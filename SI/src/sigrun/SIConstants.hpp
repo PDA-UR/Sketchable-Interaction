@@ -18,4 +18,6 @@
 #define SI_LINUX_PID std::string("pid")
 #define SI_LINUX_DEFAULT_SI_APP_OPENING std::string("(SI)")
 
+#define SI_CRASH_DUMP_FLAG 1
+
 #endif //SITEST_SICONSTANTS_HPP
