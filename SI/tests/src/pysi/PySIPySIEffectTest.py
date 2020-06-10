@@ -15,7 +15,7 @@ region_name = "TEST_CASES"
 region_type = -1
 
 
-class TestClass(PySI.PySI):
+class TestClass(PySI.Effect):
     def __init__(self, shape=PySI.PointVector(), uuid="", kwargs={}):
         super(TestClass, self).__init__(shape, uuid, "", kwargs)
 

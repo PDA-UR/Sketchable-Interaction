@@ -10,7 +10,7 @@
 
 #define NUM_LINES_STACKTRACE 15
 
-#define PARENTFOLDERPATH std::string("crash_dumps")
+#define PARENTFOLDERPATH std::string("si_crash_dumps")
 #define PIPE_DEV_NULL std::string(" >> /dev/null")
 #define DATEFORMATSTRING std::string("%d-%m-%Y--%H-%M-%S")
 #define SIGRUN_CRASH_CORE_DUMP_FILENAME std::string("sigrun_crash_core_dump")
@@ -29,10 +29,18 @@ void CrashDump::dump_crash_information(int32_t signal)
 
     create_folder(PARENTFOLDERPATH);
     create_folder(PARENTFOLDERPATH + "/" + SIGRUN_CRASH_NAME_PREFIX + datetime);
+
+    msg = ERROR_COLOR(std::string("SIGRUN ") + Log::time() + " [INFO] [CRASHDUMP] Generating Crash Report...");
+    Print::print(msg);
+
     generate_core_dump(datetime);
     generate_stacktrace(datetime);
     zip_folder(datetime);
     delete_folder(datetime);
+
+    msg = ERROR_COLOR(std::string("SIGRUN ") + Log::time() + " [INFO] [CRASHDUMP] Crash Report" + SIGRUN_CRASH_NAME_PREFIX + datetime + ".zip in " + boost::filesystem::current_path().string() + "/" + PARENTFOLDERPATH + " created!");
+    Print::print(msg);
+
     exit(signal);
 }
 
@@ -60,20 +68,11 @@ void CrashDump::execute_linux_command(const std::string &cmd)
 
 void CrashDump::generate_core_dump(const std::string& datetime)
 {
-    std::string msg = ERROR_COLOR(std::string("SIGRUN ") + Log::time() + " [INFO] [CRASHDUMP] Generating core dump...");
-    Print::print(msg);
-
     execute_linux_command(GCORE_COMMAND);
-
-    msg = ERROR_COLOR(std::string("SIGRUN ") + Log::time() + " [INFO] [CRASHDUMP] Core dump generated!");
-    Print::print(msg);
 }
 
 void CrashDump::generate_stacktrace(const std::string& datetime)
 {
-    std::string msg = ERROR_COLOR(std::string("SIGRUN ") + Log::time() + " [INFO] [CRASHDUMP] Generating stacktrace file...");
-    Print::print(msg);
-
     int32_t num_lines = NUM_LINES_STACKTRACE + 2; // ignore the first two lines which contain this file's information and sigaction
 
     const auto& stacktrace = boost::stacktrace::stacktrace();
@@ -86,20 +85,11 @@ void CrashDump::generate_stacktrace(const std::string& datetime)
     log_file.open(PARENTFOLDERPATH + "/" + SIGRUN_CRASH_NAME_PREFIX + datetime + "/"+ SIGRUN_CRASH_NAME_PREFIX + STACKTRACE_NAME + "." + TXT_FILE, std::ios_base::out);
     log_file << m;
     log_file.close();
-
-    msg = ERROR_COLOR(std::string("SIGRUN ") + Log::time() + " [INFO] [CRASHDUMP] Stacktrace file generated!");
-    Print::print(msg);
 }
 
 void CrashDump::zip_folder(const std::string &datetime)
 {
-    std::string msg = ERROR_COLOR(std::string("SIGRUN ") + Log::time() + " [INFO] [CRASHDUMP] Zipping core dump and stacktrace files to " + SIGRUN_CRASH_NAME_PREFIX + datetime + ".zip in folder " + boost::filesystem::current_path().string() + "/" + PARENTFOLDERPATH);
-    Print::print(msg);
-
     execute_linux_command("(cd " + PARENTFOLDERPATH + "; zip -r " + SIGRUN_CRASH_NAME_PREFIX + datetime + ".zip " + SIGRUN_CRASH_NAME_PREFIX + datetime + ")");
-
-    msg = ERROR_COLOR(std::string("SIGRUN ") + Log::time() + " [INFO] [CRASHDUMP] " + SIGRUN_CRASH_NAME_PREFIX + datetime + ".zip in " + boost::filesystem::current_path().string() + "/" + PARENTFOLDERPATH + " created!");
-    Print::print(msg);
 }
 
 void CrashDump::delete_folder(const std::string &datetime)

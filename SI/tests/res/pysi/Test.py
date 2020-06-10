@@ -1,7 +1,7 @@
 from libPySI import PySI
 
 
-class test(PySI.PySI):
+class test(PySI.Effect):
     def __init__(self, shape=PySI.PointVector(), aabb=PySI.PointVector(), uuid="", kwargs={}):
         super(test, self).__init__()
         self.shape = shape

@@ -13,25 +13,25 @@ TEST_F(PySIPySIEffectTest, PySIEffect_Python_Side)
     std::string path = "tests/src/pysi/PySIPySIEffectTest.py";
     std::string clazz = "PySIPySIEffectTest";
 
-    std::vector<glm::vec3> contour {
-            glm::vec3(1, 1, 1),
-            glm::vec3(1, 5, 1),
-            glm::vec3(5, 5, 1),
-            glm::vec3(5, 1, 1),
+    std::vector<glm::vec3> contour
+    {
+        glm::vec3(1, 1, 1),
+        glm::vec3(1, 5, 1),
+        glm::vec3(5, 5, 1),
+        glm::vec3(5, 1, 1)
     };
 
-    bp::object o = script.si_plugin(module, path, clazz).attr(clazz.c_str())().attr("start")();
-
-    ASSERT_TRUE(bp::extract<bool>(o));
+    ASSERT_TRUE(bp::extract<bool>(script.si_plugin(module, path, clazz).attr(clazz.c_str())().attr("start")()));
 }
 
 TEST_F(PySIPySIEffectTest, init)
 {
-    std::vector<glm::vec3> contour {
+    std::vector<glm::vec3> contour
+    {
         glm::vec3(1, 1, 1),
         glm::vec3(1, 5, 1),
         glm::vec3(5, 5, 1),
-        glm::vec3(5, 1, 1),
+        glm::vec3(5, 1, 1)
     };
 
     EXPECT_NO_FATAL_FAILURE(PySIEffect pysie(contour, _UUID_, "", bp::dict()));
@@ -39,11 +39,12 @@ TEST_F(PySIPySIEffectTest, init)
 
 TEST_F(PySIPySIEffectTest, add_data)
 {
-    std::vector<glm::vec3> contour {
-            glm::vec3(1, 1, 1),
-            glm::vec3(1, 5, 1),
-            glm::vec3(5, 5, 1),
-            glm::vec3(5, 1, 1),
+    std::vector<glm::vec3> contour
+    {
+        glm::vec3(1, 1, 1),
+        glm::vec3(1, 5, 1),
+        glm::vec3(5, 5, 1),
+        glm::vec3(5, 1, 1)
     };
 
     PySIEffect pysie(contour, _UUID_, "", bp::dict());
@@ -58,11 +59,12 @@ TEST_F(PySIPySIEffectTest, add_data)
 
 TEST_F(PySIPySIEffectTest, signal_deletion)
 {
-    std::vector<glm::vec3> contour {
-            glm::vec3(1, 1, 1),
-            glm::vec3(1, 5, 1),
-            glm::vec3(5, 5, 1),
-            glm::vec3(5, 1, 1),
+    std::vector<glm::vec3> contour
+    {
+        glm::vec3(1, 1, 1),
+        glm::vec3(1, 5, 1),
+        glm::vec3(5, 5, 1),
+        glm::vec3(5, 1, 1)
     };
 
     PySIEffect pysie(contour, _UUID_, "", bp::dict());
@@ -72,11 +74,12 @@ TEST_F(PySIPySIEffectTest, signal_deletion)
 
 TEST_F(PySIPySIEffectTest, embed_file_standard_appliation_into_context)
 {
-    std::vector<glm::vec3> contour {
-            glm::vec3(1, 1, 1),
-            glm::vec3(1, 5, 1),
-            glm::vec3(5, 5, 1),
-            glm::vec3(5, 1, 1),
+    std::vector<glm::vec3> contour
+    {
+        glm::vec3(1, 1, 1),
+        glm::vec3(1, 5, 1),
+        glm::vec3(5, 5, 1),
+        glm::vec3(5, 1, 1)
     };
 
     PySIEffect pysie(contour, _UUID_, "", bp::dict());
@@ -86,11 +89,12 @@ TEST_F(PySIPySIEffectTest, embed_file_standard_appliation_into_context)
 
 TEST_F(PySIPySIEffectTest, destroy_embedded_window)
 {
-    std::vector<glm::vec3> contour {
-            glm::vec3(1, 1, 1),
-            glm::vec3(1, 5, 1),
-            glm::vec3(5, 5, 1),
-            glm::vec3(5, 1, 1),
+    std::vector<glm::vec3> contour
+    {
+        glm::vec3(1, 1, 1),
+        glm::vec3(1, 5, 1),
+        glm::vec3(5, 5, 1),
+        glm::vec3(5, 1, 1)
     };
 
     PySIEffect pysie(contour, _UUID_, "", bp::dict());
