@@ -1,8 +1,8 @@
 from libPySI import PySI
-from plugins.standard_environment_library import SIEffect
+from plugins.standard_environment_library.SIEffect import SIEffect
 
 
-class Button(SIEffect.SIEffect):
+class Button(SIEffect):
     regiontype = PySI.EffectType.SI_BUTTON
     regionname = PySI.EffectName.SI_STD_NAME_BUTTON
     region_width = 100
@@ -10,8 +10,6 @@ class Button(SIEffect.SIEffect):
 
     def __init__(self, shape=PySI.PointVector(), uuid="", kwargs={}):
         super(Button, self).__init__(shape, uuid, "res/next.png", Button.regiontype, Button.regionname, kwargs)
-        self.name = PySI.EffectName.SI_STD_NAME_BUTTON
-        self.region_type = PySI.EffectType.SI_BUTTON
         self.qml_path = "plugins/standard_environment_library/button/Button.qml"
         self.color = PySI.Color(192, 192, 192, 0)
 
@@ -33,9 +31,9 @@ class Button(SIEffect.SIEffect):
 
         self.disable_effect(PySI.CollisionCapability.DELETION, self.RECEPTION)
 
-        self.enable_effect(PySI.CollisionCapability.BTN, self.EMISSION, self.on_btn_enter_emit, self.on_btn_continuous_emit, self.on_btn_leave_emit)
-        self.enable_effect(PySI.CollisionCapability.CLICK, self.RECEPTION, self.on_click_enter_recv, self.on_click_continuous_recv, self.on_click_leave_recv)
-        self.enable_effect(PySI.CollisionCapability.PARENT, self.RECEPTION, self.on_parent_enter_recv, None, self.on_parent_leave_recv)
+        self.enable_effect(PySI.CollisionCapability.BTN, SIEffect.EMISSION, self.on_btn_enter_emit, self.on_btn_continuous_emit, self.on_btn_leave_emit)
+        self.enable_effect(PySI.CollisionCapability.CLICK, SIEffect.RECEPTION, self.on_click_enter_recv, self.on_click_continuous_recv, self.on_click_leave_recv)
+        self.enable_effect(PySI.CollisionCapability.PARENT, SIEffect.RECEPTION, self.on_parent_enter_recv, None, self.on_parent_leave_recv)
         self.parent = ""
         self.is_open_entry_capability_blocked = False
 

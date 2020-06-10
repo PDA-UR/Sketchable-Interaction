@@ -17,6 +17,7 @@
 #include <cstdlib>
 #include <QThread>
 #include <sigrun/plugin/PythonGlobalInterpreterLockGuard.hpp>
+#include <sigrun/log/CrashDump.hpp>
 
 #define NEW_REGIONS_PER_FRAME 50
 
@@ -232,12 +233,20 @@ void Context::set_effect(const std::string& target_uuid, const std::string& effe
 
 void Context::enable(uint32_t what)
 {
-
+    if(what & SI_CRASH_DUMP_FLAG)
+    {
+        signal(SIGSEGV, CrashDump::dump_crash_information);
+        signal(SIGABRT, CrashDump::dump_crash_information);
+    }
 }
 
 void Context::disable(uint32_t what)
 {
-
+    if(what & SI_CRASH_DUMP_FLAG)
+    {
+        signal(SIGSEGV, nullptr);
+        signal(SIGABRT, nullptr);
+    }
 }
 
 void Context::register_new_region(const std::vector<glm::vec3>& contour, const std::string& uuid)
