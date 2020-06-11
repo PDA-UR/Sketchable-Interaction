@@ -119,6 +119,7 @@ class SIEffect(PySI.Effect):
             # This value is only set if texture_path is a valid path
             self.texture_height = 75
 
+            # apply data in QML
             self.__add_data__("img_width", self.texture_width, PySI.DataType.INT)
             self.__add_data__("img_height", self.texture_height, PySI.DataType.INT)
             self.__add_data__("img_path", self.texture_path, PySI.DataType.STRING)
