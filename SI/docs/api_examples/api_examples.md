@@ -84,7 +84,8 @@ from plugins.standard_environment_library.SIEffect import SIEffect
 # it is highly recommended to inherit from SIEffect for ease of use
 class MyEffect(SIEffect):
     regiontype = PySI.EffectType.SI_CUSTOM
-    regionname = PySI.EffectName.SI_STD_NAME_CUSTOM
+    regionname = PySI.EffectName.SI_STD_NAME_CUSTOM  # name used only internally
+    region_display_name = "MyEffect"  # name which is intended to be shown to end-users
 
     def __init__(self, shape=PySI.PointVector(), uuid="", kwargs={}):
         super(MyEffect, self).__init__(shape, uuid, "res/my_effect.png", Button.regiontype, Button.regionname, kwargs)
@@ -98,10 +99,11 @@ class MyEffect(SIEffect):
 Summary:
 
 * plugin files **must** import libPySI
-* plugin files **must** use static member variables *regiontye* and *regionname*
+* plugin files **must** use static member variables *regiontye*, *regionname*, and region_display_name
 * *regiontye* and *regionname* **must** be intialized according to PySI effect types and effect names respectively (if unsure use above example initialization)
 * *init*'s signature **must** look exactly as the example above
 * *self.qml_path* **must** be left empty if no QML file is required to accompany the plugin
+* *region_display_name* **should not** be an empty str
 * plugin files **should** import SIEffect for ease of use
 * *init*'s default parameters **may** be changed 
 
@@ -113,6 +115,7 @@ from plugins.standard_environment_library.SIEffect import SIEffect
 class MyEffect(SIEffect):
     regiontype = PySI.EffectType.SI_CUSTOM
     regionname = PySI.EffectName.SI_STD_NAME_CUSTOM
+    region_display_name = "MyEffect"
 
     def __init__(self, shape=PySI.PointVector(), uuid="", kwargs={}):
         super(MyEffect, self).__init__(shape, uuid, "res/my_effect.png", Button.regiontype, Button.regionname, kwargs)
@@ -161,6 +164,7 @@ class MyEffect(SIEffect):
 Summary:
 
 * API users **must** specify own names for capabilities and attributes if those are not part of PySI API
+* Emitting *collision event* functions **must** have one additional argument which is the receiving effect (e.g. def collison_event_on_enter_emit(self, other))
 * API users **should** use the functions enable_effect, disable_effect, enable_link_emission, disable_link_emission, enable_link_reception, disable_link_reception to register required *collision events* and *linking actions*
 * API users **should** use PySI built-in capabilities and attributes if available e.g. PySI.CollisionCapability.DELETION (for collision with deletion region) or PySI.LinkingCapability.POSITION (for linking to position attribute)
 
@@ -487,7 +491,188 @@ In linking action target effect
 * API Users **may not** require to use this datastructure directly
 
 ## Example: Implementation of a Tag-Effect {#impl_tag}
+### Building Tag.py
+```python
+    
+from libPySI import PySI
 
+from plugins.standard_environment_library.SIEffect import SIEffect
+
+
+class Tag(SIEffect):
+    regiontype = PySI.EffectType.SI_CUSTOM
+    regionname = PySI.EffectName.SI_STD_NAME_TAG
+    region_display_name = "Tag"
+
+    def __init__(self, shape=PySI.PointVector(), uuid="", kwargs={}):
+        super(Tag, self).__init__(shape, uuid, "res/tag.png", Tag.regiontype, Tag.regionname, kwargs)
+        # specify which qml file to use
+        self.qml_path = "plugins/standard_environment_library/tag/Tag.qml"
+            
+        # specify which color a region having the tag-effect should have
+        self.color = PySI.Color(255, 0, 0, 255)
+
+        # add and enable the tagging effect by specifying its capability and and assigning its collision event functions
+        self.enable_effect("tagging", SIEffect.EMISSION, self.on_tag_enter_emit, self.on_tag_continuous_emit, self.on_tag_leave_emit)
+
+    # define the functions needed for collision events with the "tagging" capability
+    
+    # when another eligible effect first collides with this one, emit that the other one should be tagged
+    def on_tag_enter_emit(self, other):
+        return True
+    
+    # it makes no sense to redundantly tag the other effect on every collision event, so we leave this blank 
+    def on_tag_continuous_emit(self, other):
+        pass
+    
+    # we want to keep the tag beyond collision, so we leave this also blank
+    def on_tag_leave_emit(self, other):
+        pass 
+```
+
+Using the Tag-effect within a region yields something like this when drawn in SIGRun:
+![](res/tag_without_tex.png){ width=10% } 
+
+Even though we specified a texture path (res/tag.png) in the constructor and specified a qml-file path (plugins/standard_environment_library/tag/Tag.qml), we do not see the texture on top of our region.
+In order to to make this styling visible we have to build the qml-file which associated with the Tag-effect.
+
+### Building Tag.qml
+```javascript
+import QtQuick 2.7
+
+Item
+{
+    // apply data provided by the SI-plugin
+    function updateData(data)
+    {
+        image.width = data.img_width;
+        image.height = data.img_height;
+        image.source = data.img_path;
+
+        image.anchors.leftMargin = data.widget_width / 2 - image.width / 2;
+        image.anchors.topMargin = data.widget_height / 2 - image.height / 2;
+    }
+
+    id: container
+    visible: true
+
+    Image {
+        id: image
+        anchors.left: parent.left
+        anchors.top: parent.top
+
+        visible: true
+    }
+}
+```
+
+Above example is the default qml-file for each SI-Plugin. 
+It provides the functionality to draw a texture on top of a region and center it in the region.
+This file can automatically be created if the SIQML file template is used.
+PySI SIEffect automatically manages texture application once a texture path is provided in the constructor of an effect.
+This may look like this (in SIEffect constructor):
+
+```python
+self.texture_path = texture_path
+
+if self.texture_path != "":
+    ## member attribute variable storing the width of a texture of a region drawing as a float
+    #
+    # This value is only set if texture_path is a valid path
+    self.texture_width = 75
+
+    ## member attribute variable storing the height of a texture of a region drawing as a float
+    #
+    # This value is only set if texture_path is a valid path
+    self.texture_height = 75
+    
+    # apply data in QML 
+    self.__add_data__("img_width", self.texture_width, PySI.DataType.INT)
+    self.__add_data__("img_height", self.texture_height, PySI.DataType.INT)
+    self.__add_data__("img_path", self.texture_path, PySI.DataType.STRING)
+    self.__add_data__("widget_width", self.width, PySI.DataType.FLOAT)
+    self.__add_data__("widget_height", self.height, PySI.DataType.FLOAT)
+```
+
+Now that we have created a qml-file for our SI-Plugin, we finally can see the region texture on top of our region:
+![region with tag effect with texture](res/tag_with_tex.png){ width=10% } 
+
+Now that we can fully draw our newly created Tag-effect in SIGRun, we want to see it in action.
+In order to do so, we have to adjust or create effects which can receive Tag-effects.
+ 
+### Adjusting a receiver effect
+For this example, we expand the TextFile-plugin from the SI standard environment library.
+First, we have to enable the Tag-effect in TextFile.py.
+
+```python
+    # in the constructor
+    # note that the "tagging" capability has to be received here
+    # we only implemented on_enter in Tag.py so here we only need on_enter as well
+    self.enable_effect("tagging", self.RECEPTION, self.on_tag_enter_recv, None, None)
+
+    # outside of the constructor but inside the class, we have to define on_tag_enter_recv
+    # note that we have the is_tagged parameter due to returning one value in the emission function in Tag.py    
+    # modify qml in order to show the tag on a region having the TextFile-effect
+    def on_tag_enter_recv(self, is_tagged):
+        self.add_QML_data("visible", is_tagged, PySI.DataType.BOOL)         
+```
+
+Additionally, we have to adjust TextFile.qml as well to support this new functionality.
+In updateData(data)-function we add the line:
+
+```javascript
+    function updateData(data)
+    {
+        // .
+        // .
+        // .
+        
+       tag.visible = data.visible;
+    }
+```
+
+And within the container component (*Item*), we add a *Rectangle* component:
+
+```javascript
+    Item
+    {
+        function updateData(data)
+        {
+            // .
+            // .
+            // .
+    
+            tag.visible = data.visible;
+        }
+    
+        id: container
+    
+        visible: true
+
+        // .
+        // .
+        // .
+    
+        Rectangle {
+           id: tag
+           width: 15
+           height: 15
+           color: "blue"
+           visible: false
+        }
+    }
+```
+
+And finally after that, we can visually tag our TextFiles:
+
+![](res/pre_tag.png){ width=10% } 
+
+![](res/tag.png){ width=10% } 
+
+![](res/post_tag.png){ width=10% } 
+
+However, this is a minimal example for visually tagging a TextFile.
+Of course, you can expand this approach by passing meta data, use different colors and shapes, according to your preferences and requirements.
 
 ## References {#refs}
 [1] Wimmer, R., & Hahn, J. (2018). A Concept for Sketchable Workspaces and Workflows. <a>https://epub.uni-regensburg.de/36818/1/A%20Concept%20for%20Sketchable%20Workspaces%20and%20Workflows.pdf</a>

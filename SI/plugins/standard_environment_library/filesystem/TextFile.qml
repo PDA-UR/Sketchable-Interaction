@@ -13,6 +13,8 @@ Item
 
         filename.color = data.color;
         filename.text = data.name;
+
+        tag.visible = data.visible;
     }
 
     id: container
@@ -43,5 +45,13 @@ Item
         anchors.leftMargin: -width * 0.25
 
         wrapMode: TextEdit.Wrap
+    }
+
+    Rectangle {
+       id: tag
+       width: 15
+       height: 15
+       color: "blue"
+       visible: false
     }
 }

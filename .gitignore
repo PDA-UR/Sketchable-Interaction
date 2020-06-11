@@ -274,3 +274,5 @@ SI-Doc/si/sigrun/latex/
 SI/plugins/standard_environment_library/palette/__pycache__/
 
 SI/si_crash_dumps/
+
+SI/docs/api_examples/res/
