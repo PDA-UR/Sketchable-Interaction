@@ -241,7 +241,8 @@ if (BUILD_DOCS)
     endif (DOXYGEN_FOUND)
 
     add_custom_target(APIExamplesPDF
-        COMMAND pandoc ${CMAKE_CURRENT_SOURCE_DIR}/SI/docs/api_examples/api_examples.md -o ${CMAKE_CURRENT_SOURCE_DIR}/SI-Doc/si/api_examples/api_examples.pdf -o ${CMAKE_CURRENT_SOURCE_DIR}/SI-Doc/si/api_examples/api_examples.html
+        COMMAND pandoc ${CMAKE_CURRENT_SOURCE_DIR}/SI/docs/api_examples/api_examples.md -o ${CMAKE_CURRENT_SOURCE_DIR}/SI-Doc/si/api_examples/api_examples.pdf
+        COMMAND pandoc ${CMAKE_CURRENT_SOURCE_DIR}/SI/docs/api_examples/api_examples.md -o ${CMAKE_CURRENT_SOURCE_DIR}/SI-Doc/si/api_examples/api_examples.html
     )
 
     add_dependencies(SIGRunDocsPDF SIGRunDocs)
