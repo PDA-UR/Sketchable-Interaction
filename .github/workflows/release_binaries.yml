@@ -75,13 +75,17 @@ jobs:
       run: |
         mkdir artifact &&
         mkdir si${{ env.CURRENT_VERSION }} &&
-        cp -r /home/runner/work/Sketchable-Interaction/Sketchable-Interaction/SI/plugins si${{ env.CURRENT_VERSION }} && 
-        cp -r /usr/local/lib/libboost_filesystem.so.1.69.0 si${{ env.CURRENT_VERSION }} && 
-        cp -r /usr/local/lib/libboost_python37.so.1.69.0 si${{ env.CURRENT_VERSION }} && 
-        cp -r /usr/local/lib/libboost_system.so.1.69.0 si${{ env.CURRENT_VERSION }} && 
-        cp -r si_test_application si${{ env.CURRENT_VERSION }} &&
-        cp -r libSIGeneralRuntime.so si${{ env.CURRENT_VERSION }} &&
-        cp -r libSIRenderEngine.so libPySI.so si${{ env.CURRENT_VERSION }} &&
+        mkdir si${{ env.CURRENT_VERSION }}/bin
+        mkdir si${{ env.CURRENT_VERSION }}/lib
+        cp -r /usr/local/lib/libboost_filesystem.so.1.69.0 si${{ env.CURRENT_VERSION }}/lib && 
+        cp -r /usr/local/lib/libboost_python37.so.1.69.0 si${{ env.CURRENT_VERSION }}/lib && 
+        cp -r /usr/local/lib/libboost_system.so.1.69.0 si${{ env.CURRENT_VERSION }}/lib && 
+        cp -r si_test_application si${{ env.CURRENT_VERSION }}/bin &&
+        cp -r libSIGeneralRuntime.so si${{ env.CURRENT_VERSION }}/bin &&
+        cp -r libSIRenderEngine.so si${{ env.CURRENT_VERSION }}/bin &&
+        cp -r libPySI.so si${{ env.CURRENT_VERSION }}/bin &&
+        chmod +x /home/runner/work/Sketchable-Interaction/Sketchable-Interaction/SI/si &&
+        cp -r /home/runner/work/Sketchable-Interaction/Sketchable-Interaction/SI/si si${{ env.CURRENT_VERSION }}&&
         zip -r artifact/si${{ env.CURRENT_VERSION }}.zip si${{ env.CURRENT_VERSION }}
                 
     - name: Create Artifact
