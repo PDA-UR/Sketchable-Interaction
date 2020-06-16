@@ -98,6 +98,13 @@ jobs:
           cmake --build  /home/runner/work/Sketchable-Interaction/Sketchable-Interaction --target run_unit_tests -j 8
         fi
         
+    - name: Fetch SI Plugins
+      if: success()
+      run: |
+        if [[ "${{ github.event.head_commit.message }}" != *"[NO CI]"* ]]; then
+          git clone https://github.com/PDA-UR/Sketchable-Interaction-Plugins.git plugins
+        fi
+        
     - name: Test SI
       if: success()
       run: |
