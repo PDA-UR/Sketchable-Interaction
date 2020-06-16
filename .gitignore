@@ -275,4 +275,8 @@ SI/plugins/standard_environment_library/palette/__pycache__/
 
 SI/si_crash_dumps/
 
+SI/plugins/
+
 SI/docs/api_examples/res/
+
+SI/src/sigrun/__pycache__/

@@ -107,6 +107,8 @@ Summary:
 * plugin files **should** import SIEffect for ease of use
 * *init*'s default parameters **may** be changed 
 
+TODO
+
 #### Enabling and Disabling of Effects and Linking Relationships
 ```python
 from libPySI import PySI
@@ -203,7 +205,7 @@ Item
 Summary:
 
 * API Users **must** conform to QML-Syntax
-* API Users **must** provide a function *updateDate(data)* which takes exactly one argument
+* API Users **must** provide a function *updateData(data)* which takes exactly one argument
 * API Users **must** use the *updateData(data)*-function to update qml-file and styling at runtime
 * API Users **should** define one *Item* in the qml-file which contains all other qml-components
 * API Users **may** change the parameter *data* to another identifier of their choosing
@@ -673,6 +675,14 @@ And finally after that, we can visually tag our TextFiles:
 
 However, this is a minimal example for visually tagging a TextFile.
 Of course, you can expand this approach by passing meta data, use different colors and shapes, according to your preferences and requirements.
+
+## A More Complex Use Case Example
+
+Tag-Effect is fairly simple.
+To demonstrate how powerful, do this for getting a feel of possibilities
+Directory.py / Directory QML
+
+TODO
 
 ## References {#refs}
 [1] Wimmer, R., & Hahn, J. (2018). A Concept for Sketchable Workspaces and Workflows. <a>https://epub.uni-regensburg.de/36818/1/A%20Concept%20for%20Sketchable%20Workspaces%20and%20Workflows.pdf</a>
