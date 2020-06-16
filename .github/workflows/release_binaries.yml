@@ -87,7 +87,7 @@ jobs:
         cp -r libPySI.so si${{ env.CURRENT_VERSION }}/bin &&
         cp -r /home/runner/work/Sketchable-Interaction/Sketchable-Interaction/SI/bin/si si${{ env.CURRENT_VERSION }} &&
         chmod +x si${{ env.CURRENT_VERSION }}/si &&
-        cp -r /home/runner/work/Sketchable-Interaction/Sketchable-Interaction/SI/bin/StartSIGRun.py si${{ env.CURRENT_VERSION }} &&
+        cp -r /home/runner/work/Sketchable-Interaction/Sketchable-Interaction/SI/StartSIGRun.py si${{ env.CURRENT_VERSION }} &&
         zip -r artifact/si${{ env.CURRENT_VERSION }}.zip si${{ env.CURRENT_VERSION }}
                 
     - name: Create Artifact
