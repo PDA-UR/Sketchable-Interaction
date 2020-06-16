@@ -102,7 +102,7 @@ jobs:
       if: success()
       run: |
         if [[ "${{ github.event.head_commit.message }}" != *"[NO CI]"* ]]; then
-          git clone https://github.com/PDA-UR/Sketchable-Interaction-Plugins.git //home/runner/work/Sketchable-Interaction/Sketchable-Interaction/plugins
+          git clone https://github.com/PDA-UR/Sketchable-Interaction-Plugins.git //home/runner/work/Sketchable-Interaction/Sketchable-Interaction/SI/plugins
         fi
         
     - name: Test SI
