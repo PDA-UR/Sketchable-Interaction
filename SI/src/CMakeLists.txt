@@ -178,6 +178,14 @@ target_link_libraries(SIGeneralRuntime
         -ldl
         -lbacktrace)
 
+# SI plugin generator src
+set(SIGenSRC
+    SI/src/sipluggen/sipluggen.cpp
+    SI/src/sipluggen/templates.h)
+
+add_executable(sipluggen ${SIGenSRC})
+target_link_libraries(sipluggen ${Boost_LIBRARIES})
+
 if (BUILD_DOCS)
     message("Documentation Generation enabled.")
 

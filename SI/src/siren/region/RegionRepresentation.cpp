@@ -1,11 +1,8 @@
 
 #include "RegionRepresentation.hpp"
-#include <glm/glm.hpp>
 #include <QQmlEngine>
 #include <QLayout>
-#include <execution>
 #include <algorithm>
-#include <numeric>
 #include <thread>
 #include <QQmlContext>
 #include <QQmlProperty>
