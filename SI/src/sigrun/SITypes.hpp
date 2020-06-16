@@ -69,7 +69,7 @@
 #define SI_DATA_TYPE_STRING 2
 #define SI_DATA_TYPE_BOOL 3
 
-#define SI_START_FILE "plugins.StartSIGRun"
+#define SI_START_FILE "src.sigrun.StartSIGRun"
 #define SI_START_FUNCTION "on_start"
 
 #define SI_CWD "cwd"

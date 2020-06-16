@@ -1,0 +1,30 @@
+#!/bin/sh
+
+rm -rf temp_download
+git clone --quiet https://github.com/PDA-UR/Sketchable-Interaction-Plugins.git temp_download
+
+if [ $? -eq 0 ]; then
+    cp -rf ./temp_download ./plugins
+    rm -rf temp_download
+else
+	if [ -d "./plugins" ]; then
+		echo "plugins folder present!"	
+	else
+		echo "plugins folder not present!"
+		echo "SI cannot run without a plugins folder!"
+		mkdir plugins
+		echo "Empty plugins folder created!"
+	fi
+fi
+
+
+
+echo "Launching SI"
+
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:.
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:./bin/
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:./bin/libSIRenderEngine.so
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:./lib/
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib
+./bin/si_test_application
+
