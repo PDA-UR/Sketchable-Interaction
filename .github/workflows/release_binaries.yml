@@ -85,6 +85,7 @@ jobs:
         cp -r libSIGeneralRuntime.so si${{ env.CURRENT_VERSION }}/bin &&
         cp -r libSIRenderEngine.so si${{ env.CURRENT_VERSION }}/bin &&
         cp -r libPySI.so si${{ env.CURRENT_VERSION }}/bin &&
+        cp -r sipluggen si${{ env.CURRENT_VERSION }} &&
         cp -r /home/runner/work/Sketchable-Interaction/Sketchable-Interaction/SI/bin/si si${{ env.CURRENT_VERSION }} &&
         chmod +x si${{ env.CURRENT_VERSION }}/si &&
         cp -r /home/runner/work/Sketchable-Interaction/Sketchable-Interaction/SI/StartSIGRun.py si${{ env.CURRENT_VERSION }} &&
