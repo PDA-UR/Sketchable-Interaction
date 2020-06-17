@@ -68,6 +68,7 @@
 #define SI_DATA_TYPE_FLOAT 1
 #define SI_DATA_TYPE_STRING 2
 #define SI_DATA_TYPE_BOOL 3
+#define SI_DATA_TYPE_BYTES 4
 
 #define SI_START_FILE "StartSIGRun"
 #define SI_START_FUNCTION "on_start"
