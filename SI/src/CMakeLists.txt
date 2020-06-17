@@ -4,8 +4,8 @@ project(SIEngine)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
-set(Python_ADDITIONAL_VERSIONS 3.7)
-find_package(PythonLibs 3.7 REQUIRED)
+set(Python_ADDITIONAL_VERSIONS 3)
+find_package(PythonLibs 3 REQUIRED)
 find_package(Python3 REQUIRED)
 find_package(Boost 1.69.0 COMPONENTS system python3.7 filesystem REQUIRED)
 find_package(glm REQUIRED)
@@ -99,6 +99,8 @@ set(SIGRunSRC
         SI/src/sigrun/region/RegionResampler.cpp
         SI/src/sigrun/region/RegionResampler.hpp
         SI/src/sigrun/rendering/IRenderEngine.hpp
+        SI/src/sigrun/rendering/qml/items/PlotItem.cpp
+        SI/src/sigrun/rendering/qml/items/PlotItem.hpp
         SI/src/sigrun/context/managers/LinkingManager.cpp
         SI/src/sigrun/context/managers/LinkingManager.hpp
         SI/src/sigrun/context/managers/helpers/linking/Link.cpp

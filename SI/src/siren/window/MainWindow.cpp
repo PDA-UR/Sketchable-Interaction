@@ -3,7 +3,6 @@
 #include "MainWindow.hpp"
 #include <QPaintEvent>
 #include <QDebug>
-#include <execution>
 
 MainWindow::MainWindow(uint32_t width, uint32_t height):
     QMainWindow(),
