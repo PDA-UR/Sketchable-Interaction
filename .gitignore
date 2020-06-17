@@ -282,3 +282,5 @@ SI/docs/api_examples/res/
 SI/src/sigrun/__pycache__/
 
 SI/bin/__pycache__/
+
+SI/__pycache__/

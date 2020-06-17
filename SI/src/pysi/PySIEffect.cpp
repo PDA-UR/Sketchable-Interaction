@@ -3,6 +3,9 @@
 
 #include <sigrun/context/Context.hpp>
 #include <sigrun/region/RegionResampler.hpp>
+#include <QDebug>
+#include <QBuffer>
+#include <boost/python/numpy.hpp>
 
 namespace bp = boost::python;
 
@@ -195,7 +198,7 @@ std::vector<glm::vec3> &PySIEffect::aabb()
     return d_aabb;
 }
 
-void PySIEffect::__add_data__(const std::string &key, const bp::object &value, const uint32_t type)
+void PySIEffect::__add_data__(const std::string &key, const bp::object &value, const uint32_t type, const bp::dict& kwargs)
 {
     QVariant qv;
 
@@ -215,6 +218,33 @@ void PySIEffect::__add_data__(const std::string &key, const bp::object &value, c
 
         case SI_DATA_TYPE_BOOL:
             d_data[QString(key.c_str())] = QVariant(bp::extract<bool>(value));
+        break;
+
+        case SI_DATA_TYPE_BYTES:
+            int img_width = bp::extract<int>(kwargs["width"]);
+            int img_height = bp::extract<int>(kwargs["height"]);
+
+            QImage img(img_width, img_height, QImage::Format::Format_RGBA8888);
+
+            if(!value.is_none())
+            {
+                const bp::list& bytes = bp::list(value);
+
+                int len = bp::len(bytes);
+                uint8_t buf[len];
+
+                for(int i = 0; i < len; ++i)
+                    buf[i] = (uint8_t) bp::extract<int>(value[i]);
+
+                img.fromData(buf, len, "PNG");
+                d_data[QString(key.c_str())] = QVariant(img);
+
+            }
+            else
+            {
+                d_data[QString(key.c_str())] = QVariant(QImage());
+            }
+
         break;
     }
 

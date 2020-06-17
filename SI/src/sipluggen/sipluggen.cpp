@@ -72,6 +72,7 @@ int main(int argc, char** argv)
                 target_file = target_file.substr(0, target_file.find_last_of('.'));
 
         fs::create_directories(folder);
+        fs::create_directories(folder + "/res");
 
         fs::ofstream plugin_file (folder + "/" + target_file + ".py");
         std::string content = SI_PLUGIN(target_file, "plugins/" + std_lib + std::string(argv[i + 1]).substr(0, std::string(argv[i + 1]).find_last_of('/')));

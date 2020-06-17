@@ -70,7 +70,7 @@ def add_many_regions(num = 100, area_width= 1200, area_height=600):
         PySI.Startup.create_region_by_id(r_shape, PySI.EffectType.SI_DELETION, {})
 
 def on_start():
-    # PySI.Startup.disable(PySI.Configuration.SI_CRASH_DUMP)
+    PySI.Startup.disable(PySI.Configuration.SI_CRASH_DUMP)
 
     PySI.Startup.logger_log(True)
     PySI.Startup.logger_set_log_output(PySI.Logger.SI_LOG_SHOW_ALL)

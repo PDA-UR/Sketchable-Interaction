@@ -18,8 +18,9 @@
 #include <QThread>
 #include <sigrun/plugin/PythonGlobalInterpreterLockGuard.hpp>
 #include <sigrun/log/CrashDump.hpp>
+#include <sigrun/rendering/qml/items/PlotItem.hpp>
 
-#define NEW_REGIONS_PER_FRAME 50
+#define NEW_REGIONS_PER_FRAME 100
 
 namespace bp = boost::python;
 
@@ -96,6 +97,8 @@ void Context::begin(const std::unordered_map<std::string, std::unique_ptr<bp::ob
 
         d_ire->start(s_width, s_height);
 
+        qmlRegisterType<PlotItem>("siqml", 1, 0, "PlotItem");
+
         for(QWidget* pWidget: QApplication::topLevelWidgets())
         {
             d_main_window = qobject_cast<QMainWindow *>(pWidget);
@@ -165,16 +168,6 @@ QMainWindow* Context::main_window() const
     return d_main_window;
 }
 
-/*
- * API DESIGN:
- * if an effect manipulates the object itself use properties
- * if an effect does something else use functions
- *
- * Example:
- *
- * Use properties for position, scale, rotation, etc.
- * Use functions for setting points of sketching, data content, etc.
- */
 void Context::update()
 {
     perform_external_object_update();
