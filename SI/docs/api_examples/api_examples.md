@@ -1,3 +1,7 @@
+---
+lang: en-GB
+---
+
 # PySI API
 ## Introduction
 The PySI API facilitates its users to build new SI-Plugins from scratch or extend and modify existing ones.
@@ -26,6 +30,10 @@ This *object* functionally represents the pythonic *self* in SIGrun.
 Therefore, the python code implemented in the functions of SI-Plugins is executed by SIGRun once end-users trigger their events and actions. 
 In this way, API users build application logic purely in python (with the use of python libraries available to them), while SIGRun provides the *glue* to present those applications to end-users. 
 
+### PySI obscurities
+
+* shape and its size 
+
 ### The Startup File
 #### Goal
 API users configure the startup sequence of SIGRun
@@ -40,7 +48,8 @@ Startup python file **must** be named *StartSIGRun.py*
 #### Structure
 ```python
 from libPySI import PySI
-# further imports as you see fit such as plugin files for using their static members or auxiliary non-plugin python3 files
+# further imports as you see fit such as plugin files for using their static 
+# members or auxiliary non-plugin python3 files
 
 # other variables or functions
 
@@ -85,10 +94,12 @@ from plugins.standard_environment_library.SIEffect import SIEffect
 class MyEffect(SIEffect):
     regiontype = PySI.EffectType.SI_CUSTOM
     regionname = PySI.EffectName.SI_STD_NAME_CUSTOM  # name used only internally
-    region_display_name = "MyEffect"  # name which is intended to be shown to end-users
+    region_display_name = "MyEffect"  # name to be shown to end-users
 
     def __init__(self, shape=PySI.PointVector(), uuid="", kwargs={}):
-        super(MyEffect, self).__init__(shape, uuid, "res/my_effect.png", Button.regiontype, Button.regionname, kwargs)
+        super(MyEffect, self).__init__(shape, uuid, "res/my_effect.png",
+                                       Button.regiontype, Button.regionname,
+                                       kwargs)
         
         self.qml_path = "path/to/MyEffect.qml"
     
@@ -107,8 +118,6 @@ Summary:
 * plugin files **should** import SIEffect for ease of use
 * *init*'s default parameters **may** be changed 
 
-TODO
-
 #### Enabling and Disabling of Effects and Linking Relationships
 ```python
 from libPySI import PySI
@@ -120,47 +129,96 @@ class MyEffect(SIEffect):
     region_display_name = "MyEffect"
 
     def __init__(self, shape=PySI.PointVector(), uuid="", kwargs={}):
-        super(MyEffect, self).__init__(shape, uuid, "res/my_effect.png", Button.regiontype, Button.regionname, kwargs)
+        super(MyEffect, self).__init__(shape, uuid, "res/my_effect.png",
+                                       Button.regiontype, Button.regionname,
+                                       kwargs)
         
         self.qml_path = "path/to/MyEffect.qml"
     
-        # enable an effect, according to a capability (str-value), to be emitted according to the collision event functions
-        # collison_event_on_enter_emit must be a function (e.g. self.on_collision_event_enter_emit) as parameter (must not not call the function in the parameter list)
-        # collison_event_on_continuous_emit must be a function (e.g. self.on_collision_event_continuous_emit) as parameter (must not not call the function in the parameter list)
-        # collison_event_on_leave_emit must be a function (e.g. self.on_collision_event_leave_emit) as parameter (must not not call the function in the parameter list)
-        self.enable_effect("your_capability", SIEffect.EMISSION, <collison_event_on_enter_emit>, <collison_event_on_continuous_emit>, <collison_event_on_leave_emit>)
+        # enable an effect, according to a capability (str-value), to be emitted
+        # according to the collision event functions
+
+        # collison_event_on_enter_emit must be a function 
+        # (e.g. self.on_collision_event_enter_emit) as parameter 
+        # (must not not call the function in the parameter list)
+
+        # collison_event_on_continuous_emit must be a function 
+        # (e.g. self.on_collision_event_continuous_emit) as parameter 
+        # (must not not call the function in the parameter list)
+
+        # collison_event_on_leave_emit must be a function 
+        # (e.g. self.on_collision_event_leave_emit) as parameter 
+        # (must not not call the function in the parameter list)
+        self.enable_effect("your_capability", SIEffect.EMISSION, 
+                           <collison_event_on_enter_emit>, 
+                           <collison_event_on_continuous_emit>, 
+                           <collison_event_on_leave_emit>)
         
-        # enable an effect, according to a capability (str-value), to be received according to the collision event functions
-        # "your_other_capability" can be any str-value   
-        # collison_event_on_enter_recv must be a function (e.g. self.on_collision_event_enter_recv) as parameter (must not not call the function in the parameter list)
-        # collison_event_on_continuous_recv must be a function (e.g. self.on_collision_event_continuous_recv) as parameter (must not not call the function in the parameter list)
-        # collison_event_on_leave_recv must be a function (e.g. self.on_collision_event_leave_recv) as parameter (must not not call the function in the parameter list)
-        self.enable_effect("your_other_capability", SIEffect.RECEPTION, <collison_event_on_enter_recv>, <collison_event_on_continuous_recv>, <collison_event_on_leave_recv>)
+        # enable an effect, according to a capability (str-value), 
+        # to be received according to the collision event functions
+
+        # "your_other_capability" can be any str-value 
+  
+        # collison_event_on_enter_recv must be a function 
+        # (e.g. self.on_collision_event_enter_recv) as parameter 
+        # (must not not call the function in the parameter list)
+
+        # collison_event_on_continuous_recv must be a function 
+        # (e.g. self.on_collision_event_continuous_recv) as parameter 
+        # (must not not call the function in the parameter list)
+
+        # collison_event_on_leave_recv must be a function
+        # (e.g. self.on_collision_event_leave_recv) as parameter
+        # (must not not call the function in the parameter list)
+        self.enable_effect("your_other_capability", SIEffect.RECEPTION, 
+                           <collison_event_on_enter_recv>, 
+                           <collison_event_on_continuous_recv>, 
+                           <collison_event_on_leave_recv>)
       
-        # disable an effect, according to a collision capability (str-value), so the effect stops being emitted
+        # disable an effect, according to a collision capability (str-value), 
+        # so the effect stops being emitted
+
         # "your_capability" can be any str-value 
         self.disable_effect("your_capability", SIEffect.EMISSION)
 
-        # disable an effect, according to a collision capability (str-value), so the effect stops being received
+        # disable an effect, according to a collision capability (str-value),
+        # so the effect stops being received
+
         # "your_other_capability" can be any str-value  
         self.disable_effect("your_other_capability", SIEffect.RECEPTION)
         
-        # enable a link, according to an attribute (str-value), so that the effect emits the given linking action (function)
+        # enable a link, according to an attribute (str-value), so that the 
+        # effect emits the given linking action (function)
+
         # "your_attribute" may be any str-value
-        # <linking_action_for_emission> must be a function (e.g. self.linking_action) as parameter (must not not call the function in the parameter list)
-        self.enable_link_emission("your_attribute", <linking_action_for_emission>)
+
+        # <linking_action_for_emission> must be a function 
+        # (e.g. self.linking_action) as parameter
+        # (must not not call the function in the parameter list)
+        self.enable_link_emission("your_attribute", 
+                                  <linking_action_for_emission>)
         
-        # enable a link, according to a source attribute (str-value) and target attribute, so that the effect receives a linking action according to the given function
+        # enable a link, according to a source attribute (str-value) and target 
+        # attribute, so that the effect receives a linking action according to 
+        # the given function
+
         # "your_attribute" can be any str-value
-        # <linking_action_for_emission> must be a function (e.g. self.linking_action) as parameter (must not not call the function in the parameter list)
-        self.enable_link_reception("source_attribute", "your_attribute", <linking_action_for_reception>)
+        # <linking_action_for_emission> must be a function 
+        # (e.g. self.linking_action) as parameter 
+        # (must not not call the function in the parameter list)
+        self.enable_link_reception("source_attribute", "your_attribute", 
+                                   <linking_action_for_reception>)
         
-        # disable a link, according to an attribute (str-value), so that the effect stops emitting that linking action  
+        # disable a link, according to an attribute (str-value), so that the 
+        # effect stops emitting that linking action  
         self.disable_link_emission("your_attribute")
     
-        #disable a link, according to a source_attribute and target attribute, so that the effect stops receiving that linking action
-        # specify "your_attribute" to selectively disable that exact linking relationship
-        # leave "your_attribute" empty ("") to disable all linking relationships which are triggered by "source_attribute"
+        #disable a link, according to a source_attribute and target attribute, 
+        # so that the effect stops receiving that linking action
+        # specify "your_attribute" to selectively disable that exact linking 
+        # relationship
+        # leave "your_attribute" empty ("") to disable all linking relationships
+        # which are triggered by "source_attribute"
         self.disable_link_reception("source_attribute", "your_attribute") 
 ```
 Summary:
@@ -204,6 +262,7 @@ Item
 
 Summary:
 
+* API Users **must** view the axis-aligned bounding box of a shape or contour of an *interactive region* as a container for QML components 
 * API Users **must** conform to QML-Syntax
 * API Users **must** provide a function *updateData(data)* which takes exactly one argument
 * API Users **must** use the *updateData(data)*-function to update qml-file and styling at runtime
@@ -226,11 +285,15 @@ Item
 {
     function updateData(data)
     {
-        // update the width, height and visibility of the container with data received from the associated plugin-file
-        // the key/value pairs of data-parameter are equal to the ones specified in add_QML_data
+        // update the width, height and visibility of the container with data 
+        //    received from the associated plugin-file
+        // the key/value pairs of data-parameter are equal to the ones specified
+        //    in add_QML_data
         container.width = data.width;  // container.width now has the value 200
-        container.height = data.height;  // container.height now has the value 300
-        container.visible = data.visible;  // container.visible now has the value true
+        container.height = data.height;  // container.height now has the value 
+        //    300
+        container.visible = data.visible;  // container.visible now has the 
+        //    value true
     }
 
     id: container
@@ -287,7 +350,9 @@ class __MyHelperFunctions:
     # .
     # .
 
-# class defining behaviour or serving as a complex datastructure for use in plugins
+# class defining behaviour or serving as a complex datastructure for use in 
+# plugins
+
 # __ as name prefix prevents SIGRun to read it as a SI-Plugin
 class __MyHelperDatastructure:
     def __init__(self, args, kwargs):
@@ -363,11 +428,11 @@ Summary:
 ```python
     # construction
     pts = PySI.PointVector()  # empty
-    pts = PySI.PointVector([[1, 1, 1], [2, 2, 1], ..., [m, n, 1]])  # list of points
+    pts = PySI.PointVector([[1, 1, 1], ..., [m, n, 1]]) # list of points
 
     # appending
-    pts.append(PySI.Point3(x, y, z))  # appending Point3 directly
-    pts.append([x, y, z])  # appending Point3 indirectly with python list of exactly three floats
+    pts.append(PySI.Point3(x, y, z)) # appending Point3 directly
+    pts.append([x, y, z]) # appending Point3 python list of exactly three floats
 ```
 
 Summary:
@@ -380,13 +445,17 @@ Summary:
 
 #### LinkRelationVector
 ```python
-    # construction
+    # construction with list of link relationships
     lrv = PySI.LinkRelationVector()  # empty
-    lrv = PySI.PointVector([[source_uuid, source_attribute, target_uuid, target_attribute], ...])  # list of link relationships
+    lrv = PySI.PointVector([[source_uuid, source_attribute, target_uuid, 
+                             target_attribute], ...]) 
 
-    # appending
-    pts.append(PySI.LinkRelation(source_uuid, source_attrib, target_uuid, target_attrib))  # appending LinkRelation directly
-    pts.append([source_uuid, source_attrib, target_uuid, target_attrib])  # appending LinkRelation indirectly with python list of exactly four strings
+    # appending LinkRelation directly
+    pts.append(PySI.LinkRelation(source_uuid, source_attrib, target_uuid,
+                                 target_attrib))  
+    
+    # appending LinkRelation indirectly with python list of exactly four strings
+    pts.append([source_uuid, source_attrib, target_uuid, target_attrib])  
 ```
 
 Summary:
@@ -421,11 +490,14 @@ Summary:
     # construction is not performed manually
 
     # appending of new cursor id
-    self.__partial_regions__[cursor_uuid] = PySI.PointVector()  # adding PointVector value directly
+    # adding PointVector value directly
+    self.__partial_regions__[cursor_uuid] = PySI.PointVector()  
 
     # appending of point according to cursor id
-    self.__partial_regions__[cursor_uuid].append(PySI.Point3(x, y, 1))  # adding PointVector value directly
-    self.__partial_regions__[cursor_uuid].append([x, y, 1])  # adding PointVector value directly
+    # adding PointVector value directly
+    # adding PointVector value directly
+    self.__partial_regions__[cursor_uuid].append(PySI.Point3(x, y, 1))  
+    self.__partial_regions__[cursor_uuid].append([x, y, 1])  
 ```
 
 * Custom datastructure to represent a contour/shape which is currently drawn by an end-user
@@ -440,7 +512,8 @@ Summary:
 
 #### String2FunctionMap
 ```python
-    # e.g. linking relationships eligible for emission are stored in a String2FunctionMap per SI-plugin
+    # e.g. linking relationships eligible for emission are stored in a 
+    # String2FunctionMap per SI-plugin
     
     def link_emission():
         return "emit"    
@@ -472,17 +545,21 @@ In linking action source effect:
 In linking action target effect
 
 ```python
-    # e.g. linking relationships eligible for reception are stored in a String2String2FunctionMapMap per SI-plugin
+    # e.g. linking relationships eligible for reception are stored in a 
+    # String2String2FunctionMapMap per SI-plugin
     self.enable_link_reception("my_source_attribute", "my_target ", self.receive_data)
 
-    # number of args is dependant on the number of returned values (tuple) of the emission function
+    # number of args is dependant on the number of returned values (tuple) of 
+    # the emission function
     def receive_data(self, x, y, z, source_uuid):
         # use data of linking action    
         pass    
     
     # construction
     link_recv = PySI.String2String2FunctionMapMap()
-    link_recv = PySI.String2String2FunctionMapMap({"my_source_link_attribute": {"my_target_link_attribute": self.receive_data})
+    
+    link = {"my_source_link_attribute": {"my_target_link_attribute": self.receive_data}
+    link_recv = PySI.String2String2FunctionMapMap(link)
     
     # assignment
     link_recv["my_source_link_attribute"]["my_target_link_attribute"] = self.receive_data
@@ -507,23 +584,28 @@ class Tag(SIEffect):
     region_display_name = "Tag"
 
     def __init__(self, shape=PySI.PointVector(), uuid="", kwargs={}):
-        super(Tag, self).__init__(shape, uuid, "res/tag.png", Tag.regiontype, Tag.regionname, kwargs)
+        super(Tag, self).__init__(shape, uuid, "res/tag.png", Tag.regiontype, 
+                                  Tag.regionname, kwargs)
         # specify which qml file to use
         self.qml_path = "plugins/standard_environment_library/tag/Tag.qml"
             
         # specify which color a region having the tag-effect should have
         self.color = PySI.Color(255, 0, 0, 255)
 
-        # add and enable the tagging effect by specifying its capability and and assigning its collision event functions
-        self.enable_effect("tagging", SIEffect.EMISSION, self.on_tag_enter_emit, self.on_tag_continuous_emit, self.on_tag_leave_emit)
+        # add and enable the tagging effect by specifying its capability and 
+        # and assigning its collision event functions
+        self.enable_effect("tagging", SIEffect.EMISSION, self.on_tag_enter_emit,
+                           self.on_tag_continuous_emit, self.on_tag_leave_emit)
 
     # define the functions needed for collision events with the "tagging" capability
     
-    # when another eligible effect first collides with this one, emit that the other one should be tagged
+    # when another eligible effect first collides with this one, emit that the 
+    # other one should be tagged
     def on_tag_enter_emit(self, other):
         return True
     
-    # it makes no sense to redundantly tag the other effect on every collision event, so we leave this blank 
+    # it makes no sense to redundantly tag the other effect on every collision 
+    # event, so we leave this blank 
     def on_tag_continuous_emit(self, other):
         pass
     
@@ -533,7 +615,7 @@ class Tag(SIEffect):
 ```
 
 Using the Tag-effect within a region yields something like this when drawn in SIGRun:
-![](res/tag_without_tex.png){ width=10% } 
+![](res/tag_without_tex.png){ width=40% } 
 
 Even though we specified a texture path (res/tag.png) in the constructor and specified a qml-file path (plugins/standard_environment_library/tag/Tag.qml), we do not see the texture on top of our region.
 In order to to make this styling visible we have to build the qml-file which associated with the Tag-effect.
@@ -578,12 +660,14 @@ This may look like this (in SIEffect constructor):
 self.texture_path = texture_path
 
 if self.texture_path != "":
-    ## member attribute variable storing the width of a texture of a region drawing as a float
+    ## member attribute variable storing the width of a texture of a region 
+    # drawing as a float
     #
     # This value is only set if texture_path is a valid path
     self.texture_width = 75
 
-    ## member attribute variable storing the height of a texture of a region drawing as a float
+    ## member attribute variable storing the height of a texture of a region 
+    # drawing as a float
     #
     # This value is only set if texture_path is a valid path
     self.texture_height = 75
@@ -597,7 +681,7 @@ if self.texture_path != "":
 ```
 
 Now that we have created a qml-file for our SI-Plugin, we finally can see the region texture on top of our region:
-![region with tag effect with texture](res/tag_with_tex.png){ width=10% } 
+![region with tag effect with texture](res/tag_with_tex.png){ width=40% } 
 
 Now that we can fully draw our newly created Tag-effect in SIGRun, we want to see it in action.
 In order to do so, we have to adjust or create effects which can receive Tag-effects.
@@ -612,8 +696,10 @@ First, we have to enable the Tag-effect in TextFile.py.
     # we only implemented on_enter in Tag.py so here we only need on_enter as well
     self.enable_effect("tagging", self.RECEPTION, self.on_tag_enter_recv, None, None)
 
-    # outside of the constructor but inside the class, we have to define on_tag_enter_recv
-    # note that we have the is_tagged parameter due to returning one value in the emission function in Tag.py    
+    # outside of the constructor but inside the class, we have to define 
+    # on_tag_enter_recv
+    # note that we have the is_tagged parameter due to returning one value 
+    # in the emission function in Tag.py    
     # modify qml in order to show the tag on a region having the TextFile-effect
     def on_tag_enter_recv(self, is_tagged):
         self.add_QML_data("visible", is_tagged, PySI.DataType.BOOL)         
@@ -667,22 +753,171 @@ And within the container component (*Item*), we add a *Rectangle* component:
 
 And finally after that, we can visually tag our TextFiles:
 
-![](res/pre_tag.png){ width=10% } 
-
-![](res/tag.png){ width=10% } 
-
-![](res/post_tag.png){ width=10% } 
+![](res/pre_tag.png){ width=30% } 
+![](res/tag.png){ width=30% } 
+![](res/post_tag.png){ width=30% } 
 
 However, this is a minimal example for visually tagging a TextFile.
 Of course, you can expand this approach by passing meta data, use different colors and shapes, according to your preferences and requirements.
 
-## A More Complex Use Case Example
+## A More Complex Use Case Example: Plot.py and Plot.qml
 
-Tag-Effect is fairly simple.
-To demonstrate how powerful, do this for getting a feel of possibilities
-Directory.py / Directory QML
+Preface:
 
-TODO
+The Tag-Effect is fairly simple and may hide the possibilities of SI, or at least makes it more difficult to grasp what is actually possible.
+To see the more powerful side of SI, you should have a look at the following sections.
+In that sections, an SI-Plugin is implemented which displays the result of a **matplotlib** plot within an *interactive region*.
+
+Prerequesites:
+
+* SIGRun *must* represent *interactive regions* as Qt5 QWidgets which *should* have exactly one QML QQuickWidget as a child object
+* SIGRun *must* apply the size of the axis-aligned bounding box (AABB) of a region drawing to that region's Qwidget's size to be displayed correctly
+* SIGRun *may* display regions in unexpected ways if data such as images exceed the regions' AABB's
+
+Application: 
+
+* API Users *must* define a new and big enough shape or contour of an effect's associated *interactive region* for data such as images to be properly displayed by SIRen if the region's original AABB's dimenions are exceeded 
+
+
+```python
+from libPySI import PySI
+from plugins.standard_environment_library.SIEffect import SIEffect
+import matplotlib
+matplotlib.use('Agg')  # required
+import matplotlib.pyplot as plt
+import numpy as np
+
+class Plot(SIEffect):
+    regiontype = PySI.EffectType.SI_CUSTOM
+    regionname = "__PLOT__"
+    region_display_name = "Plot"
+
+    def __init__(self, shape=PySI.PointVector(), uuid="", kwargs={}):
+        super(Plot, self).__init__(shape, uuid, "res/dot-plot.png", 
+                                   Plot.regiontype, Plot.regionname, kwargs)
+        self.qml_path = "plugins/standard_environment_library/plot/Plot.qml"
+        self.color = PySI.Color(63, 136, 143, 255)
+    
+        # matplotlib code required to plot a graph
+        figure = plt.figure()
+        plot = figure.add_subplot(111)
+
+        x = np.arange(0, 100, 0.1)
+		y = np.sin(x) / x
+		plot.plot(x, y)
+    
+        # retrieve the plot as numpy.ndarray
+        np_fig = self.fig_2_ndarray(figure)
+
+        # get image dimensions
+		self.width, self.height, _ = np_fig.shape
+    
+        # get effect's associated region's current x and y coordinates 
+        # (top left corner of region's axis-aligned bounding box)
+        # for relative_x_pos() and relative_y_pos() see code documentation of PySI
+		x = self.relative_x_pos()
+		y = self.relative_y_pos()
+    
+        # current shape may be too small to contain the complete image
+        # recompute shape according to image size at the regions position
+        # now image exactly fits into the shape (and therefore Qt5 QWidget) 
+		self.shape = PySI.PointVector([[x, y], [x, y + self.height], 
+                                      [x + self.width, y + self.height], 
+                                      [x + self.width, y]])
+        
+        # assign new data to QML for styling
+		self.add_QML_data("image", np_fig.tobytes(), PySI.DataType.BYTES, 
+                          {"width": self.width, "height": self.height})
+
+		self.add_QML_data("img_width", self.width, PySI.DataType.INT)
+		self.add_QML_data("img_height", self.height, PySI.DataType.INT)
+		self.add_QML_data("widget_width", self.width, PySI.DataType.FLOAT)
+		self.add_QML_data("widget_height", self.height, PySI.DataType.FLOAT)
+
+    # helper function for getting a plot as numpy.ndarray
+    def fig_2_ndarray(self, fig, mode="rgba"):
+		fig.canvas.draw()
+
+		w, h = fig.canvas.get_width_height()
+		buf = np.fromstring(fig.canvas.tostring_argb(), dtype=np.uint8)
+		buf.shape = (w, h, 4)
+
+		if mode == "rgba":
+			# convert to rgba
+			buf = np.roll(buf, 3, axis=2)
+			return buf
+		elif mode == "argb":
+			return buf
+```
+
+QML-file:
+```javascript
+import QtQuick 2.7
+import siqml 1.0
+
+Item {
+	function updateData(data) {
+	    if(data.image)
+	    {
+	        plot_texture.image = data.image;
+            plot_texture.width = data.img_width;
+            plot_texture.height = data.img_height;
+
+            plot_texture.anchors.leftMargin = data.widget_width / 2 - plot_texture.width / 2;
+            plot_texture.anchors.topMargin = data.widget_height / 2 - plot_texture.height / 2;
+	    }
+
+        idle_texture.width = data.icon_width;
+        idle_texture.height = data.icon_height;
+        idle_texture.source = data.img_path;
+
+        idle_texture.anchors.leftMargin = data.widget_width / 2 - idle_texture.width / 2;
+        idle_texture.anchors.topMargin = data.widget_height / 2 - idle_texture.height / 2;
+	}
+
+	id: container
+		visible: true
+
+	Image {
+	    id: idle_texture
+
+	    anchors.left: parent.left
+        anchors.top: parent.top
+	}
+
+    PlotItem {
+        id: plot_texture
+    }
+}
+```
+
+Without adjusting the shape of the target *interactive region*, behaviour such as this can be expected:
+
+```python
+    # shape will not be adjusted
+    # self.shape = PySI.PointVector([[x, y], [x, y + self.height], 
+    #                               [x + self.width, y + self.height], [x + self.width, y]])
+```
+
+![img](res/no_shape_adjustment_sketch.png "Drawing an *interactive region* intended to contain a plot"){ width=40% } 
+![img](res/no_shape_adjustment_plot.png "Plot is rendered within the *interactive region*, however the image is cut-off due to no adjustment of the region's shape"){ width=40% } 
+
+However, adjusting the shape of the target region yields the desired output:
+
+```python
+    # shape will be adjusted
+    self.shape = PySI.PointVector([[x, y], [x, y + self.height], 
+                                  [x + self.width, y + self.height], [x + self.width, y]])
+```
+
+![img](res/shape_adjustment_sketch.png "Drawing an *interactive region* intended to contain a plot"){ width=40% } 
+![img](res/shape_adjustment_plot.png "Plot is rendered within the *interactive region* and the image is not cut-off due to the adjustment of the region's shape"){ width=40% } 
+
+Summary:
+
+* API Users *must* use self.shape in conjunction with the assignment of a new PySI.PointVector which is initialized with a python list (see example above) to reassign the shape of the effect's associated shape or contour
+* API Users *should* compute a new and big enough shape to fit an image which exceeds the region's AABB's current dimensions as the AABB **must** be viewed as the QML container 
+* API Users *may* encounter unexpected behaviour in terms of rendering a region when its styling data and size do not match
 
 ## References {#refs}
 [1] Wimmer, R., & Hahn, J. (2018). A Concept for Sketchable Workspaces and Workflows. <a>https://epub.uni-regensburg.de/36818/1/A%20Concept%20for%20Sketchable%20Workspaces%20and%20Workflows.pdf</a>
