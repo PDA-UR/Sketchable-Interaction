@@ -253,6 +253,7 @@ if (BUILD_DOCS)
     add_custom_target(APIExamplesPDF
         COMMAND pandoc ${CMAKE_CURRENT_SOURCE_DIR}/SI/docs/api_examples/api_examples.md -o ${CMAKE_CURRENT_SOURCE_DIR}/SI-Doc/si/api_examples/api_examples.pdf
         COMMAND pandoc ${CMAKE_CURRENT_SOURCE_DIR}/SI/docs/api_examples/api_examples.md -o ${CMAKE_CURRENT_SOURCE_DIR}/SI-Doc/si/api_examples/api_examples.html
+        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/SI/docs/api_examples
     )
 
     add_dependencies(SIGRunDocsPDF SIGRunDocs)
