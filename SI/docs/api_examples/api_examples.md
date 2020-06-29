@@ -273,9 +273,9 @@ Summary:
 
 Data originates from python calls in a SI-Plugin
 ```python
-self.add_QML_data("width", 200, PySI.DataType.INT)
-self.add_QML_data("height", 300, PySI.DataType.INT)
-self.add_QML_data("visible", True, PySI.DataType.BOOL)
+self.set_QML_data("width", 200, PySI.DataType.INT)
+self.set_QML_data("height", 300, PySI.DataType.INT)
+self.set_QML_data("visible", True, PySI.DataType.BOOL)
 ```
 
 and then data is applied in QML for registering the styling changes
@@ -288,7 +288,7 @@ Item
         // update the width, height and visibility of the container with data 
         //    received from the associated plugin-file
         // the key/value pairs of data-parameter are equal to the ones specified
-        //    in add_QML_data
+        //    in set_QML_data
         container.width = data.width;  // container.width now has the value 200
         container.height = data.height;  // container.height now has the value 
         //    300
@@ -311,9 +311,9 @@ Summary:
 * *data*-parameter is of type JavaScript-Object
 * API Users **must** use the *updateData(data)*-function to update qml-file and styling at runtime
 * API Users **must** use common JavaScript for the *updateData(data)*-function
-* API USers **must** call the function *self.add_QML_data(key, value, datatype)* from within the python plugin to change data in the qml-file
+* API USers **must** call the function *self.set_QML_data(key, value, datatype)* from within the python plugin to change data in the qml-file
     * *key*-parameter directly translates to the key identifier in the JavaScript object *data*
-    (example: self.add_QML_data("width", 100, PySI.DataType.INT) will result in data.width = 100)
+    (example: self.set_QML_data("width", 100, PySI.DataType.INT) will result in data.width = 100)
     * *value*-parameter depicts the value assigned to the perviously specified key of the *data*-object
     * *datatype*-parameter is required by SIGRun to transfer the data changes to QML
 * API Users **must** assign values of the *data*-object to qml-components pre-defined in the qml-file 
@@ -673,11 +673,11 @@ if self.texture_path != "":
     self.texture_height = 75
     
     # apply data in QML 
-    self.__add_data__("img_width", self.texture_width, PySI.DataType.INT)
-    self.__add_data__("img_height", self.texture_height, PySI.DataType.INT)
-    self.__add_data__("img_path", self.texture_path, PySI.DataType.STRING)
-    self.__add_data__("widget_width", self.width, PySI.DataType.FLOAT)
-    self.__add_data__("widget_height", self.height, PySI.DataType.FLOAT)
+    self.__set_data__("img_width", self.texture_width, PySI.DataType.INT)
+    self.__set_data__("img_height", self.texture_height, PySI.DataType.INT)
+    self.__set_data__("img_path", self.texture_path, PySI.DataType.STRING)
+    self.__set_data__("widget_width", self.width, PySI.DataType.FLOAT)
+    self.__set_data__("widget_height", self.height, PySI.DataType.FLOAT)
 ```
 
 Now that we have created a qml-file for our SI-Plugin, we finally can see the region texture on top of our region:
@@ -702,7 +702,7 @@ First, we have to enable the Tag-effect in TextFile.py.
     # in the emission function in Tag.py    
     # modify qml in order to show the tag on a region having the TextFile-effect
     def on_tag_enter_recv(self, is_tagged):
-        self.add_QML_data("visible", is_tagged, PySI.DataType.BOOL)         
+        self.set_QML_data("visible", is_tagged, PySI.DataType.BOOL)         
 ```
 
 Additionally, we have to adjust TextFile.qml as well to support this new functionality.
@@ -826,13 +826,13 @@ class Plot(SIEffect):
                                       [x + self.width, y]])
         
         # assign new data to QML for styling
-		self.add_QML_data("image", np_fig.tobytes(), PySI.DataType.BYTES, 
+		self.set_QML_data("image", np_fig.tobytes(), PySI.DataType.BYTES, 
                           {"width": self.width, "height": self.height})
 
-		self.add_QML_data("img_width", self.width, PySI.DataType.INT)
-		self.add_QML_data("img_height", self.height, PySI.DataType.INT)
-		self.add_QML_data("widget_width", self.width, PySI.DataType.FLOAT)
-		self.add_QML_data("widget_height", self.height, PySI.DataType.FLOAT)
+		self.set_QML_data("img_width", self.width, PySI.DataType.INT)
+		self.set_QML_data("img_height", self.height, PySI.DataType.INT)
+		self.set_QML_data("widget_width", self.width, PySI.DataType.FLOAT)
+		self.set_QML_data("widget_height", self.height, PySI.DataType.FLOAT)
 
     # helper function for getting a plot as numpy.ndarray
     def fig_2_ndarray(self, fig, mode="rgba"):

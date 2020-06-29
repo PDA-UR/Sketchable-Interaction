@@ -479,7 +479,7 @@ class PySIPySIEffectTest(unittest.TestCase):
         pyeff = TestClass()
 
         self.assertNotEqual(pyeff.__init__, None)
-        self.assertNotEqual(pyeff.__add_data__, None)
+        self.assertNotEqual(pyeff.__set_data__, None)
         self.assertNotEqual(pyeff.__signal_deletion__, None)
         self.assertNotEqual(pyeff.__embed_file_standard_appliation_into_context__, None)
         self.assertNotEqual(pyeff.__destroy_embedded_window__, None)
