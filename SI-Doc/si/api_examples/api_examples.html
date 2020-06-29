@@ -241,9 +241,9 @@
 </ul>
 <h4 id="data-application">Data Application</h4>
 <p>Data originates from python calls in a SI-Plugin</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb5-1" title="1"><span class="va">self</span>.add_QML_data(<span class="st">&quot;width&quot;</span>, <span class="dv">200</span>, PySI.DataType.INT)</a>
-<a class="sourceLine" id="cb5-2" title="2"><span class="va">self</span>.add_QML_data(<span class="st">&quot;height&quot;</span>, <span class="dv">300</span>, PySI.DataType.INT)</a>
-<a class="sourceLine" id="cb5-3" title="3"><span class="va">self</span>.add_QML_data(<span class="st">&quot;visible&quot;</span>, <span class="va">True</span>, PySI.DataType.BOOL)</a></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb5-1" title="1"><span class="va">self</span>.set_QML_data(<span class="st">&quot;width&quot;</span>, <span class="dv">200</span>, PySI.DataType.INT)</a>
+<a class="sourceLine" id="cb5-2" title="2"><span class="va">self</span>.set_QML_data(<span class="st">&quot;height&quot;</span>, <span class="dv">300</span>, PySI.DataType.INT)</a>
+<a class="sourceLine" id="cb5-3" title="3"><span class="va">self</span>.set_QML_data(<span class="st">&quot;visible&quot;</span>, <span class="va">True</span>, PySI.DataType.BOOL)</a></code></pre></div>
 <p>and then data is applied in QML for registering the styling changes</p>
 <div class="sourceCode" id="cb6"><pre class="sourceCode javascript"><code class="sourceCode javascript"><a class="sourceLine" id="cb6-1" title="1">Item</a>
 <a class="sourceLine" id="cb6-2" title="2"><span class="op">{</span></a>
@@ -252,7 +252,7 @@
 <a class="sourceLine" id="cb6-5" title="5">        <span class="co">// update the width, height and visibility of the container with data </span></a>
 <a class="sourceLine" id="cb6-6" title="6">        <span class="co">//    received from the associated plugin-file</span></a>
 <a class="sourceLine" id="cb6-7" title="7">        <span class="co">// the key/value pairs of data-parameter are equal to the ones specified</span></a>
-<a class="sourceLine" id="cb6-8" title="8">        <span class="co">//    in add_QML_data</span></a>
+<a class="sourceLine" id="cb6-8" title="8">        <span class="co">//    in set_QML_data</span></a>
 <a class="sourceLine" id="cb6-9" title="9">        <span class="va">container</span>.<span class="at">width</span> <span class="op">=</span> <span class="va">data</span>.<span class="at">width</span><span class="op">;</span>  <span class="co">// container.width now has the value 200</span></a>
 <a class="sourceLine" id="cb6-10" title="10">        <span class="va">container</span>.<span class="at">height</span> <span class="op">=</span> <span class="va">data</span>.<span class="at">height</span><span class="op">;</span>  <span class="co">// container.height now has the value </span></a>
 <a class="sourceLine" id="cb6-11" title="11">        <span class="co">//    300</span></a>
@@ -273,9 +273,9 @@
 <li><em>data</em>-parameter is of type JavaScript-Object</li>
 <li>API Users <strong>must</strong> use the <em>updateData(data)</em>-function to update qml-file and styling at runtime</li>
 <li>API Users <strong>must</strong> use common JavaScript for the <em>updateData(data)</em>-function</li>
-<li>API USers <strong>must</strong> call the function <em>self.add_QML_data(key, value, datatype)</em> from within the python plugin to change data in the qml-file
+<li>API USers <strong>must</strong> call the function <em>self.set_QML_data(key, value, datatype)</em> from within the python plugin to change data in the qml-file
 <ul>
-<li><em>key</em>-parameter directly translates to the key identifier in the JavaScript object <em>data</em> (example: self.add_QML_data(“width”, 100, PySI.DataType.INT) will result in data.width = 100)</li>
+<li><em>key</em>-parameter directly translates to the key identifier in the JavaScript object <em>data</em> (example: self.set_QML_data(“width”, 100, PySI.DataType.INT) will result in data.width = 100)</li>
 <li><em>value</em>-parameter depicts the value assigned to the perviously specified key of the <em>data</em>-object</li>
 <li><em>datatype</em>-parameter is required by SIGRun to transfer the data changes to QML</li>
 </ul></li>
@@ -582,11 +582,11 @@
 <a class="sourceLine" id="cb21-14" title="14">    <span class="va">self</span>.texture_height <span class="op">=</span> <span class="dv">75</span></a>
 <a class="sourceLine" id="cb21-15" title="15">    </a>
 <a class="sourceLine" id="cb21-16" title="16">    <span class="co"># apply data in QML </span></a>
-<a class="sourceLine" id="cb21-17" title="17">    <span class="va">self</span>.__add_data__(<span class="st">&quot;img_width&quot;</span>, <span class="va">self</span>.texture_width, PySI.DataType.INT)</a>
-<a class="sourceLine" id="cb21-18" title="18">    <span class="va">self</span>.__add_data__(<span class="st">&quot;img_height&quot;</span>, <span class="va">self</span>.texture_height, PySI.DataType.INT)</a>
-<a class="sourceLine" id="cb21-19" title="19">    <span class="va">self</span>.__add_data__(<span class="st">&quot;img_path&quot;</span>, <span class="va">self</span>.texture_path, PySI.DataType.STRING)</a>
-<a class="sourceLine" id="cb21-20" title="20">    <span class="va">self</span>.__add_data__(<span class="st">&quot;widget_width&quot;</span>, <span class="va">self</span>.width, PySI.DataType.FLOAT)</a>
-<a class="sourceLine" id="cb21-21" title="21">    <span class="va">self</span>.__add_data__(<span class="st">&quot;widget_height&quot;</span>, <span class="va">self</span>.height, PySI.DataType.FLOAT)</a></code></pre></div>
+<a class="sourceLine" id="cb21-17" title="17">    <span class="va">self</span>.__set_data__(<span class="st">&quot;img_width&quot;</span>, <span class="va">self</span>.texture_width, PySI.DataType.INT)</a>
+<a class="sourceLine" id="cb21-18" title="18">    <span class="va">self</span>.__set_data__(<span class="st">&quot;img_height&quot;</span>, <span class="va">self</span>.texture_height, PySI.DataType.INT)</a>
+<a class="sourceLine" id="cb21-19" title="19">    <span class="va">self</span>.__set_data__(<span class="st">&quot;img_path&quot;</span>, <span class="va">self</span>.texture_path, PySI.DataType.STRING)</a>
+<a class="sourceLine" id="cb21-20" title="20">    <span class="va">self</span>.__set_data__(<span class="st">&quot;widget_width&quot;</span>, <span class="va">self</span>.width, PySI.DataType.FLOAT)</a>
+<a class="sourceLine" id="cb21-21" title="21">    <span class="va">self</span>.__set_data__(<span class="st">&quot;widget_height&quot;</span>, <span class="va">self</span>.height, PySI.DataType.FLOAT)</a></code></pre></div>
 <p>Now that we have created a qml-file for our SI-Plugin, we finally can see the region texture on top of our region: <img src="res/tag_with_tex.png" alt="region with tag effect with texture" style="width:40.0%" /></p>
 <p>Now that we can fully draw our newly created Tag-effect in SIGRun, we want to see it in action. In order to do so, we have to adjust or create effects which can receive Tag-effects.</p>
 <h3 id="adjusting-a-receiver-effect">Adjusting a receiver effect</h3>
@@ -602,7 +602,7 @@
 <a class="sourceLine" id="cb22-9" title="9">    <span class="co"># in the emission function in Tag.py    </span></a>
 <a class="sourceLine" id="cb22-10" title="10">    <span class="co"># modify qml in order to show the tag on a region having the TextFile-effect</span></a>
 <a class="sourceLine" id="cb22-11" title="11">    <span class="kw">def</span> on_tag_enter_recv(<span class="va">self</span>, is_tagged):</a>
-<a class="sourceLine" id="cb22-12" title="12">        <span class="va">self</span>.add_QML_data(<span class="st">&quot;visible&quot;</span>, is_tagged, PySI.DataType.BOOL)         </a></code></pre></div>
+<a class="sourceLine" id="cb22-12" title="12">        <span class="va">self</span>.set_QML_data(<span class="st">&quot;visible&quot;</span>, is_tagged, PySI.DataType.BOOL)         </a></code></pre></div>
 <p>Additionally, we have to adjust TextFile.qml as well to support this new functionality. In updateData(data)-function we add the line:</p>
 <div class="sourceCode" id="cb23"><pre class="sourceCode javascript"><code class="sourceCode javascript"><a class="sourceLine" id="cb23-1" title="1">    <span class="kw">function</span> <span class="at">updateData</span>(data)</a>
 <a class="sourceLine" id="cb23-2" title="2">    <span class="op">{</span></a>
@@ -702,13 +702,13 @@
 <a class="sourceLine" id="cb25-44" title="44">                                      [x <span class="op">+</span> <span class="va">self</span>.width, y]])</a>
 <a class="sourceLine" id="cb25-45" title="45">        </a>
 <a class="sourceLine" id="cb25-46" title="46">        <span class="co"># assign new data to QML for styling</span></a>
-<a class="sourceLine" id="cb25-47" title="47">        <span class="va">self</span>.add_QML_data(<span class="st">&quot;image&quot;</span>, np_fig.tobytes(), PySI.DataType.BYTES, </a>
+<a class="sourceLine" id="cb25-47" title="47">        <span class="va">self</span>.set_QML_data(<span class="st">&quot;image&quot;</span>, np_fig.tobytes(), PySI.DataType.BYTES, </a>
 <a class="sourceLine" id="cb25-48" title="48">                          {<span class="st">&quot;width&quot;</span>: <span class="va">self</span>.width, <span class="st">&quot;height&quot;</span>: <span class="va">self</span>.height})</a>
 <a class="sourceLine" id="cb25-49" title="49"></a>
-<a class="sourceLine" id="cb25-50" title="50">        <span class="va">self</span>.add_QML_data(<span class="st">&quot;img_width&quot;</span>, <span class="va">self</span>.width, PySI.DataType.INT)</a>
-<a class="sourceLine" id="cb25-51" title="51">        <span class="va">self</span>.add_QML_data(<span class="st">&quot;img_height&quot;</span>, <span class="va">self</span>.height, PySI.DataType.INT)</a>
-<a class="sourceLine" id="cb25-52" title="52">        <span class="va">self</span>.add_QML_data(<span class="st">&quot;widget_width&quot;</span>, <span class="va">self</span>.width, PySI.DataType.FLOAT)</a>
-<a class="sourceLine" id="cb25-53" title="53">        <span class="va">self</span>.add_QML_data(<span class="st">&quot;widget_height&quot;</span>, <span class="va">self</span>.height, PySI.DataType.FLOAT)</a>
+<a class="sourceLine" id="cb25-50" title="50">        <span class="va">self</span>.set_QML_data(<span class="st">&quot;img_width&quot;</span>, <span class="va">self</span>.width, PySI.DataType.INT)</a>
+<a class="sourceLine" id="cb25-51" title="51">        <span class="va">self</span>.set_QML_data(<span class="st">&quot;img_height&quot;</span>, <span class="va">self</span>.height, PySI.DataType.INT)</a>
+<a class="sourceLine" id="cb25-52" title="52">        <span class="va">self</span>.set_QML_data(<span class="st">&quot;widget_width&quot;</span>, <span class="va">self</span>.width, PySI.DataType.FLOAT)</a>
+<a class="sourceLine" id="cb25-53" title="53">        <span class="va">self</span>.set_QML_data(<span class="st">&quot;widget_height&quot;</span>, <span class="va">self</span>.height, PySI.DataType.FLOAT)</a>
 <a class="sourceLine" id="cb25-54" title="54"></a>
 <a class="sourceLine" id="cb25-55" title="55">    <span class="co"># helper function for getting a plot as numpy.ndarray</span></a>
 <a class="sourceLine" id="cb25-56" title="56">    <span class="kw">def</span> fig_2_ndarray(<span class="va">self</span>, fig, mode<span class="op">=</span><span class="st">&quot;rgba&quot;</span>):</a>

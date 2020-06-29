@@ -22,7 +22,7 @@ class PySIEffect: public SIObject
 public:
     PySIEffect(const std::vector<glm::vec3>& contour, const std::string& uuid, const std::string& tex_path, const bp::dict& kwargs);
 
-    void __add_data__(const std::string& key, const bp::object& value, const uint32_t type, const bp::dict& data_kwargs);
+    void __set_data__(const std::string& key, const bp::object& value, const uint32_t type, const bp::dict& data_kwargs);
     void __embed_file_standard_appliation_into_context__(const std::string& uuid, const std::string& path);
     void __destroy_embedded_file_standard_appliation_in_context__(const std::string& uuid);
     void __signal_deletion__();

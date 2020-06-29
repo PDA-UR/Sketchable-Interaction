@@ -252,22 +252,44 @@ void Context::register_new_region(const std::vector<glm::vec3>& contour, const s
 
 void Context::register_new_region_via_name(const std::vector<glm::vec3>& contour, const std::string& effect_name, bool as_selector, bp::dict& kwargs)
 {
+    int id = bp::extract<int>(d_plugins[effect_name].attr(d_plugins[effect_name].attr(SI_INTERNAL_NAME)).attr(SI_INTERNAL_REGION_TYPE));
+
     if(as_selector)
     {
         HANDLE_PYTHON_CALL(PY_WARNING, "The plugin effect for which a selector effect is to be created does not have the attribute \'region_display_name\' as a static class member.",
-            Region temp(contour, d_available_plugins[effect_name]);
+            Region temp(contour, d_plugins[effect_name]);
 
             kwargs[SI_SELECTOR_TARGET_COLOR] = temp.color();
             kwargs[SI_SELECTOR_TARGET_TEXTURE] = temp.raw_effect().attr("texture_path");
-            kwargs[SI_SELECTOR_TARGET_DISPLAY_NAME] = d_available_plugins[effect_name].attr(d_available_plugins[effect_name].attr(SI_INTERNAL_NAME)).attr(SI_INTERNAL_REGION_DISPLAY_NAME);
+            kwargs[SI_SELECTOR_TARGET_DISPLAY_NAME] = d_plugins[effect_name].attr(d_plugins[effect_name].attr(SI_INTERNAL_NAME)).attr(SI_INTERNAL_REGION_DISPLAY_NAME);
             kwargs[SI_SELECTOR_TARGET_NAME] = effect_name;
 
-            d_region_insertion_queue.emplace(contour, d_plugins[SI_NAME_EFFECT_SELECTOR], -1, kwargs);
+            d_region_insertion_queue.emplace(contour, d_plugins[SI_NAME_EFFECT_SELECTOR], id, kwargs);
         )
     }
     else
     {
-        d_region_insertion_queue.emplace(contour, d_available_plugins[effect_name], -1, kwargs);
+        if(id == SI_TYPE_DIRECTORY)
+        {
+            std::string k_cwd = std::string(bp::extract<char*>(kwargs[SI_CWD]));
+
+            if(!k_cwd.empty())
+                upfs->set_cwd(k_cwd);
+
+            const std::string& cwd = upfs->cwd();
+            const std::vector<std::string> children_paths = upfs->cwd_contents_paths(cwd);
+            const std::vector<int> children_types = upfs->cwd_contents_types(children_paths);
+
+            bp::list children;
+
+            for(int32_t i = 0; i < children_paths.size(); ++i)
+                children.append(bp::make_tuple(children_paths[i], children_types[i]));
+
+            kwargs[SI_CWD] = cwd;
+            kwargs[SI_CHILDREN] = children;
+        }
+
+        d_region_insertion_queue.emplace(contour, d_plugins[effect_name], id, kwargs);
     }
 }
 
@@ -304,6 +326,41 @@ void Context::register_new_region_via_type(const std::vector<glm::vec3>& contour
             d_region_insertion_queue.emplace(contour, effect->second, id, kwargs);
         }
     )
+}
+
+void Context::register_region_via_class_object(const std::vector<glm::vec3>& contour, bp::object& clazz, bp::dict& kwargs)
+{
+    auto effect = std::find_if(d_plugins.begin(), d_plugins.end(), [&clazz](auto& pair)
+    {
+        return pair.second.attr(SI_INTERNAL_NAME) == clazz.attr(SI_INTERNAL_NAME);
+    });
+
+    if(effect != d_plugins.end())
+    {
+        int id = bp::extract<int>(clazz.attr(clazz.attr(SI_INTERNAL_NAME)).attr(SI_INTERNAL_REGION_TYPE));
+
+        if(id == SI_TYPE_DIRECTORY)
+        {
+            std::string k_cwd = std::string(bp::extract<char*>(kwargs[SI_CWD]));
+
+            if(!k_cwd.empty())
+                upfs->set_cwd(k_cwd);
+
+            const std::string& cwd = upfs->cwd();
+            const std::vector<std::string> children_paths = upfs->cwd_contents_paths(cwd);
+            const std::vector<int> children_types = upfs->cwd_contents_types(children_paths);
+
+            bp::list children;
+
+            for(int32_t i = 0; i < children_paths.size(); ++i)
+                children.append(bp::make_tuple(children_paths[i], children_types[i]));
+
+            kwargs[SI_CWD] = cwd;
+            kwargs[SI_CHILDREN] = children;
+        }
+
+        d_region_insertion_queue.emplace(contour, effect->second, id, kwargs);
+    }
 }
 
 void Context::register_link_event_emission(const std::string& event_uuid, const std::string& sender_uuid, const std::string& sender_attribute, const bp::object& args)
