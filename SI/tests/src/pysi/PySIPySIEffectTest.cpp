@@ -49,10 +49,10 @@ TEST_F(PySIPySIEffectTest, add_data)
 
     PySIEffect pysie(contour, _UUID_, "", bp::dict());
 
-    EXPECT_NO_FATAL_FAILURE(pysie.__add_data__("test", bp::object(1), SI_DATA_TYPE_INT, bp::dict()));
-    EXPECT_NO_FATAL_FAILURE(pysie.__add_data__("test2", bp::object(1.0), SI_DATA_TYPE_FLOAT, bp::dict()));
-    EXPECT_NO_FATAL_FAILURE(pysie.__add_data__("test3", bp::object(std::string("test")), SI_DATA_TYPE_STRING, bp::dict()));
-    EXPECT_NO_FATAL_FAILURE(pysie.__add_data__("test4", bp::object(true), SI_DATA_TYPE_BOOL, bp::dict()));
+    EXPECT_NO_FATAL_FAILURE(pysie.__set_data__("test", bp::object(1), SI_DATA_TYPE_INT, bp::dict()));
+    EXPECT_NO_FATAL_FAILURE(pysie.__set_data__("test2", bp::object(1.0), SI_DATA_TYPE_FLOAT, bp::dict()));
+    EXPECT_NO_FATAL_FAILURE(pysie.__set_data__("test3", bp::object(std::string("test")), SI_DATA_TYPE_STRING, bp::dict()));
+    EXPECT_NO_FATAL_FAILURE(pysie.__set_data__("test4", bp::object(true), SI_DATA_TYPE_BOOL, bp::dict()));
 
     ASSERT_TRUE(pysie.d_data_changed);
 }

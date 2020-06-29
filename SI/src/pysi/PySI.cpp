@@ -53,7 +53,7 @@ BOOST_PYTHON_MODULE(libPySI)
         create_map<MapExposureString2_String2FunctionMap_Map, std::map<std::string, std::map<std::string, bp::object>>>("String2String2FunctionMapMap");
 
         bp::class_<PySIEffect, boost::noncopyable>("Effect",bp::init<const std::vector<glm::vec3> &, const std::string &, const std::string &, const bp::dict &>())
-                .def("__add_data__", &PySIEffect::__add_data__)
+                .def("__set_data__", &PySIEffect::__set_data__)
                 .def("__signal_deletion__", &PySIEffect::__signal_deletion__)
                 .def("__embed_file_standard_appliation_into_context__", &PySIEffect::__embed_file_standard_appliation_into_context__)
                 .def("__destroy_embedded_window__", &PySIEffect::__destroy_embedded_file_standard_appliation_in_context__)
@@ -187,7 +187,9 @@ BOOST_PYTHON_MODULE(libPySI)
 
 
             bp::class_<PySIStartup, boost::noncopyable>("Startup", bp::no_init)
-                .def("create_region_by_id", &PySIStartup::create_region_by_id).staticmethod("create_region_by_id")
+                .def("create_region_by_type", &PySIStartup::create_region_by_type).staticmethod("create_region_by_type")
+                .def("create_region_by_name", &PySIStartup::create_region_by_name).staticmethod("create_region_by_name")
+                .def("create_region_by_class", &PySIStartup::create_region_by_class).staticmethod("create_region_by_class")
                 .def("context_dimensions", &PySIStartup::context_dimensions).staticmethod("context_dimensions")
                 .def("logger_quench_messages_from_class", &PySIStartup::logger_quench_messages_from_class).staticmethod("logger_quench_messages_from_class")
                 .def("logger_unquench_messages_from_class", &PySIStartup::logger_unquench_messages_from_class).staticmethod("logger_unquench_messages_from_class")

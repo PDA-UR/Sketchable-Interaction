@@ -18,7 +18,9 @@ public:
     ~PySIStartup();
 
     static bp::tuple context_dimensions();
-    static void create_region_by_id(const bp::list& shape, int effect_type, bp::dict& kwargs);
+    static void create_region_by_type(const bp::list& shape, int effect_type, bp::dict& kwargs);
+    static void create_region_by_name(const bp::list &contour, const std::string& name, bp::dict &kwargs);
+    static void create_region_by_class(const bp::list &contour, bp::object& clazz, bp::dict &kwargs);
 
     static void logger_quench_messages_from_class(const std::string& class_name);
     static void logger_unquench_messages_from_class(const std::string& class_name);

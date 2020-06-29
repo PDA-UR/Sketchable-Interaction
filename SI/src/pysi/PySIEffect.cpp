@@ -198,7 +198,7 @@ std::vector<glm::vec3> &PySIEffect::aabb()
     return d_aabb;
 }
 
-void PySIEffect::__add_data__(const std::string &key, const bp::object &value, const uint32_t type, const bp::dict& kwargs)
+void PySIEffect::__set_data__(const std::string &key, const bp::object &value, const uint32_t type, const bp::dict& kwargs)
 {
     QVariant qv;
 

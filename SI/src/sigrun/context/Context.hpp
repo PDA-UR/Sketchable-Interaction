@@ -58,6 +58,7 @@ public:
     void register_new_region(const std::vector<glm::vec3>& contour, const std::string& uuid);
     void register_new_region_via_name(const std::vector<glm::vec3>& contour, const std::string& name, bool as_selector, bp::dict& kwargs);
     void register_new_region_via_type(const std::vector<glm::vec3>& contour, int type, bp::dict& kwargs);
+    void register_region_via_class_object(const std::vector<glm::vec3>& contour, bp::object& clazz, bp::dict& kwargs);
 
     void register_link_event_emission(const std::string& event_uuid, const std::string& sender_uuid, const std::string& sender_attribute, const bp::object& args);
 
