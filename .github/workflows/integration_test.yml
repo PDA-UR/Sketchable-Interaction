@@ -45,24 +45,35 @@ jobs:
         echo Old Version: $last_major_version.$last_minor_version.$last_patch_version
         echo New Version: $new_major_version.$new_minor_version.$new_patch_version
         
-        filename=sigrun"${current}".html
-        git rm SI-Doc/si/sigrun/html/"$filename"
-        
+        filename_sigrun=sigrun"${current}".html
+        filename_pysi=pysi"${current}".html
+
+        git rm SI-Doc/si/sigrun/html/"$filename_sigrun"
+        git rm SI-Doc/si/pysi/html/"$filename_pysi"
+
         echo $new_major_version.$new_minor_version.$new_patch_version > '.version'  
             
         current=$(cat .version)
         
         sed -i 's|SIGRun|SIGRun'"$current"'|g' SI-Doc/si/sigrun/html/docs/index.html
+        sed -i 's|PySI|PySI'"$current"'|g' SI-Doc/si/pysi/html/docs/index.html
         
-        filename=sigrun"${current}".html
-        mv SI-Doc/si/sigrun/html/sigrun.html SI-Doc/si/sigrun/html/"$filename"  
+        filename_sigrun=sigrun"${current}".html
+        filename_pysi=pysi"${current}".html
+
+        mv SI-Doc/si/sigrun/html/sigrun.html SI-Doc/si/sigrun/html/"$filename_sigrun"  
+        mv SI-Doc/si/pysi/html/pysi.html SI-Doc/si/pysi/html/"$filename_pysi"   
+
         git rm -rf SI-Doc/si/sigrun/html/sigrun.html
-        
+        git rm -rf SI-Doc/si/sigrun/html/pysi.html
+
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
         git add .version
         git add SI-Doc/si/sigrun/html/docs/index.html
-        git add SI-Doc/si/sigrun/html/"$filename"
+        git add SI-Doc/si/sigrun/html/"$filename_sigrun"
+        git add SI-Doc/si/sigrun/html/"$filename_pysi"
+
         git commit -m "Update Version"
         
     - name: Set C++ Compiler
