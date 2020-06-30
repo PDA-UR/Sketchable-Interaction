@@ -263,11 +263,7 @@ SI/plugins/standard_environment_library/external_application/__pycache__/
 
 SI/plugins/standard_environment_library/preview/__pycache__/
 
-SI-Doc/si/pysi/html/
-
 SI-Doc/si/pysi/latex/
-
-SI-Doc/si/sigrun/html/
 
 SI-Doc/si/sigrun/latex/
 
@@ -284,3 +280,5 @@ SI/src/sigrun/__pycache__/
 SI/bin/__pycache__/
 
 SI/__pycache__/
+
+SI/docs/api_examples/tex2pdf.-f747a69bc8e4690b/
