@@ -45,12 +45,17 @@ jobs:
         echo Old Version: $last_major_version.$last_minor_version.$last_patch_version
         echo New Version: $new_major_version.$new_minor_version.$new_patch_version
         
-        filename_sigrun=sigrun"${current}".html
-        filename_pysi=pysi"${current}".html
+        filename_sigrun=SI-Doc/si/sigrun/html/sigrun"${current}".html
+        filename_pysi=SI-Doc/si/pysi/html/pysi"${current}".html
 
-        git rm SI-Doc/si/sigrun/html/"$filename_sigrun"
-        git rm SI-Doc/si/pysi/html/"$filename_pysi"
-
+        if test -f "$filename_sigrun"; then
+          git rm "$filename_sigrun"
+        fi
+        
+        if test -f "$filename_pysi"; then
+          git rm "$filename_pysi"
+        fi
+        
         echo $new_major_version.$new_minor_version.$new_patch_version > '.version'  
             
         current=$(cat .version)
