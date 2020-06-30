@@ -48,9 +48,9 @@ jobs:
             
         current=$(cat .version)
         
-        sed -i 's|SIGRun|SIGRun'"$current"': Main Page</title>|g' SI-Doc/si/sigrun/html/docs/index.html
+        sed -i 's|SIGRun|SIGRun'"$current"'|g' SI-Doc/si/sigrun/html/docs/index.html
         
-        mov SI-Doc/si/sigrun/html/sigrun.html SI-Doc/si/sigrun/html/sigrun${current}.html
+        mv SI-Doc/si/sigrun/html/sigrun.html SI-Doc/si/sigrun/html/sigrun${current}.html
 
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
