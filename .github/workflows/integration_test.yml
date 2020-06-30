@@ -60,7 +60,7 @@ jobs:
         git config --local user.name "GitHub Action"
         git add .version
         git add SI-Doc/si/sigrun/html/docs/index.html
-        (cd SI-Doc/si/sigrun/html; git add "$filename")
+        git add SI-Doc/si/sigrun/html/"$filename"
         git commit -m "Update Version"
         
     - name: Set C++ Compiler
