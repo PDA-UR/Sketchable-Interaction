@@ -44,6 +44,9 @@ jobs:
         
         echo Old Version: $last_major_version.$last_minor_version.$last_patch_version
         echo New Version: $new_major_version.$new_minor_version.$new_patch_version
+        
+        rm -rf SI-Doc/si/sigrun/html/sigrun${current}.html
+        
         echo $new_major_version.$new_minor_version.$new_patch_version > '.version'  
             
         current=$(cat .version)
