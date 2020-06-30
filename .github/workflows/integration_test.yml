@@ -54,7 +54,7 @@ jobs:
         sed -i 's|SIGRun|SIGRun'"$current"'|g' SI-Doc/si/sigrun/html/docs/index.html
         
         filename=sigrun"${current}".html
-        (cd SI-Doc/si/sigrun/html; mv sigrun.html $filename)
+        (cd SI-Doc/si/sigrun/html; mv sigrun.html "$filename")
         
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
