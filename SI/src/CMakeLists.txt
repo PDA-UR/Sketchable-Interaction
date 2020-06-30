@@ -246,7 +246,13 @@ if (BUILD_DOCS)
                 COMMENT "Generating API documentation with Doxygen as PDF"
                 WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/SI-Doc/si/pysi/latex
                 COMMAND make
-                COMMAND mv refman.pdf ../PySIDoc.pdf)
+                COMMAND mv refman.pdf ../PySIDoc.pdf
+                COMMAND rm -rf ../html/docs
+                COMMAND mkdir ../docs
+                COMMAND mv ../html/* ../docs
+                COMMAND mv ../docs ../html
+                COMMAND touch ../html/pysi.html
+                COMMAND echo '<meta http-equiv="REFRESH" content="0;URL=docs/index.html">' >> ../html/pysi.html )
 
         message("Doxygen build installed")
 
