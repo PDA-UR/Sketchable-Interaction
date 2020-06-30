@@ -44,16 +44,16 @@ jobs:
         
         echo Old Version: $last_major_version.$last_minor_version.$last_patch_version
         echo New Version: $new_major_version.$new_minor_version.$new_patch_version
-        
-        filename_sigrun_prev=sigrun"${current}".html
-        filename_pysi_prev=pysi"${current}".html
+        previous=$current
+        filename_sigrun_prev=sigrun"${previous}".html
+        filename_pysi_prev=pysi"${previous}".html
 
         echo $new_major_version.$new_minor_version.$new_patch_version > '.version'  
             
         current=$(cat .version)
         
-        sed -i 's|SIGRun|SIGRun'"$current"'|g' SI-Doc/si/sigrun/html/docs/index.html
-        sed -i 's|PySI|PySI'"$current"'|g' SI-Doc/si/pysi/html/docs/index.html
+        sed -i 's|SIGRun'"$previous"'|SIGRun'"$current"'|g' SI-Doc/si/sigrun/html/docs/index.html
+        sed -i 's|PySI'"$previous"'|PySI'"$current"'|g' SI-Doc/si/pysi/html/docs/index.html
         
         filename_sigrun=sigrun"${current}".html
         filename_pysi=pysi"${current}".html
@@ -65,6 +65,7 @@ jobs:
         git config --local user.name "GitHub Action"
         git add .version
         git add SI-Doc/si/sigrun/html/docs/index.html
+        git add SI-Doc/si/pysi/html/docs/index.html
 
         git commit -m "Update Version"
         
