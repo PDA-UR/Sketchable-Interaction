@@ -114,14 +114,15 @@ bool InputManager::eventFilter(QObject *watched, QEvent *event)
         {
             case Qt::Key_Escape:
                 Context::SIContext()->end();
-                break;
+
+                return true;
 
             default:
                 press_key(key_event->key());
                 break;
         }
 
-        return true;
+        return QObject::eventFilter(watched, event);
     }
     else if(event->type() == QEvent::KeyRelease)
     {

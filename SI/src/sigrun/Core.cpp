@@ -9,7 +9,7 @@
 #include <execution>
 
 /**
-\brief constructor
+\brief constructor of Core class
 \details
     Constructor which registers instance as an SIObject.
     Specify, which Logging capabilities are desired.
@@ -17,7 +17,7 @@
 Core::Core() = default;
 
 /**
-\brief destructor
+\brief destructor of Core class
 \details
     Shut down the SIGRun environment.
 */
