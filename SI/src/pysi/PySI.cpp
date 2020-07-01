@@ -187,6 +187,7 @@ BOOST_PYTHON_MODULE(libPySI)
 
 
             bp::class_<PySIStartup, boost::noncopyable>("Startup", bp::no_init)
+                .def("available_plugins_by_name", &PySIEffect::__available_plugins_by_name__).staticmethod("available_plugins_by_name")
                 .def("create_region_by_type", &PySIStartup::create_region_by_type).staticmethod("create_region_by_type")
                 .def("create_region_by_name", &PySIStartup::create_region_by_name).staticmethod("create_region_by_name")
                 .def("create_region_by_class", &PySIStartup::create_region_by_class).staticmethod("create_region_by_class")

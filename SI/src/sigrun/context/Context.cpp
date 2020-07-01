@@ -92,8 +92,16 @@ void Context::begin(const std::unordered_map<std::string, std::unique_ptr<bp::ob
             )
         }
 
+        std::string tmp;
+
         for(const auto& [k, v]: d_available_plugins)
+        {
             d_available_plugins_names.push_back(k);
+
+            tmp += k + ", ";
+        }
+
+        INFO("Drawable Plugins: " + tmp.substr(0, tmp.length() - 2));
 
         d_ire->start(s_width, s_height);
 
