@@ -3,8 +3,7 @@
 
 #include <sigrun/context/Context.hpp>
 #include <sigrun/region/RegionResampler.hpp>
-#include <QDebug>
-#include <QBuffer>
+#include <sigrun/util/Dollar1GestureRecognizer.hpp>
 #include <boost/python/numpy.hpp>
 
 namespace bp = boost::python;
@@ -17,12 +16,12 @@ PySIEffect::PySIEffect(const std::vector<glm::vec3>& contour, const std::string&
     d_contour.reserve(STEPCOUNT);
     d_aabb.reserve(4);
 
-    RegionResampler::resample(d_contour, contour);
+    d_contour = contour;
 
-    int32_t x_min = std::numeric_limits<int32_t>::max();
-    int32_t x_max = std::numeric_limits<int32_t>::min();
-    int32_t y_min = std::numeric_limits<int32_t>::max();
-    int32_t y_max = std::numeric_limits<int32_t>::min();
+    int32_t x_min = 999999;
+    int32_t x_max = 0;
+    int32_t y_min = 999999;
+    int32_t y_max = 0;
 
     for(const auto& v: d_contour)
     {
@@ -270,16 +269,20 @@ std::vector<glm::vec3> PySIEffect::get_shape()
 
 void PySIEffect::set_shape(const std::vector<glm::vec3>& shape)
 {
-    if(!shape.empty())
+    if(!shape.empty() && !d_name.empty())
     {
         d_contour.clear();
 
-        RegionResampler::resample(d_contour, shape);
+        Recognizer r;
+        std::vector<glm::vec3> temp;
+        r.recognize(temp, shape);
 
-        int32_t x_min = std::numeric_limits<int32_t>::max();
-        int32_t x_max = std::numeric_limits<int32_t>::min();
-        int32_t y_min = std::numeric_limits<int32_t>::max();
-        int32_t y_max = std::numeric_limits<int32_t>::min();
+        RegionResampler::resample(d_contour, temp);
+
+        int32_t x_min = 999999;
+        int32_t x_max = 0;
+        int32_t y_min = 999999;
+        int32_t y_max = 0;
 
         for(const auto& v: d_contour)
         {

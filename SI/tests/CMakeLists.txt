@@ -75,7 +75,8 @@ set(SIUnitTestSrc
         SI/tests/src/sigrun/context/managers/helpers/linking/SIGRunLinkCandidateTest.hpp
         SI/tests/src/sigrun/context/managers/helpers/linking/SIGRunLinkTest.cpp
         SI/tests/src/sigrun/context/managers/helpers/linking/SIGRunLinkTest.hpp
-        )
+        SI/tests/src/sigrun/util/SIGRunDollar1GestureRecognizerTest.cpp
+        SI/tests/src/sigrun/util/SIGRunDollar1GestureRecognizerTest.hpp)
 
 ADD_DEFINITIONS(-DQT_NO_KEYWORDS)
 
