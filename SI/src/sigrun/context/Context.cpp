@@ -265,7 +265,7 @@ void Context::register_new_region_via_name(const std::vector<glm::vec3>& contour
     if(as_selector)
     {
         HANDLE_PYTHON_CALL(PY_WARNING, "The plugin effect for which a selector effect is to be created does not have the attribute \'region_display_name\' as a static class member.",
-            Region temp(contour, d_plugins[effect_name]);
+            Region temp(std::vector<glm::vec3>{{0, 0, 1}, {0, 1, 1}, {1, 1, 1}, {1, 0, 1}}, d_plugins[effect_name]);
 
             kwargs[SI_SELECTOR_TARGET_COLOR] = temp.color();
             kwargs[SI_SELECTOR_TARGET_TEXTURE] = temp.raw_effect().attr("texture_path");

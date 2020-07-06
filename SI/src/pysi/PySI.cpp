@@ -172,6 +172,7 @@ BOOST_PYTHON_MODULE(libPySI)
             collision_capability.attr("DELETION") = SI_CAPABILITY_COLLISION_DELETION;
             collision_capability.attr("PREVIEW") = SI_CAPABILITY_COLLISION_PREVIEW;
             collision_capability.attr("ASSIGN") = SI_CAPABILITY_COLLISION_ASSIGN;
+            collision_capability.attr("HOVER") = SI_CAPABILITY_COLLISION_HOVER;
         }
 
         {

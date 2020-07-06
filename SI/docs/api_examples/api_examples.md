@@ -30,9 +30,10 @@ This *object* functionally represents the pythonic *self* in SIGrun.
 Therefore, the python code implemented in the functions of SI-Plugins is executed by SIGRun once end-users trigger their events and actions. 
 In this way, API users build application logic purely in python (with the use of python libraries available to them), while SIGRun provides the *glue* to present those applications to end-users. 
 
-### PySI obscurities
-
-* shape and its size 
+### End-User interaction
+* End-Users **must** first select one of the available effects which are shown in the palette region to the right
+* End-Users **must** press the left mouse button to perform selection
+* End-Users **must** press and hold the right mouse button to link the position of the *interactive region* of the mouse cursor to colliding *interactive regions*
 
 ### The Startup File
 #### Goal
@@ -76,6 +77,7 @@ Summary:
     * on_continuous - triggered in each subsequent SIGRun update when collision remains ongoing 
     * on_leave - triggered exactly once when a previously ongoing collision is detected to have stopped
 * API Users **must** specify linking relationships according to attributes (str-values) and linking actions (functions)
+* API Users **must** place newly built SI-Plugins and associated qml-files within the *plugins* folder for being usable by SIGRun
 
 #### Naming Convention
 * plugin files **must** contain exactly one class
@@ -130,7 +132,7 @@ class MyEffect(SIEffect):
 
     def __init__(self, shape=PySI.PointVector(), uuid="", kwargs={}):
         super(MyEffect, self).__init__(shape, uuid, "res/my_effect.png",
-                                       Button.regiontype, Button.regionname,
+                                       MyEffect.regiontype, MyEffect.regionname,
                                        kwargs)
         
         self.qml_path = "path/to/MyEffect.qml"
@@ -231,6 +233,7 @@ Summary:
 ### The QML File
 #### Goal
 * API Users **must** use qml-files to define which styling an *effect* applies to its associated *interactive regions* beyond flat coloring
+* API Users **must** place qml-files next to their associated SI-Plugins within the *plugins* folder for being usable by SIGRun
 * QML-files and plugin-files **should** come in pairs
 * Plugin-files *+may** have no associated qml-file
 * QML[[4]](#refs) facilitates styling and modifying the style of regions at runtime for API Users
@@ -570,6 +573,10 @@ In linking action target effect
 * API Users **may not** require to use this datastructure directly
 
 ## Example: Implementation of a Tag-Effect {#impl_tag}
+
+### Goal:
+* Implement an effect to visually tag a colliding region with a blue square
+
 ### Building Tag.py
 ```python
     
@@ -772,11 +779,12 @@ Prerequesites:
 
 * SIGRun *must* represent *interactive regions* as Qt5 QWidgets which *should* have exactly one QML QQuickWidget as a child object
 * SIGRun *must* apply the size of the axis-aligned bounding box (AABB) of a region drawing to that region's Qwidget's size to be displayed correctly
-* SIGRun *may* display regions in unexpected ways if data such as images exceed the regions' AABB's
+* SIGRun *may* display regions in unexpected ways if data such as images exceed the regions' AABB's or qml container component's dimensions
 
 Application: 
 
-* API Users *must* define a new and big enough shape or contour of an effect's associated *interactive region* for data such as images to be properly displayed by SIRen if the region's original AABB's dimenions are exceeded 
+* API Users *must* define a new and big enough shape or contour of an effect's associated *interactive region* for data such as images to be properly displayed by SIRen if the region's original AABB's are exceeded 
+* API Users *must* define new and big enough dimensions of the container component in the associated qml file for data such as images to be properly displayed by SIRen if the region's original qml container component's dimenions are exceeded 
 
 
 ```python
@@ -831,7 +839,11 @@ class Plot(SIEffect):
 
 		self.set_QML_data("img_width", self.width, PySI.DataType.INT)
 		self.set_QML_data("img_height", self.height, PySI.DataType.INT)
+
+        # adjust the container component's dimensions to fith the target image
+        # adjust the container component's width to target image's width
 		self.set_QML_data("widget_width", self.width, PySI.DataType.FLOAT)
+        # adjust the container component's height to target image's height
 		self.set_QML_data("widget_height", self.height, PySI.DataType.FLOAT)
 
     # helper function for getting a plot as numpy.ndarray
@@ -891,12 +903,15 @@ Item {
 }
 ```
 
-Without adjusting the shape of the target *interactive region*, behaviour such as this can be expected:
+Without adjusting the shape and qml container component of the target *interactive region*, behaviour such as this can be expected:
 
 ```python
-    # shape will not be adjusted
+    # shape and container will not be adjusted
     # self.shape = PySI.PointVector([[x, y], [x, y + self.height], 
     #                               [x + self.width, y + self.height], [x + self.width, y]])
+    #
+    # self.set_QML_data("widget_width", self.width, PySI.DataType.FLOAT)
+    # self.set_QML_data("widget_height", self.height, PySI.DataType.FLOAT)
 ```
 
 ![img](res/no_shape_adjustment_sketch.png "Drawing an *interactive region* intended to contain a plot"){ width=40% } 
@@ -908,6 +923,9 @@ However, adjusting the shape of the target region yields the desired output:
     # shape will be adjusted
     self.shape = PySI.PointVector([[x, y], [x, y + self.height], 
                                   [x + self.width, y + self.height], [x + self.width, y]])
+
+    self.set_QML_data("widget_width", self.width, PySI.DataType.FLOAT)
+    self.set_QML_data("widget_height", self.height, PySI.DataType.FLOAT)
 ```
 
 ![img](res/shape_adjustment_sketch.png "Drawing an *interactive region* intended to contain a plot"){ width=40% } 

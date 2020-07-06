@@ -62,6 +62,7 @@ target_precompile_headers(PySI
         SI/src/sigrun/plugin/PythonInvoker.hpp
         SI/src/sigrun/SITypes.hpp
         SI/src/sigrun/SIConstants.hpp
+        SI/src/sigrun/util/Dollar1GestureRecognizer.hpp
         )
 
 # SI RUNTIME LIBRARY
@@ -117,7 +118,9 @@ set(SIGRunSRC
         SI/src/sigrun/parallel/JobSystem.hpp
         SI/src/sigrun/parallel/Job.cpp
         SI/src/sigrun/parallel/Job.hpp
-        SI/src/sigrun/parallel/helpers/ThreadSafeRingBuffer.hpp)
+        SI/src/sigrun/parallel/helpers/ThreadSafeRingBuffer.hpp
+        SI/src/sigrun/util/Dollar1GestureRecognizer.cpp
+        SI/src/sigrun/util/Dollar1GestureRecognizer.hpp)
 
 ADD_DEFINITIONS(-DQT_NO_KEYWORDS)
 
