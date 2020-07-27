@@ -78,6 +78,11 @@ public:
         push_back(value);
     }
 
+    const std::vector<T>& buffer() const
+    {
+        return d_buffer;
+    }
+
 private:
     std::vector<T> d_buffer;
     uint32_t d_read_index;

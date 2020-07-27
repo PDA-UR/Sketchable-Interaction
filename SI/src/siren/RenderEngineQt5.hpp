@@ -14,7 +14,7 @@ public:
     RenderEngineQT5();
     ~RenderEngineQT5();
 
-    void start(uint32_t& width, uint32_t& height) override;
+    void start(uint32_t width, uint32_t height, uint32_t target_fps=60) override;
     void run() override;
     void pause() override;
     void stop() override;

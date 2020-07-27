@@ -13,12 +13,9 @@ RenderEngineQT5::~RenderEngineQT5()
     INFO("Rendering Engine terminated!");
 }
 
-void RenderEngineQT5::start(uint32_t& width, uint32_t& height)
+void RenderEngineQT5::start(uint32_t width, uint32_t height, uint32_t target_fps)
 {
-    width = QApplication::primaryScreen()->geometry().width();
-    height = QApplication::primaryScreen()->geometry().height();
-
-    d_window = new MainWindow(width, height);
+    d_window = new MainWindow(width, height, target_fps);
 
     d_window->setGeometry(QApplication::primaryScreen()->availableGeometry());
 
@@ -28,6 +25,7 @@ void RenderEngineQT5::start(uint32_t& width, uint32_t& height)
 void RenderEngineQT5::run()
 {
     d_window->showFullScreen();
+    d_window->loop();
 }
 
 void RenderEngineQT5::pause()
@@ -38,7 +36,6 @@ void RenderEngineQT5::pause()
 void RenderEngineQT5::stop()
 {
     INFO("Stopping Rendering Engine...");
-    d_window->close();
-    d_window->deleteLater();
+    d_window->d_is_running = false;
     INFO("Rendering Engine stopped!");
 }

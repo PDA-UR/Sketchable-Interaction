@@ -3,28 +3,74 @@
 #include "MainWindow.hpp"
 #include <QPaintEvent>
 #include <QDebug>
+#include <algorithm>
+#include <siren/timing/Timing.hpp>
 
-MainWindow::MainWindow(uint32_t width, uint32_t height):
+MainWindow::MainWindow(uint32_t width, uint32_t height, uint32_t target_fps):
     QMainWindow(),
-    up_update_worker(UpdateWorker(60)),
     d_width(width),
-    d_height(height)
+    d_height(height),
+    d_is_running(true),
+    d_target_fps(target_fps)
 {
     INFO("Starting Update Loop...");
 
-    connect(&up_update_worker, &UpdateWorker::updated, this, &MainWindow::loop);
-    connect(&up_update_worker, &UpdateWorker::finished, &up_update_worker, &UpdateWorker::deleteLater);
-
-    up_update_worker.start();
     INFO("Update Loop started...");
 
     setWindowTitle("SI");
+
+    Context::SIContext()->set_main_window();
 
     engine = new QQmlEngine(this);
     engine->setObjectOwnership(engine, QQmlEngine::CppOwnership);
 }
 
-void MainWindow::loop(double delta, uint32_t fps)
+void MainWindow::loop()
+{
+    double last_time = Time::get_time();
+    double unprocessed_time = 0.0;
+    double frame_counter = 0.0;
+    int frames = 0;
+
+    while (d_is_running)
+    {
+        bool render = false;
+
+        double start_time = Time::get_time();
+        double passed_time = start_time - last_time;
+        last_time = start_time;
+
+        unprocessed_time += passed_time;
+        frame_counter += passed_time;
+
+        if(frame_counter > 1.0)
+        {
+            INFO(frames);
+            frame_counter = 0.0;
+            frames = 0;
+        }
+
+        while(unprocessed_time > 1.0 / d_target_fps)
+        {
+            render = true;
+            Time::set_time_delta(1.0 / d_target_fps);
+            unprocessed_time -= 1.0 / d_target_fps;
+        }
+
+        if(render)
+        {
+            __loop();
+            Context::SIContext()->update();
+
+            frames++;
+        }
+    }
+
+    close();
+    deleteLater();
+}
+
+void MainWindow::__loop()
 {
     auto& regions = Context::SIContext()->region_manager()->regions();
 
@@ -100,7 +146,6 @@ void MainWindow::loop(double delta, uint32_t fps)
     }
 
     update();
-    Context::SIContext()->update();
 }
 
 void MainWindow::pause()

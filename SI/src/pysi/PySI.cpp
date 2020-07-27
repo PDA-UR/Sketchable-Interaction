@@ -104,7 +104,7 @@ BOOST_PYTHON_MODULE(libPySI)
                 .value("FLOAT", SI_DATA_TYPE_FLOAT)
                 .value("BOOL", SI_DATA_TYPE_BOOL)
                 .value("STRING", SI_DATA_TYPE_STRING)
-                .value("BYTES", SI_DATA_TYPE_BYTES)
+                .value("IMAGE_AS_BYTES", SI_DATA_TYPE_IMAGE_AS_BYTES)
 
                 .export_values()
                 ;

@@ -12,26 +12,26 @@
 #include <QQmlEngine>
 #include <QMetaMethod>
 #include <QPainter>
-#include "../background/UpdateWorker.hpp"
 #include "../region/RegionRepresentation.hpp"
+#include <QtCore/QTime>
 
 //class RegionRepresentation;
 class MainWindow: public SIObject, public QMainWindow
 { SIREN
 public:
-    MainWindow(uint32_t width, uint32_t height);
+    MainWindow(uint32_t width, uint32_t height, uint32_t target_fps);
     MainWindow() = default;
 
     void pause();
+    bool d_is_running = false;
+    void loop();
 
 private:
-    Q_SLOT void loop(double delta, uint32_t fps);
+    void __loop();
 
     std::vector<RegionRepresentation*> d_reg_reps;
 
-    UpdateWorker up_update_worker;
-
-    uint32_t d_width, d_height;
+    uint32_t d_width, d_height, d_target_fps;
 
     QQmlEngine* engine;
 };

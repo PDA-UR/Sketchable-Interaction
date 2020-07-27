@@ -3,6 +3,7 @@ from libPySI import PySI
 from plugins.standard_environment_library.notification import SimpleNotification
 from plugins.standard_environment_library.filesystem import Directory
 from plugins.standard_environment_library.cursor import Cursor
+from plugins.standard_environment_library.deletion import Deletion
 
 def add_canvas():
     canvas_shape = [[0, 0],
@@ -47,17 +48,20 @@ def add_start_directory():
                        [Directory.Directory.region_width, 75]]
 
     kwargs = {"cwd": directory_path, "parent": ""}
-    PySI.Startup.create_region_by_class(directory_shape, Directory, kwargs)
+    PySI.Startup.create_region_by_type(directory_shape, PySI.EffectType.SI_DIRECTORY, kwargs)
 
 import math
 
 ## Author: RW
-def add_many_regions(num = 100, area_width= 1200, area_height=600):
+def add_many_regions(num = 100, area_width= 1920, area_height=1080):
     left = (PySI.Startup.context_dimensions()[0] - area_width) // 2
     top = (PySI.Startup.context_dimensions()[1] - area_height) // 2
     num_h = math.ceil(math.sqrt(num / (area_width/area_height)))
     num_w = math.floor(num/num_h)
     # print(f"creating region matrix: {num_w}, {num_h}")
+
+    directory_path = ""
+
     for i in range(num):
         row = i // num_w
         col = i % num_w
@@ -67,7 +71,10 @@ def add_many_regions(num = 100, area_width= 1200, area_height=600):
         w = int(area_width // num_w * 0.9)
         h = int(area_height // num_h * 0.9)
         r_shape = [[x,y], [x, y+h], [x+w, y+h], [x+w, y]]
-        PySI.Startup.create_region_by_type(r_shape, PySI.EffectType.SI_DELETION, {})
+
+        kwargs = {"cwd": directory_path, "parent": ""}
+
+        PySI.Startup.create_region_by_class(r_shape, Directory, kwargs)
 
 def on_start():
     PySI.Startup.disable(PySI.Configuration.SI_CRASH_DUMP)
@@ -76,10 +83,10 @@ def on_start():
     PySI.Startup.logger_set_log_output(PySI.Logger.SI_LOG_SHOW_ALL)
     PySI.Startup.logger_quench_messages_from_class("linkingmanager")
 
-    add_canvas()
-    add_mouse_cursor()
-    add_simple_notification()
-    add_palette()
-    add_start_directory()
+    # add_canvas()
+    # add_mouse_cursor()
+    # add_simple_notification()
+    # add_palette()
+    # add_start_directory()
 
-    # add_many_regions(1000)
+    add_many_regions(1)

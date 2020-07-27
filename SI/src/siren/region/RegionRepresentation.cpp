@@ -42,7 +42,7 @@ RegionRepresentation::RegionRepresentation(QWidget *parent, QQmlEngine* engine, 
 
 RegionRepresentation::~RegionRepresentation()
 {
-    d_view->close();
+	d_view->close();
     delete d_view;
     d_view = nullptr;
 }

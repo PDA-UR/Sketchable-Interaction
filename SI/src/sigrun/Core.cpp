@@ -35,6 +35,7 @@ Core::~Core()
 */
 void Core::start(char** argv, int argc, IRenderEngine* ire)
 {
+    SI_BENCHMARK_START;
     INFO("Initializing... ");
 
     std::unordered_map<std::string, std::unique_ptr<bp::object>> plugins;

@@ -45,6 +45,7 @@ public:
     JobSystem<void, 512>* job_system();
 
     QMainWindow* main_window() const;
+    void set_main_window();
 
     void update();
     void enable(uint32_t what);
