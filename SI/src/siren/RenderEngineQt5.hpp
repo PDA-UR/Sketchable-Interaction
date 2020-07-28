@@ -7,6 +7,8 @@
 #include <QApplication>
 #include <QMainWindow>
 #include <siren/window/MainWindow.hpp>
+#include <QGraphicsView>
+#include <QGraphicsScene>
 
 class RenderEngineQT5: public IRenderEngine, public SIObject
 {Q_OBJECT SIREN

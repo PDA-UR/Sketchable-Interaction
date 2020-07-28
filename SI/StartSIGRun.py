@@ -74,7 +74,7 @@ def add_many_regions(num = 100, area_width= 1920, area_height=1080):
 
         kwargs = {"cwd": directory_path, "parent": ""}
 
-        PySI.Startup.create_region_by_class(r_shape, Directory, kwargs)
+        PySI.Startup.create_region_by_class(r_shape, Deletion, kwargs)
 
 def on_start():
     PySI.Startup.disable(PySI.Configuration.SI_CRASH_DUMP)
@@ -82,11 +82,12 @@ def on_start():
     PySI.Startup.logger_log(True)
     PySI.Startup.logger_set_log_output(PySI.Logger.SI_LOG_SHOW_ALL)
     PySI.Startup.logger_quench_messages_from_class("linkingmanager")
+    PySI.Startup.logger_quench_messages_from_class("recognizer")
 
-    # add_canvas()
-    # add_mouse_cursor()
-    # add_simple_notification()
-    # add_palette()
-    # add_start_directory()
+    add_canvas()
+    add_mouse_cursor()
+    add_simple_notification()
+    add_palette()
+    add_start_directory()
 
-    add_many_regions(1)
+    # add_many_regions(400)

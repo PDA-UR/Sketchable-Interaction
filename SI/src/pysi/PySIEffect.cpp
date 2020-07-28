@@ -21,14 +21,13 @@ PySIEffect::PySIEffect(const std::vector<glm::vec3>& contour, const std::string&
     std::vector<glm::vec3> temp;
     r.recognize(temp, contour);
 
-    d_contour = temp;
 
     int32_t x_min = 999999;
     int32_t x_max = 0;
     int32_t y_min = 999999;
     int32_t y_max = 0;
 
-    for(auto& v: d_contour)
+    for(auto& v: temp)
     {
         x_max = v.x > x_max ? v.x : x_max;
         y_max = v.y > y_max ? v.y : y_max;
@@ -42,6 +41,8 @@ PySIEffect::PySIEffect(const std::vector<glm::vec3>& contour, const std::string&
     {
         tlc, blc, brc, trc
     };
+
+    RegionResampler::resample(d_contour, temp);
 }
 
 void PySIEffect::__signal_deletion__()
@@ -286,14 +287,12 @@ void PySIEffect::set_shape(const std::vector<glm::vec3>& shape)
         std::vector<glm::vec3> temp;
         r.recognize(temp, shape);
 
-        RegionResampler::resample(d_contour, temp);
-
         int32_t x_min = 999999;
         int32_t x_max = 0;
         int32_t y_min = 999999;
         int32_t y_max = 0;
 
-        for(const auto& v: d_contour)
+        for(const auto& v: temp)
         {
             x_max = v.x > x_max ? v.x : x_max;
             y_max = v.y > y_max ? v.y : y_max;
@@ -307,6 +306,8 @@ void PySIEffect::set_shape(const std::vector<glm::vec3>& shape)
         {
             tlc, blc, brc, trc
         };
+
+        RegionResampler::resample(d_contour, temp);
 
         d_recompute_mask = true;
     }

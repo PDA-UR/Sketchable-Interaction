@@ -14,6 +14,8 @@ set(SIRENDERENGINESrc
         SI/src/siren/window/MainWindow.hpp
         SI/src/siren/region/RegionRepresentation.cpp
         SI/src/siren/region/RegionRepresentation.hpp
+        SI/src/siren/region/PartialRegionRepresentation.cpp
+        SI/src/siren/region/PartialRegionRepresentation.hpp
         SI/src/siren/timing/Timing.cpp
         SI/src/siren/timing/Timing.hpp)
 

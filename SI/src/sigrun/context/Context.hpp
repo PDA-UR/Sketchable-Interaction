@@ -17,6 +17,7 @@
 #include <sigrun/rendering/IRenderEngine.hpp>
 #include <sigrun/context/managers/helpers/input/FileSystem.hpp>
 #include <queue>
+#include <QGraphicsView>
 #include <sigrun/parallel/JobSystem.hpp>
 
 #define DELAY_PYTHON_GARBAGE_COLLECTION(...) {\
@@ -44,7 +45,7 @@ public:
     ExternalApplicationManager* external_application_manager();
     JobSystem<void, 512>* job_system();
 
-    QMainWindow* main_window() const;
+    QGraphicsView* main_window() const;
     void set_main_window();
 
     void update();
@@ -113,7 +114,7 @@ private:
     uint32_t s_height = 0;
 
     IRenderEngine* d_ire;
-    QMainWindow* d_main_window;
+    QGraphicsView* d_main_window;
 
     friend class Core;
     friend class SIGRunCollisionManagerTest;

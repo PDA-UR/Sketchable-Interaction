@@ -1,5 +1,4 @@
 
-
 #include <sigrun/log/Log.hpp>
 #include "Context.hpp"
 #include <QApplication>
@@ -73,27 +72,27 @@ void Context::begin(const std::unordered_map<std::string, std::unique_ptr<bp::ob
         for(const auto& [k, v]: plugins)
         {
             HANDLE_PYTHON_CALL(PY_WARNING, "Plugin does not have the attribute \'regiontype\' as static class member and is skipped. Try assigning PySIEffect.EffectType.SI_CUSTOM.",
-                               switch (bp::extract<int>(v->attr(v->attr(SI_INTERNAL_NAME)).attr(SI_INTERNAL_REGION_TYPE)))
-                               {
-                                   case SI_TYPE_CANVAS:
-                                   case SI_TYPE_MOUSE_CURSOR:
-                                   case SI_TYPE_NOTIFICATION:
-                                   case SI_TYPE_DIRECTORY:
-                                   case SI_TYPE_BUTTON:
-                                   case SI_TYPE_EXTERNAL_APPLICATION_CONTAINER:
-                                   case SI_TYPE_TEXT_FILE:
-                                   case SI_TYPE_IMAGE_FILE:
-                                   case SI_TYPE_UNKNOWN_FILE:
-                                   case SI_TYPE_CURSOR:
-                                   case SI_TYPE_ENTRY:
-                                   case SI_TYPE_PALETTE:
-                                   case SI_TYPE_SELECTOR:
-                                       break;
+                switch (bp::extract<int>(v->attr(v->attr(SI_INTERNAL_NAME)).attr(SI_INTERNAL_REGION_TYPE)))
+                {
+                   case SI_TYPE_CANVAS:
+                   case SI_TYPE_MOUSE_CURSOR:
+                   case SI_TYPE_NOTIFICATION:
+                   case SI_TYPE_DIRECTORY:
+                   case SI_TYPE_BUTTON:
+                   case SI_TYPE_EXTERNAL_APPLICATION_CONTAINER:
+                   case SI_TYPE_TEXT_FILE:
+                   case SI_TYPE_IMAGE_FILE:
+                   case SI_TYPE_UNKNOWN_FILE:
+                   case SI_TYPE_CURSOR:
+                   case SI_TYPE_ENTRY:
+                   case SI_TYPE_PALETTE:
+                   case SI_TYPE_SELECTOR:
+                       break;
 
-                                   default:
-                                       d_available_plugins[k] = *v;
-                                       break;
-                               }
+                   default:
+                       d_available_plugins[k] = *v;
+                       break;
+                }
             )
         }
 
@@ -112,7 +111,7 @@ void Context::begin(const std::unordered_map<std::string, std::unique_ptr<bp::ob
             bp::import(SI_START_FILE).attr(SI_START_FUNCTION)();
         )
 
-        d_ire->start(s_width, s_height);
+        d_ire->start(s_width, s_height, 120);
 
         d_app.exec();
         INFO("QT5 Application terminated!");
@@ -160,7 +159,7 @@ Context* Context::SIContext()
     return self;
 }
 
-QMainWindow* Context::main_window() const
+QGraphicsView* Context::main_window() const
 {
     return d_main_window;
 }
@@ -169,7 +168,7 @@ void Context::set_main_window()
 {
     for(QWidget* pWidget: QApplication::topLevelWidgets())
     {
-        d_main_window = qobject_cast<QMainWindow *>(pWidget);
+        d_main_window = qobject_cast<QGraphicsView *>(pWidget);
 
         if (d_main_window)
             break;
@@ -219,10 +218,10 @@ uint32_t Context::height()
 void Context::set_effect(const std::string& target_uuid, const std::string& effect_name, const std::string& effect_display_name, bp::dict& kwargs)
 {
     auto it = std::find_if(uprm->regions().begin(),uprm->regions().end(),
-              [&](auto &region)
-              {
-                    return region->uuid() == target_uuid;
-              });
+    [&](auto &region)
+    {
+        return region->uuid() == target_uuid;
+    });
 
     if (it != uprm->regions().end())
     {
