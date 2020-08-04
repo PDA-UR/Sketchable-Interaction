@@ -282,3 +282,5 @@ SI/bin/__pycache__/
 SI/__pycache__/
 
 SI/docs/api_examples/tex2pdf.-f747a69bc8e4690b/
+
+SI/test_startup.sh

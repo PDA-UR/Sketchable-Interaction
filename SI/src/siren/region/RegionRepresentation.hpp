@@ -10,24 +10,23 @@
 #include <QQmlEngine>
 #include <QVariant>
 #include <QMatrix4x4>
+#include <QGraphicsPolygonItem>
 #include <memory>
 #include <SI/SI.hpp>
 
-class RegionRepresentation: public QWidget, public SIObject
-{ Q_OBJECT SIREN
+class RegionRepresentation: public QGraphicsPolygonItem, public SIObject
+{ SIREN
 
 public:
-    RegionRepresentation(QWidget* parent, QQmlEngine* engine, const std::shared_ptr<Region>& region);
+    RegionRepresentation(QQmlEngine* e, const std::shared_ptr<Region>& region);
     ~RegionRepresentation();
 
     void update(const std::shared_ptr<Region>& region);
-    const uint32_t type() const;
     const std::string& uuid() const;
     const std::string& name() const;
 
-protected:
-    QPainter up_qp;
-    void paintEvent(QPaintEvent *event) override;
+    QQuickWidget& view();
+    QColor& color();
 
 private:
     void perform_transform_update(const std::shared_ptr<Region>& region);
@@ -37,11 +36,10 @@ private:
     std::string d_qml_path;
     std::string d_uuid;
     std::string d_name;
-    QPainterPath d_fill;
-    QQuickWidget* d_view;
+    QQuickWidget d_view;
     uint32_t d_type;
 
-    QMetaObject::Connection d_region_connection;
+    glm::vec3 d_initial_offset;
 };
 
 #endif //SITEST_REGIONREPRESENTATION_HPP

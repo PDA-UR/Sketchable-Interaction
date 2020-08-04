@@ -1,5 +1,4 @@
 
-
 #include <sigrun/log/Log.hpp>
 #include "Context.hpp"
 #include <QApplication>
@@ -16,9 +15,11 @@
 #include <csignal>
 #include <cstdlib>
 #include <QThread>
+#include <QScreen>
 #include <sigrun/plugin/PythonGlobalInterpreterLockGuard.hpp>
 #include <sigrun/log/CrashDump.hpp>
 #include <sigrun/rendering/qml/items/PlotItem.hpp>
+#include <sigrun/util/Benchmark.hpp>
 
 #define NEW_REGIONS_PER_FRAME 100
 
@@ -54,40 +55,44 @@ void Context::begin(const std::unordered_map<std::string, std::unique_ptr<bp::ob
 {
     if(ire)
     {
+        INFO("Creating Qt5 Application...");
+        QApplication d_app(argc, argv);
+        s_width = QApplication::primaryScreen()->geometry().width();
+        s_height = QApplication::primaryScreen()->geometry().height();
+        INFO("Qt5 Application created!");
+        d_app.installEventFilter(upim.get());
+
+        qmlRegisterType<PlotItem>("siqml", 1, 0, "PlotItem");
+
         d_ire = ire;
 
         for(const auto& [k, v]: plugins)
             d_plugins[k] = *v;
-
-        INFO("Creating Qt5 Application...");
-        QApplication d_app(argc, argv);
-        INFO("Qt5 Application created!");
-
-        d_app.installEventFilter(upim.get());
 
         for(const auto& [k, v]: plugins)
         {
             HANDLE_PYTHON_CALL(PY_WARNING, "Plugin does not have the attribute \'regiontype\' as static class member and is skipped. Try assigning PySIEffect.EffectType.SI_CUSTOM.",
                 switch (bp::extract<int>(v->attr(v->attr(SI_INTERNAL_NAME)).attr(SI_INTERNAL_REGION_TYPE)))
                 {
-                    case SI_TYPE_CANVAS:
-                    case SI_TYPE_MOUSE_CURSOR:
-                    case SI_TYPE_NOTIFICATION:
-                    case SI_TYPE_DIRECTORY:
-                    case SI_TYPE_BUTTON:
-                    case SI_TYPE_EXTERNAL_APPLICATION_CONTAINER:
-                    case SI_TYPE_TEXT_FILE:
-                    case SI_TYPE_IMAGE_FILE:
-                    case SI_TYPE_UNKNOWN_FILE:
-                    case SI_TYPE_CURSOR:
-                    case SI_TYPE_ENTRY:
-                    case SI_TYPE_PALETTE:
-                    case SI_TYPE_SELECTOR:
-                        break;
+                   case SI_TYPE_CANVAS:
+                   case SI_TYPE_MOUSE_CURSOR:
+                   case SI_TYPE_NOTIFICATION:
+                   case SI_TYPE_DIRECTORY:
+                   case SI_TYPE_BUTTON:
+                   case SI_TYPE_EXTERNAL_APPLICATION_CONTAINER:
+                   case SI_TYPE_TEXT_FILE:
+                   case SI_TYPE_IMAGE_FILE:
+                   case SI_TYPE_UNKNOWN_FILE:
+                   case SI_TYPE_CURSOR:
+                   case SI_TYPE_ENTRY:
+                   case SI_TYPE_PALETTE:
+                   case SI_TYPE_SELECTOR:
+                   case SI_TYPE_CUSTOM_NON_DRAWABLE:
+                       break;
 
-                    default:
-                        d_available_plugins[k] = *v;
-                        break;
+                   default:
+                       d_available_plugins[k] = *v;
+                       break;
                 }
             )
         }
@@ -103,27 +108,11 @@ void Context::begin(const std::unordered_map<std::string, std::unique_ptr<bp::ob
 
         INFO("Drawable Plugins: " + tmp.substr(0, tmp.length() - 2));
 
-        d_ire->start(s_width, s_height);
-
-        qmlRegisterType<PlotItem>("siqml", 1, 0, "PlotItem");
-
-        for(QWidget* pWidget: QApplication::topLevelWidgets())
-        {
-            d_main_window = qobject_cast<QMainWindow *>(pWidget);
-
-            if (d_main_window)
-                break;
-        }
-
-        if(!d_main_window)
-        {
-            ERROR("Main Window could not be created!");
-            exit(6);
-        }
-
         HANDLE_PYTHON_CALL(PY_ERROR, "Could not load startup file! A python file called \'StartSIGRun\' is required to be present in plugins folder!",
-           bp::import(SI_START_FILE).attr(SI_START_FUNCTION)();
+            bp::import(SI_START_FILE).attr(SI_START_FUNCTION)();
         )
+
+        d_ire->start(s_width, s_height, 120);
 
         d_app.exec();
         INFO("QT5 Application terminated!");
@@ -171,9 +160,26 @@ Context* Context::SIContext()
     return self;
 }
 
-QMainWindow* Context::main_window() const
+QGraphicsView* Context::main_window() const
 {
     return d_main_window;
+}
+
+void Context::set_main_window()
+{
+    for(QWidget* pWidget: QApplication::topLevelWidgets())
+    {
+        d_main_window = qobject_cast<QGraphicsView *>(pWidget);
+
+        if (d_main_window)
+            break;
+    }
+
+    if(!d_main_window)
+    {
+        ERROR("Main Window could not be created!");
+        exit(6);
+    }
 }
 
 void Context::update()
@@ -212,12 +218,13 @@ uint32_t Context::height()
 
 void Context::set_effect(const std::string& target_uuid, const std::string& effect_name, const std::string& effect_display_name, bp::dict& kwargs)
 {
-    auto it = std::find_if(uprm->regions().begin(), uprm->regions().end(), [&](auto& region)
+    auto it = std::find_if(uprm->regions().begin(),uprm->regions().end(),
+    [&](auto &region)
     {
         return region->uuid() == target_uuid;
     });
 
-    if(it != uprm->regions().end())
+    if (it != uprm->regions().end())
     {
         if (it->get()->type() == SI_TYPE_MOUSE_CURSOR)
         {
@@ -252,9 +259,11 @@ void Context::disable(uint32_t what)
 
 void Context::register_new_region(const std::vector<glm::vec3>& contour, const std::string& uuid)
 {
-    if(contour.size() > 2)
+    if(contour.size() > 5)
     {
-        d_region_insertion_queue.emplace(contour, d_selected_effects_by_id[uuid], -1, bp::dict());
+        bp::dict kwargs;
+        kwargs["DRAWN"] = true;
+        d_region_insertion_queue.emplace(contour, d_selected_effects_by_id[uuid], -1, kwargs);
     }
 }
 
@@ -575,6 +584,9 @@ void Context::perform_region_insertion()
     }
 
     QApplication::processEvents(QEventLoop::AllEvents);
+
+//    if(d_region_insertion_queue.empty())
+//        SI_BENCHMARK_STOP;
 }
 
 void Context::perform_link_events()

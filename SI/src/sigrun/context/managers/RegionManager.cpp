@@ -171,6 +171,7 @@ void RegionManager::update_region_deletions()
 void RegionManager::update_regions()
 {
     int32_t size = d_regions.size();
+
     for (int32_t i = size - 1; i > -1; --i)
     {
         if(!d_regions[i]->effect()->is_flagged_for_deletion())
