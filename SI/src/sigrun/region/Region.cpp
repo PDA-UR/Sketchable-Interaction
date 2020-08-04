@@ -83,8 +83,7 @@ void Region::set_effect(const std::vector<glm::vec3>& contour, const bp::object&
             d_effect = std::make_shared<bp::object>(effect.attr(effect.attr(SI_INTERNAL_NAME))(contour, uuid, kwargs));
 
             d_py_effect = bp::extract<PySIEffect*>(*d_effect);
-            d_py_effect->set_shape(contour);
-        )
+         )
     }
 }
 

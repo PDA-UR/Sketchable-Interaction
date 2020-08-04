@@ -5,6 +5,7 @@
 #include <sigrun/region/RegionResampler.hpp>
 #include <sigrun/util/Dollar1GestureRecognizer.hpp>
 #include <boost/python/numpy.hpp>
+#include <tbb/parallel_for_each.h>
 
 namespace bp = boost::python;
 
@@ -16,14 +17,17 @@ PySIEffect::PySIEffect(const std::vector<glm::vec3>& contour, const std::string&
     d_contour.reserve(STEPCOUNT);
     d_aabb.reserve(4);
 
-    d_contour = contour;
+    Recognizer r;
+    std::vector<glm::vec3> temp;
+    r.recognize(temp, contour);
+
 
     int32_t x_min = 999999;
     int32_t x_max = 0;
     int32_t y_min = 999999;
     int32_t y_max = 0;
 
-    for(const auto& v: d_contour)
+    for(auto& v: temp)
     {
         x_max = v.x > x_max ? v.x : x_max;
         y_max = v.y > y_max ? v.y : y_max;
@@ -37,6 +41,8 @@ PySIEffect::PySIEffect(const std::vector<glm::vec3>& contour, const std::string&
     {
         tlc, blc, brc, trc
     };
+
+    RegionResampler::resample(d_contour, temp);
 }
 
 void PySIEffect::__signal_deletion__()
@@ -57,6 +63,11 @@ void PySIEffect::__embed_file_standard_appliation_into_context__(const std::stri
 void PySIEffect::__destroy_embedded_file_standard_appliation_in_context__(const std::string& uuid)
 {
     Context::SIContext()->external_application_manager()->terminate_application(uuid);
+}
+
+void PySIEffect::__emit_linking_action__(const std::string& sender, const std::string& linking_action, const bp::object& args)
+{
+    Context::SIContext()->register_link_event_emission(_UUID_, sender, linking_action, args);
 }
 
 const uint32_t PySIEffect::x() const
@@ -199,27 +210,33 @@ std::vector<glm::vec3> &PySIEffect::aabb()
 
 void PySIEffect::__set_data__(const std::string &key, const bp::object &value, const uint32_t type, const bp::dict& kwargs)
 {
+    d_data_changed = false;
+
     QVariant qv;
 
     switch (type)
     {
         case SI_DATA_TYPE_INT:
-            d_data[QString(key.c_str())] = QVariant( bp::extract<int>(value));
-        break;
+            d_data[QString(key.c_str())] = QVariant(bp::extract<int>(value));
+            d_data_changed = true;
+            break;
 
         case SI_DATA_TYPE_FLOAT:
             d_data[QString(key.c_str())] = QVariant(bp::extract<float>(value));
-        break;
+            d_data_changed = true;
+            break;
 
         case SI_DATA_TYPE_STRING:
             d_data[QString(key.c_str())] = QVariant(QString(bp::extract<char*>(value)));
-        break;
+            d_data_changed = true;
+            break;
 
         case SI_DATA_TYPE_BOOL:
             d_data[QString(key.c_str())] = QVariant(bp::extract<bool>(value));
-        break;
+            d_data_changed = true;
+            break;
 
-        case SI_DATA_TYPE_BYTES:
+        case SI_DATA_TYPE_IMAGE_AS_BYTES:
             int img_width = bp::extract<int>(kwargs["width"]);
             int img_height = bp::extract<int>(kwargs["height"]);
 
@@ -236,18 +253,16 @@ void PySIEffect::__set_data__(const std::string &key, const bp::object &value, c
                     buf[i] = (uint8_t) bp::extract<int>(value[i]);
 
                 img.fromData(buf, len, "PNG");
-                d_data[QString(key.c_str())] = QVariant(img);
 
+                d_data[QString(key.c_str())] = QVariant(img);
             }
             else
             {
                 d_data[QString(key.c_str())] = QVariant(QImage());
             }
-
-        break;
+            d_data_changed = true;
+            break;
     }
-
-    d_data_changed = true;
 }
 
 const QMap<QString, QVariant> &PySIEffect::data()
@@ -277,14 +292,12 @@ void PySIEffect::set_shape(const std::vector<glm::vec3>& shape)
         std::vector<glm::vec3> temp;
         r.recognize(temp, shape);
 
-        RegionResampler::resample(d_contour, temp);
-
         int32_t x_min = 999999;
         int32_t x_max = 0;
         int32_t y_min = 999999;
         int32_t y_max = 0;
 
-        for(const auto& v: d_contour)
+        for(const auto& v: temp)
         {
             x_max = v.x > x_max ? v.x : x_max;
             y_max = v.y > y_max ? v.y : y_max;
@@ -298,6 +311,8 @@ void PySIEffect::set_shape(const std::vector<glm::vec3>& shape)
         {
             tlc, blc, brc, trc
         };
+
+        RegionResampler::resample(d_contour, temp);
 
         d_recompute_mask = true;
     }
