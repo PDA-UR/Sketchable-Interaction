@@ -75,19 +75,25 @@ void RegionRepresentation::perform_transform_update(const std::shared_ptr<Region
 
 void RegionRepresentation::perform_data_update(const std::shared_ptr<Region> &region)
 {
+    QColor color(region->color().r, region->color().g, region->color().b, region->color().a);
+
+    if(d_color != color)
+    {
+        d_color = color;
+        setPen(QColor(d_color));
+        setBrush(QColor(d_color));
+    }
+
     if (region->effect()->has_data_changed())
     {
-        d_color = QColor(region->color().r, region->color().g, region->color().b, region->color().a);
-
         QPolygonF poly;
         for(auto& p: region->contour())
             poly << QPointF(p.x, p.y);
 
         setPolygon(poly);
-        setPen(QColor(d_color));
-        setBrush(QColor(d_color));
-
         QMetaObject::invokeMethod(reinterpret_cast<QObject *>(d_view.rootObject()), "updateData", QGenericReturnArgument(), Q_ARG(QVariant, region->data()));
+
+        d_view.update();
     }
 }
 

@@ -87,6 +87,7 @@ void Context::begin(const std::unordered_map<std::string, std::unique_ptr<bp::ob
                    case SI_TYPE_ENTRY:
                    case SI_TYPE_PALETTE:
                    case SI_TYPE_SELECTOR:
+                   case SI_TYPE_CUSTOM_NON_DRAWABLE:
                        break;
 
                    default:
@@ -258,9 +259,11 @@ void Context::disable(uint32_t what)
 
 void Context::register_new_region(const std::vector<glm::vec3>& contour, const std::string& uuid)
 {
-    if(contour.size() > 2)
+    if(contour.size() > 5)
     {
-        d_region_insertion_queue.emplace(contour, d_selected_effects_by_id[uuid], -1, bp::dict());
+        bp::dict kwargs;
+        kwargs["DRAWN"] = true;
+        d_region_insertion_queue.emplace(contour, d_selected_effects_by_id[uuid], -1, kwargs);
     }
 }
 

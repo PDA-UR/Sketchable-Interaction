@@ -83,6 +83,7 @@ def on_start():
     PySI.Startup.logger_set_log_output(PySI.Logger.SI_LOG_SHOW_ALL)
     PySI.Startup.logger_quench_messages_from_class("linkingmanager")
     PySI.Startup.logger_quench_messages_from_class("recognizer")
+    PySI.Startup.logger_quench_messages_from_class("mainwindow")
 
     add_canvas()
     add_mouse_cursor()

@@ -65,6 +65,11 @@ void PySIEffect::__destroy_embedded_file_standard_appliation_in_context__(const 
     Context::SIContext()->external_application_manager()->terminate_application(uuid);
 }
 
+void PySIEffect::__emit_linking_action__(const std::string& sender, const std::string& linking_action, const bp::object& args)
+{
+    Context::SIContext()->register_link_event_emission(_UUID_, sender, linking_action, args);
+}
+
 const uint32_t PySIEffect::x() const
 {
     return d_x;
@@ -212,7 +217,7 @@ void PySIEffect::__set_data__(const std::string &key, const bp::object &value, c
     switch (type)
     {
         case SI_DATA_TYPE_INT:
-            d_data[QString(key.c_str())] = QVariant( bp::extract<int>(value));
+            d_data[QString(key.c_str())] = QVariant(bp::extract<int>(value));
             d_data_changed = true;
             break;
 
