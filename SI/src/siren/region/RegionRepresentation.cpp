@@ -38,6 +38,7 @@ RegionRepresentation::RegionRepresentation(QQmlEngine* e, const std::shared_ptr<
     setBrush(QBrush(d_color));
     setPen(QPen(d_color));
     setZValue(-1);
+    setFillRule(Qt::WindingFill);
 }
 
 RegionRepresentation::~RegionRepresentation()
@@ -106,3 +107,5 @@ QColor& RegionRepresentation::color()
 {
     return d_color;
 }
+
+
