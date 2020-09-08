@@ -7,7 +7,7 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 set(Python_ADDITIONAL_VERSIONS 3.8)
 
 find_package(PythonInterp 3 REQUIRED)
-find_package(PythonLibs 3.8 REQUIRED)
+find_package(PythonLibs 3.7 REQUIRED)
 find_package(Python3 REQUIRED)
 find_package(Boost 1.69.0 COMPONENTS system python3.7 filesystem REQUIRED)
 find_package(glm REQUIRED)
