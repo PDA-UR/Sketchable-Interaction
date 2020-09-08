@@ -91,7 +91,7 @@ jobs:
         wget https://sourceforge.net/projects/boost/files/boost/1.69.0/boost_1_69_0.tar.gz/download &&
         tar xzf download &&
         cd boost_1_69_0 &&
-        sudo ln -s /usr/local/include/python3.8m /usr/local/include/python3.8 &&
+        sudo ln -s /usr/local/include/python3.7m /usr/local/include/python3.7 &&
         sed -i "s@includes ?= \$(prefix)/include/python\$(version)@includes ?= \$(prefix)/include/python\$(version)m@" tools/build/src/tools/python.jam  &&
         sudo ./bootstrap.sh --with-python=$(which python3) &&
         sudo ./b2 --with-system --with-python --with-filesystem -j 8 -d0 install &&       
