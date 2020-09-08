@@ -72,6 +72,17 @@ jobs:
     - name: Set C++ Compiler
       run: |
         sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-9 90
+        
+    - name: Install Dependencies
+      run: |
+        if [[ "${{ github.event.head_commit.message }}" != *"[NO CI]"* ]]; then
+          sudo apt-get update
+          sudo apt-get --fix-missing install qtbase5-dev -qq > /dev/null
+          sudo apt-get install qtdeclarative5-dev -qq > /dev/null
+          sudo apt-get install libglm-dev -qq > /dev/null
+          sudo apt-get install uuid-dev -qq > /dev/null
+          sudo apt-get install python3.7-dev -qq > /dev/null
+        fi 
 
     - name: Install Boost with components System, Python and Filesystem 
       run: |
@@ -85,18 +96,7 @@ jobs:
         sudo ./bootstrap.sh --with-python=$(which python3) &&
         sudo ./b2 --with-system --with-python --with-filesystem -j 8 -d0 install &&       
         cd ..
-        cd ..
-        
-    - name: Install Dependencies
-      run: |
-        if [[ "${{ github.event.head_commit.message }}" != *"[NO CI]"* ]]; then
-          sudo apt-get update
-          sudo apt-get --fix-missing install qtbase5-dev -qq > /dev/null
-          sudo apt-get install qtdeclarative5-dev -qq > /dev/null
-          sudo apt-get install libglm-dev -qq > /dev/null
-          sudo apt-get install uuid-dev -qq > /dev/null
-          sudo apt-get install python3.7-dev -qq > /dev/null
-        fi 
+        cd ..    
         
     - name: Install tbb
       run: |

@@ -8,9 +8,6 @@
 #include <boost/python.hpp>
 #include <pysi/PySIEffect.hpp>
 #include <sigrun/util/Util.hpp>
-#include <sigrun/plugin/Scripting.hpp>
-#include <thread>
-#include <mutex>
 #include <sigrun/SITypes.hpp>
 #include <csignal>
 #include <cstdlib>
@@ -20,6 +17,7 @@
 #include <sigrun/log/CrashDump.hpp>
 #include <sigrun/rendering/qml/items/PlotItem.hpp>
 #include <sigrun/util/Benchmark.hpp>
+#include <chrono>
 
 #define NEW_REGIONS_PER_FRAME 100
 
@@ -564,29 +562,34 @@ void Context::perform_external_application_registration()
 
 void Context::perform_region_insertion()
 {
-    int32_t region_queue_size = d_region_insertion_queue.size();
+//    SI_BENCHMARK_SCOPE(
+        int32_t region_queue_size = d_region_insertion_queue.size();
 
-    for(int32_t i = 0; i < ((region_queue_size > NEW_REGIONS_PER_FRAME) ? NEW_REGIONS_PER_FRAME: region_queue_size); ++i)
-    {
-        const auto& region_information_tuple = d_region_insertion_queue.front();
-
-        uprm->add_region(std::get<0>(region_information_tuple), std::get<1>(region_information_tuple), std::get<3>(region_information_tuple));
-
-        if(std::get<2>(region_information_tuple) == SI_TYPE_MOUSE_CURSOR)
+        for(int32_t i = 0; i < ((region_queue_size > NEW_REGIONS_PER_FRAME) ? NEW_REGIONS_PER_FRAME: region_queue_size); ++i)
         {
-            deo[uprm->regions().back()->uuid()] = std::make_shared<ExternalObject>(ExternalObject::ExternalObjectType::MOUSE);
-            uplm->add_link(deo[uprm->regions().back()->uuid()], uprm->regions().back(), SI_CAPABILITY_LINK_POSITION, SI_CAPABILITY_LINK_POSITION);
+            const auto& region_information_tuple = d_region_insertion_queue.front();
 
-            INFO("Plugin available for drawing");
+            uprm->add_region(std::get<0>(region_information_tuple), std::get<1>(region_information_tuple), std::get<3>(region_information_tuple));
+
+            if(std::get<2>(region_information_tuple) == SI_TYPE_MOUSE_CURSOR)
+            {
+                deo[uprm->regions().back()->uuid()] = std::make_shared<ExternalObject>(ExternalObject::ExternalObjectType::MOUSE);
+                uplm->add_link(deo[uprm->regions().back()->uuid()], uprm->regions().back(), SI_CAPABILITY_LINK_POSITION, SI_CAPABILITY_LINK_POSITION);
+
+                INFO("Plugin available for drawing");
+            }
+
+            d_region_insertion_queue.pop();
         }
 
-        d_region_insertion_queue.pop();
-    }
+        QApplication::processEvents();
+//    )
 
-    QApplication::processEvents(QEventLoop::AllEvents);
-
-//    if(d_region_insertion_queue.empty())
+    if(d_region_insertion_queue.empty())
+    {
 //        SI_BENCHMARK_STOP;
+//        exit(0);
+    }
 }
 
 void Context::perform_link_events()

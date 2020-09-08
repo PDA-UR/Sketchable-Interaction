@@ -14,8 +14,8 @@
 #include <memory>
 #include <SI/SI.hpp>
 
-class RegionRepresentation: public QGraphicsPolygonItem, public SIObject
-{ SIREN
+class RegionRepresentation: public QObject, public QGraphicsPolygonItem, public SIObject
+{ Q_OBJECT SIREN
 
 public:
     RegionRepresentation(QQmlEngine* e, const std::shared_ptr<Region>& region);
@@ -28,6 +28,10 @@ public:
     QQuickWidget& view();
     QColor& color();
 
+    void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;
+
+    Q_SLOT void set_data(const QVariantMap& data);
+
 private:
     void perform_transform_update(const std::shared_ptr<Region>& region);
     void perform_data_update(const std::shared_ptr<Region>& region);
@@ -38,6 +42,11 @@ private:
     std::string d_name;
     QQuickWidget d_view;
     uint32_t d_type;
+
+    bool d_was_data_received = false;
+    bool d_with_border = true;
+
+    QMap<QString, QVariant> d_received_data;
 
     glm::vec3 d_initial_offset;
 };

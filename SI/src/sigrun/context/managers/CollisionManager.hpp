@@ -9,8 +9,11 @@
 #include <sigrun/region/Region.hpp>
 #include <unordered_map>
 #include <sigrun/SIObject.hpp>
+
+#if !defined(Q_MOC_RUN)
 #include <tbb/task_group.h>
 #include <tbb/concurrent_vector.h>
+#endif
 
 class CollisionManager: public SIObject
 { SIGRUN

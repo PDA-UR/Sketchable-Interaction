@@ -5,7 +5,10 @@
 #include <sigrun/region/RegionResampler.hpp>
 #include <sigrun/util/Dollar1GestureRecognizer.hpp>
 #include <boost/python/numpy.hpp>
+
+#if !defined(Q_MOC_RUN)
 #include <tbb/parallel_for_each.h>
+#endif
 
 namespace bp = boost::python;
 
@@ -17,17 +20,16 @@ PySIEffect::PySIEffect(const std::vector<glm::vec3>& contour, const std::string&
     d_contour.reserve(STEPCOUNT);
     d_aabb.reserve(4);
 
-//    Recognizer r;
-//    std::vector<glm::vec3> temp;
-//    r.recognize(temp, contour);
+    std::vector<glm::vec3> temp;
 
+    Recognizer().recognize(temp, contour);
 
     int32_t x_min = 999999;
     int32_t x_max = 0;
     int32_t y_min = 999999;
     int32_t y_max = 0;
 
-    for(auto& v: contour)
+    for(auto& v: temp)
     {
         x_max = v.x > x_max ? v.x : x_max;
         y_max = v.y > y_max ? v.y : y_max;
@@ -42,8 +44,48 @@ PySIEffect::PySIEffect(const std::vector<glm::vec3>& contour, const std::string&
         tlc, blc, brc, trc
     };
 
-    RegionResampler::resample(d_contour, contour);
+    RegionResampler::resample(d_contour, temp);
 }
+
+void PySIEffect::set_data(const QMap<QString, QVariant> &data)
+{
+    for(auto& key: data.keys())
+        d_data[key] = data[key];
+}
+
+bool PySIEffect::is_border_present()
+{
+    return d_with_border;
+}
+
+bp::object PySIEffect::__data__(const std::string& key, const uint32_t type)
+{
+    switch (type)
+    {
+        case SI_DATA_TYPE_INT:
+            return bp::object(d_data[QString(key.c_str())].value<int>());
+        case SI_DATA_TYPE_FLOAT:
+            return bp::object(d_data[QString(key.c_str())].value<float>());
+        case SI_DATA_TYPE_STRING:
+            return bp::object(d_data[QString(key.c_str())].value<QString>().toStdString());
+        case SI_DATA_TYPE_BOOL:
+            return bp::object(d_data[QString(key.c_str())].value<bool>());
+    }
+
+    return bp::object();
+}
+
+bp::list PySIEffect::__logger_messages__()
+{
+    bp::list l;
+    const auto& msgs = Log::messages();
+
+    for(auto& msg: msgs)
+        l.append(msg);
+
+    return l;
+}
+
 
 void PySIEffect::__signal_deletion__()
 {
@@ -288,16 +330,17 @@ void PySIEffect::set_shape(const std::vector<glm::vec3>& shape)
     {
         d_contour.clear();
 
-//        Recognizer r;
-//        std::vector<glm::vec3> temp;
-//        r.recognize(temp, shape);
+        Recognizer r;
+        std::vector<glm::vec3> temp, smoothed;
+
+        r.recognize(temp, shape);
 
         int32_t x_min = 999999;
         int32_t x_max = 0;
         int32_t y_min = 999999;
         int32_t y_max = 0;
 
-        for(const auto& v: shape)
+        for(const auto& v: temp)
         {
             x_max = v.x > x_max ? v.x : x_max;
             y_max = v.y > y_max ? v.y : y_max;
@@ -312,7 +355,19 @@ void PySIEffect::set_shape(const std::vector<glm::vec3>& shape)
             tlc, blc, brc, trc
         };
 
-        RegionResampler::resample(d_contour, shape);
+//        for(int i = 0; i < temp.size() - 1; ++i)
+//        {
+//            auto& p1 = temp[i];
+//            auto& p2 = temp[i + 1];
+//
+//            glm::vec3 Q(((3.0 / 4.0) * p1.x) + ((1.0 / 4.0) * p2.x),((3.0 / 4.0) * p1.y) + ((1.0 / 4.0) * p2.y), 1);
+//            glm::vec3 R(((1.0 / 4.0) * p1.x) + ((3.0 / 4.0) * p2.x),((1.0 / 4.0) * p1.y) + ((3.0 / 4.0) * p2.y), 1);
+//
+//            smoothed.push_back(Q);
+//            smoothed.push_back(R);
+//        }
+
+        RegionResampler::resample(d_contour, temp);
 
         d_recompute_mask = true;
     }

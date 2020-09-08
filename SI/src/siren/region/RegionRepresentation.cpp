@@ -16,11 +16,13 @@ RegionRepresentation::RegionRepresentation(QQmlEngine* e, const std::shared_ptr<
     d_type(region->type()),
     d_uuid(region->uuid()),
     d_name(region->name()),
-    d_initial_offset(region->aabb()[0].x, region->aabb()[0].y, 1)
+    d_initial_offset(region->aabb()[0].x, region->aabb()[0].y, 1),
+    d_with_border(region->effect()->is_border_present())
 {
     if(!d_qml_path.empty())
         d_view.setSource(QUrl::fromLocalFile(QString(d_qml_path.c_str())));
 
+    d_view.rootContext()->setContextProperty("REGION", this);
     d_view.setGeometry(0, 0, region->aabb()[3].x - region->aabb()[0].x, region->aabb()[1].y - region->aabb()[0].y);
     d_view.setAttribute(Qt::WA_AlwaysStackOnTop);
     d_view.setAttribute(Qt::WA_NoSystemBackground);
@@ -87,15 +89,27 @@ void RegionRepresentation::perform_data_update(const std::shared_ptr<Region> &re
 
     if (region->effect()->has_data_changed())
     {
+        d_with_border = region->effect()->is_border_present();
+
         QPolygonF poly;
         for(auto& p: region->contour())
             poly << QPointF(p.x, p.y);
 
         setPolygon(poly);
         QMetaObject::invokeMethod(reinterpret_cast<QObject *>(d_view.rootObject()), "updateData", QGenericReturnArgument(), Q_ARG(QVariant, region->data()));
-
-        d_view.update();
     }
+
+    if(d_was_data_received)
+    {
+        region->set_data(d_received_data);
+
+        d_was_data_received = false;
+    }
+}
+
+void Region::set_data(const QMap<QString, QVariant>& data)
+{
+    d_py_effect->set_data(data);
 }
 
 QQuickWidget& RegionRepresentation::view()
@@ -108,4 +122,23 @@ QColor& RegionRepresentation::color()
     return d_color;
 }
 
+void RegionRepresentation::set_data(const QVariantMap& data)
+{
+    d_was_data_received = true;
 
+    for(auto& key: data.keys())
+        d_received_data[key] = data[key];
+}
+
+void RegionRepresentation::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
+{
+    if(d_with_border)
+    {
+        QPen pen(QColor(72, 79, 81));
+        pen.setWidth(4);
+        painter->setPen(pen);
+        painter->drawPolygon(this->polygon());
+    }
+
+    QGraphicsPolygonItem::paint(painter, option, widget);
+}
