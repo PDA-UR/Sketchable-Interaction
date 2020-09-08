@@ -3,8 +3,10 @@
 #include "CollisionManager.hpp"
 #include <sigrun/context/Context.hpp>
 #include <execution>
+#if !defined(Q_MOC_RUN)
 #include <tbb/parallel_for.h>
 #include "tbb/parallel_for_each.h"
+#endif
 
 namespace bp = boost::python;
 

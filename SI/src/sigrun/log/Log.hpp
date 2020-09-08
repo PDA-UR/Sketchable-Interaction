@@ -191,6 +191,8 @@ private:
     */
     static const std::string PATH_DEFAULT;
 
+    static std::vector<std::string> MESSAGES;
+
 public:
 
     /**
@@ -286,6 +288,7 @@ public:
     static void unquench(const std::string& target);
 
     static std::vector<std::string> QUENCHED;
+    static const std::vector<std::string>& messages();
 };
 
 

@@ -11,6 +11,7 @@ bool Log::__DEBUG__ = false;
 int16_t Log::SHOW = -1;
 uint16_t Log::WHERE = 0;
 std::vector<std::string> Log::QUENCHED = std::vector<std::string>();
+std::vector<std::string> Log::MESSAGES = std::vector<std::string>();
 
 /**
 \brief central logging function outputting log messages according to its params
@@ -88,6 +89,7 @@ void Log::log(const std::string& origin, const std::string &what, uint16_t level
             }
 
             Print::print(message);
+            MESSAGES.push_back(message);
         }
     }
 }
@@ -172,4 +174,9 @@ void Log::unquench(const std::string& target)
 
     if(it != QUENCHED.end())
         QUENCHED.erase(it);
+}
+
+const std::vector<std::string>& Log::messages()
+{
+    return MESSAGES;
 }

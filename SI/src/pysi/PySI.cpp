@@ -64,6 +64,8 @@ BOOST_PYTHON_MODULE(libPySI)
                 .def("__context_dimensions__", &PySIEffect::__context_dimensions__)
                 .def("__assign_effect__", &PySIEffect::__assign_effect__)
                 .def("__emit_linking_action__", &PySIEffect::__emit_linking_action__)
+                .def("__data__", &PySIEffect::__data__)
+                .def("__logger_messages__", &PySIEffect::__logger_messages__)
 
                 .add_property("shape", &PySIEffect::get_shape, &PySIEffect::set_shape)
 
@@ -95,6 +97,7 @@ BOOST_PYTHON_MODULE(libPySI)
                 .def_readwrite("has_data_changed", &PySIEffect::d_data_changed)
                 .def_readwrite("mouse_wheel_angle_px", &PySIEffect::mouse_wheel_angle_px)
                 .def_readwrite("mouse_wheel_angle_degrees", &PySIEffect::mouse_wheel_angle_degrees)
+                .def_readwrite("with_border", &PySIEffect::d_with_border)
 
                 .enable_pickling()
                 ;

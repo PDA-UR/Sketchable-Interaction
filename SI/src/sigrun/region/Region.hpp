@@ -32,6 +32,8 @@ public:
     void set_effect(const bp::object& effect, const bp::dict& kwargs);
     void set_effect(const std::vector<glm::vec3>& contour, const bp::object& effect, const std::string& uuid, const bp::dict& kwargs);
 
+    void set_data(const QMap<QString, QVariant>& data);
+
     PySIEffect* effect();
     bp::object& raw_effect();
 

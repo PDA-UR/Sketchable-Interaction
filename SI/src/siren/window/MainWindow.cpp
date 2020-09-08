@@ -4,6 +4,7 @@
 #include <QDebug>
 #include <algorithm>
 #include <execution>
+#include <Qt>
 #include <siren/timing/Timing.hpp>
 
 MainWindow::MainWindow(uint32_t width, uint32_t height, uint32_t target_fps):
@@ -20,6 +21,11 @@ MainWindow::MainWindow(uint32_t width, uint32_t height, uint32_t target_fps):
 
     d_engine = new QQmlEngine(this);
     d_engine->setObjectOwnership(d_engine, QQmlEngine::CppOwnership);
+
+    p_scene->setSceneRect(0, 0, Context::SIContext()->width(), Context::SIContext()->height());
+
+    setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
     setScene(p_scene);
     setViewport(new QOpenGLWidget);
