@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: [3.7]
+        python-version: [3.8]
 
     steps:
     - uses: actions/checkout@v1
@@ -72,20 +72,6 @@ jobs:
     - name: Set C++ Compiler
       run: |
         sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-9 90
-
-    - name: Install Boost with components System, Python and Filesystem 
-      run: |
-        mkdir temp &&
-        cd temp &&
-        wget https://sourceforge.net/projects/boost/files/boost/1.69.0/boost_1_69_0.tar.gz/download &&
-        tar xzf download &&
-        cd boost_1_69_0 &&
-        sudo ln -s /usr/local/include/python3.7m /usr/local/include/python3.7 &&
-        sed -i "s@includes ?= \$(prefix)/include/python\$(version)@includes ?= \$(prefix)/include/python\$(version)m@" tools/build/src/tools/python.jam  &&
-        sudo ./bootstrap.sh --with-python=$(which python3) &&
-        sudo ./b2 --with-system --with-python --with-filesystem -j 8 -d0 install &&       
-        cd ..
-        cd ..
         
     - name: Install Dependencies
       run: |
@@ -95,8 +81,22 @@ jobs:
           sudo apt-get install qtdeclarative5-dev -qq > /dev/null
           sudo apt-get install libglm-dev -qq > /dev/null
           sudo apt-get install uuid-dev -qq > /dev/null
-          sudo apt-get install python3.7-dev -qq > /dev/null
+          sudo apt-get install python3.8-dev -qq > /dev/null
         fi 
+
+    - name: Install Boost with components System, Python and Filesystem 
+      run: |
+        mkdir temp &&
+        cd temp &&
+        wget https://sourceforge.net/projects/boost/files/boost/1.69.0/boost_1_69_0.tar.gz/download &&
+        tar xzf download &&
+        cd boost_1_69_0 &&
+        sudo ln -s /usr/local/include/python3.8m /usr/local/include/python3.8 &&
+        sed -i "s@includes ?= \$(prefix)/include/python\$(version)@includes ?= \$(prefix)/include/python\$(version)m@" tools/build/src/tools/python.jam  &&
+        sudo ./bootstrap.sh --with-python=$(which python3) &&
+        sudo ./b2 --with-system --with-python --with-filesystem -j 8 -d0 install &&       
+        cd ..
+        cd ..    
         
     - name: Install tbb
       run: |
