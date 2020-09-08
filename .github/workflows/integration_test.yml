@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: [3.8]
+        python-version: [3.7]
 
     steps:
     - uses: actions/checkout@v1
@@ -82,7 +82,6 @@ jobs:
           sudo apt-get install libglm-dev -qq > /dev/null
           sudo apt-get install uuid-dev -qq > /dev/null
           sudo apt-get install python3.7-dev -qq > /dev/null
-          sudo apt-get install python3.8-dev -qq > /dev/null
         fi 
 
     - name: Install Boost with components System, Python and Filesystem 
