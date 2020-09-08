@@ -7,7 +7,7 @@
 #include "../log/Log.hpp"
 #include <sigrun/SITypes.hpp>
 
-#define SI_BENCHMARK_SCOPE(...) { BenchmarkTimer timer; __VA_ARGS__ }
+#define SI_BENCHMARK_SCOPE(...) { ScopedBenchmarkTimer timer; __VA_ARGS__ }
 #define SI_BENCHMARK_START NonScopedBenchmarkTimer::instance().mark_start()
 #define SI_BENCHMARK_STOP NonScopedBenchmarkTimer::instance().mark_stop()
 
@@ -37,7 +37,7 @@ public:
 
         WARN("Duration: " + std::to_string(duration * 0.001) + " ms");
 
-        exit(0);
+//        exit(0);
     }
 
 private:

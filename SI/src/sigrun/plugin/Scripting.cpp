@@ -26,6 +26,7 @@ Scripting::Scripting()
         std::string directory(buf);
 
         bp::object sys_module = bp::import("sys");
+
         bp::str module_directory = directory.c_str();
         sys_module.attr("path").attr("insert")(0, module_directory);
 

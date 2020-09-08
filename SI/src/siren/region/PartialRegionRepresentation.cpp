@@ -13,6 +13,10 @@ PartialRegionRepresentation::PartialRegionRepresentation(const std::string& id, 
         path.lineTo(p.x, p.y);
     });
 
+    QPen pen(QColor(72, 79, 81)); // 177, 180, 181
+    pen.setWidth(4);
+
+    setPen(pen);
     setPath(path);
     setZValue(2);
 }
@@ -34,7 +38,6 @@ void PartialRegionRepresentation::update(const std::vector<glm::vec3>& path)
     });
 
     setPath(qpath);
-    setPen(QColor(255, 255, 255));
 }
 
 const std::string &PartialRegionRepresentation::id() const

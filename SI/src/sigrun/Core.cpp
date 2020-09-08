@@ -25,6 +25,8 @@ Core::~Core()
 {
     INFO("Shutting down...");
 
+    Py_Finalize();
+
     INFO("Shut down");
 }
 
@@ -36,6 +38,7 @@ Core::~Core()
 void Core::start(char** argv, int argc, IRenderEngine* ire)
 {
     SI_BENCHMARK_START;
+
     INFO("Initializing... ");
 
     std::unordered_map<std::string, std::unique_ptr<bp::object>> plugins;
@@ -53,6 +56,7 @@ void Core::start(char** argv, int argc, IRenderEngine* ire)
     std::unique_ptr<Context> upctx(new Context());
 
     INFO("Initialization finished");
+//    )
 
     upctx->begin(plugins, ire, argc, argv);
     INFO("Context closed");
