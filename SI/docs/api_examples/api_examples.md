@@ -5,12 +5,15 @@ lang: en-GB
 # PySI API
 ## Introduction
 The PySI API facilitates its users to build new SI-Plugins from scratch or extend and modify existing ones.
+Therefore, the PySI API makes heavy use of object-oriented programming, most notably *
 An SI-Plugin is an implementation of an *effect* of an *interactive region* (early concept: [[1]](#refs)).
 Such an *effect* is triggered once end-users overlap two *interactive regions*, defining a *collision*.
 Additionally, *interactive regions* can be *linked*.
 Such *linking relationships* are defined according to *attributes*.
 Application developers specify in the implementation of an *effect* which *attributes* of that *effect* can be linked to which *attributes* of other *effects* and which *linking action* shall occur.
 Standard *attributes* are either provided by the PySI API, such as *position*, or may be created as ad-hoc identifiers which are chosen by application developers. 
+In Sketchable Interaction, everything is considered an SI-plugin.
+The very canvas you draw on is a plugin, filesystem entries such as files are plugins, where each file type can be done as a plugin which represents that type, etc.
 
 The PySI API aims to streamline the implementation of an SI-Plugin in partially descriptive, partially imperative and self-documenting fashion.
 This document's goal is to describe the PySI API beyond its code documentation.
