@@ -66,6 +66,19 @@ jobs:
           cmake --build  /home/runner/work/Sketchable-Interaction/Sketchable-Interaction --target all -j 8
         fi
         
+    - name: Fetch SI Plugins
+      if: success()
+      run: |
+        if [[ "${{ github.event.head_commit.message }}" != *"[NO CI]"* ]]; then
+          git clone https://github.com/PDA-UR/Sketchable-Interaction-Plugins.git //home/runner/work/Sketchable-Interaction/Sketchable-Interaction/SI/plugins
+        fi
+        
+    - name: Generate E
+      if: success()
+      run: |
+        cd /home/runner/work/Sketchable-Interaction/Sketchable-Interaction/SI
+        ./../egen
+        
     - name: Versioning
       id: version
       run: |
@@ -86,6 +99,8 @@ jobs:
         cp -r libSIRenderEngine.so si${{ env.CURRENT_VERSION }}/bin &&
         cp -r libPySI.so si${{ env.CURRENT_VERSION }}/bin &&
         cp -r sipluggen si${{ env.CURRENT_VERSION }} &&
+        cp -r egen si${{ env.CURRENT_VERSION }} &&
+        cp -r sitools si${{ env.CURRENT_VERSION }} &&
         cp -r /home/runner/work/Sketchable-Interaction/Sketchable-Interaction/SI/bin/si si${{ env.CURRENT_VERSION }} &&
         chmod +x si${{ env.CURRENT_VERSION }}/si &&
         cp -r /home/runner/work/Sketchable-Interaction/Sketchable-Interaction/SI/StartSIGRun.py si${{ env.CURRENT_VERSION }} &&
