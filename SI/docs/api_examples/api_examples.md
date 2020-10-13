@@ -5,7 +5,7 @@ lang: en-GB
 # PySI API
 ## Introduction
 The PySI API facilitates its users to build new SI-Plugins from scratch or extend and modify existing ones.
-Therefore, the PySI API makes heavy use of object-oriented programming, most notably *
+Therefore, the PySI API makes heavy use of object-oriented programming, most notably **Inheritance**.
 An SI-Plugin is an implementation of an *effect* of an *interactive region* (early concept: [[1]](#refs)).
 Such an *effect* is triggered once end-users overlap two *interactive regions*, defining a *collision*.
 Additionally, *interactive regions* can be *linked*.

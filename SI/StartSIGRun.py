@@ -4,6 +4,8 @@ from plugins.standard_environment_library.notification import SimpleNotification
 from plugins.standard_environment_library.filesystem import Directory
 from plugins.standard_environment_library.cursor import Cursor
 from plugins.standard_environment_library.deletion import Deletion
+from plugins.standard_environment_library.slider import SliderBase
+from plugins.standard_environment_library.slider import SliderTargetDummy
 
 def add_canvas():
     canvas_shape = [[0, 0],
@@ -53,7 +55,7 @@ def add_start_directory():
 import math
 
 ## Author: RW
-def add_many_regions(num = 100, area_width= 1920, area_height=1080):
+def add_many_regions(num = 100, area_width= 1600, area_height=800):
     left = (PySI.Startup.context_dimensions()[0] - area_width) // 2
     top = (PySI.Startup.context_dimensions()[1] - area_height) // 2
     num_h = math.ceil(math.sqrt(num / (area_width/area_height)))
@@ -76,6 +78,12 @@ def add_many_regions(num = 100, area_width= 1920, area_height=1080):
 
         PySI.Startup.create_region_by_class(r_shape, Deletion, kwargs)
 
+def add_slider(shape, c):
+    PySI.Startup.create_region_by_class(shape, SliderBase, {"color_channel": c})
+
+def add_slider_target(shape):
+    PySI.Startup.create_region_by_class(shape, SliderTargetDummy, {})
+
 def on_start():
     PySI.Startup.disable(PySI.Configuration.SI_CRASH_DUMP)
 
@@ -91,4 +99,11 @@ def on_start():
     add_palette()
     add_start_directory()
 
-    # add_many_regions(1000)
+    # add_many_regions(500)
+    #
+    # add_slider([[500, 500], [500, 530], [800, 530], [800, 500]], "r")
+    # add_slider([[500, 600], [500, 630], [800, 630], [800, 600]], "g")
+    # add_slider([[500, 700], [500, 730], [800, 730], [800, 700]], "b")
+    #
+    # add_slider_target([[1000, 570], [1000, 670], [1100, 670], [1100, 570]])
+
