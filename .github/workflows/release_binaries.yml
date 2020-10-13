@@ -65,20 +65,7 @@ jobs:
           cmake . 
           cmake --build  /home/runner/work/Sketchable-Interaction/Sketchable-Interaction --target all -j 8
         fi
-        
-    - name: Fetch SI Plugins
-      if: success()
-      run: |
-        if [[ "${{ github.event.head_commit.message }}" != *"[NO CI]"* ]]; then
-          git clone https://github.com/PDA-UR/Sketchable-Interaction-Plugins.git //home/runner/work/Sketchable-Interaction/Sketchable-Interaction/SI/plugins
-        fi
-        
-    - name: Generate E
-      if: success()
-      run: |
-        cd /home/runner/work/Sketchable-Interaction/Sketchable-Interaction/SI
-        ./../egen
-        
+                
     - name: Versioning
       id: version
       run: |
