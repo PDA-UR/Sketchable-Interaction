@@ -86,7 +86,7 @@ void Scripting::load_class_names(std::vector<std::string> &classes, const std::s
             {
                 std::string class_name = source.substr(found + clazz.size() + space.size(),found2 - (found + clazz.size() + space.size()));
 
-                if(class_name.substr(0, 2) != SI_DOUBLE_UNDERSCORE && class_name != SI_PYTHON_SIEFFECT_NAME)
+                if(class_name.substr(0, 2) != SI_DOUBLE_UNDERSCORE && class_name != SI_PYTHON_SIEFFECT_NAME && class_name != "E")
                     classes.push_back(class_name);
 
                 size += found2;

@@ -284,3 +284,11 @@ SI/__pycache__/
 SI/docs/api_examples/tex2pdf.-f747a69bc8e4690b/
 
 SI/test_startup.sh
+
+SI/lib/pugixml-1.10/docs/
+
+SI/lib/pugixml-1.10/scripts/
+
+SI/lib/pugixml-1.10/readme.txt
+
+SI/lib/pugixml-1.10/CMakeLists.txt
