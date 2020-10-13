@@ -175,7 +175,23 @@ void Region::LINK_SLOT(const std::string& uuid_event, const std::string& uuid_se
                 {
                     if(Context::SIContext()->linking_manager()->is_linked(uuid_sender, source_cap, uuid(), k, ILink::UD))
                     {
-                        v(*args);
+                        if (args.is_none())
+                        {
+                            v();
+                        }
+                        else
+                        {
+                            if (bp::extract<bp::tuple>(args).check())
+                            {
+                                v(*args);
+                            }
+                            else
+                            {
+                                // this is weird, unsure whether its a hack or not; needs investigation when time
+                                if(!bp::extract<bp::dict>(args).check())
+                                    v(args());
+                            }
+                        }
 
                         if(d_py_effect->attr_link_emit().find(k) != d_py_effect->attr_link_emit().end())
                             Q_EMIT LINK_SIGNAL(uuid_event, uuid(), k, d_py_effect->attr_link_emit()[k]());

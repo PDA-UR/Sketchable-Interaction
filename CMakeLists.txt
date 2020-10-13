@@ -15,6 +15,12 @@ set(BUILD_DOCS FALSE)
 include(SI/src/CMakeLists.txt)
 include(SI/src/siren/CMakeLists.txt)
 
+#SItools
+include(SI/src/sitools/CMakeLists.txt)
+
+#SIEgen
+include(SI/src/e/CMakeLists.txt)
+
 # SIExamples
 include(SI/examples/app/CMakeLists.txt)
 
