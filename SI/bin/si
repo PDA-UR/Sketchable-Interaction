@@ -4,11 +4,15 @@ rm -rf temp_download
 git clone --quiet https://github.com/PDA-UR/Sketchable-Interaction-Plugins.git temp_download
 
 if [ $? -eq 0 ]; then
-    cp -rf ./temp_download ./plugins
-    rm -rf temp_download
+	if [ -d "./plugins" ]; then
+		echo "plugins folder present!"
+	else
+		cp -rf ./temp_download ./plugins
+    	rm -rf temp_download
+    fi
 else
 	if [ -d "./plugins" ]; then
-		echo "plugins folder present!"	
+		echo "plugins folder present!"
 	else
 		echo "plugins folder not present!"
 		echo "SI cannot run without a plugins folder!"
@@ -16,6 +20,10 @@ else
 		echo "Empty plugins folder created!"
 	fi
 fi
+
+rm -rf temp_download
+
+./egen
 
 
 
