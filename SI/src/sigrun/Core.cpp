@@ -102,7 +102,7 @@ void Core::retrieve_available_plugins(std::unordered_map<std::string, std::uniqu
             std::string module_name = name.substr(0, name.find_last_of('.'));
             std::string rpath = full_path.substr(full_path.find(plugin_path)) + SI_SLASH + name;
 
-            if(module_name != SI_PYTHON_STARTUP_FILE_NAME && module_name.substr(0, 2) != SI_DOUBLE_UNDERSCORE && module_name != "E")
+            if(module_name != SI_PYTHON_STARTUP_FILE_NAME && module_name.substr(0, 2) != SI_DOUBLE_UNDERSCORE && module_name != "E" && module_name != SI_PYTHON_SIEFFECT_NAME)
             {
                 script.load_class_names(classes, rpath);
 
