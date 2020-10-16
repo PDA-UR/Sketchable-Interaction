@@ -13,7 +13,7 @@ int main(int argc, char* argv[])
 {
     QApplication app(argc, argv);
     QFileSystemWatcher watcher;
-    watcher.addPath("plugins/env/values/");
+    watcher.addPath("plugins/env/");
 
     MyClass* mc = new MyClass(QString(argv[1]));
 

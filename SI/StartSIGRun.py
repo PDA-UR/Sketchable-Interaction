@@ -78,11 +78,14 @@ def add_many_regions(num = 100, area_width= 1600, area_height=800):
 
         PySI.Startup.create_region_by_class(r_shape, Deletion, kwargs)
 
+
 def add_slider(shape, c):
     PySI.Startup.create_region_by_class(shape, SliderBase, {"color_channel": c})
 
+
 def add_slider_target(shape):
     PySI.Startup.create_region_by_class(shape, SliderTargetDummy, {})
+
 
 def on_start():
     PySI.Startup.disable(PySI.Configuration.SI_CRASH_DUMP)
