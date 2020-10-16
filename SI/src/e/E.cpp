@@ -22,7 +22,7 @@ void E::parse(std::string& constants)
     std::string directory(buf);
 
     pugi::xml_document doc;
-    doc.load_file((directory + "/plugins/env/values/values.xml").c_str());
+    doc.load_file((directory + "/plugins/env/values.xml").c_str());
 
     for(auto node: doc.children("environment"))
     {
