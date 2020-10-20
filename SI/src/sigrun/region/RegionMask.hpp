@@ -102,6 +102,8 @@ private:
     int32_t d_move_x;
     int32_t d_move_y;
 
+    static int d_num_called;
+
     /**
         std::vector of bools containing the bit array used for testing for collisions
     */
