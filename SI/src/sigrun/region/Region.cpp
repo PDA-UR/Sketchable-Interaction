@@ -9,6 +9,9 @@
 #include <sigrun/util/UUID.hpp>
 #include <sigrun/context/Context.hpp>
 
+#include <sigrun/context/Context.hpp>
+#include <execution>
+
 namespace bp = boost::python;
 
 Region::Region(const std::vector<glm::vec3> &contour, const bp::object& effect, uint32_t mask_width, uint32_t mask_height, const bp::dict& kwargs):
@@ -336,6 +339,19 @@ const glm::vec4& Region::color() const
 bool Region::is_new()
 {
     return d_is_new;
+}
+
+void Region::set_data(const QMap<QString, QVariant>& data)
+{
+    const auto& regions = Context::SIContext()->region_manager()->regions();
+
+    auto it = std::find_if(std::execution::par_unseq, regions.begin(), regions.end(), [&](const auto& r)
+    {
+       return r->uuid() == data["uuid"].toString().toStdString();
+    });
+
+    if(it->get())
+        it->get()->effect()->set_data(data);
 }
 
 void Region::set_is_new(bool toggle)
