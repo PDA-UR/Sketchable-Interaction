@@ -107,11 +107,6 @@ void RegionRepresentation::perform_data_update(const std::shared_ptr<Region> &re
     }
 }
 
-void Region::set_data(const QMap<QString, QVariant>& data)
-{
-    d_py_effect->set_data(data);
-}
-
 QQuickWidget& RegionRepresentation::view()
 {
     return d_view;
@@ -127,7 +122,9 @@ void RegionRepresentation::set_data(const QVariantMap& data)
     d_was_data_received = true;
 
     for(auto& key: data.keys())
+    {
         d_received_data[key] = data[key];
+    }
 }
 
 void RegionRepresentation::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)

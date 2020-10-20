@@ -286,82 +286,57 @@ void RegionMask::move(const glm::vec2& v)
 */
 void RegionMask::scanlinefill(const std::vector<glm::vec3>& contour, const std::vector<glm::vec3>& aabb)
 {
-    std::vector<glm::vec2> scan_hits;
-    static glm::vec2 min, max;
-    unsigned int polysize = contour.size();
+    int nodes;
+    int nodeX[256];
 
-    min.x = d_tlc_aabb_x;
-    min.y = d_tlc_aabb_y;
-
-    max.x = d_brc_aabb_x;
-    max.y = d_brc_aabb_y;
-
-    // Bounds check
-    if ((max.x < 0) || (min.x > d_canvas_width) || (max.y < 0) || (min.y > d_canvas_height))
-        return;
-
-    // Vertically clip
-    if (min.y < d_tlc_aabb_y)
-        min.y = d_tlc_aabb_y;
-
-    if (max.y > d_brc_aabb_y)
-        max.y = d_brc_aabb_y;
-
-    // start on the outside of the object we step out by 1.
-    min.x -= 1;
-    max.x += 1;
-
-    // Go through each scan line iteratively, jumping by 'gap' pixels each time
-    for(int32_t y = min.y; y < max.y; ++y)
+    //  Loop through the rows of the image.
+    for (int y = d_tlc_aabb_y; y < d_brc_aabb_y; y++)
     {
-        scan_hits.clear();
-
-        bool jump = true;
-        glm::vec2 fp(contour[0].x, contour[0].y);
-
-        for (size_t i = 0; i < polysize - 1; i++)
+        //  Build a list of nodes.
+        nodes = 0;
+        for (int i = 0, k = contour.size() - 2 - 1; i < contour.size() - 2; i++)
         {
-            glm::vec2 pa(contour[i].x, contour[i].y);
-            glm::vec2 pb(contour[i + 1].x, contour[i + 1].y);
+            if (contour[i].y < (double) y && contour[k].y >= (double) y || contour[k].y < (double) y && contour[i].y >= (double) y)
+                nodeX[nodes++] = (int) (contour[i].x + (y - contour[i].y) / (contour[k].y - contour[i].y) * (contour[k].x - contour[i].x));
 
-            // jump double/dud points
-            if (pa.x == pb.x && pa.y == pb.y)
-                continue;
-
-            // if we encounter our hull/poly start point, then we've now created the
-            // closed
-            // hull, jump the next segment and reset the first-point
-            if ((!jump) && (fp.x == pb.x) && (fp.y == pb.y))
-            {
-                if (i < polysize - 2)
-                {
-                    fp.x = contour[i + 2].x;
-                    fp.y = contour[i + 2].y;
-                    jump = true;
-                    i++;
-                }
-            }
-            else
-                jump = false;
-
-            // test to see if this segment makes the scan-cut.
-            if ((pa.y > pb.y && y < pa.y && y > pb.y) || (pa.y < pb.y && y > pa.y && y < pb.y))
-                scan_hits.emplace_back(pa.x == pb.x ? pa.x : (pb.x - pa.x) / (pb.y - pa.y) * (y - pa.y) + pa.x, y);
+            k = i;
         }
 
-        // Sort the scan hits by X, so we have a proper left->right ordering
-        std::sort(scan_hits.begin(), scan_hits.end(), [&](glm::vec2 const &a, glm::vec2 const &b)
+        //  Sort the nodes, via a simple “Bubble” sort.
+
+        int swap;
+        for (int i = 0; i < nodes - 1;)
         {
-            return a.x < b.x;
-        });
+            if (nodeX[i] > nodeX[i + 1])
+            {
+                swap = nodeX[i];
+                nodeX[i] = nodeX[i + 1];
+                nodeX[i + 1] = swap;
+                if (i) i--;
+            }
+            else
+            {
+                i++;
+            }
+        }
 
-        int32_t l = scan_hits.size() - 1;
+        //  Fill the pixels between node pairs.
+        for (int i = 0; i < nodes; i += 2)
+        {
+            if (nodeX[i] >= d_canvas_width)
+                break;
 
-        // generate the line segments.
-        for (int32_t i = 0; i < l; i += 2)
-            for(int32_t x = scan_hits[i].x; x < scan_hits[i + 1].x; x++)
-                this->set_bit(glm::vec3(x, y, 1));
+            if (nodeX[i + 1] > 0)
+            {
+                if (nodeX[i] < 0)
+                    nodeX[i] = 0;
+
+                if (nodeX[i + 1] > d_canvas_width)
+                    nodeX[i + 1] = d_canvas_width;
+
+                for (int x = nodeX[i]; x < nodeX[i + 1]; x++)
+                    this->set_bit(glm::vec3(x, y, 1));
+            }
+        }
     }
-
-    scan_hits.clear();
 }

@@ -262,24 +262,6 @@ Recognizer::Recognizer()
         perfect_circle.emplace_back(radius * std::cos(i * M_PI / 180) + cx, radius * std::sin(i * M_PI / 180) + cy, 1);
 
     d_templates.emplace_back("Circle", perfect_circle);
-
-    //clockwise
-//    d_templates.emplace_back("Diamond", std::vector<glm::vec3>
-//    {
-//        {100, 100, 1},
-//        {300, 0, 1},
-//        {500, 100, 1},
-//        {300, 200, 10}
-//    });
-//
-//    // counter-clockwise
-//    d_templates.emplace_back("Diamond", std::vector<glm::vec3>
-//    {
-//        {100, 100, 1},
-//        {300, 200, 10},
-//        {500, 100, 1},
-//        {300, 0, 1}
-//    });
 }
 
 float Recognizer::recognize(std::vector<glm::vec3> &out, const std::vector<glm::vec3> &in)
@@ -344,18 +326,6 @@ float Recognizer::recognize(std::vector<glm::vec3> &out, const std::vector<glm::
             for(int i = 0; i < 360; ++i)
                 out.emplace_back(radius * std::cos(i * M_PI / 180) + cx, radius * std::sin(i * M_PI / 180) + cy, 1);
         }
-//        else if(r.name() == "Diamond")
-//        {
-//            INFO("Shape approximates to a diamond. Diamond generated in its place!");
-//
-//            out = std::vector<glm::vec3>
-//            {
-//                {bb[0].x, bb[0].y + bb[1].y / 2, 1},
-//                {bb[0].x + bb[1].x / 2, bb[0].y, 1},
-//                {bb[0].x + bb[1].x, bb[0].y + bb[1].y / 2, 1},
-//                {bb[0].x + bb[1].x / 2, bb[0].y + bb[1].y, 1}
-//            };
-//        }
     }
     else
     {
