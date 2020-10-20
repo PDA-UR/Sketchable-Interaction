@@ -171,8 +171,6 @@ bool InputManager::eventFilter(QObject *watched, QEvent *event)
                 press_mouse_button(SI_RIGHT_MOUSE_BUTTON);
                 break;
         }
-
-        return true;
     }
     else if(event->type() == QEvent::MouseButtonRelease)
     {
@@ -192,7 +190,6 @@ bool InputManager::eventFilter(QObject *watched, QEvent *event)
                 release_mouse_button(SI_RIGHT_MOUSE_BUTTON);
                 break;
         }
-        return true;
     }
     else if(event->type() == QEvent::Wheel)
     {
