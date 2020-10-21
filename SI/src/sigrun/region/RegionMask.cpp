@@ -4,7 +4,16 @@
 #include "RegionMask.hpp"
 
 #include <iostream>
-#include <sigrun/log/Log.hpp>
+#include <fstream>
+#include <boost/python.hpp>
+#if !defined(Q_MOC_RUN)
+#include <tbb/parallel_for.h>
+#endif
+
+#define NUM_DEFAULT_SCANLINES 24
+//#define MASK_DEBUG
+
+int RegionMask::d_num_called = 0;
 
 /**
 \brief constructor of the RegionMask class
@@ -43,17 +52,26 @@ RegionMask::RegionMask(uint32_t canvas_width, uint32_t canvas_height, const std:
 {
     scanlinefill(contour, aabb);
 
-//    for(int i = 0; i < d_width_aabb; ++i)
-//    {
-//        for(int k = 0; k < d_height_aabb; ++k)
-//        {
-//            std::cout << (int) d_values[d_width_aabb * k + i];
-//        }
-//
-//        std::cout << std::endl;
-//    }
-}
+#ifdef MASK_DEBUG
+    ++d_num_called;
+    std::ofstream f;
 
+    if(d_num_called > NUM_DEFAULT_SCANLINES)
+    {
+        f.open ("build/test" + std::to_string(d_num_called) + ".txt");
+
+        for(int i = 0; i < d_width_aabb; ++i)
+        {
+            for(int k = 0; k < d_height_aabb; ++k)
+                f << (int) d_values[d_height_aabb * i + k];
+
+            f << "\n";
+        }
+
+        f.close();
+    }
+#endif
+}
 /**
 \brief copy constructor
 
@@ -86,10 +104,7 @@ RegionMask::RegionMask(const RegionMask &rm):
 /**
 \brief default destructor
 */
-RegionMask::~RegionMask()
-{
-
-}
+RegionMask::~RegionMask() = default;
 
 /**
 \brief retrieve the size of the mask datastructure
@@ -286,57 +301,68 @@ void RegionMask::move(const glm::vec2& v)
 */
 void RegionMask::scanlinefill(const std::vector<glm::vec3>& contour, const std::vector<glm::vec3>& aabb)
 {
-    int nodes;
-    int nodeX[256];
-
-    //  Loop through the rows of the image.
-    for (int y = d_tlc_aabb_y; y < d_brc_aabb_y; y++)
+    tbb::parallel_for(tbb::blocked_range<uint32_t>(d_tlc_aabb_y, d_brc_aabb_y), [&](const tbb::blocked_range<uint32_t>& r)
     {
-        //  Build a list of nodes.
-        nodes = 0;
-        for (int i = 0, k = contour.size() - 2 - 1; i < contour.size() - 2; i++)
+        for (auto y = r.begin(); y != r.end(); y++)
         {
-            if (contour[i].y < (double) y && contour[k].y >= (double) y || contour[k].y < (double) y && contour[i].y >= (double) y)
-                nodeX[nodes++] = (int) (contour[i].x + (y - contour[i].y) / (contour[k].y - contour[i].y) * (contour[k].x - contour[i].x));
+            int nodes = 0, nodeX[256];
 
-            k = i;
+            build_node_list(nodeX, &nodes, y, contour);
+            sort(nodeX, nodes);
+            fill(nodeX, nodes, y);
         }
+    });
+}
 
-        //  Sort the nodes, via a simple “Bubble” sort.
+void RegionMask::build_node_list(int *out, int *num_out, int y, const std::vector<glm::vec3> &in)
+{
+    for (int i = 0, k = in.size() - 2 - 1; i < in.size() - 2; i++)
+    {
+        if (in[i].y < (double) y && in[k].y >= (double) y || in[k].y < (double) y && in[i].y >= (double) y)
+            out[(*num_out)++] = (int) (in[i].x + (y - in[i].y) / (in[k].y - in[i].y) * (in[k].x - in[i].x));
 
-        int swap;
-        for (int i = 0; i < nodes - 1;)
+        k = i;
+    }
+}
+
+// weird stuff: this sort works as intended
+// using std::sort does not - no clue why that is
+void RegionMask::sort(int in[256], int num_in)
+{
+    int swap;
+    for (int i = 0; i < num_in - 1;)
+    {
+        if (in[i] > in[i + 1])
         {
-            if (nodeX[i] > nodeX[i + 1])
-            {
-                swap = nodeX[i];
-                nodeX[i] = nodeX[i + 1];
-                nodeX[i + 1] = swap;
-                if (i) i--;
-            }
-            else
-            {
-                i++;
-            }
+            swap = in[i];
+            in[i] = in[i + 1];
+            in[i + 1] = swap;
+
+            if (i)
+                i--;
         }
+        else
+            i++;
+    }
+}
 
-        //  Fill the pixels between node pairs.
-        for (int i = 0; i < nodes; i += 2)
+void RegionMask::fill(int in[256], int num_in, int y)
+{
+    for (int i = 0; i < num_in; i += 2)
+    {
+        if (in[i] >= d_canvas_width)
+            break;
+
+        if (in[i + 1] > 0)
         {
-            if (nodeX[i] >= d_canvas_width)
-                break;
+            if (in[i] < 0)
+                in[i] = 0;
 
-            if (nodeX[i + 1] > 0)
-            {
-                if (nodeX[i] < 0)
-                    nodeX[i] = 0;
+            if (in[i + 1] > d_canvas_width)
+                in[i + 1] = d_canvas_width;
 
-                if (nodeX[i + 1] > d_canvas_width)
-                    nodeX[i + 1] = d_canvas_width;
-
-                for (int x = nodeX[i]; x < nodeX[i + 1]; x++)
-                    this->set_bit(glm::vec3(x, y, 1));
-            }
+            for (int x = in[i]; x < in[i + 1]; x++)
+                this->set_bit(glm::vec3(x, y, 1));
         }
     }
 }
