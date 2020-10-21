@@ -132,10 +132,18 @@ void RegionRepresentation::paint(QPainter *painter, const QStyleOptionGraphicsIt
     if(d_with_border)
     {
         QPen pen(QColor(72, 79, 81));
+
         pen.setWidth(4);
         painter->setPen(pen);
         painter->drawPolygon(this->polygon());
     }
+
+    // show AABBs
+//    QPen pen(QColor(72, 79, 81));
+//    pen.setWidth(4);
+//    painter->setPen(pen);
+//
+//    painter->drawRect(this->polygon().boundingRect());
 
     QGraphicsPolygonItem::paint(painter, option, widget);
 }

@@ -110,6 +110,9 @@ private:
     std::vector<bool> d_values;
 
     void scanlinefill(const std::vector<glm::vec3>& contour, const std::vector<glm::vec3>& aabb);
+    void build_node_list(int out[256], int *num_out, int y, const std::vector<glm::vec3> &in);
+    void sort(int in[256], int num_in);
+    void fill(int in[256], int num_in, int y);
 
     friend class SIGRunRegionMaskTest;
 };
