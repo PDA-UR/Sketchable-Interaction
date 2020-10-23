@@ -8,8 +8,6 @@
 #include <sigrun/log/Log.hpp>
 #include <sigrun/util/UUID.hpp>
 #include <sigrun/context/Context.hpp>
-
-#include <sigrun/context/Context.hpp>
 #include <execution>
 
 namespace bp = boost::python;
@@ -31,13 +29,10 @@ Region::Region(const std::vector<glm::vec3> &contour, const bp::object& effect, 
         mask_height = Context::SIContext()->height();
     }
 
-    uprm = std::make_unique<RegionMask>(mask_width, mask_height, d_py_effect->contour(), d_py_effect->aabb());
+    uprm = std::make_unique<RegionMask>(mask_width, mask_height, d_py_effect->contour());
 }
 
-Region::~Region()
-{
-
-}
+Region::~Region() = default;
 
 void Region::move()
 {
@@ -168,26 +163,17 @@ void Region::LINK_SLOT(const std::string& uuid_event, const std::string& uuid_se
             for(auto& [k, v]: d_py_effect->attr_link_recv()[source_cap])
             {
                 if(uuid_sender.empty())
-                {
                     v(*args);
-
-                    if(d_py_effect->attr_link_emit().find(k) != d_py_effect->attr_link_emit().end())
-                        Q_EMIT LINK_SIGNAL(uuid_event, uuid(), k, d_py_effect->attr_link_emit()[k]());
-                }
                 else
                 {
                     if(Context::SIContext()->linking_manager()->is_linked(uuid_sender, source_cap, uuid(), k, ILink::UD))
                     {
                         if (args.is_none())
-                        {
                             v();
-                        }
                         else
                         {
                             if (bp::extract<bp::tuple>(args).check())
-                            {
                                 v(*args);
-                            }
                             else
                             {
                                 // this is weird, unsure whether its a hack or not; needs investigation when time
@@ -195,11 +181,11 @@ void Region::LINK_SLOT(const std::string& uuid_event, const std::string& uuid_se
                                     v(args());
                             }
                         }
-
-                        if(d_py_effect->attr_link_emit().find(k) != d_py_effect->attr_link_emit().end())
-                            Q_EMIT LINK_SIGNAL(uuid_event, uuid(), k, d_py_effect->attr_link_emit()[k]());
                     }
                 }
+
+                if(d_py_effect->attr_link_emit().find(k) != d_py_effect->attr_link_emit().end())
+                    Q_EMIT LINK_SIGNAL(uuid_event, uuid(), k, d_py_effect->attr_link_emit()[k]());
             }
         }
     )
@@ -269,7 +255,7 @@ void Region::update()
 
     if(d_py_effect->d_recompute_mask)
     {
-        uprm = std::make_unique<RegionMask>(Context::SIContext()->width(), Context::SIContext()->height(), d_py_effect->contour(), d_py_effect->aabb());
+        uprm = std::make_unique<RegionMask>(Context::SIContext()->width(), Context::SIContext()->height(), d_py_effect->contour());
         uprm->move(glm::vec2(d_last_x, d_last_y));
 
         HANDLE_PYTHON_CALL(PY_ERROR, "Fatal Error. Region Collision broken (" + name() + ")",

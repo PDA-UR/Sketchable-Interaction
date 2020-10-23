@@ -122,9 +122,7 @@ void RegionRepresentation::set_data(const QVariantMap& data)
     d_was_data_received = true;
 
     for(auto& key: data.keys())
-    {
         d_received_data[key] = data[key];
-    }
 }
 
 void RegionRepresentation::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
@@ -138,12 +136,14 @@ void RegionRepresentation::paint(QPainter *painter, const QStyleOptionGraphicsIt
         painter->drawPolygon(this->polygon());
     }
 
-    // show AABBs
-//    QPen pen(QColor(72, 79, 81));
-//    pen.setWidth(4);
-//    painter->setPen(pen);
+//    if(d_type == SI_TYPE_DIRECTORY || d_type == SI_TYPE_IMAGE_FILE || d_type == SI_TYPE_TEXT_FILE)
+//    {
+//        QPen pen(QColor(72, 79, 81));
+//        pen.setWidth(1);
+//        painter->setPen(pen);
 //
-//    painter->drawRect(this->polygon().boundingRect());
+//        painter->drawRect(this->polygon().boundingRect());
+//    }
 
     QGraphicsPolygonItem::paint(painter, option, widget);
 }
