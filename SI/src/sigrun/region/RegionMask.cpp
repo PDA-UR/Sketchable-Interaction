@@ -1,17 +1,30 @@
 
-//#include <debug/Print.hpp>
 #include <algorithm>
 #include "RegionMask.hpp"
 
-#include <iostream>
-#include <fstream>
-#include <boost/python.hpp>
 #if !defined(Q_MOC_RUN)
 #include <tbb/parallel_for.h>
 #endif
 
+#include <iostream>
+#include <fstream>
+
 #define NUM_DEFAULT_SCANLINES 24
-//#define MASK_DEBUG
+
+#define MASK_DEBUG \
+++d_num_called; \
+if(d_num_called > NUM_DEFAULT_SCANLINES) \
+{ \
+    std::ofstream f; \
+    f.open("build/test" + std::to_string(d_num_called) + ".txt"); \
+    for (int i = 0; i < d_canvas_height; ++i) \
+    { \
+        for (int k = 0; k < d_canvas_width; ++k) \
+            f << (int) d_values[d_canvas_width * i + k]; \
+        f << "\n"; \
+    } \
+    f.close();\
+}
 
 int RegionMask::d_num_called = 0;
 
@@ -37,40 +50,16 @@ int RegionMask::d_num_called = 0;
 \see d_height_aabb
 \see d_values
  */
-RegionMask::RegionMask(uint32_t canvas_width, uint32_t canvas_height, const std::vector<glm::vec3> &contour, const std::vector<glm::vec3> &aabb):
+RegionMask::RegionMask(uint32_t canvas_width, uint32_t canvas_height, const std::vector<glm::vec3> &contour):
     d_canvas_width(canvas_width),
     d_canvas_height(canvas_height),
-    d_tlc_aabb_x(aabb[0].x),
-    d_tlc_aabb_y(aabb[0].y),
-    d_brc_aabb_x(aabb[2].x),
-    d_brc_aabb_y(aabb[2].y),
     d_move_x(0),
     d_move_y(0),
-    d_width_aabb(d_brc_aabb_x - d_tlc_aabb_x),
-    d_height_aabb(d_brc_aabb_y - d_tlc_aabb_y),
-    d_values(std::vector<bool>(d_width_aabb * d_height_aabb))
+    d_values(std::vector<bool>(d_canvas_width * d_canvas_height))
 {
-    scanlinefill(contour, aabb);
+    scanlinefill(contour);
 
-#ifdef MASK_DEBUG
-    ++d_num_called;
-    std::ofstream f;
-
-    if(d_num_called > NUM_DEFAULT_SCANLINES)
-    {
-        f.open ("build/test" + std::to_string(d_num_called) + ".txt");
-
-        for(int i = 0; i < d_width_aabb; ++i)
-        {
-            for(int k = 0; k < d_height_aabb; ++k)
-                f << (int) d_values[d_height_aabb * i + k];
-
-            f << "\n";
-        }
-
-        f.close();
-    }
-#endif
+//    MASK_DEBUG
 }
 /**
 \brief copy constructor
@@ -90,14 +79,8 @@ RegionMask::RegionMask(uint32_t canvas_width, uint32_t canvas_height, const std:
 RegionMask::RegionMask(const RegionMask &rm):
         d_canvas_width(rm.d_canvas_width),
         d_canvas_height(rm.d_canvas_height),
-        d_tlc_aabb_x(rm.d_tlc_aabb_x),
-        d_tlc_aabb_y(rm.d_tlc_aabb_y),
-        d_brc_aabb_x(rm.d_brc_aabb_x),
-        d_brc_aabb_y(rm.d_brc_aabb_y),
         d_move_x(0),
         d_move_y(0),
-        d_width_aabb(rm.d_width_aabb),
-        d_height_aabb(rm.d_height_aabb),
         d_values(rm.d_values)
 {}
 
@@ -134,6 +117,8 @@ void RegionMask::set_bit(int32_t i)
 {
     if(i > -1 && i < d_values.size())
         d_values[i] = true;
+    else
+        d_values[i] = false;
 }
 
 /**
@@ -153,7 +138,7 @@ void RegionMask::set_bit(int32_t i)
  */
 void RegionMask::set_bit(const glm::vec3& v)
 {
-    int32_t index = d_width_aabb * ((int32_t) v.y - (d_tlc_aabb_y + d_move_y)) + (int32_t) v.x - (d_tlc_aabb_x + d_move_x);
+    int32_t index = d_canvas_width * ((int32_t) v.y) + ((int32_t) v.x);
 
     if(index > -1 && index < d_values.size())
         this->set_bit(index);
@@ -191,38 +176,18 @@ void RegionMask::clear_bit(int32_t i)
 */
 void RegionMask::clear_bit(const glm::vec3 &v)
 {
-    int32_t index = d_width_aabb * ((int32_t) v.y - (d_tlc_aabb_y + d_move_y)) + (int32_t) v.x - (d_tlc_aabb_x + d_move_x);
+    int32_t index = d_canvas_width * (int32_t) v.y + (int32_t) v.x;
 
     if(index > -1 && index < d_values.size())
         this->clear_bit(index);
 }
 
-/**
-@return the width of the AABB of the parent Region
-
-\see d_width_aabb
-*/
-uint32_t RegionMask::width() const
-{
-    return d_width_aabb;
-}
-
-/**
-@return the height of the AABB of the parent Region
-
-\see d_height_aabb
-*/
-uint32_t RegionMask::height() const
-{
-    return d_height_aabb;
-}
-
-void RegionMask::rebuild(const std::vector<glm::vec3> &contour, const std::vector<glm::vec3> &aabb)
+void RegionMask::rebuild(const std::vector<glm::vec3> &contour)
 {
     d_values.clear();
-    d_values.reserve(d_width_aabb * d_height_aabb);
+    d_values.reserve(d_canvas_width * d_canvas_height);
 
-    scanlinefill(contour, aabb);
+    scanlinefill(contour);
 }
 
 /**
@@ -238,7 +203,7 @@ void RegionMask::rebuild(const std::vector<glm::vec3> &contour, const std::vecto
 */
 bool RegionMask::operator[](int32_t i) const
 {
-    if(i > -1 && i < d_values.size())
+    if (i > -1 && i < d_values.size())
         return d_values[i];
 
     return false;
@@ -262,12 +227,7 @@ bool RegionMask::operator[](int32_t i) const
 */
 bool RegionMask::operator[](const glm::vec3 &v) const
 {
-    int index = d_width_aabb * ((int) v.y - (d_tlc_aabb_y + d_move_y)) + (int) v.x - (d_tlc_aabb_x + d_move_x);
-
-    if(index > -1 && index < d_values.size())
-        return d_values[index];
-
-    return false;
+    return (*this)[d_canvas_width * ((int32_t) v.y - d_move_y) + ((int32_t) v.x - d_move_x)];
 }
 
 /**
@@ -299,9 +259,9 @@ void RegionMask::move(const glm::vec2& v)
 @param contour a constant reference to std::vector object containing glm::vec3 objects depicting the points of the contour of the parent region
 @param aabb a constant reference to std::vector object containing glm::vec3 objects depicting the four points of the AABB of the contour of the parent region
 */
-void RegionMask::scanlinefill(const std::vector<glm::vec3>& contour, const std::vector<glm::vec3>& aabb)
+void RegionMask::scanlinefill(const std::vector<glm::vec3>& contour)
 {
-    tbb::parallel_for(tbb::blocked_range<uint32_t>(d_tlc_aabb_y, d_brc_aabb_y), [&](const tbb::blocked_range<uint32_t>& r)
+    tbb::parallel_for(tbb::blocked_range<uint32_t>(0, d_canvas_height), [&](const tbb::blocked_range<uint32_t>& r)
     {
         for (auto y = r.begin(); y != r.end(); y++)
         {
@@ -316,7 +276,9 @@ void RegionMask::scanlinefill(const std::vector<glm::vec3>& contour, const std::
 
 void RegionMask::build_node_list(int *out, int *num_out, int y, const std::vector<glm::vec3> &in)
 {
-    for (int i = 0, k = in.size() - 2 - 1; i < in.size() - 2; i++)
+    int num_corners = in.size() - 2;
+
+    for (int i = 0, k = num_corners - 1; i < num_corners; i++)
     {
         if (in[i].y < (double) y && in[k].y >= (double) y || in[k].y < (double) y && in[i].y >= (double) y)
             out[(*num_out)++] = (int) (in[i].x + (y - in[i].y) / (in[k].y - in[i].y) * (in[k].x - in[i].x));
@@ -355,13 +317,10 @@ void RegionMask::fill(int in[256], int num_in, int y)
 
         if (in[i + 1] > 0)
         {
-            if (in[i] < 0)
-                in[i] = 0;
+            in[i] = in[i] < 0 ? 0 : in[i];
+            in[i + 1] = in[i + 1] > d_canvas_width ? d_canvas_width : in[i + 1];
 
-            if (in[i + 1] > d_canvas_width)
-                in[i + 1] = d_canvas_width;
-
-            for (int x = in[i]; x < in[i + 1]; x++)
+            for (int x = in[i] + 1; x < in[i + 1]; x++)
                 this->set_bit(glm::vec3(x, y, 1));
         }
     }
