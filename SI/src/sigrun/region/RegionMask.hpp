@@ -36,7 +36,7 @@
 class RegionMask: public SIObject
 { SIGRUN
 public:
-    RegionMask(uint32_t canvas_width, uint32_t canvas_height, const std::vector<glm::vec3>& contour, const std::vector<glm::vec3>& aabb);
+    RegionMask(uint32_t canvas_width, uint32_t canvas_height, const std::vector<glm::vec3>& contour);
     RegionMask(const RegionMask& rm);
     ~RegionMask();
 
@@ -48,12 +48,9 @@ public:
     void clear_bit(int32_t i);
     void clear_bit(const glm::vec3& v);
 
-    uint32_t width() const;
-    uint32_t height() const;
-
     void move(const glm::vec2& v);
 
-    void rebuild(const std::vector<glm::vec3>& contour, const std::vector<glm::vec3>& aabb);
+    void rebuild(const std::vector<glm::vec3>& contour);
 
     bool operator[](int32_t i) const;
     bool operator[](const glm::vec3& v) const;
@@ -69,36 +66,6 @@ private:
     */
     uint32_t d_canvas_height;
 
-    /**
-        int containing the x coordinate of the top left corner of the parent AABB
-    */
-    int32_t d_tlc_aabb_x;
-
-    /**
-        int containing the y coordinate of the top left corner of the parent AABB
-    */
-    int32_t d_tlc_aabb_y;
-
-    /**
-        int containing the x coordinate of the bottom right corner of the parent AABB
-    */
-    int32_t d_brc_aabb_x;
-
-    /**
-         int containing the y coordinate of the bottom right corner of the parent AABB
-     */
-    int32_t d_brc_aabb_y;
-
-    /**
-        int containing the width of the AABB
-    */
-    uint32_t d_width_aabb;
-
-    /**
-        int containing the height of the AABB
-    */
-    uint32_t d_height_aabb;
-
     int32_t d_move_x;
     int32_t d_move_y;
 
@@ -109,7 +76,7 @@ private:
     */
     std::vector<bool> d_values;
 
-    void scanlinefill(const std::vector<glm::vec3>& contour, const std::vector<glm::vec3>& aabb);
+    void scanlinefill(const std::vector<glm::vec3>& contour);
     void build_node_list(int out[256], int *num_out, int y, const std::vector<glm::vec3> &in);
     void sort(int in[256], int num_in);
     void fill(int in[256], int num_in, int y);

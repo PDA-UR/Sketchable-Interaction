@@ -15,7 +15,7 @@ public:
     {
         std::vector<glm::vec3> contour {glm::vec3(100, 100, 1), glm::vec3(100, 600, 1), glm::vec3(600, 600, 1), glm::vec3(600, 100, 1)};
 
-        d_rm = new RegionMask(1920, 1080, contour, contour);
+        d_rm = new RegionMask(1920, 1080, contour);
     }
 
     virtual void TearDown()
@@ -27,9 +27,9 @@ public:
     RegionMask* d_rm;
 
 protected:
-    void scanlinefill(const std::vector<glm::vec3>& contour, const std::vector<glm::vec3>& aabb)
+    void scanlinefill(const std::vector<glm::vec3>& contour)
     {
-        d_rm->scanlinefill(contour, aabb);
+        d_rm->scanlinefill(contour);
     }
 };
 
