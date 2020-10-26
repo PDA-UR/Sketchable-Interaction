@@ -140,10 +140,10 @@ bool CollisionManager::collides_with_mask(const std::shared_ptr<Region> &a, cons
 
 bool CollisionManager::has_capabilities_in_common(const std::shared_ptr<Region>& a, const std::shared_ptr<Region>& b)
 {
-    const std::map<std::string, std::map<std::string, bp::object>>& a_recv = a->effect()->cap_collision_recv();
-    const std::map<std::string, std::map<std::string, bp::object>>& a_emit = a->effect()->cap_collision_emit();
-    const std::map<std::string, std::map<std::string, bp::object>>& b_recv = b->effect()->cap_collision_recv();
-    const std::map<std::string, std::map<std::string, bp::object>>& b_emit = b->effect()->cap_collision_emit();
+    const std::unordered_map<std::string, std::unordered_map<std::string, bp::object>>& a_recv = a->effect()->cap_collision_recv();
+    const std::unordered_map<std::string, std::unordered_map<std::string, bp::object>>& a_emit = a->effect()->cap_collision_emit();
+    const std::unordered_map<std::string, std::unordered_map<std::string, bp::object>>& b_recv = b->effect()->cap_collision_recv();
+    const std::unordered_map<std::string, std::unordered_map<std::string, bp::object>>& b_emit = b->effect()->cap_collision_emit();
 
     for(const auto& [key, value]: a_emit)
         if(b_recv.find(key) != b_recv.end())

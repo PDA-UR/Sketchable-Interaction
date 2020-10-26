@@ -48,9 +48,10 @@ BOOST_PYTHON_MODULE(libPySI)
         create_vector<VectorExposureVec3, std::vector<glm::vec3>>("PointVector");
         create_vector<VectorExposureLinkRelation, std::vector<LinkCandidate>>("LinkRelationVector");
         create_vector<VectorExposureString, std::vector<std::string>>("StringVector");
-        create_map<MapExposurePartialContour, std::map<std::string, std::vector<glm::vec3>>>("PartialContour");
-        create_map<MapExposureString2Function, std::map<std::string, bp::object>>("String2FunctionMap");
-        create_map<MapExposureString2_String2FunctionMap_Map, std::map<std::string, std::map<std::string, bp::object>>>("String2String2FunctionMapMap");
+
+        create_map<MapExposurePartialContour, std::unordered_map<std::string, std::vector<glm::vec3>>>("PartialContour");
+        create_map<MapExposureString2Function, std::unordered_map<std::string, bp::object>>("String2FunctionMap");
+        create_map<MapExposureString2_String2FunctionMap_Map, std::unordered_map<std::string, std::unordered_map<std::string, bp::object>>>("String2String2FunctionMapMap");
 
         bp::class_<PySIEffect, boost::noncopyable>("Effect",bp::init<const std::vector<glm::vec3> &, const std::string &, const std::string &, const bp::dict &>())
                 .def("__set_data__", &PySIEffect::__set_data__)

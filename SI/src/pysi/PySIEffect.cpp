@@ -127,22 +127,22 @@ const glm::vec4& PySIEffect::color() const
     return d_color;
 }
 
-std::map<std::string, bp::object>& PySIEffect::attr_link_emit()
+std::unordered_map<std::string, bp::object>& PySIEffect::attr_link_emit()
 {
     return d_cap_link_emit;
 }
 
-std::map<std::string, std::map<std::string, bp::object>>& PySIEffect::attr_link_recv()
+std::unordered_map<std::string, std::unordered_map<std::string, bp::object>>& PySIEffect::attr_link_recv()
 {
     return d_cap_link_recv;
 }
 
-std::map<std::string, std::map<std::string, bp::object>>& PySIEffect::cap_collision_emit()
+std::unordered_map<std::string, std::unordered_map<std::string, bp::object>>& PySIEffect::cap_collision_emit()
 {
     return d_cap_collision_emit;
 }
 
-std::map<std::string, std::map<std::string, bp::object>>& PySIEffect::cap_collision_recv()
+std::unordered_map<std::string, std::unordered_map<std::string, bp::object>>& PySIEffect::cap_collision_recv()
 {
     return d_cap_collision_recv;
 }
@@ -210,7 +210,7 @@ const std::string& PySIEffect::uuid() const
     return d_uuid;
 }
 
-std::map<std::string, std::vector<glm::vec3>>& PySIEffect::partial_region_contours()
+std::unordered_map<std::string, std::vector<glm::vec3>>& PySIEffect::partial_region_contours()
 {
     return d_partial_regions;
 }

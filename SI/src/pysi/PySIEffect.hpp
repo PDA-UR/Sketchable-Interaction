@@ -104,18 +104,18 @@ public:
     glm::vec4 d_color;
     const glm::vec4& color() const;
 
-    std::map<std::string, bp::object> d_cap_link_emit;
-    std::map<std::string, bp::object>& attr_link_emit();
+    std::unordered_map<std::string, bp::object> d_cap_link_emit;
+    std::unordered_map<std::string, bp::object>& attr_link_emit();
 
-    std::map<std::string, std::map<std::string, bp::object>> d_cap_link_recv;
-    std::map<std::string, std::map<std::string, bp::object>> d_cap_collision_emit;
-    std::map<std::string, std::map<std::string, bp::object>> d_cap_collision_recv;
-    std::map<std::string, std::map<std::string, bp::object>>& attr_link_recv();
-    std::map<std::string, std::map<std::string, bp::object>>& cap_collision_emit();
-    std::map<std::string, std::map<std::string, bp::object>>& cap_collision_recv();
+    std::unordered_map<std::string, std::unordered_map<std::string, bp::object>> d_cap_link_recv;
+    std::unordered_map<std::string, std::unordered_map<std::string, bp::object>> d_cap_collision_emit;
+    std::unordered_map<std::string, std::unordered_map<std::string, bp::object>> d_cap_collision_recv;
+    std::unordered_map<std::string, std::unordered_map<std::string, bp::object>>& attr_link_recv();
+    std::unordered_map<std::string, std::unordered_map<std::string, bp::object>>& cap_collision_emit();
+    std::unordered_map<std::string, std::unordered_map<std::string, bp::object>>& cap_collision_recv();
 
-    std::map<std::string, std::vector<glm::vec3>> d_partial_regions;
-    std::map<std::string, std::vector<glm::vec3>>& partial_region_contours();
+    std::unordered_map<std::string, std::vector<glm::vec3>> d_partial_regions;
+    std::unordered_map<std::string, std::vector<glm::vec3>>& partial_region_contours();
 
     void set_data(const QMap<QString, QVariant>& data);
     const QMap<QString, QVariant>& data();
