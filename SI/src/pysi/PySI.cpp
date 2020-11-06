@@ -229,6 +229,10 @@ BOOST_PYTHON_MODULE(libPySI)
             bp::scope startup_scope = bp::class_<PySIStartup>("Configuration", bp::no_init);
 
             startup_scope.attr("SI_CRASH_DUMP") = (int32_t) SI_CRASH_DUMP_FLAG;
+            startup_scope.attr("SI_ANTI_ALIASING_OFF") = (int32_t) SI_ANTI_ALIASING_OFF;
+            startup_scope.attr("SI_ANTI_ALIASING_4x") = (int32_t) SI_ANTI_ALIASING_4x;
+            startup_scope.attr("SI_ANTI_ALIASING_8x") = (int32_t) SI_ANTI_ALIASING_8x;
+            startup_scope.attr("SI_ANTI_ALIASING_16x") = (int32_t) SI_ANTI_ALIASING_16x;
 
         } // scope ended for everything which shall be part of startup_scope
     } // scope ended for everything which shall be part of effect_scope

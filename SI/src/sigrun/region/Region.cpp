@@ -329,14 +329,14 @@ bool Region::is_new()
 
 void Region::set_data(const QMap<QString, QVariant>& data)
 {
-    const auto& regions = Context::SIContext()->region_manager()->regions();
+    const auto &regions = Context::SIContext()->region_manager()->regions();
 
-    auto it = std::find_if(std::execution::par_unseq, regions.begin(), regions.end(), [&](const auto& r)
+    auto it = std::find_if(regions.begin(), regions.end(), [&](const auto &r)
     {
-       return r->uuid() == data["uuid"].toString().toStdString();
+        return r->uuid() == data["uuid"].toString().toStdString();
     });
 
-    if(it->get())
+    if (it != regions.end())
         it->get()->effect()->set_data(data);
 }
 

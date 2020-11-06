@@ -136,14 +136,15 @@ void RegionRepresentation::paint(QPainter *painter, const QStyleOptionGraphicsIt
         painter->drawPolygon(this->polygon());
     }
 
-//    if(d_type == SI_TYPE_DIRECTORY || d_type == SI_TYPE_IMAGE_FILE || d_type == SI_TYPE_TEXT_FILE)
-//    {
-//        QPen pen(QColor(72, 79, 81));
-//        pen.setWidth(1);
-//        painter->setPen(pen);
-//
-//        painter->drawRect(this->polygon().boundingRect());
-//    }
+    if(d_type == SI_TYPE_DIRECTORY || d_type == SI_TYPE_IMAGE_FILE || d_type == SI_TYPE_TEXT_FILE)
+    {
+        QPen pen(QColor(72, 79, 81));
+        pen.setWidth(1);
+        painter->setRenderHint(QPainter::Antialiasing);
+        painter->setPen(pen);
+
+        painter->drawRect(this->polygon().boundingRect());
+    }
 
     QGraphicsPolygonItem::paint(painter, option, widget);
 }

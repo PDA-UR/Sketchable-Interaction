@@ -244,6 +244,27 @@ void Context::enable(uint32_t what)
         signal(SIGSEGV, CrashDump::dump_crash_information);
         signal(SIGABRT, CrashDump::dump_crash_information);
     }
+
+    if(what & SI_ANTI_ALIASING_OFF)
+    {
+        d_ire->disable_anti_aliasing();
+    }
+
+    if(what & SI_ANTI_ALIASING_4x)
+    {
+        d_ire->enable_anti_aliasing(4);
+
+    }
+
+    if(what & SI_ANTI_ALIASING_8x)
+    {
+        d_ire->enable_anti_aliasing(8);
+    }
+
+    if(what & SI_ANTI_ALIASING_16x)
+    {
+        d_ire->enable_anti_aliasing(16);
+    }
 }
 
 void Context::disable(uint32_t what)
@@ -252,6 +273,11 @@ void Context::disable(uint32_t what)
     {
         signal(SIGSEGV, nullptr);
         signal(SIGABRT, nullptr);
+    }
+
+    if(what & SI_ANTI_ALIASING_OFF || what & SI_ANTI_ALIASING_4x || what & SI_ANTI_ALIASING_8x || what & SI_ANTI_ALIASING_16x)
+    {
+        d_ire->disable_anti_aliasing();
     }
 }
 

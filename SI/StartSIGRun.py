@@ -89,6 +89,7 @@ def add_slider_target(shape):
 
 def on_start():
     PySI.Startup.disable(PySI.Configuration.SI_CRASH_DUMP)
+    PySI.Startup.enable(PySI.Configuration.SI_ANTI_ALIASING_8x)
 
     PySI.Startup.logger_log(True)
     PySI.Startup.logger_set_log_output(PySI.Logger.SI_LOG_SHOW_ALL)
