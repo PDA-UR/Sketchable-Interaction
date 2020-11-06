@@ -33,8 +33,8 @@ void CrashDump::dump_crash_information(int32_t signal)
     msg = ERROR_COLOR(std::string("SIGRUN ") + Log::time() + " [INFO] [CRASHDUMP] Generating Crash Report...");
     Print::print(msg);
 
-    generate_core_dump(datetime);
     generate_stacktrace(datetime);
+    generate_core_dump(datetime);
     zip_folder(datetime);
     delete_folder(datetime);
 
@@ -80,10 +80,17 @@ void CrashDump::generate_stacktrace(const std::string& datetime)
     for(int32_t i = 2; i < (stacktrace.size() > num_lines ? num_lines: stacktrace.size()); ++i)
         m += stacktrace[i].source_file() + " at " + stacktrace[i].name() + " in line " + std::to_string(stacktrace[i].source_line()) + "\n";
 
+
+
+
     std::ofstream log_file;
     log_file.open(PARENTFOLDERPATH + "/" + SIGRUN_CRASH_NAME_PREFIX + datetime + "/"+ SIGRUN_CRASH_NAME_PREFIX + STACKTRACE_NAME + "." + TXT_FILE, std::ios_base::out);
     log_file << m;
     log_file.close();
+
+    m = ERROR_COLOR(m);
+
+    Print::print(m);
 }
 
 void CrashDump::zip_folder(const std::string &datetime)
