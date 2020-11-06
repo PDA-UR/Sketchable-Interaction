@@ -131,6 +131,7 @@ jobs:
           ./../egen
           
           echo "Showing Test Results:"
+          ls -la
           test_output="$(./../run_unit_tests)"
           echo ${test_output}
           
