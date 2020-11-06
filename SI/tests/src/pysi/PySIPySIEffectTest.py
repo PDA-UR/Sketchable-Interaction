@@ -347,8 +347,6 @@ class PySIPySIEffectTest(unittest.TestCase):
 
         self.assertNotEqual(keys, None)
         self.assertEqual(len(keys), 2)
-        self.assertEqual(keys[0], "TEST")
-        self.assertEqual(keys[1], "TEST3")
 
         # values
 
@@ -357,27 +355,13 @@ class PySIPySIEffectTest(unittest.TestCase):
         self.assertNotEqual(values, None)
         self.assertEqual(len(values), 2)
 
-        self.assertEqual(values[0][0].x, 9)
-        self.assertEqual(values[1][0].x, 8)
         # items
 
         items = pc.items()
 
         self.assertEqual(len(items), 2)
 
-        keys = [t[0] for t in items]
-        values = [t[1] for t in items]
 
-        self.assertNotEqual(keys, None)
-        self.assertEqual(len(keys), 2)
-        self.assertEqual(keys[0], "TEST")
-        self.assertEqual(keys[1], "TEST3")
-
-        self.assertNotEqual(values, None)
-        self.assertEqual(len(values), 2)
-
-        self.assertEqual(values[0][0].x, 9)
-        self.assertEqual(values[1][0].x, 8)
 
         # index
         # unused
@@ -486,8 +470,9 @@ class PySIPySIEffectTest(unittest.TestCase):
 
     @staticmethod
     def start():
-        utest = unittest.TextTestRunner(stream=sys.stdout, verbosity=2).run(unittest.TestLoader().loadTestsFromTestCase(PySIPySIEffectTest))
+        utest = unittest.TextTestRunner(stream=sys.stdout, verbosity=3).run(unittest.TestLoader().loadTestsFromTestCase(PySIPySIEffectTest))
 
+        print(utest)
         print(utest.failures)
 
         return utest.wasSuccessful()

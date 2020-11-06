@@ -196,8 +196,6 @@ bool InputManager::eventFilter(QObject *watched, QEvent *event)
         QWheelEvent* wheel_event = (QWheelEvent*) event;
 
         d_mouse_wheel_angle_in_px = wheel_event->angleDelta().y();
-
-        return true;
     }
 
     return QObject::eventFilter(watched, event);

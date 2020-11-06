@@ -4,6 +4,7 @@
 
 #include <boost/python.hpp>
 #include <map>
+#include <unordered_map>
 #include <algorithm>
 #include <numeric>
 #include <execution>
@@ -105,9 +106,9 @@ public:
 class MapExposurePartialContour
 {
 public:
-    static boost::shared_ptr<std::map<std::string, std::vector<glm::vec3>>> init(const bp::dict& dict=bp::dict())
+    static boost::shared_ptr<std::unordered_map<std::string, std::vector<glm::vec3>>> init(const bp::dict& dict=bp::dict())
     {
-        auto self = boost::make_shared<std::map<std::string, std::vector<glm::vec3>>>();
+        auto self = boost::make_shared<std::unordered_map<std::string, std::vector<glm::vec3>>>();
 
         const bp::list keys = bp::extract<bp::list>(dict.keys());
         for(int i = 0; i < bp::len(keys); ++i)
@@ -119,12 +120,12 @@ public:
         return self;
     }
 
-    inline static void set(std::map<std::string, std::vector<glm::vec3>>& self, const std::string& key, const std::vector<glm::vec3>& points)
+    inline static void set(std::unordered_map<std::string, std::vector<glm::vec3>>& self, const std::string& key, const std::vector<glm::vec3>& points)
     {
         self[key] = points;
     }
 
-    static std::string repr(std::map<std::string, std::vector<glm::vec3>>& self)
+    static std::string repr(std::unordered_map<std::string, std::vector<glm::vec3>>& self)
     {
         return std::transform_reduce(self.begin(), self.end(), std::string("{"), [](const std::string& a, const std::string& b)
         {
@@ -147,9 +148,9 @@ private:
 class MapExposureString2Function
 {
 public:
-    static boost::shared_ptr<std::map<std::string, bp::object>> init(const bp::dict& dict=bp::dict())
+    static boost::shared_ptr<std::unordered_map<std::string, bp::object>> init(const bp::dict& dict=bp::dict())
     {
-        auto self = boost::make_shared<std::map<std::string, bp::object>>();
+        auto self = boost::make_shared<std::unordered_map<std::string, bp::object>>();
 
         const bp::list keys = bp::extract<bp::list>(dict.keys());
         for(uint32_t i = 0; i < bp::len(keys); ++i)
@@ -162,12 +163,12 @@ public:
         return self;
     }
 
-    inline static void set(std::map<std::string, bp::object>& self, const std::string& key, const bp::object& function)
+    inline static void set(std::unordered_map<std::string, bp::object>& self, const std::string& key, const bp::object& function)
     {
         self[key] = function;
     }
 
-    static std::string repr(std::map<std::string, bp::object>& self)
+    static std::string repr(std::unordered_map<std::string, bp::object>& self)
     {
         return std::transform_reduce(self.begin(), self.end(), std::string("{"), [&](const std::string& a, const std::string& b)
         {
@@ -190,9 +191,9 @@ private:
 class MapExposureString2_String2FunctionMap_Map
 {
 public:
-    static boost::shared_ptr<std::map<std::string, std::map<std::string, bp::object>>> init(const bp::dict& dict=bp::dict())
+    static boost::shared_ptr<std::unordered_map<std::string, std::unordered_map<std::string, bp::object>>> init(const bp::dict& dict=bp::dict())
     {
-        auto self = boost::make_shared<std::map<std::string, std::map<std::string, bp::object>>>();
+        auto self = boost::make_shared<std::unordered_map<std::string, std::unordered_map<std::string, bp::object>>>();
 
         const bp::list outer_keys = bp::extract<bp::list>(dict.keys());
         for(uint32_t i = 0; i < bp::len(outer_keys); ++i)
@@ -213,7 +214,7 @@ public:
         return self;
     }
 
-    inline static void set(std::map<std::string, std::map<std::string, bp::object>>& self, const std::string& key, const bp::dict& dict)
+    inline static void set(std::unordered_map<std::string, std::unordered_map<std::string, bp::object>>& self, const std::string& key, const bp::dict& dict)
     {
         const bp::list keys = bp::extract<bp::list>(dict.keys());
 
@@ -226,12 +227,12 @@ public:
         }
     }
 
-    static std::string repr(std::map<std::string, std::map<std::string, bp::object>>& self)
+    static std::string repr(std::unordered_map<std::string, std::unordered_map<std::string, bp::object>>& self)
     {
         return std::transform_reduce(self.begin(), self.end(), std::string("{"), [&](const std::string& a, const std::string& b)
         {
             return a + ", " + b;
-        }, [&](const std::pair<std::string, std::map<std::string, bp::object>>& outer_pair)
+        }, [&](const std::pair<std::string, std::unordered_map<std::string, bp::object>>& outer_pair)
         {
             return outer_pair.first + ": " + std::transform_reduce(outer_pair.second.begin(), outer_pair.second.end(), std::string("{"), [&](const std::string& a2, const std::string& b2)
             {

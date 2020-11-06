@@ -47,7 +47,7 @@ public:
 
 private:
     std::vector<std::shared_ptr<ILink>> d_links;
-    std::map<std::string, std::vector<std::shared_ptr<ILink>>> d_links_in_ctx;
+    std::unordered_map<std::string, std::vector<std::shared_ptr<ILink>>> d_links_in_ctx;
 
     void remove_all_source_linking_relations(const std::string& source);
     void remove_linking_relations(const std::vector<LinkCandidate>& candidates, const std::string& source);
