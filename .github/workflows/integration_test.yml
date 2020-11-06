@@ -131,8 +131,8 @@ jobs:
           ./../egen
           test_output="$(./../run_unit_tests)"
           
+          echo "Showing Test Results:"
           echo ${test_output}
-          
           
           if [[ ${test_output} == *"FAILED TESTS"* ]]; then
             exit 1
