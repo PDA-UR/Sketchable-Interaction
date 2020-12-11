@@ -88,9 +88,7 @@ jobs:
     - name: Install tbb
       run: |
         if [[ "${{ github.event.head_commit.message }}" != *"[NO CI]"* ]]; then
-          # echo "deb http://cz.archive.ubuntu.com/ubuntu eoan main universe" | sudo tee -a  /etc/apt/sources.list
-          # sudo apt-get update
-          sudo apt-get install libtbb-dev -qq > /dev/null
+          sudo apt-get install libtbb-dev
         fi
 
     - name: Install Boost with components System, Python and Filesystem 
