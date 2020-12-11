@@ -82,6 +82,7 @@ jobs:
           sudo apt-get install libglm-dev -qq > /dev/null
           sudo apt-get install uuid-dev -qq > /dev/null
           sudo apt-get install python3.7-dev -qq > /dev/null
+          sudo apt-get install gdb -qq > /dev/null
         fi 
 
     - name: Install Boost with components System, Python and Filesystem 
@@ -131,13 +132,14 @@ jobs:
           ./../egen
           
           echo "Showing Test Results:"
-          ls -la
           test_output="$(./../run_unit_tests)"
           echo ${test_output}
           
           if [[ ${test_output} == *"FAILED TESTS"* ]]; then
             exit 1
           fi
+          
+          ls -la
         fi
         
     - name: Push Version
