@@ -84,6 +84,14 @@ jobs:
           sudo apt-get install python3.7-dev -qq > /dev/null
           sudo apt-get install gdb -qq > /dev/null
         fi 
+        
+    - name: Install tbb
+      run: |
+        if [[ "${{ github.event.head_commit.message }}" != *"[NO CI]"* ]]; then
+          # echo "deb http://cz.archive.ubuntu.com/ubuntu eoan main universe" | sudo tee -a  /etc/apt/sources.list
+          # sudo apt-get update
+          sudo apt-get install libtbb-dev -qq > /dev/null
+        fi
 
     - name: Install Boost with components System, Python and Filesystem 
       run: |
@@ -98,14 +106,6 @@ jobs:
         sudo ./b2 --with-system --with-python --with-filesystem -j 8 -d0 install &&       
         cd ..
         cd ..    
-        
-    - name: Install tbb
-      run: |
-        if [[ "${{ github.event.head_commit.message }}" != *"[NO CI]"* ]]; then
-          echo "deb http://cz.archive.ubuntu.com/ubuntu eoan main universe" | sudo tee -a  /etc/apt/sources.list
-          sudo apt-get update
-          sudo apt-get install libtbb-dev -qq > /dev/null
-        fi
                 
     - name: Compile SI
       env:
