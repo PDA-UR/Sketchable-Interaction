@@ -87,16 +87,8 @@ jobs:
         
     - name: Install tbb
       run: |
-        if [[ "${{ github.event.head_commit.message }}" != *"[NO CI]"* ]]; then
-        
-          echo "deb http://ftp.de.debian.org/debian/ jessie main contrib non-free" | sudo tee -a  /etc/apt/sources.list
-          echo "deb http://ftp.de.debian.org/debian/ testing main contrib non-free" | sudo tee -a  /etc/apt/sources.list
-          echo "deb http://ftp.de.debian.org/debian/ stretch main contrib non-free" | sudo tee -a  /etc/apt/sources.list
-          echo "deb http://ftp.de.debian.org/debian/ stable main contrib non-free" | sudo tee -a  /etc/apt/sources.list
-          echo "deb http://ftp.de.debian.org/debian/ buster main contrib non-free" | sudo tee -a  /etc/apt/sources.list
-          
+        if [[ "${{ github.event.head_commit.message }}" != *"[NO CI]"* ]]; then          
           sudo apt update
-          
           sudo apt install libtbb-dev
         fi
 
