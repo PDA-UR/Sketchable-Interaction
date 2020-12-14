@@ -88,7 +88,9 @@ jobs:
     - name: Install tbb
       run: |
         if [[ "${{ github.event.head_commit.message }}" != *"[NO CI]"* ]]; then          
-          sudo apt update
+          echo "deb http://cz.archive.ubuntu.com/ubuntu eoan main universe" | sudo tee -a  /etc/apt/sources.list
+          sudo apt-get update
+          
           sudo apt install libtbb-dev
         fi
 
