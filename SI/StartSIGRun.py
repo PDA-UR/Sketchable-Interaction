@@ -1,6 +1,7 @@
 
 from libPySI import PySI
 from plugins.standard_environment_library.notification import SimpleNotification
+from plugins.standard_environment_library.tag import Tag
 from plugins.standard_environment_library.filesystem import Directory
 from plugins.standard_environment_library.cursor import Cursor
 from plugins.standard_environment_library.deletion import Deletion
@@ -44,10 +45,10 @@ def add_palette():
 def add_start_directory():
     directory_path = "" # if empty, the Desktop will be used
 
-    directory_shape = [[0, 75],
-                       [0, 75 + Directory.Directory.region_height],
-                       [Directory.Directory.region_width, 75 + Directory.Directory.region_height],
-                       [Directory.Directory.region_width, 75]]
+    directory_shape = [[75, 75],
+                       [75, 75 + Directory.Directory.region_height],
+                       [75 + Directory.Directory.region_width, 75 + Directory.Directory.region_height],
+                       [75 + Directory.Directory.region_width, 75]]
 
     kwargs = {"cwd": directory_path, "parent": ""}
     PySI.Startup.create_region_by_type(directory_shape, PySI.EffectType.SI_DIRECTORY, kwargs)
@@ -89,7 +90,7 @@ def add_slider_target(shape):
 
 def on_start():
     PySI.Startup.disable(PySI.Configuration.SI_CRASH_DUMP)
-    PySI.Startup.enable(PySI.Configuration.SI_ANTI_ALIASING_8x)
+    # PySI.Startup.enable(PySI.Configuration.SI_ANTI_ALIASING_8x)
 
     PySI.Startup.logger_log(True)
     PySI.Startup.logger_set_log_output(PySI.Logger.SI_LOG_SHOW_ALL)
@@ -97,17 +98,21 @@ def on_start():
     PySI.Startup.logger_quench_messages_from_class("recognizer")
     PySI.Startup.logger_quench_messages_from_class("mainwindow")
 
+    # color_picker = True
+    color_picker = False
+
     add_canvas()
     add_mouse_cursor()
-    add_simple_notification()
-    add_palette()
-    add_start_directory()
 
-    # add_many_regions(500)
-    #
-    # add_slider([[500, 500], [500, 530], [800, 530], [800, 500]], "r")
-    # add_slider([[500, 600], [500, 630], [800, 630], [800, 600]], "g")
-    # add_slider([[500, 700], [500, 730], [800, 730], [800, 700]], "b")
-    #
-    # add_slider_target([[1000, 570], [1000, 670], [1100, 670], [1100, 570]])
+    if color_picker:
+        add_slider([[500, 500], [500, 530], [800, 530], [800, 500]], "r")
+        add_slider([[500, 600], [500, 630], [800, 630], [800, 600]], "g")
+        add_slider([[500, 700], [500, 730], [800, 730], [800, 700]], "b")
 
+        add_slider_target([[1000, 570], [1000, 670], [1100, 670], [1100, 570]])
+    else:
+        add_simple_notification()
+        add_palette()
+        add_start_directory()
+
+# add_many_regions(500)
