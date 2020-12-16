@@ -18,7 +18,7 @@
 #define STACKTRACE_NAME std::string("stacktrace")
 #define TXT_FILE std::string("txt")
 
-#define GCORE_COMMAND "gcore -a -o " + PARENTFOLDERPATH + "/" + SIGRUN_CRASH_NAME_PREFIX + datetime + "/" + SIGRUN_CRASH_CORE_DUMP_FILENAME + " " + std::to_string(getpid())
+#define GCORE_COMMAND "sudo gcore -a -o " + PARENTFOLDERPATH + "/" + SIGRUN_CRASH_NAME_PREFIX + datetime + "/" + SIGRUN_CRASH_CORE_DUMP_FILENAME + " " + std::to_string(getpid())
 
 void CrashDump::dump_crash_information(int32_t signal)
 {
