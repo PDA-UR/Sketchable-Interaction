@@ -132,6 +132,8 @@ jobs:
           cd /home/runner/work/Sketchable-Interaction/Sketchable-Interaction/SI
           ./../egen
           
+          touch TEST.TXT
+          
           echo "Showing Test Results:"
           test_output="$(./../run_unit_tests)"
           echo ${test_output}
@@ -139,8 +141,6 @@ jobs:
           if [[ ${test_output} == *"FAILED TESTS"* ]]; then
             exit 1
           fi
-          
-          ls -la
         fi
         
     - name: Push Version
