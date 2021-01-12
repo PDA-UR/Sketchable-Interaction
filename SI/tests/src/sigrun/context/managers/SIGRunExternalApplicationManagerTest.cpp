@@ -5,10 +5,10 @@
 
 TEST_F(SIGRunExternalApplicationManagerTest, construction_default)
 {
-//    ExternalApplicationManager eam;
-//    ASSERT_EQ(DEFAULT_PROCESS_WINID_FETCH_SLEEP_TIME_MS, eam.process_winid_fetch_sleep_tie_ms());
-//    ASSERT_EQ(DEFAULT_PROCESS_WINID_FETCH_TIMEOUT_MS, eam.process_winid_fetch_timeout_ms());
-//    ASSERT_EQ(DEFAULT_PROCESS_WINID_FETCH_TIMEOUT_MS / DEFAULT_PROCESS_WINID_FETCH_SLEEP_TIME_MS / 1000, eam.process_winid_fetch_iterations());
+    ExternalApplicationManager eam;
+    ASSERT_EQ(DEFAULT_PROCESS_WINID_FETCH_SLEEP_TIME_MS, eam.process_winid_fetch_sleep_tie_ms());
+    ASSERT_EQ(DEFAULT_PROCESS_WINID_FETCH_TIMEOUT_MS, eam.process_winid_fetch_timeout_ms());
+    ASSERT_EQ(DEFAULT_PROCESS_WINID_FETCH_TIMEOUT_MS / DEFAULT_PROCESS_WINID_FETCH_SLEEP_TIME_MS / 1000, eam.process_winid_fetch_iterations());
 
 }
 

@@ -22,25 +22,25 @@
 
 void CrashDump::dump_crash_information(int32_t signal)
 {
-    std::string msg = ERROR_COLOR(std::string("SIGRUN ") + Log::time() + " [ERROR] [FATAL] " + std::string(strsignal(signal)) + " (sginal: " + std::to_string(signal) + ")");
-    Print::print(msg);
-
-    std::string datetime = current_datetime_string();
-
-    create_folder(PARENTFOLDERPATH);
-    create_folder(PARENTFOLDERPATH + "/" + SIGRUN_CRASH_NAME_PREFIX + datetime);
-
-    msg = ERROR_COLOR(std::string("SIGRUN ") + Log::time() + " [INFO] [CRASHDUMP] Generating Crash Report...");
-    Print::print(msg);
-
-    generate_stacktrace(datetime);
-    generate_core_dump(datetime);
-    zip_folder(datetime);
-    delete_folder(datetime);
-
-    msg = ERROR_COLOR(std::string("SIGRUN ") + Log::time() + " [INFO] [CRASHDUMP] Crash Report" + SIGRUN_CRASH_NAME_PREFIX + datetime + ".zip in " + boost::filesystem::current_path().string() + "/" + PARENTFOLDERPATH + " created!");
-    Print::print(msg);
-    exit(signal);
+//    std::string msg = ERROR_COLOR(std::string("SIGRUN ") + Log::time() + " [ERROR] [FATAL] " + std::string(strsignal(signal)) + " (sginal: " + std::to_string(signal) + ")");
+//    Print::print(msg);
+//
+//    std::string datetime = current_datetime_string();
+//
+//    create_folder(PARENTFOLDERPATH);
+//    create_folder(PARENTFOLDERPATH + "/" + SIGRUN_CRASH_NAME_PREFIX + datetime);
+//
+//    msg = ERROR_COLOR(std::string("SIGRUN ") + Log::time() + " [INFO] [CRASHDUMP] Generating Crash Report...");
+//    Print::print(msg);
+//
+//    generate_stacktrace(datetime);
+//    generate_core_dump(datetime);
+//    zip_folder(datetime);
+//    delete_folder(datetime);
+//
+//    msg = ERROR_COLOR(std::string("SIGRUN ") + Log::time() + " [INFO] [CRASHDUMP] Crash Report" + SIGRUN_CRASH_NAME_PREFIX + datetime + ".zip in " + boost::filesystem::current_path().string() + "/" + PARENTFOLDERPATH + " created!");
+//    Print::print(msg);
+//    exit(signal);
 }
 
 void CrashDump::create_folder(const std::string &path)
