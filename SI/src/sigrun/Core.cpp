@@ -56,7 +56,6 @@ void Core::start(char** argv, int argc, IRenderEngine* ire)
     std::unique_ptr<Context> upctx(new Context());
 
     INFO("Initialization finished");
-//    )
 
     upctx->begin(plugins, ire, argc, argv);
     INFO("Context closed");

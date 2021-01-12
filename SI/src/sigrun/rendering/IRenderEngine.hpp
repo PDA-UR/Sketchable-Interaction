@@ -12,6 +12,9 @@ public:
     virtual void run() = 0;
     virtual void pause() = 0;
     virtual void stop() = 0;
+
+    virtual void disable_anti_aliasing() = 0;
+    virtual void enable_anti_aliasing(uint32_t samplng_factor) = 0;
 };
 
 

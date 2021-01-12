@@ -106,12 +106,12 @@ void RegionManager::deactivate_mouse_region_button_down(uint32_t mouse_btn)
     }
 }
 
-void RegionManager::set_partial_regions(const std::map<std::string, std::vector<glm::vec3>>& partials)
+void RegionManager::set_partial_regions(const std::unordered_map<std::string, std::vector<glm::vec3>>& partials)
 {
     d_partial_regions = partials;
 }
 
-std::map<std::string, std::vector<glm::vec3>> &RegionManager::partial_regions()
+std::unordered_map<std::string, std::vector<glm::vec3>> &RegionManager::partial_regions()
 {
     return d_partial_regions;
 }

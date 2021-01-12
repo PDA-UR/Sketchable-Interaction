@@ -38,3 +38,17 @@ void RenderEngineQT5::stop()
     d_window->d_is_running = false;
     INFO("Rendering Engine stopped!");
 }
+
+void RenderEngineQT5::disable_anti_aliasing()
+{
+    QSurfaceFormat format;
+    format.setSamples(0);
+    QSurfaceFormat::setDefaultFormat(format);
+}
+
+void RenderEngineQT5::enable_anti_aliasing(uint32_t samplng_factor)
+{
+    QSurfaceFormat format;
+    format.setSamples(samplng_factor);
+    QSurfaceFormat::setDefaultFormat(format);
+}

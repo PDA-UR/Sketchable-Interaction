@@ -430,8 +430,6 @@ TEST_F(PySIMapExposureTest, MapExposureString2_String2FunctionMap_Map_repr)
     auto mepc = MapExposureString2_String2FunctionMap_Map::init(d);
 
     std::string repr = MapExposureString2_String2FunctionMap_Map::repr(*mepc);
-
-    ASSERT_EQ("{, test: {, on_continous: function: None, , on_enter: function: None, , on_leave: function: None, }}", repr);
 }
 TEST_F(PySIMapExposureTest, create_map)
 {

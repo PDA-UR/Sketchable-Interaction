@@ -20,6 +20,8 @@ public:
     void run() override;
     void pause() override;
     void stop() override;
+    void disable_anti_aliasing() override;
+    void enable_anti_aliasing(uint32_t samplng_factor) override;
 
 private:
     MainWindow* d_window;

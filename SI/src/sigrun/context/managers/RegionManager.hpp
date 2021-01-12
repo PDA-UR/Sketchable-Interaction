@@ -23,15 +23,15 @@ public:
     void add_region(const std::vector<glm::vec3> &contour, const bp::object &effect, const bp::dict& kwargs=bp::dict());
 
     std::vector<std::shared_ptr<Region>>& regions();
-    std::map<std::string, std::vector<glm::vec3>>& partial_regions();
+    std::unordered_map<std::string, std::vector<glm::vec3>>& partial_regions();
 
-    void set_partial_regions(const std::map<std::string, std::vector<glm::vec3>>& partials);
+    void set_partial_regions(const std::unordered_map<std::string, std::vector<glm::vec3>>& partials);
 
     void update();
 
 private:
     std::vector<std::shared_ptr<Region>> d_regions;
-    std::map<std::string, std::vector<glm::vec3>> d_partial_regions;
+    std::unordered_map<std::string, std::vector<glm::vec3>> d_partial_regions;
 
     void update_mouse_inputs();
     void update_regions();

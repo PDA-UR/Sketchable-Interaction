@@ -33,6 +33,8 @@ public:
     void __create_region__(const bp::list& contour, const std::string& name, bool as_selector, bp::dict& kwargs);
     void __create_region__(const bp::list& contour, int effect_type, bp::dict& kwargs);
 
+    void __update_transform__(int32_t delta_x, int32_t delta_y);
+
     bp::list __logger_messages__();
 
     bp::object __data__(const std::string& key, const uint32_t type);
@@ -49,6 +51,8 @@ public:
     uint32_t d_width = 0;
     uint32_t d_height = 0;
     uint32_t d_effect_type = SI_TYPE_CUSTOM;
+    int32_t d_transform_x = 0;
+    int32_t d_transform_y = 0;
     const uint32_t x() const;
     const uint32_t y() const;
     const uint32_t width() const;
@@ -104,18 +108,18 @@ public:
     glm::vec4 d_color;
     const glm::vec4& color() const;
 
-    std::map<std::string, bp::object> d_cap_link_emit;
-    std::map<std::string, bp::object>& attr_link_emit();
+    std::unordered_map<std::string, bp::object> d_cap_link_emit;
+    std::unordered_map<std::string, bp::object>& attr_link_emit();
 
-    std::map<std::string, std::map<std::string, bp::object>> d_cap_link_recv;
-    std::map<std::string, std::map<std::string, bp::object>> d_cap_collision_emit;
-    std::map<std::string, std::map<std::string, bp::object>> d_cap_collision_recv;
-    std::map<std::string, std::map<std::string, bp::object>>& attr_link_recv();
-    std::map<std::string, std::map<std::string, bp::object>>& cap_collision_emit();
-    std::map<std::string, std::map<std::string, bp::object>>& cap_collision_recv();
+    std::unordered_map<std::string, std::unordered_map<std::string, bp::object>> d_cap_link_recv;
+    std::unordered_map<std::string, std::unordered_map<std::string, bp::object>> d_cap_collision_emit;
+    std::unordered_map<std::string, std::unordered_map<std::string, bp::object>> d_cap_collision_recv;
+    std::unordered_map<std::string, std::unordered_map<std::string, bp::object>>& attr_link_recv();
+    std::unordered_map<std::string, std::unordered_map<std::string, bp::object>>& cap_collision_emit();
+    std::unordered_map<std::string, std::unordered_map<std::string, bp::object>>& cap_collision_recv();
 
-    std::map<std::string, std::vector<glm::vec3>> d_partial_regions;
-    std::map<std::string, std::vector<glm::vec3>>& partial_region_contours();
+    std::unordered_map<std::string, std::vector<glm::vec3>> d_partial_regions;
+    std::unordered_map<std::string, std::vector<glm::vec3>>& partial_region_contours();
 
     void set_data(const QMap<QString, QVariant>& data);
     const QMap<QString, QVariant>& data();

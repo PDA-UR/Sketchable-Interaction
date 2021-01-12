@@ -26,6 +26,7 @@ Scripting::Scripting()
         std::string directory(buf);
 
         bp::object sys_module = bp::import("sys");
+        bp::object os_module = bp::import("os");
 
         bp::str module_directory = directory.c_str();
         sys_module.attr("path").attr("insert")(0, module_directory);
@@ -33,10 +34,30 @@ Scripting::Scripting()
         d_main = bp::import("__main__");
         d_globals = d_main.attr("__dict__");
         d_globals["__builtins__"] = bp::import("builtins");
+
+        bp::exec("class Unbuffered(object):\n"
+                 "   def __init__(self, stream):\n"
+                 "       self.stream = stream\n"
+                 "   def write(self, data):\n"
+                 "       self.stream.write(data)\n"
+                 "       self.stream.flush()\n"
+                 "   def writelines(self, datas):\n"
+                 "       self.stream.writelines(datas)\n"
+                 "       self.stream.flush()\n"
+                 "   def __getattr__(self, attr):\n"
+                 "       return getattr(self.stream, attr)\n"
+                 "\n"
+                 "import sys\n"
+                 "sys.stdout = open(\"TEST.TXT\", \"w\")\n"
+                 "sys.stdout = Unbuffered(sys.stdout)");
+
     )
 }
 
-Scripting::~Scripting() = default;
+Scripting::~Scripting()
+{
+
+}
 
 bp::object Scripting::si_plugin(std::string &module_name, std::string &path, std::string &class_name)
 {
