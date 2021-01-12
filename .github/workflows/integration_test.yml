@@ -114,7 +114,7 @@ jobs:
       run: |
         if [[ "${{ github.event.head_commit.message }}" != *"[NO CI]"* ]]; then
           cmake .
-          cmake -DDEFINE_TEST=ON /home/runner/work/Sketchable-Interaction/Sketchable-Interaction --target all -j 8
+          cmake -DDEFINE_TEST=ON /home/runner/work/Sketchable-Interaction/Sketchable-Interaction --target all -j8
         fi
         
     - name: Fetch SI Plugins
