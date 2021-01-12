@@ -82,7 +82,6 @@ jobs:
           sudo apt-get install libglm-dev -qq > /dev/null
           sudo apt-get install uuid-dev -qq > /dev/null
           sudo apt-get install python3.7-dev -qq > /dev/null
-          sudo apt-get install gdb -qq > /dev/null
         fi 
         
     - name: Install tbb
