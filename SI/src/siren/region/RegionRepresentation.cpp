@@ -132,6 +132,7 @@ void RegionRepresentation::paint(QPainter *painter, const QStyleOptionGraphicsIt
         QPen pen(QColor(72, 79, 81));
 
         pen.setWidth(4);
+
         painter->setPen(pen);
         painter->drawPolygon(this->polygon());
     }
@@ -140,7 +141,6 @@ void RegionRepresentation::paint(QPainter *painter, const QStyleOptionGraphicsIt
     {
         QPen pen(QColor(72, 79, 81));
         pen.setWidth(1);
-        painter->setRenderHint(QPainter::Antialiasing);
         painter->setPen(pen);
 
         painter->drawRect(this->polygon().boundingRect());

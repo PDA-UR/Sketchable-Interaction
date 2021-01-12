@@ -23,7 +23,6 @@ public:
 
     }
 
-    Context c;
 };
 
 #endif //SITEST_PYSIPYSIEFFECTTEST_HPP
