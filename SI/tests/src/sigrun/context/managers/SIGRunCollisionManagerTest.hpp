@@ -5,7 +5,6 @@
 
 #include <gtest/gtest.h>
 #include <sigrun/context/managers/CollisionManager.hpp>
-#include <sigrun/context/Context.hpp>
 #include <unordered_map>
 #include <boost/python.hpp>
 #include <memory>

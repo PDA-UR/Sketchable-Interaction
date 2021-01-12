@@ -29,6 +29,7 @@ MainWindow::MainWindow(uint32_t width, uint32_t height, uint32_t target_fps):
 
     setScene(p_scene);
     setViewport(new QOpenGLWidget);
+    setRenderHint(QPainter::Antialiasing);
 }
 
 void MainWindow::loop()

@@ -416,6 +416,12 @@ void PySIEffect::__create_region__(const bp::list& contour, int effect_type, bp:
         Context::SIContext()->register_new_region_via_type(_contour, effect_type, kwargs);
 }
 
+void PySIEffect::__update_transform__(int32_t delta_x, int32_t delta_y)
+{
+    d_transform_x += delta_x;
+    d_transform_x += delta_y;
+}
+
 std::vector<std::string> PySIEffect::__available_plugins_by_name__()
 {
     return Context::SIContext()->available_plugins_names();

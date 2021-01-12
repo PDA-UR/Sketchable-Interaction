@@ -48,6 +48,8 @@ void Region::move()
         d_last_delta_x = x - d_last_x;
         d_last_delta_y = y - d_last_y;
 
+//        d_py_effect->__update_transform__(d_last_delta_x, d_last_delta_y);
+
         d_last_x = x;
         d_last_y = y;
 
