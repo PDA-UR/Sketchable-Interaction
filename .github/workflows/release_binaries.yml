@@ -68,9 +68,10 @@ jobs:
                 
     - name: Versioning
       id: version
+      env:
+        ACTIONS_ALLOW_UNSECURE_COMMANDS: 'true'
       run: |
         current=$(cat .version)
-        ACTIONS_ALLOW_UNSECURE_COMMANDS=true
         echo "::set-env name=CURRENT_VERSION::$current"
         
     - name: Create SI Archive
