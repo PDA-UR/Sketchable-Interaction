@@ -74,30 +74,30 @@ TEST_F(PySIPySIEffectTest, signal_deletion)
 
 TEST_F(PySIPySIEffectTest, embed_file_standard_appliation_into_context)
 {
-//    std::vector<glm::vec3> contour
-//    {
-//        glm::vec3(1, 1, 1),
-//        glm::vec3(1, 5, 1),
-//        glm::vec3(5, 5, 1),
-//        glm::vec3(5, 1, 1)
-//    };
-//
-//    PySIEffect pysie(contour, _UUID_, "", bp::dict());
-//
-//    EXPECT_NO_FATAL_FAILURE(pysie.__embed_file_standard_appliation_into_context__(std::string("uuid"), std::string("path")));
+    std::vector<glm::vec3> contour
+    {
+        glm::vec3(1, 1, 1),
+        glm::vec3(1, 5, 1),
+        glm::vec3(5, 5, 1),
+        glm::vec3(5, 1, 1)
+    };
+
+    PySIEffect pysie(contour, _UUID_, "", bp::dict());
+
+    EXPECT_NO_FATAL_FAILURE(pysie.__embed_file_standard_appliation_into_context__(std::string("uuid"), std::string("path")));
 }
 
 TEST_F(PySIPySIEffectTest, destroy_embedded_window)
 {
-//    std::vector<glm::vec3> contour
-//    {
-//        glm::vec3(1, 1, 1),
-//        glm::vec3(1, 5, 1),
-//        glm::vec3(5, 5, 1),
-//        glm::vec3(5, 1, 1)
-//    };
-//
-//    PySIEffect pysie(contour, _UUID_, "", bp::dict());
-//
-//    EXPECT_NO_FATAL_FAILURE(pysie.__destroy_embedded_file_standard_appliation_in_context__(std::string("uuid")));
+    std::vector<glm::vec3> contour
+    {
+        glm::vec3(1, 1, 1),
+        glm::vec3(1, 5, 1),
+        glm::vec3(5, 5, 1),
+        glm::vec3(5, 1, 1)
+    };
+
+    PySIEffect pysie(contour, _UUID_, "", bp::dict());
+
+    EXPECT_NO_FATAL_FAILURE(pysie.__destroy_embedded_file_standard_appliation_in_context__(std::string("uuid")));
 }
