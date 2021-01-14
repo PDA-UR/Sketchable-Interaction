@@ -50,9 +50,9 @@ void CollisionManager::perform_collision_check(tbb::concurrent_vector<std::tuple
     {
         for(int k = i + 1; k < in.size(); ++k)
         {
-            if (has_capabilities_in_common(in[i], in[k]))
+            if (collides_with_aabb(in[i].get(), in[k].get()))
             {
-                if (collides_with_aabb(in[i]->aabb(), in[i]->x(), in[i]->y(), in[k]->aabb(), in[k]->x(), in[k]->y()))
+                if (has_capabilities_in_common(in[i], in[k]))
                 {
                     out.emplace_back(in[i].get(), in[k].get(), collides_with_mask(in[i], in[k]));
                     continue;
@@ -132,12 +132,12 @@ void CollisionManager::handle_event_leave_on_deletion(Region* deleted_region)
     }), d_cols.end());
 }
 
-bool CollisionManager::collides_with_aabb(const std::vector<glm::vec3>& a_aabb, int32_t ax, int32_t ay, const std::vector<glm::vec3>& b_aabb, int32_t bx, int32_t by)
+bool CollisionManager::collides_with_aabb(Region* a, Region* b)
 {
-    return (a_aabb[0].x + ax) < (b_aabb[3].x + bx) &&
-           (a_aabb[3].x + ax) > (b_aabb[0].x + bx) &&
-           (a_aabb[0].y + ay) < (b_aabb[1].y + by) &&
-           (a_aabb[1].y + ay) > (b_aabb[0].y + by);
+    return (a->aabb()[0].x + a->x()) < (b->aabb()[3].x + b->x()) &&
+           (a->aabb()[3].x + a->x()) > (b->aabb()[0].x + b->x()) &&
+           (a->aabb()[0].y + a->y()) < (b->aabb()[1].y + b->y()) &&
+           (a->aabb()[1].y + a->y()) > (b->aabb()[0].y + b->y());
 }
 
 bool CollisionManager::collides_with_mask(const std::shared_ptr<Region> &a, const std::shared_ptr<Region> &b)
@@ -145,15 +145,21 @@ bool CollisionManager::collides_with_mask(const std::shared_ptr<Region> &a, cons
     auto& a_mask = a->mask();
     auto& b_mask = b->mask();
 
-    return std::find_if(std::execution::par_unseq, b->contour().begin(), b->contour().end(), [&](auto& p)
+    float area_a = (a->aabb()[3].x - a->aabb()[0].x) * (a->aabb()[1].y - a->aabb()[0].y);
+    float area_b = (b->aabb()[3].x - b->aabb()[0].x) * (b->aabb()[1].y - b->aabb()[0].y);
+
+    if(area_a > area_b)
     {
-        return ((*a_mask)[glm::vec3(p.x + b->x(), p.y + b->y(), 1)]);
-    }) != b->contour().end()
-    ||
-    std::find_if(std::execution::par_unseq, a->contour().begin(), a->contour().end(), [&](auto& p)
-    {
-        return ((*b_mask)[glm::vec3(p.x + a->x(), p.y + a->y(), 1)]);
-    }) != a->contour().end();
+        return std::find_if(b->contour().begin(), b->contour().end(), [&](auto& p)
+                {
+                    return ((*a_mask)[glm::vec3(p.x + b->x(), p.y + b->y(), 1)]);
+                }) != b->contour().end();
+    }
+
+    return std::find_if(a->contour().begin(), a->contour().end(), [&](auto& p)
+            {
+                return ((*b_mask)[glm::vec3(p.x + a->x(), p.y + a->y(), 1)]);
+            }) != a->contour().end();
 }
 
 bool CollisionManager::has_capabilities_in_common(const std::shared_ptr<Region>& a, const std::shared_ptr<Region>& b)

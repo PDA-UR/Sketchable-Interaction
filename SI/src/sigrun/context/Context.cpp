@@ -19,7 +19,7 @@
 #include <sigrun/util/Benchmark.hpp>
 #include <chrono>
 
-#define NEW_REGIONS_PER_FRAME 100
+#define NEW_REGIONS_PER_FRAME 50
 
 namespace bp = boost::python;
 

@@ -29,7 +29,7 @@ private:
     void perform_collision_events(tbb::concurrent_vector<std::tuple<Region*, Region*, bool>>& in);
     void remove_dead_collision_events();
 
-    bool collides_with_aabb(const std::vector<glm::vec3>& a_aabb, int32_t ax, int32_t ay, const std::vector<glm::vec3>& b_aabb, int32_t bx, int32_t by);
+    bool collides_with_aabb(Region* a, Region* b);
     bool collides_with_mask(const std::shared_ptr<Region>& a, const std::shared_ptr<Region>& b);
     bool has_capabilities_in_common(const std::shared_ptr<Region>& a, const std::shared_ptr<Region>& b);
 
