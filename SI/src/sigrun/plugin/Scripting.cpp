@@ -35,7 +35,7 @@ Scripting::Scripting()
         d_globals = d_main.attr("__dict__");
         d_globals["__builtins__"] = bp::import("builtins");
 
-        PyDict_SetItemString(d_globals.ptr(), "__builtins__", PyEval_GetBuiltins());
+//        PyDict_SetItemString(d_globals.ptr(), "__builtins__", PyEval_GetBuiltins());
 
         bp::exec((std::string("class Unbuffered:\n") +
                  "   def __init__(self, stream):\n" +
@@ -51,7 +51,7 @@ Scripting::Scripting()
                  "\n" +
                  "import sys\n" +
                  "sys.stdout = open(\"TEST.TXT\", \"w\")\n" +
-                 "sys.stdout = Unbuffered(sys.stdout)").c_str());
+                 "sys.stdout = Unbuffered(sys.stdout)").c_str(), d_globals);
 
     )
 }
