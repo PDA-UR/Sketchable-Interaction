@@ -3,7 +3,6 @@
 #include "MainWindow.hpp"
 #include <QDebug>
 #include <algorithm>
-#include <execution>
 #include <Qt>
 #include <siren/timing/Timing.hpp>
 
@@ -103,7 +102,7 @@ void MainWindow::handle_region_representations()
 
     d_reg_reps.erase(std::remove_if(d_reg_reps.begin(), d_reg_reps.end(), [&](RegionRepresentation* rep)
     {
-        auto it = std::find_if(std::execution::par_unseq, regions.begin(), regions.end(), [&](auto& reg)
+        auto it = std::find_if(regions.begin(), regions.end(), [&](auto& reg)
         {
             return reg->uuid() == rep->uuid();
         });
@@ -122,18 +121,17 @@ void MainWindow::handle_region_representations()
 
     for(auto& reg: regions)
     {
-        auto it = std::find_if(std::execution::par_unseq, d_reg_reps.begin(), d_reg_reps.end(), [&](RegionRepresentation* rep)
+        auto it = std::find_if(d_reg_reps.begin(), d_reg_reps.end(), [&](RegionRepresentation* rep)
         {
             return reg->uuid() == rep->uuid();
         });
 
         if(it == d_reg_reps.end())
         {
-            d_reg_reps.push_back(new RegionRepresentation(d_engine, reg));
+            d_reg_reps.push_back(new RegionRepresentation(d_engine, reg, this));
             p_scene->addItem(d_reg_reps.back());
 
-            d_reg_reps.back()->view().setParent(this);
-            d_reg_reps.back()->view().show();
+            d_reg_reps.back()->view()->show();
         }
         else
         {
@@ -162,7 +160,7 @@ void MainWindow::handle_partial_region_representations()
         const auto& source = k;
         const auto& path = v;
 
-        auto it = std::find_if(std::execution::par_unseq, d_par_reg_reps.begin(), d_par_reg_reps.end(), [&](PartialRegionRepresentation* prep)
+        auto it = std::find_if(d_par_reg_reps.begin(), d_par_reg_reps.end(), [&](PartialRegionRepresentation* prep)
         {
             return source == prep->id();
         });

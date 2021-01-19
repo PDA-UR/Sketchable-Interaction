@@ -6,10 +6,6 @@
 #include <sigrun/util/Dollar1GestureRecognizer.hpp>
 #include <boost/python/numpy.hpp>
 
-#if !defined(Q_MOC_RUN)
-#include <tbb/parallel_for_each.h>
-#endif
-
 namespace bp = boost::python;
 
 PySIEffect::PySIEffect(const std::vector<glm::vec3>& contour, const std::string& uuid, const std::string& tex_path, const bp::dict& kwargs)
@@ -17,17 +13,17 @@ PySIEffect::PySIEffect(const std::vector<glm::vec3>& contour, const std::string&
 {
     d_regions_marked_for_registration.reserve(10);
     d_link_relations.reserve(100);
-    d_contour.reserve(STEPCOUNT);
+    d_contour.reserve(SI_CONTOUR_STEPCOUNT);
     d_aabb.reserve(4);
 
     std::vector<glm::vec3> temp;
 
     Recognizer().recognize(temp, contour);
 
-    int32_t x_min = 999999;
-    int32_t x_max = 0;
-    int32_t y_min = 999999;
-    int32_t y_max = 0;
+    int32_t x_min = INT32_MAX;
+    int32_t x_max = INT32_MIN;
+    int32_t y_min = INT32_MAX;
+    int32_t y_max = INT32_MIN;
 
     for(auto& v: temp)
     {
@@ -335,10 +331,10 @@ void PySIEffect::set_shape(const std::vector<glm::vec3>& shape)
 
         r.recognize(temp, shape);
 
-        int32_t x_min = 999999;
-        int32_t x_max = 0;
-        int32_t y_min = 999999;
-        int32_t y_max = 0;
+        int32_t x_min = INT32_MAX;
+        int32_t x_max = INT32_MIN;
+        int32_t y_min = INT32_MAX;
+        int32_t y_max = INT32_MIN;
 
         for(const auto& v: temp)
         {
@@ -354,18 +350,6 @@ void PySIEffect::set_shape(const std::vector<glm::vec3>& shape)
         {
             tlc, blc, brc, trc
         };
-
-//        for(int i = 0; i < temp.size() - 1; ++i)
-//        {
-//            auto& p1 = temp[i];
-//            auto& p2 = temp[i + 1];
-//
-//            glm::vec3 Q(((3.0 / 4.0) * p1.x) + ((1.0 / 4.0) * p2.x),((3.0 / 4.0) * p1.y) + ((1.0 / 4.0) * p2.y), 1);
-//            glm::vec3 R(((1.0 / 4.0) * p1.x) + ((3.0 / 4.0) * p2.x),((1.0 / 4.0) * p1.y) + ((3.0 / 4.0) * p2.y), 1);
-//
-//            smoothed.push_back(Q);
-//            smoothed.push_back(R);
-//        }
 
         RegionResampler::resample(d_contour, temp);
 
