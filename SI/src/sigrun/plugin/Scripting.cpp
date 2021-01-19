@@ -35,7 +35,9 @@ Scripting::Scripting()
         d_globals = d_main.attr("__dict__");
         d_globals["__builtins__"] = bp::import("builtins");
 
-        bp::exec((std::string("class Unbuffered(object):\n") +
+        PyDict_SetItemString(d_globals.ptr(), "__builtins__", PyEval_GetBuiltins());
+
+        bp::exec((std::string("class Unbuffered:\n") +
                  "   def __init__(self, stream):\n" +
                  "       self.stream = stream\n" +
                  "   def write(self, data):\n" +
