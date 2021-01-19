@@ -9,10 +9,10 @@
 #include <QPolygonF>
 #include <QGraphicsItem>
 
-RegionRepresentation::RegionRepresentation(QQmlEngine* e, const std::shared_ptr<Region>& region):
+RegionRepresentation::RegionRepresentation(QQmlEngine* e, const std::shared_ptr<Region>& region, QGraphicsView* parent):
     d_color(QColor(region->color().r, region->color().g, region->color().b, region->color().a)),
     d_qml_path(region->qml_path()),
-    d_view(QQuickWidget(e, nullptr)),
+    d_view(new QQuickWidget(e, parent)),
     d_type(region->type()),
     d_uuid(region->uuid()),
     d_name(region->name()),
@@ -20,17 +20,20 @@ RegionRepresentation::RegionRepresentation(QQmlEngine* e, const std::shared_ptr<
     d_with_border(region->effect()->is_border_present())
 {
     if(!d_qml_path.empty())
-        d_view.setSource(QUrl::fromLocalFile(QString(d_qml_path.c_str())));
+        d_view->setSource(QUrl::fromLocalFile(QString(d_qml_path.c_str())));
 
-    d_view.rootContext()->setContextProperty("REGION", this);
-    d_view.setGeometry(0, 0, region->aabb()[3].x - region->aabb()[0].x, region->aabb()[1].y - region->aabb()[0].y);
-    d_view.setAttribute(Qt::WA_AlwaysStackOnTop);
-    d_view.setAttribute(Qt::WA_NoSystemBackground);
-    d_view.setClearColor(Qt::transparent);
-    d_view.move(d_initial_offset.x, d_initial_offset.y);
+    d_view->rootContext()->setContextProperty("REGION", this);
+    d_view->setGeometry(0, 0, region->aabb()[3].x - region->aabb()[0].x, region->aabb()[1].y - region->aabb()[0].y);
+
+    d_view->setAttribute(Qt::WA_AlwaysStackOnTop);
+    d_view->setAttribute(Qt::WA_NoSystemBackground);
+    d_view->setClearColor(Qt::transparent);
+    d_view->move(d_initial_offset.x, d_initial_offset.y);
+
+
 
     if(region->effect()->has_data_changed())
-        QMetaObject::invokeMethod(reinterpret_cast<QObject *>(d_view.rootObject()), "updateData", QGenericReturnArgument(), Q_ARG(QVariant, region->data()));
+        QMetaObject::invokeMethod(reinterpret_cast<QObject *>(d_view->rootObject()), "updateData", QGenericReturnArgument(), Q_ARG(QVariant, region->data()));
 
     QPolygonF poly;
     for(auto& p: region->contour())
@@ -45,7 +48,8 @@ RegionRepresentation::RegionRepresentation(QQmlEngine* e, const std::shared_ptr<
 
 RegionRepresentation::~RegionRepresentation()
 {
-	d_view.close();
+	d_view->close();
+	delete d_view;
 }
 
 const std::string& RegionRepresentation::uuid() const
@@ -72,7 +76,7 @@ void RegionRepresentation::perform_transform_update(const std::shared_ptr<Region
         int y = d_initial_offset.y + region->transform()[1].z;
 
         setPos(region->transform()[0].z, region->transform()[1].z);
-        d_view.move(x, y);
+        d_view->move(x, y);
     }
 }
 
@@ -96,7 +100,7 @@ void RegionRepresentation::perform_data_update(const std::shared_ptr<Region> &re
             poly << QPointF(p.x, p.y);
 
         setPolygon(poly);
-        QMetaObject::invokeMethod(reinterpret_cast<QObject *>(d_view.rootObject()), "updateData", QGenericReturnArgument(), Q_ARG(QVariant, region->data()));
+        QMetaObject::invokeMethod(reinterpret_cast<QObject *>(d_view->rootObject()), "updateData", QGenericReturnArgument(), Q_ARG(QVariant, region->data()));
     }
 
     if(d_was_data_received)
@@ -107,7 +111,7 @@ void RegionRepresentation::perform_data_update(const std::shared_ptr<Region> &re
     }
 }
 
-QQuickWidget& RegionRepresentation::view()
+QQuickWidget* RegionRepresentation::view()
 {
     return d_view;
 }

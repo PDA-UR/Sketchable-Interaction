@@ -18,14 +18,14 @@ class RegionRepresentation: public QObject, public QGraphicsPolygonItem, public 
 { Q_OBJECT SIREN
 
 public:
-    RegionRepresentation(QQmlEngine* e, const std::shared_ptr<Region>& region);
+    RegionRepresentation(QQmlEngine* e, const std::shared_ptr<Region>& region, QGraphicsView* parent);
     ~RegionRepresentation();
 
     void update(const std::shared_ptr<Region>& region);
     const std::string& uuid() const;
     const std::string& name() const;
 
-    QQuickWidget& view();
+    QQuickWidget* view();
     QColor& color();
 
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;
@@ -40,7 +40,7 @@ private:
     std::string d_qml_path;
     std::string d_uuid;
     std::string d_name;
-    QQuickWidget d_view;
+    QQuickWidget* d_view;
     uint32_t d_type;
 
     bool d_was_data_received = false;

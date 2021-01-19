@@ -290,7 +290,7 @@ float Recognizer::recognize(std::vector<glm::vec3> &out, const std::vector<glm::
 
     Result r(temp_name, 1.0 - ((float) b / (float) $1_HALF_DIAGONAL));
 
-    if(r.score() > 0.90f)
+    if(r.score() > 0.85f)
     {
         if(r.name() == "Triangle")
         {

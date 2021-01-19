@@ -87,7 +87,7 @@ TEST_F(SIGRunRegionTest, contour)
     Region r(contour, *o, 1920, 1080);
 
     ASSERT_EQ(contour.size(), 4);
-    ASSERT_EQ(r.contour().size(), STEPCOUNT);
+    ASSERT_EQ(r.contour().size(), SI_CONTOUR_STEPCOUNT);
 }
 
 TEST_F(SIGRunRegionTest, on_enter)

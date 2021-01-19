@@ -161,7 +161,7 @@ void RegionManager::update_region_deletions()
         if(!region->effect()->is_flagged_for_deletion())
             return false;
 
-        Context::SIContext()->collision_manager()->handle_event_leave_on_deletion(region);
+        Context::SIContext()->collision_manager()->handle_event_leave_on_deletion(region.get());
         Context::SIContext()->linking_manager()->remove_all_partaking_linking_relations(region->uuid());
 
         return true;

@@ -35,21 +35,21 @@ Scripting::Scripting()
         d_globals = d_main.attr("__dict__");
         d_globals["__builtins__"] = bp::import("builtins");
 
-        bp::exec("class Unbuffered(object):\n"
-                 "   def __init__(self, stream):\n"
-                 "       self.stream = stream\n"
-                 "   def write(self, data):\n"
-                 "       self.stream.write(data)\n"
-                 "       self.stream.flush()\n"
-                 "   def writelines(self, datas):\n"
-                 "       self.stream.writelines(datas)\n"
-                 "       self.stream.flush()\n"
-                 "   def __getattr__(self, attr):\n"
-                 "       return getattr(self.stream, attr)\n"
-                 "\n"
-                 "import sys\n"
-                 "sys.stdout = open(\"TEST.TXT\", \"w\")\n"
-                 "sys.stdout = Unbuffered(sys.stdout)");
+        bp::exec((std::string("class Unbuffered(object):\n") +
+                 "   def __init__(self, stream):\n" +
+                 "       self.stream = stream\n" +
+                 "   def write(self, data):\n" +
+                 "       self.stream.write(data)\n" +
+                 "       self.stream.flush()\n" +
+                 "   def writelines(self, datas):\n" +
+                 "       self.stream.writelines(datas)\n" +
+                 "       self.stream.flush()\n" +
+                 "   def __getattr__(self, attr):\n" +
+                 "       return getattr(self.stream, attr)\n" +
+                 "\n" +
+                 "import sys\n" +
+                 "sys.stdout = open(\"TEST.TXT\", \"w\")\n" +
+                 "sys.stdout = Unbuffered(sys.stdout)").c_str());
 
     )
 }

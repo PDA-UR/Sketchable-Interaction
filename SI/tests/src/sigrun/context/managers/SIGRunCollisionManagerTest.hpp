@@ -31,7 +31,7 @@ public:
 
     bool cm_collides_with_aabb(const std::shared_ptr<Region>& a, const std::shared_ptr<Region>& b)
     {
-        return cm.collides_with_aabb(a->aabb(), a->x(), a->y(), b->aabb(), b->x(), b->y());
+        return cm.collides_with_aabb(a.get(), b.get());
     }
 
     bool cm_collides_with_mask(const std::shared_ptr<Region>& a, const std::shared_ptr<Region>& b)
@@ -41,17 +41,17 @@ public:
 
     void cm_handle_event_continuous(const std::shared_ptr<Region>& a, const std::shared_ptr<Region>& b)
     {
-        cm.handle_event_continuous(a, b);
+        cm.handle_event_continuous(a.get(), b.get());
     }
 
     void cm_handle_event_leave(const std::shared_ptr<Region>& a, const std::shared_ptr<Region>& b)
     {
-        cm.handle_event_leave(a, b);
+        cm.handle_event_leave(a.get(), b.get());
     }
 
     void cm_handle_event_enter(const std::shared_ptr<Region>& a, const std::shared_ptr<Region>& b)
     {
-        cm.handle_event_enter(a, b);
+        cm.handle_event_enter(a.get(), b.get());
     }
 };
 
