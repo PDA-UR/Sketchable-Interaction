@@ -8,8 +8,10 @@
 #include <memory>
 #include <QWindow>
 #include <QWidget>
+#include <thread>
 #include <boost/python.hpp>
 #include <sigrun/context/managers/RegionManager.hpp>
+#include <sigrun/context/managers/TangibleManager.hpp>
 #include <sigrun/context/managers/CollisionManager.hpp>
 #include <sigrun/context/managers/LinkingManager.hpp>
 #include <sigrun/context/managers/InputManager.hpp>
@@ -44,6 +46,7 @@ public:
     LinkingManager* linking_manager();
     ExternalApplicationManager* external_application_manager();
     JobSystem<void, 512>* job_system();
+    TangibleManager* tangible_manager();
 
     QGraphicsView* main_window() const;
     void set_main_window();
@@ -77,6 +80,7 @@ public:
     void set_message(const std::string& msg);
 
 private:
+
     static Context* self;
     Context();
 
@@ -109,6 +113,7 @@ private:
     std::unique_ptr<FileSystem> upfs;
     std::unique_ptr<ExternalApplicationManager> upeam;
     std::unique_ptr<JobSystem<void, 512>> upjs;
+    std::unique_ptr<TangibleManager> uptm;
 
     uint32_t s_width = 0;
     uint32_t s_height = 0;

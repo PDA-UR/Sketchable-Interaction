@@ -18,6 +18,9 @@
 #include <sigrun/rendering/qml/items/PlotItem.hpp>
 #include <sigrun/util/Benchmark.hpp>
 #include <chrono>
+#include <sigrun/tangible/TangibleListener.hpp>
+
+#include "../lib/tuio_headers/oscpack/ip/UdpSocket.h"
 
 #define NEW_REGIONS_PER_FRAME 50
 
@@ -29,10 +32,12 @@ Context::~Context()
 {
     INFO("Destroying Context...");
     upjs.release();
-    delete p_py_garbage_collector;
     p_py_garbage_collector = nullptr;
     INFO("Destroyed Context");
 }
+
+// Either move QApp to separate thread
+// or leave GUI in Main thread and move Context logic to another thread
 
 Context::Context()
 {
@@ -45,6 +50,7 @@ Context::Context()
     upfs = std::make_unique<FileSystem>();
     upeam = std::make_unique<ExternalApplicationManager>();
     upjs = std::make_unique<JobSystem<void, 512>>();
+    uptm = std::make_unique<TangibleManager>();
 
     p_py_garbage_collector = new bp::object(bp::import(SI_PYTHON_GARBAGE_COLLECTOR));
 }
@@ -106,6 +112,21 @@ void Context::begin(const std::unordered_map<std::string, std::unique_ptr<bp::ob
 
         INFO("Drawable Plugins: " + tmp.substr(0, tmp.length() - 2));
 
+
+        auto tuio_task = [&]
+        {
+            int port = 3333;
+
+            TangibleListener tangible_listener;
+            UdpListeningReceiveSocket s(IpEndpointName("127.0.0.1", port), &tangible_listener);
+
+            s.RunUntilSigInt();
+
+            return 0;
+        };
+
+        std::thread{tuio_task}.detach();
+
         HANDLE_PYTHON_CALL(PY_ERROR, "Could not load startup file! A python file called \'StartSIGRun\' is required to be present in plugins folder!",
             bp::import(SI_START_FILE).attr(SI_START_FUNCTION)();
         )
@@ -151,6 +172,11 @@ ExternalApplicationManager* Context::external_application_manager()
 JobSystem<void, 512>* Context::job_system()
 {
     return upjs.get();
+}
+
+TangibleManager* Context::tangible_manager()
+{
+    return uptm.get();
 }
 
 Context* Context::SIContext()

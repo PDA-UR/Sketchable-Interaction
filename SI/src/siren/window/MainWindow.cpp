@@ -131,7 +131,8 @@ void MainWindow::handle_region_representations()
             d_reg_reps.push_back(new RegionRepresentation(d_engine, reg, this));
             p_scene->addItem(d_reg_reps.back());
 
-            d_reg_reps.back()->view()->show();
+            if(!d_reg_reps.back()->qml_path().empty())
+                d_reg_reps.back()->view()->show();
         }
         else
         {
