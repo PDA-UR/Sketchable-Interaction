@@ -128,7 +128,17 @@ set(SIGRunSRC
         SI/src/sigrun/parallel/Job.hpp
         SI/src/sigrun/parallel/helpers/ThreadSafeRingBuffer.hpp
         SI/src/sigrun/util/Dollar1GestureRecognizer.cpp
-        SI/src/sigrun/util/Dollar1GestureRecognizer.hpp)
+        SI/src/sigrun/util/Dollar1GestureRecognizer.hpp
+        SI/src/sigrun/context/managers/TangibleManager.cpp
+        SI/src/sigrun/context/managers/TangibleManager.hpp
+        SI/src/sigrun/tangible/TangibleListener.cpp
+        SI/src/sigrun/tangible/TangibleListener.hpp
+        SI/src/sigrun/tangible/SITUIOObject.hpp
+        SI/src/sigrun/tangible/SITUIOObject.cpp
+
+        SI/lib/tuio_headers/oscpack/ip/IpEndpointName.h
+        SI/lib/tuio_headers/oscpack/ip/IpEndpointName.cpp
+        SI/lib/tuio_headers/oscpack/ip/UdpSocket.h)
 
 ADD_DEFINITIONS(-DQT_NO_KEYWORDS)
 
