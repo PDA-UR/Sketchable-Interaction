@@ -8,7 +8,7 @@ project(SITest)
 
 find_package(PythonLibs 3 REQUIRED)
 find_package(Python3 REQUIRED)
-find_package(Boost 1.69.0 COMPONENTS system python3.7 REQUIRED)
+find_package(Boost 1.69.0 COMPONENTS system python3.9 REQUIRED)
 
 include_directories(${Boost_INCLUDE_DIRS})
 include_directories(${PYTHON_INCLUDE_DIRS})
