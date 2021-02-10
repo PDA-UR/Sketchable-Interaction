@@ -85,6 +85,7 @@ jobs:
           sudo apt-get install libglm-dev -qq > /dev/null
           sudo apt-get install uuid-dev -qq > /dev/null
           sudo apt install python3.9-dev
+          sudo apt upgrade
         fi 
         
     - name: Install Boost with components System, Python and Filesystem 
