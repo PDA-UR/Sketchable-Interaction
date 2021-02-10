@@ -21,6 +21,8 @@ Scripting::Scripting()
 
         Py_Initialize();
 
+        Print::print(PY_VERSION);
+
         char buf[FILENAME_MAX];
         getcwd(buf, FILENAME_MAX);
         std::string directory(buf);
