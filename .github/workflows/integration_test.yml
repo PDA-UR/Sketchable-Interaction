@@ -73,6 +73,20 @@ jobs:
       run: |
         sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-9 90
         
+    - name: Install Dependencies
+      run: |
+        if [[ "${{ github.event.head_commit.message }}" != *"[NO CI]"* ]]; then
+          sudo apt update
+          sudo apt install software-properties-common
+          sudo add-apt-repository ppa:deadsnakes/ppa
+          sudo apt update
+          sudo apt-get --fix-missing install qtbase5-dev -qq > /dev/null
+          sudo apt-get install qtdeclarative5-dev -qq > /dev/null
+          sudo apt-get install libglm-dev -qq > /dev/null
+          sudo apt-get install uuid-dev -qq > /dev/null
+          sudo apt install python3.9-dev
+        fi 
+        
     - name: Install Boost with components System, Python and Filesystem 
       run: |       
         echo "$(which python3)"
@@ -86,17 +100,6 @@ jobs:
         sudo ./b2 --with-system --with-python --with-filesystem -j 8 -d0 install &&       
         cd ..
         cd ..  
-        
-    - name: Install Dependencies
-      run: |
-        if [[ "${{ github.event.head_commit.message }}" != *"[NO CI]"* ]]; then
-          sudo apt-get update
-          sudo apt-get --fix-missing install qtbase5-dev -qq > /dev/null
-          sudo apt-get install qtdeclarative5-dev -qq > /dev/null
-          sudo apt-get install libglm-dev -qq > /dev/null
-          sudo apt-get install uuid-dev -qq > /dev/null
-          sudo apt-get install python3.9-dev
-        fi 
         
     - name: Install tbb
       run: |
