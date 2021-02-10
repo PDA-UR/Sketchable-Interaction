@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: [3.7]
+        python-version: [3.9]
   
     steps:
     - uses: actions/checkout@v1
@@ -23,6 +23,20 @@ jobs:
       run: |
         sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-9 90
         
+    - name: Install Dependencies
+      run: |
+        if [[ "${{ github.event.head_commit.message }}" != *"[NO CI]"* ]]; then
+          sudo apt update
+          sudo apt install software-properties-common
+          sudo add-apt-repository ppa:deadsnakes/ppa
+          sudo apt update
+          sudo apt-get --fix-missing install qtbase5-dev -qq > /dev/null
+          sudo apt-get install qtdeclarative5-dev -qq > /dev/null
+          sudo apt-get install libglm-dev -qq > /dev/null
+          sudo apt-get install uuid-dev -qq > /dev/null
+          sudo apt install python3.9-dev -qq > /dev/null
+        fi
+        
     - name: Install Boost with components System, Python and Filesystem 
       run: |
         mkdir temp &&
@@ -30,23 +44,10 @@ jobs:
         wget https://sourceforge.net/projects/boost/files/boost/1.69.0/boost_1_69_0.tar.gz/download &&
         tar xzf download &&
         cd boost_1_69_0 &&
-        sudo ln -s /usr/local/include/python3.7m /usr/local/include/python3.7 &&
-        sed -i "s@includes ?= \$(prefix)/include/python\$(version)@includes ?= \$(prefix)/include/python\$(version)m@" tools/build/src/tools/python.jam  &&
         sudo ./bootstrap.sh --with-python=$(which python3) &&
         sudo ./b2 --with-system --with-python --with-filesystem -j 8 -d0 install &&       
         cd ..
         cd ..
- 
-    - name: Install Dependencies
-      run: |
-        if [[ "${{ github.event.head_commit.message }}" != *"[NO CI]"* ]]; then
-          sudo apt-get update
-          sudo apt-get --fix-missing install qtbase5-dev -qq > /dev/null
-          sudo apt-get install qtdeclarative5-dev -qq > /dev/null
-          sudo apt-get install libglm-dev -qq > /dev/null
-          sudo apt-get install uuid-dev -qq > /dev/null
-          sudo apt-get install python3.7-dev -qq > /dev/null
-        fi
         
     - name: Install tbb
       run: |
@@ -81,7 +82,7 @@ jobs:
         mkdir si${{ env.CURRENT_VERSION }}/bin
         mkdir si${{ env.CURRENT_VERSION }}/lib
         cp -r /usr/local/lib/libboost_filesystem.so.1.69.0 si${{ env.CURRENT_VERSION }}/lib && 
-        cp -r /usr/local/lib/libboost_python37.so.1.69.0 si${{ env.CURRENT_VERSION }}/lib && 
+        cp -r /usr/local/lib/libboost_python39.so.1.69.0 si${{ env.CURRENT_VERSION }}/lib && 
         cp -r /usr/local/lib/libboost_system.so.1.69.0 si${{ env.CURRENT_VERSION }}/lib && 
         cp -r si_test_application si${{ env.CURRENT_VERSION }}/bin &&
         cp -r libSIGeneralRuntime.so si${{ env.CURRENT_VERSION }}/bin &&
