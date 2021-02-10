@@ -23,12 +23,6 @@ Scripting::Scripting()
 
         INFO("Started Python3 Interpreter with Version: " + std::string(PY_VERSION));
 
-
-        boost::filesystem::path workingDir = boost::filesystem::absolute("./").normalize();
-
-        PyObject* sysPath = PySys_GetObject("path");
-        PyList_Insert( sysPath, 0, PyUnicode_FromString(workingDir.string().c_str()));
-
         char buf[FILENAME_MAX];
         getcwd(buf, FILENAME_MAX);
         std::string directory(buf);
@@ -45,7 +39,7 @@ Scripting::Scripting()
         d_globals["__builtins__"] = bp::import("builtins");
 
 
-        bp::exec("import sys\nprint(\"sys path: \", sys.path)", d_globals);
+//        bp::exec("import sys\nprint(\"sys path: \", sys.path)", d_globals);
 
 
 //        PyDict_SetItemString(d_globals.ptr(), "__builtins__", PyEval_GetBuiltins());
