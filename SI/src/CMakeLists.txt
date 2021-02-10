@@ -4,13 +4,19 @@ project(SIEngine)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
-set(Python_ADDITIONAL_VERSIONS 3.7)
 
+# dependent on current install of boostpython  |
+#                                              v
+find_package(Boost 1.69.0 COMPONENTS system python3.9 filesystem REQUIRED)
+
+find_package(Python REQUIRED)
 find_package(PythonInterp 3 REQUIRED)
-find_package(PythonLibs 3.7 REQUIRED)
-find_package(Python3 REQUIRED)
-find_package(Boost 1.69.0 COMPONENTS system python3.7 filesystem REQUIRED)
+find_package(PythonLibs 3 REQUIRED)
 find_package(glm REQUIRED)
+
+message(STATUS "PYTHON_LIBRARIES = ${PYTHON_LIBRARIES}")
+message(STATUS "PYTHON_EXECUTABLE = ${PYTHON_EXECUTABLE}")
+message(STATUS "PYTHON_INCLUDE_DIRS = ${PYTHON_INCLUDE_DIRS}")
 
 include_directories(${Boost_INCLUDE_DIRS})
 include_directories(${PYTHON_INCLUDE_DIRS})
