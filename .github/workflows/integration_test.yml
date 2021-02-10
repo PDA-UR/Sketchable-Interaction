@@ -100,7 +100,7 @@ jobs:
         wget https://sourceforge.net/projects/boost/files/boost/1.69.0/boost_1_69_0.tar.gz/download &&
         tar xzf download &&
         cd boost_1_69_0 &&
-        sudo ./bootstrap.sh --with-python=$(which python3) &&
+        sudo ./bootstrap.sh --with-python=python3 &&
         sudo ./b2 --with-system --with-python --with-filesystem -j 8 -d0 install &&       
         cd ..
         cd ..    
