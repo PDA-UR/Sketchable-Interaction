@@ -94,9 +94,7 @@ jobs:
         fi
 
     - name: Install Boost with components System, Python and Filesystem 
-      run: |
-        echo ${which python3}
-        
+      run: |       
         mkdir temp &&
         cd temp &&
         wget https://sourceforge.net/projects/boost/files/boost/1.69.0/boost_1_69_0.tar.gz/download &&
