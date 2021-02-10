@@ -23,6 +23,7 @@ Scripting::Scripting()
 
         INFO("Started Python3 Interpreter with Version: " + std::string(PY_VERSION));
 
+
         boost::filesystem::path workingDir = boost::filesystem::absolute("./").normalize();
 
         PyObject* sysPath = PySys_GetObject("path");
@@ -35,12 +36,17 @@ Scripting::Scripting()
         bp::object sys_module = bp::import("sys");
         bp::object os_module = bp::import("os");
 
+
         bp::str module_directory = directory.c_str();
         sys_module.attr("path").attr("insert")(0, module_directory);
 
         d_main = bp::import("__main__");
         d_globals = d_main.attr("__dict__");
         d_globals["__builtins__"] = bp::import("builtins");
+
+
+        bp::exec("import sys\nprint(\"sys path: \", sys.path)", d_globals);
+
 
 //        PyDict_SetItemString(d_globals.ptr(), "__builtins__", PyEval_GetBuiltins());
 
