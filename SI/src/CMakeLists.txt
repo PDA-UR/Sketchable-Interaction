@@ -141,6 +141,7 @@ set(SIGRunSRC
         SI/src/sigrun/tangible/TangibleListener.hpp
         SI/src/sigrun/tangible/SITUIOObject.hpp
         SI/src/sigrun/tangible/SITUIOObject.cpp
+        SI/src/sigrun/plugin/PythonInvoker.cpp
 
         SI/lib/tuio_headers/oscpack/ip/IpEndpointName.h
         SI/lib/tuio_headers/oscpack/ip/IpEndpointName.cpp

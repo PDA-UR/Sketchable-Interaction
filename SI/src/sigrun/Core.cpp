@@ -92,28 +92,29 @@ void Core::retrieve_available_plugins(std::unordered_map<std::string, std::uniqu
 
     for(const auto& file: files)
     {
-        HANDLE_PYTHON_CALL(PY_ERROR, "Unknown Error.",
-            std::vector<std::string> classes;
+        std::vector<std::string> classes;
 
-            const std::string& full_path = std::get<0>(file);
-            const std::string& name = std::get<1>(file);
+        const std::string &full_path = std::get<0>(file);
+        const std::string &name = std::get<1>(file);
 
-            std::string module_name = name.substr(0, name.find_last_of('.'));
-            std::string rpath = full_path.substr(full_path.find(plugin_path)) + SI_SLASH + name;
+        std::string module_name = name.substr(0, name.find_last_of('.'));
+        std::string rpath = full_path.substr(full_path.find(plugin_path)) + SI_SLASH + name;
 
-            if(module_name != SI_PYTHON_STARTUP_FILE_NAME && module_name.substr(0, 2) != SI_DOUBLE_UNDERSCORE && module_name != "E" && module_name != SI_PYTHON_SIEFFECT_NAME)
+        if (module_name != SI_PYTHON_STARTUP_FILE_NAME && module_name.substr(0, 2) != SI_DOUBLE_UNDERSCORE
+            && module_name != "E" && module_name != SI_PYTHON_SIEFFECT_NAME)
+        {
+            script.load_class_names(classes, rpath);
+
+            for (auto &clazz: classes)
             {
-                script.load_class_names(classes, rpath);
-
-                for(auto& clazz: classes)
-                {
+                HANDLE_PYTHON_CALL(PY_ERROR, "The plugin " + full_path + "/" + clazz + ".py has a Syntax Error and is therefore not loaded!",
                     bp::object obj = script.si_plugin(module_name, rpath, clazz);
 
-                    HANDLE_PYTHON_CALL(PY_WARNING, "The found plugin does not contain the attribute \'regionname\' as a static class member (str-value). Therefore, the plugin is skipped and not available for use.",
-                        plugins[std::string(bp::extract<char*>(obj.attr(obj.attr(SI_INTERNAL_NAME)).attr(SI_INTERNAL_REGION_NAME)))] = std::make_unique<bp::object>(obj);
+                    HANDLE_PYTHON_CALL(PY_ERROR, "The plugin " + full_path + "/" + clazz + " does not contain the attribute \'regionname\' as a static class member (str-value). Therefore, the plugin is skipped and not available for use.",
+                        plugins[std::string(bp::extract<char *>(obj.attr(obj.attr(SI_INTERNAL_NAME)).attr(SI_INTERNAL_REGION_NAME)))] = std::make_unique<bp::object>(obj);
                     )
-                }
+                )
             }
-        )
+        }
     }
 }
