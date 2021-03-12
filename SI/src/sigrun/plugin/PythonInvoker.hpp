@@ -8,6 +8,8 @@
 
 namespace bp = boost::python;
 
+bool __si_evaluate_syntax_error__(const std::string& error);
+
 #define PY_ERROR 0
 #define PY_WARNING 1
 #define PY_INFO 2
@@ -34,9 +36,12 @@ namespace bp = boost::python;
         }\
         std::string error = bp::extract<std::string>(bp::str("\n").join(formatted_list));\
         if(flag == PY_ERROR) {\
+        if(__si_evaluate_syntax_error__(error)) {\
+        ERROR(error + std::string(additional_msg));\
+        } else {\
         ERROR(error + std::string(additional_msg));\
         ::raise(SIGABRT);\
-        }\
+        }}\
         else if(flag == PY_WARNING)\
         WARN(error + std::string(additional_msg));\
         else\
