@@ -8,7 +8,7 @@
 
 namespace bp = boost::python;
 
-bool __si_evaluate_syntax_error__(const std::string& error);
+bool __si_evaluate_syntax_error__(const std::string& error, const std::string& to_search);
 
 #define PY_ERROR 0
 #define PY_WARNING 1
@@ -36,11 +36,17 @@ bool __si_evaluate_syntax_error__(const std::string& error);
         }\
         std::string error = bp::extract<std::string>(bp::str("\n").join(formatted_list));\
         if(flag == PY_ERROR) {\
-        if(__si_evaluate_syntax_error__(error)) {\
+        if(__si_evaluate_syntax_error__(error, "SyntaxError")) {\
         ERROR(error + std::string(additional_msg));\
+        }else if(__si_evaluate_syntax_error__(error, "AttributeError")){\
+        ERROR(error + std::string(additional_msg));\
+        Print::print("ATTRIBUTE ERROR");\
+        }else if(__si_evaluate_syntax_error__(error, "TypeError")){\
+        Print::print("TYPE ERROR");\
+        }else if(__si_evaluate_syntax_error__(error, "ZeroDivisionError")){\
+        Print::print("ZERO DIVISION ERROR");\
         } else {\
         ERROR(error + std::string(additional_msg));\
-        ::raise(SIGABRT);\
         }}\
         else if(flag == PY_WARNING)\
         WARN(error + std::string(additional_msg));\

@@ -1,7 +1,7 @@
 #include "PythonInvoker.hpp"
 
 
-bool __si_evaluate_syntax_error__(const std::string& error)
+bool __si_evaluate_syntax_error__(const std::string& error, const std::string& to_search)
 {
-    return error.find("SyntaxError") != std::string::npos;
+    return error.find(to_search) != std::string::npos;
 }
