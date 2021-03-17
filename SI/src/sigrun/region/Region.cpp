@@ -63,7 +63,7 @@ void Region::set_effect(const bp::object& effect, const bp::dict& kwargs)
 
     if(!effect.is_none())
     {
-        HANDLE_PYTHON_CALL(PY_ERROR, "Fatal Error. Plugin broken.",
+        HANDLE_PYTHON_CALL(PY_ERROR, "Fatal Error. Plugin broken",
             d_effect = std::make_shared<bp::object>(effect.attr(effect.attr(SI_INTERNAL_NAME))(d_py_effect->contour(), d_py_effect->uuid(), kwargs));
 
             d_py_effect = bp::extract<PySIEffect*>(*d_effect);
@@ -77,9 +77,8 @@ void Region::set_effect(const std::vector<glm::vec3>& contour, const bp::object&
 
     if(!effect.is_none())
     {
-        HANDLE_PYTHON_CALL(PY_ERROR, "Fatal Error. Plugin broken.",
+        HANDLE_PYTHON_CALL(PY_ERROR, "Fatal Error. Plugin broken",
             d_effect = std::make_shared<bp::object>(effect.attr(effect.attr(SI_INTERNAL_NAME))(contour, uuid, kwargs));
-
             d_py_effect = bp::extract<PySIEffect*>(*d_effect);
          )
     }
