@@ -33,6 +33,7 @@ private:
 
     bp::object d_main;
     bp::object d_globals;
+    std::string d_cwd;
 };
 
 

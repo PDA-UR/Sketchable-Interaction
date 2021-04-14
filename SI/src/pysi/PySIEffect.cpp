@@ -5,6 +5,7 @@
 #include <sigrun/region/RegionResampler.hpp>
 #include <sigrun/util/Dollar1GestureRecognizer.hpp>
 #include <boost/python/numpy.hpp>
+#include <QDebug>
 
 namespace bp = boost::python;
 
@@ -18,7 +19,8 @@ PySIEffect::PySIEffect(const std::vector<glm::vec3>& contour, const std::string&
 
     std::vector<glm::vec3> temp;
 
-    Recognizer().recognize(temp, contour);
+    Recognizer r;
+    r.recognize(temp, contour);
 
     int32_t x_min = INT32_MAX;
     int32_t x_max = INT32_MIN;
@@ -325,11 +327,17 @@ void PySIEffect::set_shape(const std::vector<glm::vec3>& shape)
     if(!shape.empty() && !d_name.empty())
     {
         d_contour.clear();
-
-        Recognizer r;
         std::vector<glm::vec3> temp, smoothed;
 
-        r.recognize(temp, shape);
+        if(d_name != "__ ConveyorBelt __")
+        {
+            Recognizer r;
+            r.recognize(temp, shape);
+        }
+        else
+        {
+            temp = shape;
+        }
 
         int32_t x_min = INT32_MAX;
         int32_t x_max = INT32_MIN;

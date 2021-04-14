@@ -92,7 +92,7 @@ def on_start():
     # PySI.Startup.disable(PySI.Configuration.SI_CRASH_DUMP)
     PySI.Startup.enable(PySI.Configuration.SI_ANTI_ALIASING_8x)
 
-    PySI.Startup.logger_log(True)
+    PySI.Startup.logger_log(False)
     PySI.Startup.logger_set_log_output(PySI.Logger.SI_LOG_SHOW_ALL)
     PySI.Startup.logger_quench_messages_from_class("linkingmanager")
     PySI.Startup.logger_quench_messages_from_class("recognizer")

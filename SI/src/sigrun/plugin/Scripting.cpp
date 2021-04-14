@@ -37,12 +37,7 @@ Scripting::Scripting()
         d_main = bp::import("__main__");
         d_globals = d_main.attr("__dict__");
         d_globals["__builtins__"] = bp::import("builtins");
-
-
-//        bp::exec("import sys\nprint(\"sys path: \", sys.path)", d_globals);
-
-
-//        PyDict_SetItemString(d_globals.ptr(), "__builtins__", PyEval_GetBuiltins());
+        d_cwd = directory;
 
         bp::exec((std::string("class Unbuffered:\n") +
                  "   def __init__(self, stream):\n" +
@@ -72,7 +67,6 @@ bp::object Scripting::si_plugin(std::string &module_name, std::string &path, std
 {
     std::string temp = path.substr(0, path.length() - 3); // -3 removes .py
     std::replace(temp.begin(), temp.end(), SI_SLASH_CHAR, SI_DOT_CHAR);
-
     bp::object ret = bp::import(bp::str((temp).c_str()));
     ret.attr(SI_INTERNAL_NAME) = class_name.c_str();
 

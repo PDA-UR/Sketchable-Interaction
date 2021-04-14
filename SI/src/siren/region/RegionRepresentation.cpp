@@ -2,6 +2,7 @@
 #include "RegionRepresentation.hpp"
 #include <QQmlEngine>
 #include <QLayout>
+#include <QQmlComponent>
 #include <algorithm>
 #include <thread>
 #include <QQmlProperty>
@@ -10,7 +11,7 @@
 #include <QGraphicsItem>
 #include <debug/Print.hpp>
 
-RegionRepresentation::RegionRepresentation(QQmlEngine* e, const std::shared_ptr<Region>& region, QGraphicsView* parent):
+RegionRepresentation::RegionRepresentation(QQmlContext* c, QQmlEngine* e, const std::shared_ptr<Region>& region, QGraphicsView* parent):
     d_color(QColor(region->color().r, region->color().g, region->color().b, region->color().a)),
     d_qml_path(region->qml_path()),
     d_type(region->type()),
@@ -22,21 +23,18 @@ RegionRepresentation::RegionRepresentation(QQmlEngine* e, const std::shared_ptr<
     if(!d_qml_path.empty())
     {
         d_view = new QQuickWidget(e, parent);
-
-        d_view->setSource(QUrl::fromLocalFile(QString(d_qml_path.c_str())));
+        QQmlComponent* component = new QQmlComponent(e, d_qml_path.c_str());
+        d_view->setContent(component->url(), component, component->create(c));
 
         d_view->rootContext()->setContextProperty("REGION", this);
-        d_view->setGeometry(0, 0, region->aabb()[3].x - region->aabb()[0].x, region->aabb()[1].y - region->aabb()[0].y);
-
+        d_view->setGeometry(d_initial_offset.x, d_initial_offset.y, region->aabb()[3].x - region->aabb()[0].x, region->aabb()[1].y - region->aabb()[0].y);
         d_view->setAttribute(Qt::WA_AlwaysStackOnTop);
         d_view->setAttribute(Qt::WA_NoSystemBackground);
         d_view->setClearColor(Qt::transparent);
-        d_view->move(d_initial_offset.x, d_initial_offset.y);
 
         if(region->effect()->has_data_changed())
             QMetaObject::invokeMethod(reinterpret_cast<QObject *>(d_view->rootObject()), "updateData", QGenericReturnArgument(), Q_ARG(QVariant, region->data()));
     }
-
 
     QPolygonF poly;
     for(auto& p: region->contour())
@@ -148,6 +146,8 @@ QColor& RegionRepresentation::color()
 void RegionRepresentation::set_data(const QVariantMap& data)
 {
     d_was_data_received = true;
+
+    d_received_data[QString("uuid")] = QVariant(d_uuid.c_str());
 
     for(auto& key: data.keys())
         d_received_data[key] = data[key];
