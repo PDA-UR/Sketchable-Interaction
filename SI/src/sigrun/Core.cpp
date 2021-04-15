@@ -103,18 +103,10 @@ void Core::retrieve_available_plugins(std::unordered_map<std::string, std::uniqu
         if (module_name != SI_PYTHON_STARTUP_FILE_NAME && module_name.substr(0, 2) != SI_DOUBLE_UNDERSCORE
             && module_name != "E" && module_name != SI_PYTHON_SIEFFECT_NAME)
         {
-            script.load_class_names(classes, rpath);
-
-            for (auto &clazz: classes)
-            {
-                HANDLE_PYTHON_CALL(PY_ERROR, "The plugin " + full_path + "/" + clazz + ".py has a Syntax Error and is therefore not loaded!",
-                    bp::object obj = script.si_plugin(module_name, rpath, clazz);
-
-                    HANDLE_PYTHON_CALL(PY_ERROR, "The plugin " + full_path + "/" + clazz + " does not contain the attribute \'regionname\' as a static class member (str-value). Therefore, the plugin is skipped and not available for use.",
-                        plugins[std::string(bp::extract<char *>(obj.attr(obj.attr(SI_INTERNAL_NAME)).attr(SI_INTERNAL_REGION_NAME)))] = std::make_unique<bp::object>(obj);
-                    )
-                )
-            }
+            HANDLE_PYTHON_CALL(PY_ERROR, "Could not load plugin!",
+                bp::object o = script.load_plugin(module_name, rpath);
+                plugins[std::string(bp::extract<char *>(o.attr(o.attr(SI_INTERNAL_NAME)).attr(SI_INTERNAL_REGION_NAME)))] = std::make_unique<bp::object>(o);
+            )
         }
     }
 }

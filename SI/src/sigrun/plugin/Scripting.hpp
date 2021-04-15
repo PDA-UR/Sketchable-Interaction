@@ -17,6 +17,8 @@ public:
     Scripting();
     ~Scripting();
 
+    bp::object load_plugin(const std::string &module_name, const std::string &path);
+
     bp::object si_plugin(std::string &module_name, std::string &path, std::string &class_name);
 
     std::string load_plugin_source(const char *source);

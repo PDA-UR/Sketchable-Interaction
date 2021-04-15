@@ -63,6 +63,21 @@ Scripting::~Scripting()
 
 }
 
+bp::object Scripting::load_plugin(const std::string &module_name, const std::string &path)
+{
+    std::string temp = path.substr(0, path.length() - 3); // -3 removes .py
+    std::replace(temp.begin(), temp.end(), SI_SLASH_CHAR, SI_DOT_CHAR);
+
+    PyObject* code = Py_CompileString(load_plugin_source(path.c_str()).c_str(), (d_cwd + "/" + path).c_str(), Py_file_input);
+    PyObject* module = PyImport_ExecCodeModule(temp.c_str(), code);
+
+    bp::object o = bp::object(bp::handle<>(module));
+    o.attr(SI_INTERNAL_NAME) = module_name.c_str();
+
+    return o;
+}
+
+/* unused/deprecated */
 bp::object Scripting::si_plugin(std::string &module_name, std::string &path, std::string &class_name)
 {
     std::string temp = path.substr(0, path.length() - 3); // -3 removes .py
@@ -89,6 +104,7 @@ std::string Scripting::load_plugin_source(const char *source)
     return ret;
 }
 
+/* unused/deprecated */
 void Scripting::load_class_names(std::vector<std::string> &classes, const std::string &path)
 {
     uint64_t size = 0;
