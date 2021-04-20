@@ -35,9 +35,7 @@ TEST_F(SIGRunLinkingManagerTest, link_creation_uni)
     std::string module_name = name.substr(0, name.find_last_of('.'));
     std::string rpath = full_path.substr(full_path.find(path)) + "/" + name;
 
-    script.load_class_names(classes, rpath);
-
-    bp::object o = script.si_plugin(module_name, rpath, classes[0]);
+    bp::object o = script.si_plugin(module_name, rpath);
 
     classes.clear();
 
@@ -46,10 +44,8 @@ TEST_F(SIGRunLinkingManagerTest, link_creation_uni)
 
     module_name = name2.substr(0, name2.find_last_of('.'));
     rpath = full_path2.substr(full_path2.find(path)) + "/" + name2;
-
-    script.load_class_names(classes, rpath);
-
-    std::shared_ptr<bp::object> t = std::make_shared<bp::object>(script.si_plugin(module_name, rpath, classes[0]));
+    
+    std::shared_ptr<bp::object> t = std::make_shared<bp::object>(script.si_plugin(module_name, rpath));
 
     std::vector<glm::vec3> contour1{glm::vec3(100, 100, 1), glm::vec3(100, 600, 1), glm::vec3(600, 600, 1),
                                     glm::vec3(600, 100, 1)};
@@ -94,9 +90,9 @@ TEST_F(SIGRunLinkingManagerTest, is_linked_uni)
     std::string module_name = name.substr(0, name.find_last_of('.'));
     std::string rpath = full_path.substr(full_path.find(path)) + "/" + name;
 
-    script.load_class_names(classes, rpath);
+    
 
-    bp::object o = script.si_plugin(module_name, rpath, classes[0]);
+    bp::object o = script.si_plugin(module_name, rpath);
 
     classes.clear();
 
@@ -106,9 +102,9 @@ TEST_F(SIGRunLinkingManagerTest, is_linked_uni)
     module_name = name2.substr(0, name2.find_last_of('.'));
     rpath = full_path2.substr(full_path2.find(path)) + "/" + name2;
 
-    script.load_class_names(classes, rpath);
+    
 
-    std::shared_ptr<bp::object> t = std::make_shared<bp::object>(script.si_plugin(module_name, rpath, classes[0]));
+    std::shared_ptr<bp::object> t = std::make_shared<bp::object>(script.si_plugin(module_name, rpath));
 
     std::vector<glm::vec3> contour1{glm::vec3(100, 100, 1), glm::vec3(100, 600, 1), glm::vec3(600, 600, 1),
                                     glm::vec3(600, 100, 1)};
@@ -151,9 +147,9 @@ TEST_F(SIGRunLinkingManagerTest, link_event_execution_uni)
     std::string module_name = name.substr(0, name.find_last_of('.'));
     std::string rpath = full_path.substr(full_path.find(path)) + "/" + name;
 
-    script.load_class_names(classes, rpath);
+    
 
-    bp::object o = script.si_plugin(module_name, rpath, classes[0]);
+    bp::object o = script.si_plugin(module_name, rpath);
 
     classes.clear();
 
@@ -163,9 +159,9 @@ TEST_F(SIGRunLinkingManagerTest, link_event_execution_uni)
     module_name = name2.substr(0, name2.find_last_of('.'));
     rpath = full_path2.substr(full_path2.find(path)) + "/" + name2;
 
-    script.load_class_names(classes, rpath);
+    
 
-    std::shared_ptr<bp::object> t = std::make_shared<bp::object>(script.si_plugin(module_name, rpath, classes[0]));
+    std::shared_ptr<bp::object> t = std::make_shared<bp::object>(script.si_plugin(module_name, rpath));
 
     std::vector<glm::vec3> contour1{glm::vec3(100, 100, 1), glm::vec3(100, 600, 1), glm::vec3(600, 600, 1),
                                     glm::vec3(600, 100, 1)};
@@ -221,9 +217,9 @@ TEST_F(SIGRunLinkingManagerTest, link_removal_uni)
     std::string module_name = name.substr(0, name.find_last_of('.'));
     std::string rpath = full_path.substr(full_path.find(path)) + "/" + name;
 
-    script.load_class_names(classes, rpath);
+    
 
-    bp::object o = script.si_plugin(module_name, rpath, classes[0]);
+    bp::object o = script.si_plugin(module_name, rpath);
 
     classes.clear();
 
@@ -233,9 +229,9 @@ TEST_F(SIGRunLinkingManagerTest, link_removal_uni)
     module_name = name2.substr(0, name2.find_last_of('.'));
     rpath = full_path2.substr(full_path2.find(path)) + "/" + name2;
 
-    script.load_class_names(classes, rpath);
+    
 
-    std::shared_ptr<bp::object> t = std::make_shared<bp::object>(script.si_plugin(module_name, rpath, classes[0]));
+    std::shared_ptr<bp::object> t = std::make_shared<bp::object>(script.si_plugin(module_name, rpath));
 
     std::vector<glm::vec3> contour1{glm::vec3(100, 100, 1), glm::vec3(100, 600, 1), glm::vec3(600, 600, 1),
                                     glm::vec3(600, 100, 1)};
@@ -305,9 +301,9 @@ TEST_F(SIGRunLinkingManagerTest, link_creation_bi)
     std::string module_name = name.substr(0, name.find_last_of('.'));
     std::string rpath = full_path.substr(full_path.find(path)) + "/" + name;
 
-    script.load_class_names(classes, rpath);
+    
 
-    bp::object o = script.si_plugin(module_name, rpath, classes[0]);
+    bp::object o = script.si_plugin(module_name, rpath);
 
     classes.clear();
 
@@ -317,9 +313,9 @@ TEST_F(SIGRunLinkingManagerTest, link_creation_bi)
     module_name = name2.substr(0, name2.find_last_of('.'));
     rpath = full_path2.substr(full_path2.find(path)) + "/" + name2;
 
-    script.load_class_names(classes, rpath);
+    
 
-    std::shared_ptr<bp::object> t = std::make_shared<bp::object>(script.si_plugin(module_name, rpath, classes[0]));
+    std::shared_ptr<bp::object> t = std::make_shared<bp::object>(script.si_plugin(module_name, rpath));
 
     std::vector<glm::vec3> contour1{glm::vec3(100, 100, 1), glm::vec3(100, 600, 1), glm::vec3(600, 600, 1),
                                     glm::vec3(600, 100, 1)};
@@ -370,9 +366,9 @@ TEST_F(SIGRunLinkingManagerTest, is_linked_bi)
     std::string module_name = name.substr(0, name.find_last_of('.'));
     std::string rpath = full_path.substr(full_path.find(path)) + "/" + name;
 
-    script.load_class_names(classes, rpath);
+    
 
-    bp::object o = script.si_plugin(module_name, rpath, classes[0]);
+    bp::object o = script.si_plugin(module_name, rpath);
 
     classes.clear();
 
@@ -382,9 +378,9 @@ TEST_F(SIGRunLinkingManagerTest, is_linked_bi)
     module_name = name2.substr(0, name2.find_last_of('.'));
     rpath = full_path2.substr(full_path2.find(path)) + "/" + name2;
 
-    script.load_class_names(classes, rpath);
+    
 
-    std::shared_ptr<bp::object> t = std::make_shared<bp::object>(script.si_plugin(module_name, rpath, classes[0]));
+    std::shared_ptr<bp::object> t = std::make_shared<bp::object>(script.si_plugin(module_name, rpath));
 
     std::vector<glm::vec3> contour1{glm::vec3(100, 100, 1), glm::vec3(100, 600, 1), glm::vec3(600, 600, 1),
                                     glm::vec3(600, 100, 1)};
@@ -424,9 +420,9 @@ TEST_F(SIGRunLinkingManagerTest, link_event_execution_bi)
     std::string module_name = name.substr(0, name.find_last_of('.'));
     std::string rpath = full_path.substr(full_path.find(path)) + "/" + name;
 
-    script.load_class_names(classes, rpath);
+    
 
-    bp::object o = script.si_plugin(module_name, rpath, classes[0]);
+    bp::object o = script.si_plugin(module_name, rpath);
 
     classes.clear();
 
@@ -436,9 +432,9 @@ TEST_F(SIGRunLinkingManagerTest, link_event_execution_bi)
     module_name = name2.substr(0, name2.find_last_of('.'));
     rpath = full_path2.substr(full_path2.find(path)) + "/" + name2;
 
-    script.load_class_names(classes, rpath);
+    
 
-    std::shared_ptr<bp::object> t = std::make_shared<bp::object>(script.si_plugin(module_name, rpath, classes[0]));
+    std::shared_ptr<bp::object> t = std::make_shared<bp::object>(script.si_plugin(module_name, rpath));
 
     std::vector<glm::vec3> contour1{glm::vec3(100, 100, 1), glm::vec3(100, 600, 1), glm::vec3(600, 600, 1),
                                     glm::vec3(600, 100, 1)};
@@ -486,9 +482,9 @@ TEST_F(SIGRunLinkingManagerTest, link_removal_bi)
     std::string module_name = name.substr(0, name.find_last_of('.'));
     std::string rpath = full_path.substr(full_path.find(path)) + "/" + name;
 
-    script.load_class_names(classes, rpath);
+    
 
-    bp::object o = script.si_plugin(module_name, rpath, classes[0]);
+    bp::object o = script.si_plugin(module_name, rpath);
 
     classes.clear();
 
@@ -498,9 +494,9 @@ TEST_F(SIGRunLinkingManagerTest, link_removal_bi)
     module_name = name2.substr(0, name2.find_last_of('.'));
     rpath = full_path2.substr(full_path2.find(path)) + "/" + name2;
 
-    script.load_class_names(classes, rpath);
+    
 
-    std::shared_ptr<bp::object> t = std::make_shared<bp::object>(script.si_plugin(module_name, rpath, classes[0]));
+    std::shared_ptr<bp::object> t = std::make_shared<bp::object>(script.si_plugin(module_name, rpath));
 
     std::vector<glm::vec3> contour1{glm::vec3(100, 100, 1), glm::vec3(100, 600, 1), glm::vec3(600, 600, 1),
                                     glm::vec3(600, 100, 1)};

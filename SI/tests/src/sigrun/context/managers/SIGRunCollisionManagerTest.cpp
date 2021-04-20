@@ -26,9 +26,7 @@ TEST_F(SIGRunCollisionManagerTest, collide)
     std::string module_name = name.substr(0, name.find_last_of('.'));
     std::string rpath = full_path.substr(full_path.find(path)) + "/" + name;
 
-    script.load_class_names(classes, rpath);
-
-    bp::object o = script.si_plugin(module_name, rpath, classes[0]);
+    bp::object o = script.si_plugin(module_name, rpath);
 
     classes.clear();
 
@@ -38,9 +36,7 @@ TEST_F(SIGRunCollisionManagerTest, collide)
     module_name = name2.substr(0, name2.find_last_of('.'));
     rpath = full_path2.substr(full_path2.find(path)) + "/" + name2;
 
-    script.load_class_names(classes, rpath);
-
-    std::shared_ptr<bp::object> t = std::make_shared<bp::object>(script.si_plugin(module_name, rpath, classes[0]));
+    std::shared_ptr<bp::object> t = std::make_shared<bp::object>(script.si_plugin(module_name, rpath));
 
     std::vector<glm::vec3> contour {glm::vec3(100, 100, 1), glm::vec3(100, 600, 1), glm::vec3(600, 600, 1), glm::vec3(600, 100, 1)};
 
@@ -68,9 +64,7 @@ TEST_F(SIGRunCollisionManagerTest, has_capabilities_in_common)
     std::string module_name = name.substr(0, name.find_last_of('.'));
     std::string rpath = full_path.substr(full_path.find(path)) + "/" + name;
 
-    script.load_class_names(classes, rpath);
-
-    bp::object o = script.si_plugin(module_name, rpath, classes[0]);
+    bp::object o = script.si_plugin(module_name, rpath);
 
     classes.clear();
 
@@ -80,9 +74,7 @@ TEST_F(SIGRunCollisionManagerTest, has_capabilities_in_common)
     module_name = name2.substr(0, name2.find_last_of('.'));
     rpath = full_path2.substr(full_path2.find(path)) + "/" + name2;
 
-    script.load_class_names(classes, rpath);
-
-    std::shared_ptr<bp::object> t = std::make_shared<bp::object>(script.si_plugin(module_name, rpath, classes[0]));
+    std::shared_ptr<bp::object> t = std::make_shared<bp::object>(script.si_plugin(module_name, rpath));
 
     std::vector<glm::vec3> contour {glm::vec3(100, 100, 1), glm::vec3(100, 600, 1), glm::vec3(600, 600, 1), glm::vec3(600, 100, 1)};
 
@@ -108,9 +100,7 @@ TEST_F(SIGRunCollisionManagerTest, collides_with_aabb)
     std::string module_name = name.substr(0, name.find_last_of('.'));
     std::string rpath = full_path.substr(full_path.find(path)) + "/" + name;
 
-    script.load_class_names(classes, rpath);
-
-    bp::object o = script.si_plugin(module_name, rpath, classes[0]);
+    bp::object o = script.si_plugin(module_name, rpath);
 
     classes.clear();
 
@@ -120,9 +110,7 @@ TEST_F(SIGRunCollisionManagerTest, collides_with_aabb)
     module_name = name2.substr(0, name2.find_last_of('.'));
     rpath = full_path2.substr(full_path2.find(path)) + "/" + name2;
 
-    script.load_class_names(classes, rpath);
-
-    std::shared_ptr<bp::object> t = std::make_shared<bp::object>(script.si_plugin(module_name, rpath, classes[0]));
+    std::shared_ptr<bp::object> t = std::make_shared<bp::object>(script.si_plugin(module_name, rpath));
 
     std::vector<glm::vec3> contour {glm::vec3(100, 100, 1), glm::vec3(100, 600, 1), glm::vec3(600, 600, 1), glm::vec3(600, 100, 1)};
 
@@ -148,9 +136,7 @@ TEST_F(SIGRunCollisionManagerTest, cm_collides_with_mask)
     std::string module_name = name.substr(0, name.find_last_of('.'));
     std::string rpath = full_path.substr(full_path.find(path)) + "/" + name;
 
-    script.load_class_names(classes, rpath);
-
-    bp::object o = script.si_plugin(module_name, rpath, classes[0]);
+    bp::object o = script.si_plugin(module_name, rpath);
 
     classes.clear();
 
@@ -160,9 +146,7 @@ TEST_F(SIGRunCollisionManagerTest, cm_collides_with_mask)
     module_name = name2.substr(0, name2.find_last_of('.'));
     rpath = full_path2.substr(full_path2.find(path)) + "/" + name2;
 
-    script.load_class_names(classes, rpath);
-
-    std::shared_ptr<bp::object> t = std::make_shared<bp::object>(script.si_plugin(module_name, rpath, classes[0]));
+    std::shared_ptr<bp::object> t = std::make_shared<bp::object>(script.si_plugin(module_name, rpath));
 
     std::vector<glm::vec3> contour1 {glm::vec3(100, 100, 1), glm::vec3(100, 600, 1), glm::vec3(600, 600, 1), glm::vec3(600, 100, 1)};
     std::vector<glm::vec3> contour2 {glm::vec3(150, 150, 1), glm::vec3(150, 550, 1), glm::vec3(550, 550, 1), glm::vec3(550, 150, 1)};
@@ -192,9 +176,7 @@ TEST_F(SIGRunCollisionManagerTest, handle_event_continuous)
     std::string module_name = name.substr(0, name.find_last_of('.'));
     std::string rpath = full_path.substr(full_path.find(path)) + "/" + name;
 
-    script.load_class_names(classes, rpath);
-
-    bp::object o = script.si_plugin(module_name, rpath, classes[0]);
+    bp::object o = script.si_plugin(module_name, rpath);
 
     classes.clear();
 
@@ -204,9 +186,7 @@ TEST_F(SIGRunCollisionManagerTest, handle_event_continuous)
     module_name = name2.substr(0, name2.find_last_of('.'));
     rpath = full_path2.substr(full_path2.find(path)) + "/" + name2;
 
-    script.load_class_names(classes, rpath);
-
-    std::shared_ptr<bp::object> t = std::make_shared<bp::object>(script.si_plugin(module_name, rpath, classes[0]));
+    std::shared_ptr<bp::object> t = std::make_shared<bp::object>(script.si_plugin(module_name, rpath));
 
     std::vector<glm::vec3> contour1 {glm::vec3(100, 100, 1), glm::vec3(100, 600, 1), glm::vec3(600, 600, 1), glm::vec3(600, 100, 1)};
     std::vector<glm::vec3> contour2 {glm::vec3(150, 150, 1), glm::vec3(150, 550, 1), glm::vec3(550, 550, 1), glm::vec3(550, 150, 1)};
@@ -233,9 +213,7 @@ TEST_F(SIGRunCollisionManagerTest, handle_event_enter)
     std::string module_name = name.substr(0, name.find_last_of('.'));
     std::string rpath = full_path.substr(full_path.find(path)) + "/" + name;
 
-    script.load_class_names(classes, rpath);
-
-    bp::object o = script.si_plugin(module_name, rpath, classes[0]);
+    bp::object o = script.si_plugin(module_name, rpath);
 
     classes.clear();
 
@@ -245,9 +223,7 @@ TEST_F(SIGRunCollisionManagerTest, handle_event_enter)
     module_name = name2.substr(0, name2.find_last_of('.'));
     rpath = full_path2.substr(full_path2.find(path)) + "/" + name2;
 
-    script.load_class_names(classes, rpath);
-
-    std::shared_ptr<bp::object> t = std::make_shared<bp::object>(script.si_plugin(module_name, rpath, classes[0]));
+    std::shared_ptr<bp::object> t = std::make_shared<bp::object>(script.si_plugin(module_name, rpath));
 
     std::vector<glm::vec3> contour1 {glm::vec3(100, 100, 1), glm::vec3(100, 600, 1), glm::vec3(600, 600, 1), glm::vec3(600, 100, 1)};
     std::vector<glm::vec3> contour2 {glm::vec3(150, 150, 1), glm::vec3(150, 550, 1), glm::vec3(550, 550, 1), glm::vec3(550, 150, 1)};
@@ -276,9 +252,7 @@ TEST_F(SIGRunCollisionManagerTest, handle_event_leave)
     std::string module_name = name.substr(0, name.find_last_of('.'));
     std::string rpath = full_path.substr(full_path.find(path)) + "/" + name;
 
-    script.load_class_names(classes, rpath);
-
-    bp::object o = script.si_plugin(module_name, rpath, classes[0]);
+    bp::object o = script.si_plugin(module_name, rpath);
 
     classes.clear();
 
@@ -288,9 +262,7 @@ TEST_F(SIGRunCollisionManagerTest, handle_event_leave)
     module_name = name2.substr(0, name2.find_last_of('.'));
     rpath = full_path2.substr(full_path2.find(path)) + "/" + name2;
 
-    script.load_class_names(classes, rpath);
-
-    std::shared_ptr<bp::object> t = std::make_shared<bp::object>(script.si_plugin(module_name, rpath, classes[0]));
+    std::shared_ptr<bp::object> t = std::make_shared<bp::object>(script.si_plugin(module_name, rpath));
 
     std::vector<glm::vec3> contour1 {glm::vec3(100, 100, 1), glm::vec3(100, 600, 1), glm::vec3(600, 600, 1), glm::vec3(600, 100, 1)};
     std::vector<glm::vec3> contour2 {glm::vec3(150, 150, 1), glm::vec3(150, 550, 1), glm::vec3(550, 550, 1), glm::vec3(550, 150, 1)};

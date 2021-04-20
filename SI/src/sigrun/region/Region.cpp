@@ -9,6 +9,7 @@
 #include <sigrun/util/UUID.hpp>
 #include <sigrun/context/Context.hpp>
 #include <execution>
+#include <QDebug>
 
 namespace bp = boost::python;
 
@@ -59,8 +60,6 @@ void Region::move()
 
 void Region::set_effect(const bp::object& effect, const bp::dict& kwargs)
 {
-    PythonGlobalInterpreterLockGuard g;
-
     if(!effect.is_none())
     {
         HANDLE_PYTHON_CALL(PY_ERROR, "Fatal Error. Plugin broken",
@@ -73,8 +72,6 @@ void Region::set_effect(const bp::object& effect, const bp::dict& kwargs)
 
 void Region::set_effect(const std::vector<glm::vec3>& contour, const bp::object& effect, const std::string& uuid, const bp::dict& kwargs)
 {
-    PythonGlobalInterpreterLockGuard g;
-
     if(!effect.is_none())
     {
         HANDLE_PYTHON_CALL(PY_ERROR, "Fatal Error. Plugin broken",
@@ -358,16 +355,22 @@ uint8_t Region::handle_collision_event(const std::string &function_name, PySIEff
                    if (t.is_none())
                    {
                        if(!d_py_effect->cap_collision_recv()[capability][function_name].is_none())
+                       {
                            d_py_effect->cap_collision_recv()[capability][function_name]();
+                       }
                    }
                    else
                    {
                        if(!d_py_effect->cap_collision_recv()[capability][function_name].is_none())
                        {
                            if (bp::extract<bp::tuple>(t).check())
+                           {
                                d_py_effect->cap_collision_recv()[capability][function_name](*t);
+                           }
                            else
+                           {
                                d_py_effect->cap_collision_recv()[capability][function_name](t);
+                           }
                        }
                    }
                }

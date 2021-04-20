@@ -8,6 +8,7 @@
 #include <glm/glm.hpp>
 #include <QQuickWidget>
 #include <QQmlEngine>
+#include <QQmlContext>
 #include <QVariant>
 #include <QMatrix4x4>
 #include <QGraphicsPolygonItem>
@@ -18,7 +19,7 @@ class RegionRepresentation: public QObject, public QGraphicsPolygonItem, public 
 { Q_OBJECT SIREN
 
 public:
-    RegionRepresentation(QQmlEngine* e, const std::shared_ptr<Region>& region, QGraphicsView* parent);
+    RegionRepresentation(QQmlContext* c, QQmlEngine* e, const std::shared_ptr<Region>& region, QGraphicsView* parent);
     ~RegionRepresentation();
 
     void update(const std::shared_ptr<Region>& region);

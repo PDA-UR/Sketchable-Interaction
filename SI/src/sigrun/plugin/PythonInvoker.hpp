@@ -43,6 +43,7 @@ bool __si_evaluate_syntax_error__(const std::string& error, const std::string& t
         Print::print("ATTRIBUTE ERROR");\
         }else if(__si_evaluate_syntax_error__(error, "TypeError")){\
         Print::print("TYPE ERROR");\
+        ERROR(error + std::string(additional_msg));\
         }else if(__si_evaluate_syntax_error__(error, "ZeroDivisionError")){\
         Print::print("ZERO DIVISION ERROR");\
         } else {\

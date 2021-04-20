@@ -21,7 +21,7 @@ TEST_F(PySIPySIEffectTest, PySIEffect_Python_Side)
         glm::vec3(5, 1, 1)
     };
 
-    ASSERT_TRUE(bp::extract<bool>(script.si_plugin(module, path, clazz).attr(clazz.c_str())().attr("start")()));
+    ASSERT_TRUE(bp::extract<bool>(script.si_plugin(module, path).attr(clazz.c_str())().attr("start")()));
 }
 
 TEST_F(PySIPySIEffectTest, init)

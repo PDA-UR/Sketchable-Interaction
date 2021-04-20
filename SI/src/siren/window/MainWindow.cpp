@@ -18,8 +18,12 @@ MainWindow::MainWindow(uint32_t width, uint32_t height, uint32_t target_fps):
 
     Context::SIContext()->set_main_window();
 
-    d_engine = new QQmlEngine(this);
+    this->setInteractive(false);
+
+    d_engine = new QQmlEngine();
     d_engine->setObjectOwnership(d_engine, QQmlEngine::CppOwnership);
+
+    d_qmlcontext = new QQmlContext(d_engine);
 
     p_scene->setSceneRect(0, 0, Context::SIContext()->width(), Context::SIContext()->height());
 
@@ -82,8 +86,6 @@ void MainWindow::__loop()
 {
     handle_region_representations();
     handle_partial_region_representations();
-
-    update();
 }
 
 void MainWindow::pause()
@@ -128,7 +130,7 @@ void MainWindow::handle_region_representations()
 
         if(it == d_reg_reps.end())
         {
-            d_reg_reps.push_back(new RegionRepresentation(d_engine, reg, this));
+            d_reg_reps.push_back(new RegionRepresentation(d_qmlcontext, d_engine, reg, this));
             p_scene->addItem(d_reg_reps.back());
 
             if(!d_reg_reps.back()->qml_path().empty())
