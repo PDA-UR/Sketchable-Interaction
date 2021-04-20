@@ -1,12 +1,12 @@
 
 from libPySI import PySI
-from plugins.standard_environment_library.notification import SimpleNotification
-from plugins.standard_environment_library.tag import Tag
-from plugins.standard_environment_library.filesystem import Directory
-from plugins.standard_environment_library.cursor import Cursor
-from plugins.standard_environment_library.deletion import Deletion
-from plugins.standard_environment_library.slider import SliderBase
-from plugins.standard_environment_library.slider import SliderTargetDummy
+from plugins.__loaded_plugins__.standard_environment_library.notification import SimpleNotification
+from plugins.__loaded_plugins__.standard_environment_library.tag import Tag
+from plugins.__loaded_plugins__.standard_environment_library.filesystem import Directory
+from plugins.__loaded_plugins__.standard_environment_library.cursor import Cursor
+from plugins.__loaded_plugins__.standard_environment_library.deletion import Deletion
+from plugins.__loaded_plugins__.standard_environment_library.slider import SliderBase
+from plugins.__loaded_plugins__.standard_environment_library.slider import SliderTargetDummy
 
 def add_canvas():
     canvas_shape = [[0, 0],
@@ -92,7 +92,7 @@ def on_start():
     # PySI.Startup.disable(PySI.Configuration.SI_CRASH_DUMP)
     PySI.Startup.enable(PySI.Configuration.SI_ANTI_ALIASING_8x)
 
-    PySI.Startup.logger_log(True)
+    PySI.Startup.logger_log(False)
     PySI.Startup.logger_set_log_output(PySI.Logger.SI_LOG_SHOW_ALL)
     PySI.Startup.logger_quench_messages_from_class("linkingmanager")
     PySI.Startup.logger_quench_messages_from_class("recognizer")

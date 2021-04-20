@@ -17,15 +17,36 @@ public:
     Scripting();
     ~Scripting();
 
-    bp::object si_plugin(std::string &module_name, std::string &path, std::string &class_name);
+    std::string transpile(std::string& path, const std::string& path_addition);
 
-    std::string load_plugin_source(const char *source);
+    bp::object si_plugin(std::string &module_name, std::string &path);
 
-    void load_class_names(std::vector<std::string> &classes, const std::string &path);
+
 
     friend std::ostream &operator<<(std::ostream &os, const Scripting &scripting);
 
 private:
+
+    void extract_superclasses(std::vector<std::string>& superclasses, const std::string& line);
+    int extract_line_end_constructor(const std::vector<std::string>& lines, int n);
+    void extract_calls(std::vector<std::string>& calls, std::unordered_map<std::string, std::unordered_map<std::string, std::unordered_map<std::string, std::string>>>& collision_events, std::vector<std::string>& lines, int n);
+    void extract_calls(std::vector<std::string>& calls, const std::unordered_map<std::string, std::unordered_map<std::string, std::unordered_map<std::string, std::string>>>& collision_events);
+    std::string load_plugin_source(const char *source);
+
+    void adjust_imports(std::string& s, const std::string& path_addition);
+
+    std::vector<std::string> str_split(const std::string& str, char delim) {
+        std::vector<std::string> strings;
+        size_t start;
+        size_t end = 0;
+
+        while ((start = str.find_first_not_of(delim, end)) != std::string::npos) {
+            end = str.find(delim, start);
+            strings.push_back(str.substr(start, end - start));
+        }
+
+        return strings;
+    }
 
     void remove_comments(std::string& source);
     std::string remove_line_comments(const std::string& source);
@@ -33,6 +54,7 @@ private:
 
     bp::object d_main;
     bp::object d_globals;
+    std::string d_cwd;
 };
 
 

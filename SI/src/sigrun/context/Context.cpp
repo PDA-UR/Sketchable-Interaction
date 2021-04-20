@@ -70,50 +70,51 @@ void Context::begin(const std::unordered_map<std::string, std::unique_ptr<bp::ob
 
         d_ire = ire;
 
-        for(const auto& [k, v]: plugins)
-            d_plugins[k] = *v;
+        std::string tmp;
 
         for(const auto& [k, v]: plugins)
         {
+            d_plugins[k] = *v;
+
+            /**** THIS WORKS FOR READING IN A OBJECT FROM SOURCE
+            bp::dict d;
+            bp::exec("class TEST:\n\tid = 5\n", bp::object(), d);
+            INFO(bp::extract<int>(d["TEST"].attr("id")));
+            **/
+
             HANDLE_PYTHON_CALL(PY_WARNING, "Plugin does not have the attribute \'regiontype\' as static class member and is skipped. Try assigning PySIEffect.EffectType.SI_CUSTOM.",
                 switch (bp::extract<int>(v->attr(v->attr(SI_INTERNAL_NAME)).attr(SI_INTERNAL_REGION_TYPE)))
                 {
-                   case SI_TYPE_CANVAS:
-                   case SI_TYPE_MOUSE_CURSOR:
-                   case SI_TYPE_NOTIFICATION:
-                   case SI_TYPE_DIRECTORY:
-                   case SI_TYPE_BUTTON:
-                   case SI_TYPE_EXTERNAL_APPLICATION_CONTAINER:
-                   case SI_TYPE_TEXT_FILE:
-                   case SI_TYPE_IMAGE_FILE:
-                   case SI_TYPE_UNKNOWN_FILE:
-                   case SI_TYPE_CURSOR:
-                   case SI_TYPE_ENTRY:
-                   case SI_TYPE_PALETTE:
-                   case SI_TYPE_SELECTOR:
-                   case SI_TYPE_CUSTOM_NON_DRAWABLE:
-                       break;
+                    case SI_TYPE_CANVAS:
+                    case SI_TYPE_MOUSE_CURSOR:
+                    case SI_TYPE_NOTIFICATION:
+                    case SI_TYPE_DIRECTORY:
+                    case SI_TYPE_BUTTON:
+                    case SI_TYPE_EXTERNAL_APPLICATION_CONTAINER:
+                    case SI_TYPE_TEXT_FILE:
+                    case SI_TYPE_IMAGE_FILE:
+                    case SI_TYPE_UNKNOWN_FILE:
+                    case SI_TYPE_CURSOR:
+                    case SI_TYPE_ENTRY:
+                    case SI_TYPE_PALETTE:
+                    case SI_TYPE_SELECTOR:
+                    case SI_TYPE_CUSTOM_NON_DRAWABLE:
+                        break;
 
-                   default:
-                       d_available_plugins[k] = *v;
-                       break;
+                    default:
+                    {
+                        d_available_plugins[k] = d_plugins[k];
+                        d_available_plugins_names.push_back(k);
+                        tmp += k + ", ";
+                    }
+                    break;
                 }
             )
         }
 
-        std::string tmp;
-
-        for(const auto& [k, v]: d_available_plugins)
-        {
-            d_available_plugins_names.push_back(k);
-
-            tmp += k + ", ";
-        }
-
         INFO("Drawable Plugins: " + tmp.substr(0, tmp.length() - 2));
 
-
-        auto tuio_task = [&]
+        std::thread{[&]() -> int
         {
             int port = 3333;
 
@@ -123,9 +124,7 @@ void Context::begin(const std::unordered_map<std::string, std::unique_ptr<bp::ob
             s.RunUntilSigInt();
 
             return 0;
-        };
-
-        std::thread{tuio_task}.detach();
+        }}.detach();
 
         HANDLE_PYTHON_CALL(PY_ERROR, "Could not load startup file! A python file called \'StartSIGRun\' is required to be present in plugins folder!",
             bp::import(SI_START_FILE).attr(SI_START_FUNCTION)();
@@ -557,7 +556,6 @@ void Context::perform_external_application_update(std::unordered_map<std::string
     else
     {
         QWidget* current = it->second->embedded_object.external_application.window;
-
         Q_EMIT it->second->LINK_SIGNAL(_UUID_, "", SI_CAPABILITY_LINK_GEOMETRY, bp::make_tuple(current->x() - Context::SIContext()->main_window()->x(), current->y(), current->width(), current->height()));
     }
 }
@@ -571,7 +569,6 @@ void Context::perform_external_application_registration()
         const auto& external_app_container_tuple = d_external_application_container_insertion_queue.front();
 
         QWidget* window = QWidget::createWindowContainer(QWindow::fromWinId(std::get<0>(external_app_container_tuple)));
-        window->setGeometry(20, 20, s_width * 0.3 - 40, s_height * 0.3 - 40);
         window->setWindowFlags(Qt::WindowStaysOnTopHint);
         window->setWindowFlags(Qt::ForeignWindow);
         window->setWindowTitle(QString(SI_LINUX_DEFAULT_SI_APP_OPENING.c_str()) + std::get<2>(external_app_container_tuple));

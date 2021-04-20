@@ -3,9 +3,9 @@
 #include "CollisionManager.hpp"
 #include <sigrun/context/Context.hpp>
 #include <execution>
-//#if !defined(Q_MOC_RUN)
-//#include <tbb/parallel_for.h>
-//#endif
+#if !defined(Q_MOC_RUN)
+#include <tbb/parallel_for.h>
+#endif
 
 namespace bp = boost::python;
 
@@ -23,45 +23,28 @@ void CollisionManager::collide(std::vector<std::shared_ptr<Region>> &regions)
 
 void CollisionManager::perform_collision_check(tbb::concurrent_vector<std::tuple<Region*, Region*, bool>> &out, const std::vector<std::shared_ptr<Region>>& in)
 {
-//    tbb::parallel_for(tbb::blocked_range<uint32_t>(0, in.size() - 1), [&](const tbb::blocked_range<uint32_t>& r)
-//    {
-//        for(auto i = r.begin(); i != r.end(); ++i)
-//        {
-//            tbb::parallel_for(tbb::blocked_range<uint32_t>(i + 1, in.size()), [&](const tbb::blocked_range<uint32_t>& r2)
-//            {
-//                for(auto k = r2.begin(); k != r2.end(); ++k)
-//                {
-//                    if (has_capabilities_in_common(in[i], in[k]))
-//                    {
-//                        if (collides_with_aabb(in[i]->aabb(), in[i]->x(), in[i]->y(), in[k]->aabb(), in[k]->x(), in[k]->y()))
-//                        {
-//                            out.emplace_back(i, k, collides_with_mask(in[i], in[k]));
-//                            continue;
-//                        }
-//                    }
-//
-//                    out.emplace_back(i, k, false);
-//                }
-//            });
-//        }
-//    });
-
-    for(int i = 0; i < in.size() - 1; ++i)
+    tbb::parallel_for(tbb::blocked_range<uint32_t>(0, in.size() - 1), [&](const tbb::blocked_range<uint32_t>& r)
     {
-        for(int k = i + 1; k < in.size(); ++k)
+        for(auto i = r.begin(); i != r.end(); ++i)
         {
-            if (collides_with_aabb(in[i].get(), in[k].get()))
+            tbb::parallel_for(tbb::blocked_range<uint32_t>(i + 1, in.size()), [&](const tbb::blocked_range<uint32_t>& r2)
             {
-                if (has_capabilities_in_common(in[i], in[k]))
+                for(auto k = r2.begin(); k != r2.end(); ++k)
                 {
-                    out.emplace_back(in[i].get(), in[k].get(), collides_with_mask(in[i], in[k]));
-                    continue;
-                }
-            }
+                    if (has_capabilities_in_common(in[i], in[k]))
+                    {
+                        if (collides_with_aabb(in[i].get(), in[k].get()))
+                        {
+                            out.emplace_back(in[i].get(), in[k].get(), collides_with_mask(in[i], in[k]));
+                            continue;
+                        }
+                    }
 
-            out.emplace_back(in[i].get(), in[k].get(), false);
+                    out.emplace_back(in[i].get(), in[k].get(), false);
+                }
+            });
         }
-    }
+    });
 }
 
 void CollisionManager::perform_collision_events(tbb::concurrent_vector<std::tuple<Region*, Region*, bool>> &in)

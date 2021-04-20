@@ -15,6 +15,7 @@
 #include <QGraphicsView>
 #include <QGraphicsScene>
 #include <QOpenGLWidget>
+#include <QQmlContext>
 #include "../region/RegionRepresentation.hpp"
 #include "../region/PartialRegionRepresentation.hpp"
 
@@ -42,6 +43,7 @@ private:
     uint32_t d_width, d_height, d_target_fps;
 
     QQmlEngine* d_engine;
+    QQmlContext*  d_qmlcontext;
 
     QGraphicsScene* p_scene;
 
