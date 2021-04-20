@@ -9,6 +9,7 @@
 #include <sigrun/rendering/IRenderEngine.hpp>
 #include <sigrun/context/Context.hpp>
 #include "SIObject.hpp"
+#include "sigrun/plugin/Scripting.hpp"
 
 /**
 \brief namespace shortening for python object integration
@@ -38,6 +39,13 @@ protected:
     Core();
 
     void retrieve_available_plugins(std::unordered_map<std::string, std::unique_ptr<bp::object>>& plugins, const std::string& plugin_path);
+    void prepare_plugin_loading(std::vector<std::tuple<std::string, std::string>>& to_load, const std::vector<std::tuple<std::string, std::string>>& files, const std::string& plugin_path, const std::string& path_addition, Scripting& script);
+    void load_plugins(std::unordered_map<std::string, std::unique_ptr<bp::object>>& plugins, const std::vector<std::tuple<std::string, std::string>>& to_load, Scripting& script);
+
+    void process_plugin_file(std::vector<std::tuple<std::string, std::string>>& to_load, const std::string& path_addition, const std::tuple<std::string, std::string>& file, Scripting& script);
+    void filesystem_operations(const std::string& loaded_path, const std::string& path, const std::string& name, const std::string& source);
+    void create_transpiled_plugin_files(const std::string& source, const std::string& loaded_path, const std::string& name);
+    void copy_qml_and_res(const std::string& path, const std::string& loaded_path);
 
     friend class SIGRun;
     friend class SIGRunTest;
