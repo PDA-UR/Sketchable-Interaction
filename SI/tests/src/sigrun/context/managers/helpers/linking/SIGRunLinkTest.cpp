@@ -25,9 +25,7 @@ TEST_F(SIGRunLinkTest, region_region_unidirectional_construction)
     std::string module_name = name.substr(0, name.find_last_of('.'));
     std::string rpath = full_path.substr(full_path.find(path)) + "/" + name;
 
-    script.load_class_names(classes, rpath);
-
-    std::shared_ptr<bp::object> o = std::make_shared<bp::object>(script.si_plugin(module_name, rpath, classes[0]));
+    std::shared_ptr<bp::object> o = std::make_shared<bp::object>(script.si_plugin(module_name, rpath));
 
     std::shared_ptr<Region> a = std::make_shared<Region>(contour, *o, 1920, 1080);
     std::shared_ptr<Region> b = std::make_shared<Region>(contour, *o, 1920, 1080);
@@ -53,9 +51,7 @@ TEST_F(SIGRunLinkTest, external_object_region_unidirectional_construction)
     std::string module_name = name.substr(0, name.find_last_of('.'));
     std::string rpath = full_path.substr(full_path.find(path)) + "/" + name;
 
-    script.load_class_names(classes, rpath);
-
-    std::shared_ptr<bp::object> o = std::make_shared<bp::object>(script.si_plugin(module_name, rpath, classes[0]));
+    std::shared_ptr<bp::object> o = std::make_shared<bp::object>(script.si_plugin(module_name, rpath));
 
     std::shared_ptr<Region> a = std::make_shared<Region>(contour, *o, 1920, 1080);
 
@@ -88,9 +84,7 @@ TEST_F(SIGRunLinkTest, type)
     std::string module_name = name.substr(0, name.find_last_of('.'));
     std::string rpath = full_path.substr(full_path.find(path)) + "/" + name;
 
-    script.load_class_names(classes, rpath);
-
-    std::shared_ptr<bp::object> o = std::make_shared<bp::object>(script.si_plugin(module_name, rpath, classes[0]));
+    std::shared_ptr<bp::object> o = std::make_shared<bp::object>(script.si_plugin(module_name, rpath));
 
     std::shared_ptr<Region> a = std::make_shared<Region>(contour, *o, 1920, 1080);
     std::shared_ptr<Region> b = std::make_shared<Region>(contour, *o, 1920, 1080);
@@ -123,9 +117,7 @@ TEST_F(SIGRunLinkTest, sender_a)
     std::string module_name = name.substr(0, name.find_last_of('.'));
     std::string rpath = full_path.substr(full_path.find(path)) + "/" + name;
 
-    script.load_class_names(classes, rpath);
-
-    std::shared_ptr<bp::object> o = std::make_shared<bp::object>(script.si_plugin(module_name, rpath, classes[0]));
+    std::shared_ptr<bp::object> o = std::make_shared<bp::object>(script.si_plugin(module_name, rpath));
 
     std::shared_ptr<Region> a = std::make_shared<Region>(contour, *o, 1920, 1080);
     std::shared_ptr<Region> b = std::make_shared<Region>(contour, *o, 1920, 1080);
@@ -158,9 +150,7 @@ TEST_F(SIGRunLinkTest, sender_b)
     std::string module_name = name.substr(0, name.find_last_of('.'));
     std::string rpath = full_path.substr(full_path.find(path)) + "/" + name;
 
-    script.load_class_names(classes, rpath);
-
-    std::shared_ptr<bp::object> o = std::make_shared<bp::object>(script.si_plugin(module_name, rpath, classes[0]));
+    std::shared_ptr<bp::object> o = std::make_shared<bp::object>(script.si_plugin(module_name, rpath));
 
     std::shared_ptr<Region> a = std::make_shared<Region>(contour, *o, 1920, 1080);
     std::shared_ptr<Region> b = std::make_shared<Region>(contour, *o, 1920, 1080);
@@ -193,9 +183,7 @@ TEST_F(SIGRunLinkTest, receiver_a)
     std::string module_name = name.substr(0, name.find_last_of('.'));
     std::string rpath = full_path.substr(full_path.find(path)) + "/" + name;
 
-    script.load_class_names(classes, rpath);
-
-    std::shared_ptr<bp::object> o = std::make_shared<bp::object>(script.si_plugin(module_name, rpath, classes[0]));
+    std::shared_ptr<bp::object> o = std::make_shared<bp::object>(script.si_plugin(module_name, rpath));
 
     std::shared_ptr<Region> a = std::make_shared<Region>(contour, *o, 1920, 1080);
     std::shared_ptr<Region> b = std::make_shared<Region>(contour, *o, 1920, 1080);
@@ -228,9 +216,7 @@ TEST_F(SIGRunLinkTest, receiver_b)
     std::string module_name = name.substr(0, name.find_last_of('.'));
     std::string rpath = full_path.substr(full_path.find(path)) + "/" + name;
 
-    script.load_class_names(classes, rpath);
-
-    std::shared_ptr<bp::object> o = std::make_shared<bp::object>(script.si_plugin(module_name, rpath, classes[0]));
+    std::shared_ptr<bp::object> o = std::make_shared<bp::object>(script.si_plugin(module_name, rpath));
 
     std::shared_ptr<Region> a = std::make_shared<Region>(contour, *o, 1920, 1080);
     std::shared_ptr<Region> b = std::make_shared<Region>(contour, *o, 1920, 1080);
@@ -263,9 +249,7 @@ TEST_F(SIGRunLinkTest, external_sender_a)
     std::string module_name = name.substr(0, name.find_last_of('.'));
     std::string rpath = full_path.substr(full_path.find(path)) + "/" + name;
 
-    script.load_class_names(classes, rpath);
-
-    std::shared_ptr<bp::object> o = std::make_shared<bp::object>(script.si_plugin(module_name, rpath, classes[0]));
+    std::shared_ptr<bp::object> o = std::make_shared<bp::object>(script.si_plugin(module_name, rpath));
 
     std::shared_ptr<Region> a = std::make_shared<Region>(contour, *o, 1920, 1080);
     std::shared_ptr<Region> b = std::make_shared<Region>(contour, *o, 1920, 1080);
@@ -298,9 +282,7 @@ TEST_F(SIGRunLinkTest, attribute_a)
     std::string module_name = name.substr(0, name.find_last_of('.'));
     std::string rpath = full_path.substr(full_path.find(path)) + "/" + name;
 
-    script.load_class_names(classes, rpath);
-
-    std::shared_ptr<bp::object> o = std::make_shared<bp::object>(script.si_plugin(module_name, rpath, classes[0]));
+    std::shared_ptr<bp::object> o = std::make_shared<bp::object>(script.si_plugin(module_name, rpath));
 
     std::shared_ptr<Region> a = std::make_shared<Region>(contour, *o, 1920, 1080);
     std::shared_ptr<Region> b = std::make_shared<Region>(contour, *o, 1920, 1080);
@@ -333,9 +315,7 @@ TEST_F(SIGRunLinkTest, attribute_b)
     std::string module_name = name.substr(0, name.find_last_of('.'));
     std::string rpath = full_path.substr(full_path.find(path)) + "/" + name;
 
-    script.load_class_names(classes, rpath);
-
-    std::shared_ptr<bp::object> o = std::make_shared<bp::object>(script.si_plugin(module_name, rpath, classes[0]));
+    std::shared_ptr<bp::object> o = std::make_shared<bp::object>(script.si_plugin(module_name, rpath));
 
     std::shared_ptr<Region> a = std::make_shared<Region>(contour, *o, 1920, 1080);
     std::shared_ptr<Region> b = std::make_shared<Region>(contour, *o, 1920, 1080);
@@ -368,9 +348,7 @@ TEST_F(SIGRunLinkTest, is_external)
     std::string module_name = name.substr(0, name.find_last_of('.'));
     std::string rpath = full_path.substr(full_path.find(path)) + "/" + name;
 
-    script.load_class_names(classes, rpath);
-
-    std::shared_ptr<bp::object> o = std::make_shared<bp::object>(script.si_plugin(module_name, rpath, classes[0]));
+    std::shared_ptr<bp::object> o = std::make_shared<bp::object>(script.si_plugin(module_name, rpath));
 
     std::shared_ptr<Region> a = std::make_shared<Region>(contour, *o, 1920, 1080);
     std::shared_ptr<Region> b = std::make_shared<Region>(contour, *o, 1920, 1080);

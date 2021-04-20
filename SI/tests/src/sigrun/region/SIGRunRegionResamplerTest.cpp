@@ -23,9 +23,7 @@ TEST_F(SIGRunRegionResamplerTest, resample)
     std::string module_name = name.substr(0, name.find_last_of('.'));
     std::string rpath = full_path.substr(full_path.find(path)) + "/" + name;
 
-    script.load_class_names(classes, rpath);
-
-    bp::object o = script.si_plugin(module_name, rpath, classes[0]);
+    bp::object o = script.si_plugin(module_name, rpath);
 
     classes.clear();
 
@@ -35,9 +33,7 @@ TEST_F(SIGRunRegionResamplerTest, resample)
     module_name = name2.substr(0, name2.find_last_of('.'));
     rpath = full_path2.substr(full_path2.find(path)) + "/" + name2;
 
-    script.load_class_names(classes, rpath);
-
-    std::shared_ptr<bp::object> t = std::make_shared<bp::object>(script.si_plugin(module_name, rpath, classes[0]));
+    std::shared_ptr<bp::object> t = std::make_shared<bp::object>(script.si_plugin(module_name, rpath));
 
     std::vector<glm::vec3> contour1 {glm::vec3(100, 100, 1), glm::vec3(100, 600, 1), glm::vec3(600, 600, 1), glm::vec3(600, 100, 1)};
     std::vector<glm::vec3> contour2 {glm::vec3(150, 150, 1), glm::vec3(150, 550, 1), glm::vec3(550, 550, 1), glm::vec3(550, 150, 1)};
