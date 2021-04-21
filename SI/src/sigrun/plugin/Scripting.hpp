@@ -28,7 +28,7 @@ public:
 private:
 
     void extract_superclasses(std::vector<std::string>& superclasses, const std::string& line);
-    int extract_line_end_constructor(const std::vector<std::string>& lines, int n);
+    void extract_line_constructor(int& start, int& end, const std::vector<std::string>& lines, int n);
     void extract_calls(std::vector<std::string>& calls, std::unordered_map<std::string, std::unordered_map<std::string, std::unordered_map<std::string, std::string>>>& collision_events, std::vector<std::string>& lines, int n);
     void extract_calls(std::vector<std::string>& calls, const std::unordered_map<std::string, std::unordered_map<std::string, std::unordered_map<std::string, std::string>>>& collision_events);
     std::string load_plugin_source(const char *source);
