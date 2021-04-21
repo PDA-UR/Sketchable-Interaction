@@ -38,22 +38,20 @@ Scripting::Scripting()
         d_globals["__builtins__"] = bp::import("builtins");
         d_cwd = directory;
 
-        bp::exec((std::string("class Unbuffered:\n") +
-                 "   def __init__(self, stream):\n" +
-                 "       self.stream = stream\n" +
-                 "   def write(self, data):\n" +
-                 "       self.stream.write(data)\n" +
-                 "       self.stream.flush()\n" +
-                 "   def writelines(self, datas):\n" +
-                 "       self.stream.writelines(datas)\n" +
-                 "       self.stream.flush()\n" +
-                 "   def __getattr__(self, attr):\n" +
-                 "       return getattr(self.stream, attr)\n" +
-                 "\n" +
-                 "import sys\n" +
-                 "sys.stdout = open(\"TEST.TXT\", \"w\")\n" +
-                 "sys.stdout = Unbuffered(sys.stdout)").c_str(), d_globals);
+        bp::exec((std::string("import builtins\nimport os\n\n") +
+                              "os.remove(\"TEST.TXT\")\n" +
+                              "open(\"TEST.TXT\", 'w').close()\n" +
+                              "def si_print(filename):\n" +
+                              "    def wrap(func):\n" +
+                              "        def wrapped_func(*args, **kwargs):\n" +
+                              "            with open(filename, \'a\') as outputfile:\n" +
+                              "                outputfile.write(str(*args) + \",\" + str(**kwargs))\n" +
+                              "            return func(\"PySI:\", *args, **kwargs)\n" +
+                              "        return wrapped_func\n" +
+                              "    return wrap\n\n" +
+                              "builtins.print = si_print(\"TEST.TXT\")(builtins.print)\n"
 
+                ).c_str(), d_globals);
     )
 }
 
@@ -71,15 +69,15 @@ std::string Scripting::transpile(std::string& path, const std::string& path_addi
     std::vector<std::string> lines = str_split(source, '\n');
     std::unordered_map<std::string, std::unordered_map<std::string, std::unordered_map<std::string, std::string>>> collision_events;
 
-    std::vector<std::string> superclasses;
-    int line_constructor = -1;
+    int line_constructor_start = -1;
+    int line_constructor_end = -1;
 
     for(int i = 0; i < lines.size(); ++i)
     {
         adjust_imports(lines[i], path_addition);
 
-        if(line_constructor == -1)
-            line_constructor = extract_line_end_constructor(lines, i);
+        if(line_constructor_end == -1)
+            extract_line_constructor(line_constructor_start, line_constructor_end, lines, i);
 
         extract_calls(calls, collision_events, lines, i);
     }
@@ -93,10 +91,22 @@ std::string Scripting::transpile(std::string& path, const std::string& path_addi
         return s.find("@SIEffect") != std::string::npos;
     }), lines.end());
 
-    auto it = lines.begin() + line_constructor;
+    if(line_constructor_start != -1 && line_constructor_end != -1)
+    {
+        auto it = lines.begin() + line_constructor_end;
 
-    for(auto& call: calls)
-        lines.insert(it, call);
+        for(int i = line_constructor_start; i < line_constructor_end; ++i)
+            lines[i] = "\t" + lines[i];
+
+        for(auto& call: calls)
+            lines.insert(it, "\t" + call);
+
+        it += calls.size();
+        auto it_start = lines.begin() + line_constructor_start;
+
+        lines.insert(it, std::string("        except Exception as ex:\n            print('Exception caught in file %s !' % __file__)\n            print(type(ex).__name__)\n            print(ex.args)"));
+        lines.insert(it_start, std::string("        try:"));
+    }
 
     for(auto& l: lines)
     {
@@ -119,20 +129,23 @@ std::string Scripting::transpile(std::string& path, const std::string& path_addi
     return src;
 }
 
-int Scripting::extract_line_end_constructor(const std::vector<std::string>& lines, int i)
+void Scripting::extract_line_constructor(int& start, int& end,const std::vector<std::string>& lines, int i)
 {
     if(lines[i].find("def __init__") != std::string::npos)
     {
-        for(int k = i + 1; k < lines.size(); ++k)
+        start = i + 1;
+
+        for(int k = start; k < lines.size(); ++k)
         {
             if(lines[k].find("def ") != std::string::npos)
             {
-                return k - 1;
+                end = k - 1;
+                return;
             }
         }
-    }
 
-    return -1;
+        end = lines.size() - 1;
+    }
 }
 
 void Scripting::extract_calls(std::vector<std::string>& calls, std::unordered_map<std::string, std::unordered_map<std::string, std::unordered_map<std::string, std::string>>>& collision_events, std::vector<std::string>& lines, int i)
@@ -195,10 +208,6 @@ void Scripting::extract_calls(std::vector<std::string>& calls, std::unordered_ma
             }
 
             calls.push_back(call);
-        }
-        else
-        {
-            // on_create
         }
     }
 }
