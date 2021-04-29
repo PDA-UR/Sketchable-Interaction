@@ -282,25 +282,25 @@ void PySIEffect::__set_data__(const std::string &key, const bp::object &value, c
 
             QImage img(img_width, img_height, QImage::Format::Format_RGBA8888);
 
-            if(!value.is_none())
-            {
-                const bp::list& bytes = bp::list(value);
+            d_data_changed = true;
 
-                int len = bp::len(bytes);
-                uint8_t buf[len];
-
-                for(int i = 0; i < len; ++i)
-                    buf[i] = (uint8_t) bp::extract<int>(value[i]);
-
-                img.fromData(buf, len, "PNG");
-
-                d_data[QString(key.c_str())] = QVariant(img);
-            }
-            else
+            if(value.is_none())
             {
                 d_data[QString(key.c_str())] = QVariant(QImage());
+                break;
             }
-            d_data_changed = true;
+
+            const bp::list& bytes = bp::list(value);
+
+            int len = bp::len(bytes);
+            uint8_t buf[len];
+
+            for(int i = 0; i < len; ++i)
+                buf[i] = (uint8_t) bp::extract<int>(value[i]);
+
+            img.fromData(buf, len, "PNG");
+
+            d_data[QString(key.c_str())] = QVariant(img);
             break;
     }
 }
@@ -324,45 +324,45 @@ std::vector<glm::vec3> PySIEffect::get_shape()
 
 void PySIEffect::set_shape(const std::vector<glm::vec3>& shape)
 {
-    if(!shape.empty() && !d_name.empty())
+    if (shape.empty() || d_name.empty())
+        return;
+
+    d_contour.clear();
+    std::vector<glm::vec3> temp, smoothed;
+
+    if(d_name != "__ ConveyorBelt __")
     {
-        d_contour.clear();
-        std::vector<glm::vec3> temp, smoothed;
-
-        if(d_name != "__ ConveyorBelt __")
-        {
-            Recognizer r;
-            r.recognize(temp, shape);
-        }
-        else
-        {
-            temp = shape;
-        }
-
-        int32_t x_min = INT32_MAX;
-        int32_t x_max = INT32_MIN;
-        int32_t y_min = INT32_MAX;
-        int32_t y_max = INT32_MIN;
-
-        for(const auto& v: temp)
-        {
-            x_max = v.x > x_max ? v.x : x_max;
-            y_max = v.y > y_max ? v.y : y_max;
-            x_min = v.x < x_min ? v.x : x_min;
-            y_min = v.y < y_min ? v.y : y_min;
-        }
-
-        glm::vec3 tlc(x_min, y_min, 1), blc(x_min, y_max, 1), brc(x_max, y_max, 1), trc(x_max, y_min, 1);
-
-        d_aabb = std::vector<glm::vec3>
-        {
-            tlc, blc, brc, trc
-        };
-
-        RegionResampler::resample(d_contour, temp);
-
-        d_recompute_mask = true;
+        Recognizer r;
+        r.recognize(temp, shape);
     }
+    else
+    {
+        temp = shape;
+    }
+
+    int32_t x_min = INT32_MAX;
+    int32_t x_max = INT32_MIN;
+    int32_t y_min = INT32_MAX;
+    int32_t y_max = INT32_MIN;
+
+    for(const auto& v: temp)
+    {
+        x_max = v.x > x_max ? v.x : x_max;
+        y_max = v.y > y_max ? v.y : y_max;
+        x_min = v.x < x_min ? v.x : x_min;
+        y_min = v.y < y_min ? v.y : y_min;
+    }
+
+    glm::vec3 tlc(x_min, y_min, 1), blc(x_min, y_max, 1), brc(x_max, y_max, 1), trc(x_max, y_min, 1);
+
+    d_aabb = std::vector<glm::vec3>
+    {
+        tlc, blc, brc, trc
+    };
+
+    RegionResampler::resample(d_contour, temp);
+
+    d_recompute_mask = true;
 }
 
 void PySIEffect::__create_region__(const std::vector<glm::vec3>& contour, const std::string& name, bool as_selector, bp::dict& kwargs)

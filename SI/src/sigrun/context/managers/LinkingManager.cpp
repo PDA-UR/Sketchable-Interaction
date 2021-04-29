@@ -38,45 +38,42 @@ bool LinkingManager::add_link(const std::shared_ptr<Region> &ra, const std::stri
         auto& dra = ra->effect()->attr_link_emit();
         auto& drb = rb->effect()->attr_link_recv();
 
-        if(dra.count(aa) && drb.count(aa))
+        if (!dra.count(aa) || !drb.count(aa) || !drb[aa].count(ab))
+            return false;
+
+        INFO("Requested linking relationship is defined!");
+        INFO("Establishing Unidirectional Link...");
+
+        // hack: preemptive disconnect to quench multiple connects per Region pair
+        // multiple connects occur, when a pair of regions is connected via multiple attributs
+        // example:
+        // A -> B: position, position;
+        // A -> B: scale, scale;
+        // with current add_link function logic, the connect() function would be called twice
+        // this leads to executing the slot function twice for the same attribute pair
+        //
+        // this note is also present within the unidirectional linking case
+        disconnect(ra.get(), &Region::LINK_SIGNAL, rb.get(), &Region::LINK_SLOT);
+        bool success_1 = connect(ra.get(), &Region::LINK_SIGNAL, rb.get(), &Region::LINK_SLOT);
+
+        if(success_1)
         {
-            if(drb[aa].count(ab))
-            {
-                INFO("Requested linking relationship is defined!");
-                INFO("Establishing Unidirectional Link...");
+            d_links.push_back(std::make_shared<UnidirectionalLink>(ra, rb, aa, ab));
 
-                // hack: preemptive disconnect to quench multiple connects per Region pair
-                // multiple connects occur, when a pair of regions is connected via multiple attributs
-                // example:
-                // A -> B: position, position;
-                // A -> B: scale, scale;
-                // with current add_link function logic, the connect() function would be called twice
-                // this leads to executing the slot function twice for the same attribute pair
-                //
-                // this note is also present within the unidirectional linking case
-                disconnect(ra.get(), &Region::LINK_SIGNAL, rb.get(), &Region::LINK_SLOT);
-                bool success = connect(ra.get(), &Region::LINK_SIGNAL, rb.get(), &Region::LINK_SLOT);
+            INFO("Establishing Unidirectional Link Successfull!");
+        }
+        else
+        {
+            disconnect(ra.get(), &Region::LINK_SIGNAL, rb.get(), &Region::LINK_SLOT);
 
-                if(success)
-                {
-                    d_links.push_back(std::make_shared<UnidirectionalLink>(ra, rb, aa, ab));
-
-                    INFO("Establishing Unidirectional Link Successfull!");
-                }
-                else
-                {
-                    disconnect(ra.get(), &Region::LINK_SIGNAL, rb.get(), &Region::LINK_SLOT);
-
-                    INFO("Establishing Unidirectional Link Failed!");
-                }
-
-                return success;
-            }
+            INFO("Establishing Unidirectional Link Failed!");
         }
 
-        return false;
+        return success_1;
+
     }
-    else if(type == ILink::LINK_TYPE::BD)
+
+    if(type == ILink::LINK_TYPE::BD)
     {
         INFO("Checking if requested linking relationship (" + aa + "|" + ab + "as " + "unidirectional link) is already present...");
 
@@ -118,21 +115,21 @@ void LinkingManager::add_link(std::shared_ptr<ExternalObject>& eo, std::shared_p
 
 void LinkingManager::remove_link(std::shared_ptr<ExternalObject>& eo, std::shared_ptr<Region> &a, const std::string &ea, const std::string &aa)
 {
-    if(is_linked(eo, ea, a, aa))
+    if (!is_linked(eo, ea, a, aa))
+        return;
+
+    disconnect(eo.get(), &ExternalObject::LINK_SIGNAL, a.get(), &Region::LINK_SLOT);
+
+    d_links.erase(std::remove_if(d_links.begin(), d_links.end(), [&](auto &link)
     {
-        disconnect(eo.get(), &ExternalObject::LINK_SIGNAL, a.get(), &Region::LINK_SLOT);
+        if(!link->is_external())
+            return false;
 
-        d_links.erase(std::remove_if(d_links.begin(), d_links.end(), [&](auto &link)
-        {
-            if(!link->is_external())
-                return false;
-
-            return (link->attribute_a() == ea &&
-                    link->attribute_b() == aa &&
-                    link->external_sender_a()->uuid() == eo->uuid() &&
-                    link->receiver_b()->uuid() == a->uuid());
-        }), d_links.end());
-    }
+        return (link->attribute_a() == ea &&
+                link->attribute_b() == aa &&
+                link->external_sender_a()->uuid() == eo->uuid() &&
+                link->receiver_b()->uuid() == a->uuid());
+    }), d_links.end());
 }
 
 void LinkingManager::remove_links_by_indices(std::vector<uint32_t>& indices)
@@ -145,54 +142,54 @@ void LinkingManager::remove_links_by_indices(std::vector<uint32_t>& indices)
 
 void LinkingManager::remove_link(const std::shared_ptr<Region> &ra, const std::string& aa, const std::shared_ptr<Region> &rb, const std::string &ab, const ILink::LINK_TYPE& type)
 {
-    if(is_linked(ra, aa, rb, ab, type))
+    if (!is_linked(ra, aa, rb, ab, type))
+        return;
+
+    if(type == ILink::LINK_TYPE ::UD)
     {
-        if(type == ILink::LINK_TYPE ::UD)
+        INFO("Requested Deletion of UD Link between " + ra->name() + " and " + rb->name());
+        disconnect(ra.get(), &Region::LINK_SIGNAL, rb.get(), &Region::LINK_SLOT);
+
+        d_links.erase(std::remove_if(d_links.begin(), d_links.end(),[&](auto& link)
         {
-            INFO("Requested Deletion of UD Link between " + ra->name() + " and " + rb->name());
-            disconnect(ra.get(), &Region::LINK_SIGNAL, rb.get(), &Region::LINK_SLOT);
+            if(link->is_external())
+                return false;
 
-            d_links.erase(std::remove_if(d_links.begin(), d_links.end(),[&](auto& link)
-            {
-                if(link->is_external())
-                    return false;
+            return (link->attribute_a() == aa &&
+                    link->attribute_b() == ab &&
+                    link->sender_a()->uuid() == ra->uuid() &&
+                    link->receiver_b()->uuid() == rb->uuid() &&
+                    link->sender_b()->uuid() == rb->uuid() &&
+                    link->receiver_a()->uuid() == ra->uuid());
+        }), d_links.end());
 
-                return (link->attribute_a() == aa &&
-                        link->attribute_b() == ab &&
-                        link->sender_a()->uuid() == ra->uuid() &&
-                        link->receiver_b()->uuid() == rb->uuid() &&
-                        link->sender_b()->uuid() == rb->uuid() &&
-                        link->receiver_a()->uuid() == ra->uuid());
-            }), d_links.end());
+        INFO("Requested Deletion of UD Link successful!");
+    }
 
-            INFO("Requested Deletion of UD Link successful!");
-        }
-        else if(type == ILink::LINK_TYPE ::BD)
+    if(type == ILink::LINK_TYPE ::BD)
+    {
+        INFO("Requested Deletion of BD Link between " + ra->name() + " and " + rb->name());
+
+        disconnect(ra.get(), &Region::LINK_SIGNAL, rb.get(), &Region::LINK_SLOT);
+        disconnect(rb.get(), &Region::LINK_SIGNAL, ra.get(), &Region::LINK_SLOT);
+
+        d_links.erase(std::remove_if(d_links.begin(), d_links.end(),[&](auto& link)
         {
-            INFO("Requested Deletion of BD Link between " + ra->name() + " and " + rb->name());
+            return ((link->attribute_a() == aa &&
+                     link->attribute_b() == ab &&
+                     link->sender_a()->uuid() == ra->uuid() &&
+                     link->receiver_b()->uuid() == rb->uuid() &&
+                     link->sender_b()->uuid() == rb->uuid() &&
+                     link->receiver_a()->uuid() == ra->uuid()) ||
+                    (link->attribute_a() == ab &&
+                     link->attribute_b() == aa &&
+                     link->sender_a()->uuid() == rb->uuid() &&
+                     link->receiver_b()->uuid() == ra->uuid() &&
+                     link->sender_b()->uuid() == ra->uuid() &&
+                     link->receiver_a()->uuid() == rb->uuid()));
+        }), d_links.end());
 
-            disconnect(ra.get(), &Region::LINK_SIGNAL, rb.get(), &Region::LINK_SLOT);
-            disconnect(rb.get(), &Region::LINK_SIGNAL, ra.get(), &Region::LINK_SLOT);
-
-            d_links.erase(std::remove_if(d_links.begin(), d_links.end(),[&](auto& link)
-            {
-                return ((link->attribute_a() == aa &&
-                         link->attribute_b() == ab &&
-                         link->sender_a()->uuid() == ra->uuid() &&
-                         link->receiver_b()->uuid() == rb->uuid() &&
-                         link->sender_b()->uuid() == rb->uuid() &&
-                         link->receiver_a()->uuid() == ra->uuid()) ||
-                        (link->attribute_a() == ab &&
-                         link->attribute_b() == aa &&
-                         link->sender_a()->uuid() == rb->uuid() &&
-                         link->receiver_b()->uuid() == ra->uuid() &&
-                         link->sender_b()->uuid() == ra->uuid() &&
-                         link->receiver_a()->uuid() == rb->uuid()));
-            }), d_links.end());
-
-            INFO("Requested Deletion of BD Link successful!");
-
-        }
+        INFO("Requested Deletion of BD Link successful!");
     }
 }
 
@@ -283,25 +280,27 @@ const uint64_t LinkingManager::num_links() const
 void LinkingManager::update_linking_candidates(std::vector<LinkCandidate>& candidates, const std::string& source)
 {
     if (candidates.empty())
-        remove_all_source_linking_relations(source);
-    else
     {
-        remove_linking_relations(candidates, source);
-        create_linking_relations(candidates, source);
+        remove_all_source_linking_relations(source);
+        return;
     }
+
+    remove_linking_relations(candidates, source);
+    create_linking_relations(candidates, source);
+
 }
 
 void LinkingManager::remove_all_source_linking_relations(const std::string &source)
 {
-    if(MAP_HAS_KEY(d_links_in_ctx, source))
-    {
-        std::for_each(d_links_in_ctx[source].begin(), d_links_in_ctx[source].end(), [&](auto& i)
-        {
-            remove_link(i->sender_a(), i->attribute_a(), i->receiver_b(), i->attribute_b(), ILink::LINK_TYPE::UD);
-        });
+    if (!d_links_in_ctx.count(source))
+        return;
 
-        d_links_in_ctx.erase(source);
-    }
+    std::for_each(d_links_in_ctx[source].begin(), d_links_in_ctx[source].end(), [&](auto& i)
+    {
+        remove_link(i->sender_a(), i->attribute_a(), i->receiver_b(), i->attribute_b(), ILink::LINK_TYPE::UD);
+    });
+
+    d_links_in_ctx.erase(source);
 }
 
 void LinkingManager::remove_all_partaking_linking_relations(const std::string &source)
@@ -319,7 +318,7 @@ void LinkingManager::remove_all_partaking_linking_relations(const std::string &s
 
 void LinkingManager::remove_linking_relations(const std::vector<LinkCandidate> &relations, const std::string &source)
 {
-    if (MAP_HAS_KEY(d_links_in_ctx, source))
+    if (d_links_in_ctx.count(source))
     {
         d_links_in_ctx[source].erase(std::remove_if(d_links_in_ctx[source].begin(), d_links_in_ctx[source].end(), [&](auto& link) -> bool
         {
@@ -342,7 +341,7 @@ void LinkingManager::remove_linking_relations(const std::vector<LinkCandidate> &
 
 void LinkingManager::create_linking_relations(std::vector<LinkCandidate> &candidates, const std::string &source)
 {
-    if (!MAP_HAS_KEY(d_links_in_ctx, source))
+    if (!d_links_in_ctx.count(source))
     {
         d_links_in_ctx[source] = std::vector<std::shared_ptr<ILink>>();
         d_links_in_ctx[source].reserve(candidates.size());

@@ -12,17 +12,17 @@ void TangibleListener::ProcessMessage(const osc::ReceivedMessage &m, const IpEnd
 {
     d_bundle.push_back(m);
 
-    if(!strcmp(m.AddressPattern(), ALIVE_MESSAGE))
-    {
-        std::mutex mutex;
-        std::lock_guard<std::mutex> guard(mutex);
+    if (strcmp(m.AddressPattern(), ALIVE_MESSAGE) != 0)
+        return;
 
-        process_message_bundle();
-        d_bundle.clear();
+    std::mutex mutex;
+    std::lock_guard<std::mutex> guard(mutex);
 
-        for(SITUIOObject* tobj: d_current_objects)
-            Context::SIContext()->tangible_manager()->update(tobj);
-    }
+    process_message_bundle();
+    d_bundle.clear();
+
+    for(SITUIOObject* tobj: d_current_objects)
+        Context::SIContext()->tangible_manager()->update(tobj);
 }
 
 void TangibleListener::process_message_bundle()
@@ -57,17 +57,15 @@ void TangibleListener::erase_associated_regions_of_removed_tangibles(const std::
     {
         d_current_objects.erase(std::remove_if(d_current_objects.begin(), d_current_objects.end(), [&](SITUIOObject *tobj)
         {
-            if (tobj->s_id() == dead[i])
-            {
-                Context::SIContext()->tangible_manager()->remove(tobj->s_id());
+            if (tobj->s_id() != dead[i])
+                return false;
 
-                delete tobj;
-                tobj = nullptr;
+            Context::SIContext()->tangible_manager()->remove(tobj->s_id());
 
-                return true;
-            }
+            delete tobj;
+            tobj = nullptr;
 
-            return false;
+            return true;
         }), d_current_objects.end());
     }
 }

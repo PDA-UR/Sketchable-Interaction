@@ -153,14 +153,13 @@ Region *TangibleManager::associated_region(int s_id)
 
     auto it = std::find_if(regions.begin(), regions.end(), [s_id](std::shared_ptr<Region>& region)
     {
-        if(PyObject_HasAttrString(region->raw_effect().ptr(), "s_id"))
-        {
-            int rs_id = bp::extract<int>(region->raw_effect().attr("s_id"));
+        if (!PyObject_HasAttrString(region->raw_effect().ptr(), "s_id"))
+            return false;
 
-            return rs_id == s_id;
-        }
+        int rs_id = bp::extract<int>(region->raw_effect().attr("s_id"));
 
-        return false;
+        return rs_id == s_id;
+
     });
 
     return it == regions.end() ? nullptr: (*it).get();

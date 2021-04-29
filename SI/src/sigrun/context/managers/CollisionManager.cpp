@@ -108,7 +108,6 @@ void CollisionManager::handle_event_leave_on_deletion(Region* deleted_region)
                 handle_event_leave(it->get(), deleted_region);
                 return true;
             }
-
         }
 
         return false;
@@ -153,11 +152,11 @@ bool CollisionManager::has_capabilities_in_common(const std::shared_ptr<Region>&
     const std::unordered_map<std::string, std::unordered_map<std::string, bp::object>>& b_emit = b->effect()->cap_collision_emit();
 
     for(const auto& [key, value]: a_emit)
-        if(b_recv.find(key) != b_recv.end())
+        if(b_recv.count(key))
             return true;
 
     for(const auto& [key, value]: b_emit)
-        if(a_recv.find(key) != a_recv.end())
+        if(a_recv.count(key))
             return true;
 
     return false;

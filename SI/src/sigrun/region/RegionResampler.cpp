@@ -40,7 +40,8 @@ void RegionResampler::resample(std::vector<glm::vec3> &out, const std::vector<gl
         if(out.size() < step_count)
             for(int32_t i = out.size(); i < step_count; ++i)
                 out.emplace_back(out.back());
-        else if(out.size() > step_count)
+
+        if(out.size() > step_count)
             Print::print("Outgoing contour contains more points than " + std::to_string(step_count));
     }
 }

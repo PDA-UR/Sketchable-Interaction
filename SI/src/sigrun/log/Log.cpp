@@ -42,55 +42,52 @@ void Log::log(const std::string& origin, const std::string &what, uint16_t level
 {
     Log::SHOW |= Log::SHOW_TYPE::UNDEFINED | Log::SHOW_TYPE::ERROR;
 
-    if(!Log::__DEBUG__ || Log::WHERE == Log::MODE::NONE)
+    if(!Log::__DEBUG__ || Log::WHERE == Log::MODE::NONE || !(level & Log::SHOW))
         return;
 
-    if (level & Log::SHOW)
+    for(auto& s: QUENCHED)
+        if(type.find(s) != std::string::npos)
+            return;
+
+    std::string message = origin + "\t" + Log::time() + "\t" + Log::log_level(level) + " [" + type + "] " + what + ".\t" + file + "\t" + func + "\t" + line;
+
+    if (Log::WHERE & Log::MODE::FILE)
     {
-        for(auto& s: QUENCHED)
-            if(type.find(s) != std::string::npos)
-                return;
-
-        std::string message = origin + "\t" + Log::time() + "\t" + Log::log_level(level) + " [" + type + "] " + what + ".\t" + file + "\t" + func + "\t" + line;
-
-        if (Log::WHERE & Log::MODE::FILE)
+        if (!log_file.is_open())
         {
-            if (!log_file.is_open())
-            {
-                log_file.open(log_file_path, std::ios_base::app);
-                log_file << message << "\n";
-                log_file.close();
-            }
+            log_file.open(log_file_path, std::ios_base::app);
+            log_file << message << "\n";
+            log_file.close();
+        }
+    }
+
+    if (Log::WHERE & Log::MODE::CONSOLE)
+    {
+        switch (level)
+        {
+            case Log::LOG_LEVEL::INFO_LEVEL:
+                message = INFO_COLOR(message);
+                break;
+
+            case Log::LOG_LEVEL::WARN_LEVEL:
+                message = WARN_COLOR(message);
+                break;
+
+            case Log::LOG_LEVEL::ERROR_LEVEL:
+                message = ERROR_COLOR(message);
+                break;
+
+            case Log::LOG_LEVEL::DEBUG_LEVEL:
+                message = DEBUG_COLOR(message);
+                break;
+
+            default:
+                message = UNDEFINED_COLOR(message);
+                break;
         }
 
-        if (Log::WHERE & Log::MODE::CONSOLE)
-        {
-            switch (level)
-            {
-                case Log::LOG_LEVEL::INFO_LEVEL:
-                    message = INFO_COLOR(message);
-                    break;
-
-                case Log::LOG_LEVEL::WARN_LEVEL:
-                    message = WARN_COLOR(message);
-                    break;
-
-                case Log::LOG_LEVEL::ERROR_LEVEL:
-                    message = ERROR_COLOR(message);
-                    break;
-
-                case Log::LOG_LEVEL::DEBUG_LEVEL:
-                    message = DEBUG_COLOR(message);
-                    break;
-
-                default:
-                    message = UNDEFINED_COLOR(message);
-                    break;
-            }
-
-            Print::print(message);
-            MESSAGES.push_back(message);
-        }
+        Print::print(message);
+        MESSAGES.push_back(message);
     }
 }
 

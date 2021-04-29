@@ -29,37 +29,37 @@ void RegionManager::activate_mouse_region_button_down(uint32_t mouse_btn)
         return region->effect()->effect_type() == SI_TYPE_MOUSE_CURSOR && !region->effect()->has_mouse_pressed_capability(mouse_btn);
     });
 
-    if(it != d_regions.end())
+    if (!(it != d_regions.end()))
+        return;
+
+    it->get()->effect()->set_mouse_pressed_capability(mouse_btn, true);
+
+    switch(mouse_btn)
     {
-        it->get()->effect()->set_mouse_pressed_capability(mouse_btn, true);
-
-        switch(mouse_btn)
+        case SI_LEFT_MOUSE_BUTTON:
         {
-            case SI_LEFT_MOUSE_BUTTON:
-            {
-                HANDLE_PYTHON_CALL(PY_ERROR, "Cannot foward left mouse click to plugin " + it->get()->name(),
-                    it->get()->raw_effect().attr("left_mouse_clicked") = true;
-                    it->get()->raw_effect().attr("on_left_mouse_click")(true);
-                )
-                break;
-            }
-            case SI_RIGHT_MOUSE_BUTTON:
-            {
-                HANDLE_PYTHON_CALL(PY_WARNING, "Cannot foward right mouse click to plugin " + it->get()->name(),
-                    it->get()->raw_effect().attr("right_mouse_clicked") = true;
-                    it->get()->raw_effect().attr("on_right_mouse_click")(true);
-                )
-                break;
-            }
+            HANDLE_PYTHON_CALL(PY_ERROR, "Cannot foward left mouse click to plugin " + it->get()->name(),
+                it->get()->raw_effect().attr("left_mouse_clicked") = true;
+                it->get()->raw_effect().attr("on_left_mouse_click")(true);
+            )
+            break;
+        }
+        case SI_RIGHT_MOUSE_BUTTON:
+        {
+            HANDLE_PYTHON_CALL(PY_WARNING, "Cannot foward right mouse click to plugin " + it->get()->name(),
+                it->get()->raw_effect().attr("right_mouse_clicked") = true;
+                it->get()->raw_effect().attr("on_right_mouse_click")(true);
+            )
+            break;
+        }
 
-            case SI_MIDDLE_MOUSE_BUTTON:
-            {
-                HANDLE_PYTHON_CALL(PY_WARNING, "Cannot foward middle mouse click to plugin " + it->get()->name(),
-                    it->get()->raw_effect().attr("middle_mouse_clicked") = true;
-                    it->get()->raw_effect().attr("on_middle_mouse_click")(true);
-                )
-                break;
-            }
+        case SI_MIDDLE_MOUSE_BUTTON:
+        {
+            HANDLE_PYTHON_CALL(PY_WARNING, "Cannot foward middle mouse click to plugin " + it->get()->name(),
+                it->get()->raw_effect().attr("middle_mouse_clicked") = true;
+                it->get()->raw_effect().attr("on_middle_mouse_click")(true);
+            )
+            break;
         }
     }
 }
@@ -71,37 +71,37 @@ void RegionManager::deactivate_mouse_region_button_down(uint32_t mouse_btn)
         return region->effect()->effect_type() == SI_TYPE_MOUSE_CURSOR && region->effect()->has_mouse_pressed_capability(mouse_btn);
     });
 
-    if(it != d_regions.end())
+    if (!(it != d_regions.end()))
+        return;
+
+    it->get()->effect()->set_mouse_pressed_capability(mouse_btn, false);
+
+    switch(mouse_btn)
     {
-        it->get()->effect()->set_mouse_pressed_capability(mouse_btn, false);
-
-        switch(mouse_btn)
+        case SI_LEFT_MOUSE_BUTTON:
         {
-            case SI_LEFT_MOUSE_BUTTON:
-            {
-                HANDLE_PYTHON_CALL(PY_WARNING, "Cannot foward left mouse release to plugin " + it->get()->name(),
-                    it->get()->raw_effect().attr("left_mouse_clicked") = false;
-                    it->get()->raw_effect().attr("on_left_mouse_click")(false);
-                )
-                break;
-            }
-            case SI_RIGHT_MOUSE_BUTTON:
-            {
-                HANDLE_PYTHON_CALL(PY_WARNING, "Cannot foward right mouse release to plugin " + it->get()->name(),
-                    it->get()->raw_effect().attr("right_mouse_clicked") = false;
-                    it->get()->raw_effect().attr("on_right_mouse_click")(false);
-                )
-                break;
-            }
+            HANDLE_PYTHON_CALL(PY_WARNING, "Cannot foward left mouse release to plugin " + it->get()->name(),
+                it->get()->raw_effect().attr("left_mouse_clicked") = false;
+                it->get()->raw_effect().attr("on_left_mouse_click")(false);
+            )
+            break;
+        }
+        case SI_RIGHT_MOUSE_BUTTON:
+        {
+            HANDLE_PYTHON_CALL(PY_WARNING, "Cannot foward right mouse release to plugin " + it->get()->name(),
+                it->get()->raw_effect().attr("right_mouse_clicked") = false;
+                it->get()->raw_effect().attr("on_right_mouse_click")(false);
+            )
+            break;
+        }
 
-            case SI_MIDDLE_MOUSE_BUTTON:
-            {
-                HANDLE_PYTHON_CALL(PY_WARNING, "Cannot foward middle mouse release to plugin " + it->get()->name(),
-                    it->get()->raw_effect().attr("middle_mouse_clicked") = false;
-                    it->get()->raw_effect().attr("on_middle_mouse_click")(false);
-                )
-                break;
-            }
+        case SI_MIDDLE_MOUSE_BUTTON:
+        {
+            HANDLE_PYTHON_CALL(PY_WARNING, "Cannot foward middle mouse release to plugin " + it->get()->name(),
+                it->get()->raw_effect().attr("middle_mouse_clicked") = false;
+                it->get()->raw_effect().attr("on_middle_mouse_click")(false);
+            )
+            break;
         }
     }
 }
@@ -145,13 +145,13 @@ void RegionManager::toggle_mouse_region_wheel_scrolled(float angle_px, float ang
         return region->effect()->effect_type() == SI_TYPE_MOUSE_CURSOR;
     });
 
-    if(it != d_regions.end())
-    {
-        HANDLE_PYTHON_CALL(PY_ERROR, "Cannot foward mouse wheel to plugin " + it->get()->name(),
-            it->get()->effect()->mouse_wheel_angle_px = angle_px;
-            it->get()->effect()->mouse_wheel_angle_degrees = angle_degrees;
-        )
-    }
+    if (!(it != d_regions.end()))
+        return;
+
+    HANDLE_PYTHON_CALL(PY_ERROR, "Cannot foward mouse wheel to plugin " + it->get()->name(),
+        it->get()->effect()->mouse_wheel_angle_px = angle_px;
+        it->get()->effect()->mouse_wheel_angle_degrees = angle_degrees;
+    )
 }
 
 void RegionManager::update_region_deletions()

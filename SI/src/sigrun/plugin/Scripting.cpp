@@ -150,65 +150,66 @@ void Scripting::extract_line_constructor(int& start, int& end,const std::vector<
 
 void Scripting::extract_calls(std::vector<std::string>& calls, std::unordered_map<std::string, std::unordered_map<std::string, std::unordered_map<std::string, std::string>>>& collision_events, std::vector<std::string>& lines, int i)
 {
-    if(lines[i].find("@SIEffect") != std::string::npos)
+    if (lines[i].find("@SIEffect") == std::string::npos)
+        return;
+
+    std::string event_type;
+    std::string target_capability;
+    std::string source_capability;
+    std::string transmission_type;
+    std::string target_function;
+
+    std::string line = lines[i];
+    line.erase(remove_if(line.begin(), line.end(), isspace), line.end());
+
+    if (line.find("on_enter") != std::string::npos
+        || line.find("on_continuous") != std::string::npos
+        || line.find("on_leave") != std::string::npos)
     {
-        std::string event_type;
-        std::string target_capability;
-        std::string source_capability;
-        std::string transmission_type;
-        std::string target_function;
+        std::vector tmp = str_split(line, ',');
+        event_type = tmp[0].substr(tmp[0].find(".") + 1);
+        event_type = event_type.substr(0, event_type.find("("));
 
-        std::string line = lines[i];
-        line.erase(remove_if(line.begin(), line.end(), isspace), line.end());
+        target_capability = tmp[0].substr(tmp[0].find("(") + 1);
+        transmission_type = tmp[1].substr(0, tmp[1].find(")"));
 
-        if (line.find("on_enter") != std::string::npos
-            || line.find("on_continuous") != std::string::npos
-            || line.find("on_leave") != std::string::npos)
+        std::string temp = lines[i + 1];
+        temp = temp.substr(temp.find_first_not_of(" \n\r\t\f\v"));
+
+        target_function = str_split(temp, '(')[0];
+        target_function = "self." + target_function.substr(target_function.find(" ") + 1);
+
+        collision_events[target_capability][transmission_type][event_type] = target_function;
+    }
+
+    if (lines[i].find("on_link") != std::string::npos)
+    {
+        std::vector tmp = str_split(line, ',');
+
+        std::string temp = lines[i + 1];
+        temp = temp.substr(temp.find_first_not_of(" \n\r\t\f\v"));
+
+        target_function = str_split(temp, '(')[0];
+        target_function = "self." + target_function.substr(target_function.find(" ") + 1);
+
+        std::string call;
+
+        if (tmp.size() == 2)
         {
-            std::vector tmp = str_split(line, ',');
-            event_type = tmp[0].substr(tmp[0].find(".") + 1);
-            event_type = event_type.substr(0, event_type.find("("));
+            target_capability = tmp[1].substr(0, tmp[1].find(")"));
 
-            target_capability = tmp[0].substr(tmp[0].find("(") + 1);
-            transmission_type = tmp[1].substr(0, tmp[1].find(")"));
-
-            std::string temp = lines[i + 1];
-            temp = temp.substr(temp.find_first_not_of(" \n\r\t\f\v"));
-
-            target_function = str_split(temp, '(')[0];
-            target_function = "self." + target_function.substr(target_function.find(" ") + 1);
-
-            collision_events[target_capability][transmission_type][event_type] = target_function;
+            call = "\t\tself.enable_link_emission(" + target_capability + ", " + target_function + ")";
         }
-        else if (lines[i].find("on_link") != std::string::npos)
+        else
         {
-            std::vector tmp = str_split(line, ',');
+            source_capability = tmp[1];
+            target_capability = tmp[2].substr(0, tmp[2].find(")"));
 
-            std::string temp = lines[i + 1];
-            temp = temp.substr(temp.find_first_not_of(" \n\r\t\f\v"));
+            call = "\t\tself.enable_link_reception(" + source_capability + ", " + target_capability + ", " + target_function + ")";
 
-            target_function = str_split(temp, '(')[0];
-            target_function = "self." + target_function.substr(target_function.find(" ") + 1);
-
-            std::string call;
-
-            if (tmp.size() == 2)
-            {
-                target_capability = tmp[1].substr(0, tmp[1].find(")"));
-
-                call = "\t\tself.enable_link_emission(" + target_capability + ", " + target_function + ")";
-            }
-            else
-            {
-                source_capability = tmp[1];
-                target_capability = tmp[2].substr(0, tmp[2].find(")"));
-
-                call = "\t\tself.enable_link_reception(" + source_capability + ", " + target_capability + ", " + target_function + ")";
-
-            }
-
-            calls.push_back(call);
         }
+
+        calls.push_back(call);
     }
 }
 
@@ -296,14 +297,14 @@ std::string Scripting::remove_line_comments(const std::string& source)
         size_t hashtag = temp.find(SI_HASHTAG_CHAR);
         size_t new_line = temp.find(SI_NEW_LINE_CHAR, hashtag);
 
+        cursor = std::string::npos;
+
         if(hashtag != std::string::npos && new_line != std::string::npos)
         {
             temp.replace(hashtag, new_line - hashtag, "");
 
             cursor = hashtag - 1;
         }
-        else
-            cursor = std::string::npos;
     }
     while(cursor != std::string::npos);
 
@@ -320,14 +321,14 @@ std::string Scripting::remove_block_comments(const std::string& source)
         size_t left_triple_quotes = temp.find(R"(""")");
         size_t right_triple_quotes = temp.find(R"(""")", left_triple_quotes + 3);
 
+        cursor = std::string::npos;
+
         if(left_triple_quotes != std::string::npos && right_triple_quotes != std::string::npos)
         {
             temp.replace(left_triple_quotes, right_triple_quotes + 3 - left_triple_quotes, "");
 
             cursor = left_triple_quotes - 1;
         }
-        else
-            cursor = std::string::npos;
     }
     while(cursor != std::string::npos);
 

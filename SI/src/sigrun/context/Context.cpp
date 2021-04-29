@@ -52,89 +52,83 @@ Context::Context()
     upjs = std::make_unique<JobSystem<void, 512>>();
     uptm = std::make_unique<TangibleManager>();
 
-    p_py_garbage_collector = new bp::object(bp::import(SI_PYTHON_GARBAGE_COLLECTOR));
+//    p_py_garbage_collector = new bp::object(bp::import(SI_PYTHON_GARBAGE_COLLECTOR));
 }
 
 void Context::begin(const std::unordered_map<std::string, std::unique_ptr<bp::object>>& plugins, IRenderEngine* ire, int argc, char** argv)
 {
-    if(ire)
+    if (!ire)
+        return;
+
+    INFO("Creating Qt5 Application...");
+    QApplication d_app(argc, argv);
+    s_width = QApplication::primaryScreen()->geometry().width();
+    s_height = QApplication::primaryScreen()->geometry().height();
+    INFO("Qt5 Application created!");
+    d_app.installEventFilter(upim.get());
+
+    qmlRegisterType<PlotItem>("siqml", 1, 0, "PlotItem");
+
+    d_ire = ire;
+
+    std::string tmp;
+
+    for(const auto& [k, v]: plugins)
     {
-        INFO("Creating Qt5 Application...");
-        QApplication d_app(argc, argv);
-        s_width = QApplication::primaryScreen()->geometry().width();
-        s_height = QApplication::primaryScreen()->geometry().height();
-        INFO("Qt5 Application created!");
-        d_app.installEventFilter(upim.get());
+        d_plugins[k] = *v;
 
-        qmlRegisterType<PlotItem>("siqml", 1, 0, "PlotItem");
-
-        d_ire = ire;
-
-        std::string tmp;
-
-        for(const auto& [k, v]: plugins)
-        {
-            d_plugins[k] = *v;
-
-            /**** THIS WORKS FOR READING IN A OBJECT FROM SOURCE
-            bp::dict d;
-            bp::exec("class TEST:\n\tid = 5\n", bp::object(), d);
-            INFO(bp::extract<int>(d["TEST"].attr("id")));
-            **/
-
-            HANDLE_PYTHON_CALL(PY_WARNING, "Plugin does not have the attribute \'regiontype\' as static class member and is skipped. Try assigning PySIEffect.EffectType.SI_CUSTOM.",
-                switch (bp::extract<int>(v->attr(v->attr(SI_INTERNAL_NAME)).attr(SI_INTERNAL_REGION_TYPE)))
-                {
-                    case SI_TYPE_CANVAS:
-                    case SI_TYPE_MOUSE_CURSOR:
-                    case SI_TYPE_NOTIFICATION:
-                    case SI_TYPE_DIRECTORY:
-                    case SI_TYPE_BUTTON:
-                    case SI_TYPE_EXTERNAL_APPLICATION_CONTAINER:
-                    case SI_TYPE_TEXT_FILE:
-                    case SI_TYPE_IMAGE_FILE:
-                    case SI_TYPE_UNKNOWN_FILE:
-                    case SI_TYPE_CURSOR:
-                    case SI_TYPE_ENTRY:
-                    case SI_TYPE_PALETTE:
-                    case SI_TYPE_SELECTOR:
-                    case SI_TYPE_CUSTOM_NON_DRAWABLE:
-                        break;
-
-                    default:
-                    {
-                        d_available_plugins[k] = d_plugins[k];
-                        d_available_plugins_names.push_back(k);
-                        tmp += k + ", ";
-                    }
+        HANDLE_PYTHON_CALL(PY_WARNING, "Plugin does not have the attribute \'regiontype\' as static class member and is skipped. Try assigning PySIEffect.EffectType.SI_CUSTOM.",
+            switch (bp::extract<int>(v->attr(v->attr(SI_INTERNAL_NAME)).attr(SI_INTERNAL_REGION_TYPE)))
+            {
+                case SI_TYPE_CANVAS:
+                case SI_TYPE_MOUSE_CURSOR:
+                case SI_TYPE_NOTIFICATION:
+                case SI_TYPE_DIRECTORY:
+                case SI_TYPE_BUTTON:
+                case SI_TYPE_EXTERNAL_APPLICATION_CONTAINER:
+                case SI_TYPE_TEXT_FILE:
+                case SI_TYPE_IMAGE_FILE:
+                case SI_TYPE_UNKNOWN_FILE:
+                case SI_TYPE_CURSOR:
+                case SI_TYPE_ENTRY:
+                case SI_TYPE_PALETTE:
+                case SI_TYPE_SELECTOR:
+                case SI_TYPE_CUSTOM_NON_DRAWABLE:
                     break;
+
+                default:
+                {
+                    d_available_plugins[k] = d_plugins[k];
+                    d_available_plugins_names.push_back(k);
+                    tmp += k + ", ";
                 }
-            )
-        }
-
-        INFO("Drawable Plugins: " + tmp.substr(0, tmp.length() - 2));
-
-        std::thread{[&]() -> int
-        {
-            int port = 3333;
-
-            TangibleListener tangible_listener;
-            UdpListeningReceiveSocket s(IpEndpointName("127.0.0.1", port), &tangible_listener);
-
-            s.RunUntilSigInt();
-
-            return 0;
-        }}.detach();
-
-        HANDLE_PYTHON_CALL(PY_ERROR, "Could not load startup file! A python file called \'StartSIGRun\' is required to be present in plugins folder!",
-            bp::import(SI_START_FILE).attr(SI_START_FUNCTION)();
+                break;
+            }
         )
-
-        d_ire->start(s_width, s_height, 120);
-
-        d_app.exec();
-        INFO("QT5 Application terminated!");
     }
+
+    INFO("Drawable Plugins: " + tmp.substr(0, tmp.length() - 2));
+
+    std::thread{[&]() -> int
+    {
+        int port = 3333;
+
+        TangibleListener tangible_listener;
+        UdpListeningReceiveSocket s(IpEndpointName("127.0.0.1", port), &tangible_listener);
+
+        s.RunUntilSigInt();
+
+        return 0;
+    }}.detach();
+
+    HANDLE_PYTHON_CALL(PY_ERROR, "Could not load startup file! A python file called \'StartSIGRun\' is required to be present in plugins folder!",
+        bp::import(SI_START_FILE).attr(SI_START_FUNCTION)();
+    )
+
+    d_ire->start(s_width, s_height, 120);
+
+    d_app.exec();
+    INFO("QT5 Application terminated!");
 }
 
 void Context::end()
@@ -247,18 +241,18 @@ void Context::set_effect(const std::string& target_uuid, const std::string& effe
         return region->uuid() == target_uuid;
     });
 
-    if (it != uprm->regions().end())
-    {
-        if (it->get()->type() == SI_TYPE_MOUSE_CURSOR)
-        {
-            d_selected_effects_by_id[target_uuid] = d_available_plugins[effect_name];
+    if (!(it != uprm->regions().end()))
+        return;
 
-            set_message("Mouse Cursor set to " + effect_display_name);
-        }
-        else
-        {
-            it->get()->set_effect(d_available_plugins[effect_name], kwargs);
-        }
+    if (it->get()->type() == SI_TYPE_MOUSE_CURSOR)
+    {
+        d_selected_effects_by_id[target_uuid] = d_available_plugins[effect_name];
+
+        set_message("Mouse Cursor set to " + effect_display_name);
+    }
+    else
+    {
+        it->get()->set_effect(d_available_plugins[effect_name], kwargs);
     }
 }
 
@@ -332,31 +326,31 @@ void Context::register_new_region_via_name(const std::vector<glm::vec3>& contour
 
             d_region_insertion_queue.emplace(contour, d_plugins[SI_NAME_EFFECT_SELECTOR], id, kwargs);
         )
+
+        return;
     }
-    else
+
+    if(id == SI_TYPE_DIRECTORY)
     {
-        if(id == SI_TYPE_DIRECTORY)
-        {
-            std::string k_cwd = std::string(bp::extract<char*>(kwargs[SI_CWD]));
+        std::string k_cwd = std::string(bp::extract<char*>(kwargs[SI_CWD]));
 
-            if(!k_cwd.empty())
-                upfs->set_cwd(k_cwd);
+        if(!k_cwd.empty())
+            upfs->set_cwd(k_cwd);
 
-            const std::string& cwd = upfs->cwd();
-            const std::vector<std::string> children_paths = upfs->cwd_contents_paths(cwd);
-            const std::vector<int> children_types = upfs->cwd_contents_types(children_paths);
+        const std::string& cwd = upfs->cwd();
+        const std::vector<std::string> children_paths = upfs->cwd_contents_paths(cwd);
+        const std::vector<int> children_types = upfs->cwd_contents_types(children_paths);
 
-            bp::list children;
+        bp::list children;
 
-            for(int32_t i = 0; i < children_paths.size(); ++i)
-                children.append(bp::make_tuple(children_paths[i], children_types[i]));
+        for(int32_t i = 0; i < children_paths.size(); ++i)
+            children.append(bp::make_tuple(children_paths[i], children_types[i]));
 
-            kwargs[SI_CWD] = cwd;
-            kwargs[SI_CHILDREN] = children;
-        }
-
-        d_region_insertion_queue.emplace(contour, d_plugins[effect_name], id, kwargs);
+        kwargs[SI_CWD] = cwd;
+        kwargs[SI_CHILDREN] = children;
     }
+
+    d_region_insertion_queue.emplace(contour, d_plugins[effect_name], id, kwargs);
 }
 
 void Context::register_new_region_via_type(const std::vector<glm::vec3>& contour, int id, bp::dict& kwargs)
@@ -553,11 +547,9 @@ void Context::perform_external_application_update(std::unordered_map<std::string
 
         return;
     }
-    else
-    {
-        QWidget* current = it->second->embedded_object.external_application.window;
-        Q_EMIT it->second->LINK_SIGNAL(_UUID_, "", SI_CAPABILITY_LINK_GEOMETRY, bp::make_tuple(current->x() - Context::SIContext()->main_window()->x(), current->y(), current->width(), current->height()));
-    }
+
+    QWidget* current = it->second->embedded_object.external_application.window;
+    Q_EMIT it->second->LINK_SIGNAL(_UUID_, "", SI_CAPABILITY_LINK_GEOMETRY, bp::make_tuple(current->x() - Context::SIContext()->main_window()->x(), current->y(), current->width(), current->height()));
 }
 
 void Context::perform_external_application_registration()

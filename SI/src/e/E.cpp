@@ -24,20 +24,21 @@ void E::parse(std::string& constants)
     pugi::xml_document doc;
     doc.load_file((directory + "/plugins/env/values.xml").c_str());
 
-    for(auto node: doc.children("environment"))
+    for(const auto& node: doc.children("environment"))
     {
-        for(auto n: node.children())
+        for(const auto& n: node.children())
         {
             std::string identifier(n.attributes().begin()->value());
             std::string type(n.attributes().begin()->next_attribute().value());
             std::string value = "";
 
+            value = std::string(n.begin()->value());
+
             if(type == "str")
                 value = "\"" + std::string(n.begin()->value()) + "\"";
-            else if(type == "color")
+
+            if(type == "color")
                 value = "PySI.Color" + std::string(n.begin()->value());
-            else // bool, int, float
-                value = std::string(n.begin()->value());
 
             constants += std::string("\t\t" + identifier + " = " + value + "\n");
         }
