@@ -21,6 +21,7 @@
 #include <queue>
 #include <QGraphicsView>
 #include <sigrun/parallel/JobSystem.hpp>
+#include <sigrun/context/spatial_grid/SpatialHashGrid.hpp>
 
 #define DELAY_PYTHON_GARBAGE_COLLECTION(...) {\
     p_py_garbage_collector->attr("disable")(); \
@@ -47,6 +48,7 @@ public:
     ExternalApplicationManager* external_application_manager();
     JobSystem<void, 512>* job_system();
     TangibleManager* tangible_manager();
+    SpatialHashGrid* spatial_hash_grid();
 
     QGraphicsView* main_window() const;
     void set_main_window();
@@ -114,6 +116,7 @@ private:
     std::unique_ptr<ExternalApplicationManager> upeam;
     std::unique_ptr<JobSystem<void, 512>> upjs;
     std::unique_ptr<TangibleManager> uptm;
+    std::unique_ptr<SpatialHashGrid> upshg;
 
     uint32_t s_width = 0;
     uint32_t s_height = 0;

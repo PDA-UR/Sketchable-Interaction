@@ -39,8 +39,8 @@ Scripting::Scripting()
         d_cwd = directory;
 
         bp::exec((std::string("import builtins\nimport os\n\n") +
-                              "os.remove(\"TEST.TXT\")\n" +
-                              "open(\"TEST.TXT\", 'w').close()\n" +
+                              "os.remove(\".TEST.TXT\")\n" +
+                              "open(\".TEST.TXT\", 'x').close()\n" +
                               "def si_print(filename):\n" +
                               "    def wrap(func):\n" +
                               "        def wrapped_func(*args, **kwargs):\n" +
@@ -49,8 +49,7 @@ Scripting::Scripting()
                               "            return func(\"PySI:\", *args, **kwargs)\n" +
                               "        return wrapped_func\n" +
                               "    return wrap\n\n" +
-                              "builtins.print = si_print(\"TEST.TXT\")(builtins.print)\n"
-
+                              "builtins.print = si_print(\".TEST.TXT\")(builtins.print)\n"
                 ).c_str(), d_globals);
     )
 }

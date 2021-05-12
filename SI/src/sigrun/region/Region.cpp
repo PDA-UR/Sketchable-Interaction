@@ -31,6 +31,8 @@ Region::Region(const std::vector<glm::vec3> &contour, const bp::object& effect, 
     }
 
     uprm = std::make_unique<RegionMask>(mask_width, mask_height, d_py_effect->contour());
+
+    Context::SIContext()->spatial_hash_grid()->register_region(this);
 }
 
 Region::~Region() = default;
@@ -261,6 +263,8 @@ void Region::update()
 
     move();
 
+    Context::SIContext()->spatial_hash_grid()->update_region(this);
+
     process_canvas_specifics();
     process_linking_relationships();
 }
@@ -341,12 +345,22 @@ void Region::set_is_new(bool toggle)
     d_is_new = toggle;
 }
 
+std::vector<int> &Region::grid_nodes()
+{
+    return d_grid_nodes;
+}
+
+glm::ivec4 &Region::grid_bounds()
+{
+    return d_grid_bounds;
+}
+
 uint8_t Region::handle_collision_event(const std::string &function_name, PySIEffect* colliding_effect)
 {
     for(auto& [capability, emission_functions]: colliding_effect->cap_collision_emit())
     {
         HANDLE_PYTHON_CALL(PY_ERROR, "Fatal Error. Unable to perform collision event " + function_name + " (" + name() + "other: " + colliding_effect->name() + ")",
-           if (d_py_effect->cap_collision_recv().find(capability) == d_py_effect->cap_collision_recv().end())
+           if (!d_py_effect->cap_collision_recv().count(capability))
                continue;
 
            if(emission_functions[function_name].is_none())

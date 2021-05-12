@@ -65,6 +65,9 @@ void Context::begin(const std::unordered_map<std::string, std::unique_ptr<bp::ob
     s_width = QApplication::primaryScreen()->geometry().width();
     s_height = QApplication::primaryScreen()->geometry().height();
     INFO("Qt5 Application created!");
+
+    upshg = std::make_unique<SpatialHashGrid>(s_width, s_height, 20, 20);
+
     d_app.installEventFilter(upim.get());
 
     qmlRegisterType<PlotItem>("siqml", 1, 0, "PlotItem");
@@ -170,6 +173,11 @@ JobSystem<void, 512>* Context::job_system()
 TangibleManager* Context::tangible_manager()
 {
     return uptm.get();
+}
+
+SpatialHashGrid* Context::spatial_hash_grid()
+{
+    return upshg.get();
 }
 
 Context* Context::SIContext()
