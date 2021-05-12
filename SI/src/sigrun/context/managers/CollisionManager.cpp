@@ -23,6 +23,26 @@ void CollisionManager::collide(std::vector<std::shared_ptr<Region>> &regions)
 
 void CollisionManager::perform_collision_check(tbb::concurrent_vector<std::tuple<Region*, Region*, bool>> &out, const std::vector<std::shared_ptr<Region>>& in)
 {
+//    for(int i = 0; i < in.size() - 1; ++i)
+//    {
+//        for(int k = i + 1; k < in.size(); ++k)
+//        {
+//            if(Context::SIContext()->spatial_hash_grid()->has_shared_cell(in[i].get(), in[k].get()))
+//            {
+//                if (collides_with_aabb(in[i].get(), in[k].get()))
+//                {
+//                    if (collides_with_mask(in[i], in[k]))
+//                    {
+//                        out.emplace_back(in[i].get(), in[k].get(), has_capabilities_in_common(in[i], in[k]));
+//                        continue;
+//                    }
+//                }
+//            }
+//
+//            out.emplace_back(in[i].get(), in[k].get(), false);
+//        }
+//    }
+
     tbb::parallel_for(tbb::blocked_range<uint32_t>(0, in.size() - 1), [&](const tbb::blocked_range<uint32_t>& r)
     {
         for(auto i = r.begin(); i != r.end(); ++i)
@@ -31,12 +51,15 @@ void CollisionManager::perform_collision_check(tbb::concurrent_vector<std::tuple
             {
                 for(auto k = r2.begin(); k != r2.end(); ++k)
                 {
-                    if (has_capabilities_in_common(in[i], in[k]))
+                    if(Context::SIContext() && Context::SIContext()->spatial_hash_grid()->has_shared_cell(in[i].get(), in[k].get()))
                     {
                         if (collides_with_aabb(in[i].get(), in[k].get()))
                         {
-                            out.emplace_back(in[i].get(), in[k].get(), collides_with_mask(in[i], in[k]));
-                            continue;
+                            if (collides_with_mask(in[i], in[k]))
+                            {
+                                out.emplace_back(in[i].get(), in[k].get(), has_capabilities_in_common(in[i], in[k]));
+                                continue;
+                            }
                         }
                     }
 
@@ -108,7 +131,6 @@ void CollisionManager::handle_event_leave_on_deletion(Region* deleted_region)
                 handle_event_leave(it->get(), deleted_region);
                 return true;
             }
-
         }
 
         return false;
@@ -153,11 +175,11 @@ bool CollisionManager::has_capabilities_in_common(const std::shared_ptr<Region>&
     const std::unordered_map<std::string, std::unordered_map<std::string, bp::object>>& b_emit = b->effect()->cap_collision_emit();
 
     for(const auto& [key, value]: a_emit)
-        if(b_recv.find(key) != b_recv.end())
+        if(b_recv.count(key))
             return true;
 
     for(const auto& [key, value]: b_emit)
-        if(a_recv.find(key) != a_recv.end())
+        if(a_recv.count(key))
             return true;
 
     return false;

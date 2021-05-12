@@ -203,10 +203,7 @@ void RegionMask::rebuild(const std::vector<glm::vec3> &contour)
 */
 bool RegionMask::operator[](int32_t i) const
 {
-    if (i > -1 && i < d_values.size())
-        return d_values[i];
-
-    return false;
+    return (i > -1 && i < d_values.size()) && d_values[i];
 }
 
 /**

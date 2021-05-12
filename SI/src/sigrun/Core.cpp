@@ -47,6 +47,8 @@ void Core::start(char** argv, int argc, IRenderEngine* ire)
 
     std::unordered_map<std::string, std::unique_ptr<bp::object>> plugins;
     std::string path = "plugins";
+    std::ofstream ofs(sfs::path(".TEST.TXT"));
+    ofs.close();
 
     INFO("Loading plugins... ");
     retrieve_available_plugins(plugins, path);

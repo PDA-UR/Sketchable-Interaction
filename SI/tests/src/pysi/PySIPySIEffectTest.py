@@ -470,9 +470,4 @@ class PySIPySIEffectTest(unittest.TestCase):
 
     @staticmethod
     def start():
-        utest = unittest.TextTestRunner(stream=sys.stdout, verbosity=3).run(unittest.TestLoader().loadTestsFromTestCase(PySIPySIEffectTest))
-
-        print(utest)
-        print(utest.failures)
-
-        return utest.wasSuccessful()
+        return unittest.TextTestRunner(stream=sys.stdout, verbosity=3).run(unittest.TestLoader().loadTestsFromTestCase(PySIPySIEffectTest)).wasSuccessful()

@@ -109,16 +109,15 @@ void MainWindow::handle_region_representations()
             return reg->uuid() == rep->uuid();
         });
 
-        if(it == regions.end())
-        {
-            p_scene->removeItem(rep);
+        if (it != regions.end())
+            return false;
 
-            delete rep;
-            rep = nullptr;
-            return true;
-        }
+        p_scene->removeItem(rep);
 
-        return false;
+        delete rep;
+        rep = nullptr;
+        return true;
+
     }), d_reg_reps.end());
 
     for(auto& reg: regions)

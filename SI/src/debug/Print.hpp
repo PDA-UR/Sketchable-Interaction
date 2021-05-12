@@ -50,37 +50,43 @@ public:
     template<typename T>
     inline static std::string _print(const std::vector<std::vector<T>> &v)
     {
-        return std::transform_reduce(std::execution::par, v.begin(), v.end(), std::string("["), [](const std::string& a, const std::string& b)
+        std::string ret = std::transform_reduce(std::execution::par, v.begin(), v.end(), std::string("["), [](const std::string& a, const std::string& b)
         {
             return a + ", " + b;
         }, [](const std::vector<T>& value)
         {
             return _print(value);
         }) + "]";
+
+        return "[" + ret.substr(2);
     }
 
     template<typename T>
     inline static std::string _print(const std::vector<T>& v)
     {
-        return std::transform_reduce(std::execution::par, v.begin(), v.end(), std::string("["), [](const std::string& a, const std::string& b)
+        std::string ret = std::transform_reduce(std::execution::par, v.begin(), v.end(), std::string(""), [](const std::string& a, const std::string& b)
         {
             return a + ", " + b;
         }, [](const T& value)
         {
             return _print(value);
         }) + "]";
+
+        return "[" + ret.substr(2);
     }
 
     template<typename T1, typename T2>
     inline static std::string _print(const std::map<T1, T2> &map)
     {
-        return std::transform_reduce(map.begin(), map.end(), std::string("{"), [](const std::string& a, const std::string& b)
+        std::string ret = std::transform_reduce(map.begin(), map.end(), std::string("{"), [](const std::string& a, const std::string& b)
         {
             return a + ", " + b;
         }, [](const std::pair<T1, T2>& pair)
         {
             return _print(pair.first) + ": " + _print(pair.second);
         }) + "}";
+
+        return "{" + ret.substr(2);
     }
 
     inline static std::string _print(const QString& qs)
@@ -164,6 +170,11 @@ public:
     inline static std::string _print(const glm::vec3& p)
     {
         return "(" + std::to_string(p.x) + ", " + std::to_string(p.y) + ")";
+    }
+
+    inline static std::string _print(const glm::ivec4& p)
+    {
+        return "(" + std::to_string(p.x) + ", " + std::to_string(p.y) + ", " + std::to_string(p.z) + ", " + std::to_string(p.w) + ")";
     }
 
     template<class... Args>

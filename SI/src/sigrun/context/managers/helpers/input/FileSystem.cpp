@@ -95,10 +95,12 @@ uint32_t FileSystem::entry_type(const std::string& _path)
 
         if(ext == ".png" || ext == ".jpeg" || ext == ".jpg" || ext == ".gif")
             return SI_TYPE_IMAGE_FILE;
-        else if(ext == ".txt" || ext == ".odt" || ext == ".md")
+
+        if(ext == ".txt" || ext == ".odt" || ext == ".md")
             return SI_TYPE_TEXT_FILE;
     }
-    else if (fs::exists(path) && fs::is_directory(path))
+
+    if (fs::exists(path) && fs::is_directory(path))
         return SI_TYPE_DIRECTORY;
 
     return SI_TYPE_UNKNOWN_FILE;
@@ -109,32 +111,34 @@ void FileSystem::set_cwd(const fs::path &path)
     d_cwd_contents.clear();
     d_cwd = path;
 
-    if (fs::exists(path) && fs::is_directory(path))
+    if (!fs::exists(path) || !fs::is_directory(path))
+        return;
+
+    for(const auto& entry : fs::directory_iterator(path))
     {
-        for(const auto& entry : fs::directory_iterator(path))
+        if (fs::is_directory(entry.status()))
         {
-            if (fs::is_directory(entry.status()))
-            {
-                d_cwd_contents.emplace_back(std::make_shared<FileSystemObject>(entry.path(), SI_TYPE_DIRECTORY));
-            }
-            else if (fs::is_regular_file(entry.status()))
-            {
-                const std::string& ext = entry.path().extension().string();
-
-                uint32_t type = SI_TYPE_UNKNOWN_FILE;
-
-                if(ext == ".png" || ext == ".jpeg" || ext == ".jpg")
-                    type = SI_TYPE_IMAGE_FILE;
-                else if(ext == ".txt" || ext == ".odt" || ext == ".md")
-                    type = SI_TYPE_TEXT_FILE;
-
-                d_cwd_contents.emplace_back(std::make_shared<FileSystemObject>(entry.path(), type));
-            }
-            else
-            {
-                d_cwd_contents.emplace_back(std::make_shared<FileSystemObject>(entry.path(), SI_TYPE_UNKNOWN_FILE));
-            }
+            d_cwd_contents.emplace_back(std::make_shared<FileSystemObject>(entry.path(), SI_TYPE_DIRECTORY));
+            continue;
         }
+
+        if (fs::is_regular_file(entry.status()))
+        {
+            const std::string& ext = entry.path().extension().string();
+
+            uint32_t type = SI_TYPE_UNKNOWN_FILE;
+
+            if(ext == ".png" || ext == ".jpeg" || ext == ".jpg")
+                type = SI_TYPE_IMAGE_FILE;
+
+            if(ext == ".txt" || ext == ".odt" || ext == ".md")
+                type = SI_TYPE_TEXT_FILE;
+
+            d_cwd_contents.emplace_back(std::make_shared<FileSystemObject>(entry.path(), type));
+            continue;
+        }
+
+        d_cwd_contents.emplace_back(std::make_shared<FileSystemObject>(entry.path(), SI_TYPE_UNKNOWN_FILE));
     }
 }
 

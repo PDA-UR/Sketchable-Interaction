@@ -33,6 +33,7 @@ void PlotItem::paint(QPainter *painter)
 
     if (center.x() < 0)
         center.setX(0);
+
     if (center.y() < 0)
         center.setY(0);
 
