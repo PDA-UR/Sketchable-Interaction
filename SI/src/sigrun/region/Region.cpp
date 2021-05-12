@@ -32,7 +32,8 @@ Region::Region(const std::vector<glm::vec3> &contour, const bp::object& effect, 
 
     uprm = std::make_unique<RegionMask>(mask_width, mask_height, d_py_effect->contour());
 
-    Context::SIContext()->spatial_hash_grid()->register_region(this);
+    if(Context::SIContext() && Context::SIContext()->spatial_hash_grid())
+        Context::SIContext()->spatial_hash_grid()->register_region(this);
 }
 
 Region::~Region() = default;
@@ -263,7 +264,8 @@ void Region::update()
 
     move();
 
-    Context::SIContext()->spatial_hash_grid()->update_region(this);
+    if(Context::SIContext())
+        Context::SIContext()->spatial_hash_grid()->update_region(this);
 
     process_canvas_specifics();
     process_linking_relationships();

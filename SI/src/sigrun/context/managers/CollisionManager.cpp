@@ -51,7 +51,7 @@ void CollisionManager::perform_collision_check(tbb::concurrent_vector<std::tuple
             {
                 for(auto k = r2.begin(); k != r2.end(); ++k)
                 {
-                    if(Context::SIContext()->spatial_hash_grid()->has_shared_cell(in[i].get(), in[k].get()))
+                    if(Context::SIContext() && Context::SIContext()->spatial_hash_grid()->has_shared_cell(in[i].get(), in[k].get()))
                     {
                         if (collides_with_aabb(in[i].get(), in[k].get()))
                         {
