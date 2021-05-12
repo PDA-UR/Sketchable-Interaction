@@ -124,7 +124,8 @@ bool InputManager::eventFilter(QObject *watched, QEvent *event)
 
         return QObject::eventFilter(watched, event);
     }
-    else if(event->type() == QEvent::KeyRelease)
+
+    if(event->type() == QEvent::KeyRelease)
     {
         QKeyEvent *key_event = (QKeyEvent*)event;
 
@@ -141,7 +142,8 @@ bool InputManager::eventFilter(QObject *watched, QEvent *event)
         return true;
 
     }
-    else if(event->type() == QEvent::MouseMove)
+
+    if(event->type() == QEvent::MouseMove)
     {
         QMouseEvent* mouse_event = (QMouseEvent*) event;
 
@@ -153,7 +155,8 @@ bool InputManager::eventFilter(QObject *watched, QEvent *event)
 
         return true;
     }
-    else if(event->type() == QEvent::MouseButtonPress)
+
+    if(event->type() == QEvent::MouseButtonPress)
     {
         QMouseEvent* mouse_event = (QMouseEvent*) event;
 
@@ -172,7 +175,8 @@ bool InputManager::eventFilter(QObject *watched, QEvent *event)
                 break;
         }
     }
-    else if(event->type() == QEvent::MouseButtonRelease)
+
+    if(event->type() == QEvent::MouseButtonRelease)
     {
         QMouseEvent* mouse_event = (QMouseEvent*) event;
 
@@ -191,7 +195,8 @@ bool InputManager::eventFilter(QObject *watched, QEvent *event)
                 break;
         }
     }
-    else if(event->type() == QEvent::Wheel)
+
+    if(event->type() == QEvent::Wheel)
     {
         QWheelEvent* wheel_event = (QWheelEvent*) event;
 

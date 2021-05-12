@@ -31,6 +31,8 @@ Region::Region(const std::vector<glm::vec3> &contour, const bp::object& effect, 
     }
 
     uprm = std::make_unique<RegionMask>(mask_width, mask_height, d_py_effect->contour());
+
+    Context::SIContext()->spatial_hash_grid()->register_region(this);
 }
 
 Region::~Region() = default;
@@ -40,45 +42,45 @@ void Region::move()
     const int32_t& x = d_py_effect->x();
     const int32_t& y = d_py_effect->y();
 
-    if(x != d_last_x || y != d_last_y)
-    {
-        glm::vec2 center(d_last_x + (d_py_effect->aabb()[0].x + (d_py_effect->aabb()[3].x - d_py_effect->aabb()[0].x)) / 2, d_last_y + (d_py_effect->aabb()[0].y + (d_py_effect->aabb()[1].y - d_py_effect->aabb()[0].y)) / 2);
+    if (x == d_last_x && y == d_last_y)
+        return;
 
-        uprt->update(glm::vec2(x, y), 0, 1, center);
+    glm::vec2 center(d_last_x + (d_py_effect->aabb()[0].x + (d_py_effect->aabb()[3].x - d_py_effect->aabb()[0].x)) / 2, d_last_y + (d_py_effect->aabb()[0].y + (d_py_effect->aabb()[1].y - d_py_effect->aabb()[0].y)) / 2);
 
-        d_last_delta_x = x - d_last_x;
-        d_last_delta_y = y - d_last_y;
+    uprt->update(glm::vec2(x, y), 0, 1, center);
 
-        d_last_x = x;
-        d_last_y = y;
+    d_last_delta_x = x - d_last_x;
+    d_last_delta_y = y - d_last_y;
 
-        uprm->move(glm::vec2(d_last_delta_x, d_last_delta_y));
+    d_last_x = x;
+    d_last_y = y;
 
-        d_is_transformed = true;
-    }
+    uprm->move(glm::vec2(d_last_delta_x, d_last_delta_y));
+
+    d_is_transformed = true;
 }
 
 void Region::set_effect(const bp::object& effect, const bp::dict& kwargs)
 {
-    if(!effect.is_none())
-    {
-        HANDLE_PYTHON_CALL(PY_ERROR, "Fatal Error. Plugin broken",
-            d_effect = std::make_shared<bp::object>(effect.attr(effect.attr(SI_INTERNAL_NAME))(d_py_effect->contour(), d_py_effect->uuid(), kwargs));
+    if (effect.is_none())
+        return;
 
-            d_py_effect = bp::extract<PySIEffect*>(*d_effect);
-        )
-    }
+    HANDLE_PYTHON_CALL(PY_ERROR, "Fatal Error. Plugin broken",
+        d_effect = std::make_shared<bp::object>(effect.attr(effect.attr(SI_INTERNAL_NAME))(d_py_effect->contour(), d_py_effect->uuid(), kwargs));
+
+        d_py_effect = bp::extract<PySIEffect*>(*d_effect);
+    )
 }
 
 void Region::set_effect(const std::vector<glm::vec3>& contour, const bp::object& effect, const std::string& uuid, const bp::dict& kwargs)
 {
-    if(!effect.is_none())
-    {
-        HANDLE_PYTHON_CALL(PY_ERROR, "Fatal Error. Plugin broken",
-            d_effect = std::make_shared<bp::object>(effect.attr(effect.attr(SI_INTERNAL_NAME))(contour, uuid, kwargs));
-            d_py_effect = bp::extract<PySIEffect*>(*d_effect);
-         )
-    }
+    if (effect.is_none())
+        return;
+
+    HANDLE_PYTHON_CALL(PY_ERROR, "Fatal Error. Plugin broken",
+        d_effect = std::make_shared<bp::object>(effect.attr(effect.attr(SI_INTERNAL_NAME))(contour, uuid, kwargs));
+        d_py_effect = bp::extract<PySIEffect*>(*d_effect);
+     )
 }
 
 bool Region::is_transformed() const
@@ -152,37 +154,37 @@ void Region::LINK_SLOT(const std::string& uuid_event, const std::string& uuid_se
 
         std::tuple<std::string, std::string> event = std::make_tuple(uuid_event, source_cap);
 
-        if(!is_link_event_registered(event))
-        {
-            register_link_event(event);
+        if(is_link_event_registered(event))
+            return;
 
-            for(auto& [k, v]: d_py_effect->attr_link_recv()[source_cap])
+        register_link_event(event);
+
+        for(auto& [k, v]: d_py_effect->attr_link_recv()[source_cap])
+        {
+            if(uuid_sender.empty())
+                v(*args);
+            else
             {
-                if(uuid_sender.empty())
-                    v(*args);
-                else
+                if(Context::SIContext()->linking_manager()->is_linked(uuid_sender, source_cap, uuid(), k, ILink::UD))
                 {
-                    if(Context::SIContext()->linking_manager()->is_linked(uuid_sender, source_cap, uuid(), k, ILink::UD))
+                    if (args.is_none())
+                        v();
+                    else
                     {
-                        if (args.is_none())
-                            v();
+                        if (bp::extract<bp::tuple>(args).check())
+                            v(*args);
                         else
                         {
-                            if (bp::extract<bp::tuple>(args).check())
-                                v(*args);
-                            else
-                            {
-                                // this is weird, unsure whether its a hack or not; needs investigation when time
-                                if(!bp::extract<bp::dict>(args).check())
-                                    v(args());
-                            }
+                            // this is weird, unsure whether its a hack or not; needs investigation when time
+                            if(!bp::extract<bp::dict>(args).check())
+                                v(args());
                         }
                     }
                 }
-
-                if(d_py_effect->attr_link_emit().find(k) != d_py_effect->attr_link_emit().end())
-                    Q_EMIT LINK_SIGNAL(uuid_event, uuid(), k, d_py_effect->attr_link_emit()[k]());
             }
+
+            if(d_py_effect->attr_link_emit().find(k) != d_py_effect->attr_link_emit().end())
+                Q_EMIT LINK_SIGNAL(uuid_event, uuid(), k, d_py_effect->attr_link_emit()[k]());
         }
     )
 }
@@ -260,6 +262,8 @@ void Region::update()
     }
 
     move();
+
+    Context::SIContext()->spatial_hash_grid()->update_region(this);
 
     process_canvas_specifics();
     process_linking_relationships();
@@ -341,39 +345,43 @@ void Region::set_is_new(bool toggle)
     d_is_new = toggle;
 }
 
+std::vector<int> &Region::grid_nodes()
+{
+    return d_grid_nodes;
+}
+
+glm::ivec4 &Region::grid_bounds()
+{
+    return d_grid_bounds;
+}
+
 uint8_t Region::handle_collision_event(const std::string &function_name, PySIEffect* colliding_effect)
 {
     for(auto& [capability, emission_functions]: colliding_effect->cap_collision_emit())
     {
         HANDLE_PYTHON_CALL(PY_ERROR, "Fatal Error. Unable to perform collision event " + function_name + " (" + name() + "other: " + colliding_effect->name() + ")",
-           if (d_py_effect->cap_collision_recv().find(capability) != d_py_effect->cap_collision_recv().end())
-           {
-               if(!emission_functions[function_name].is_none())
-               {
-                   const bp::object &t = emission_functions[function_name](*d_effect);
+           if (!d_py_effect->cap_collision_recv().count(capability))
+               continue;
 
-                   if (t.is_none())
-                   {
-                       if(!d_py_effect->cap_collision_recv()[capability][function_name].is_none())
-                       {
-                           d_py_effect->cap_collision_recv()[capability][function_name]();
-                       }
-                   }
-                   else
-                   {
-                       if(!d_py_effect->cap_collision_recv()[capability][function_name].is_none())
-                       {
-                           if (bp::extract<bp::tuple>(t).check())
-                           {
-                               d_py_effect->cap_collision_recv()[capability][function_name](*t);
-                           }
-                           else
-                           {
-                               d_py_effect->cap_collision_recv()[capability][function_name](t);
-                           }
-                       }
-                   }
-               }
+           if(emission_functions[function_name].is_none())
+               continue;
+
+           const bp::object &t = emission_functions[function_name](*d_effect);
+
+           if (t.is_none())
+           {
+               if(!d_py_effect->cap_collision_recv()[capability][function_name].is_none())
+                   d_py_effect->cap_collision_recv()[capability][function_name]();
+           }
+           else
+           {
+               if(d_py_effect->cap_collision_recv()[capability][function_name].is_none())
+                   continue;
+
+               if (bp::extract<bp::tuple>(t).check())
+                   d_py_effect->cap_collision_recv()[capability][function_name](*t);
+               else
+                   d_py_effect->cap_collision_recv()[capability][function_name](t);
            }
         )
     }

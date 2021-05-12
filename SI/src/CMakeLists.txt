@@ -142,6 +142,8 @@ set(SIGRunSRC
         SI/src/sigrun/tangible/SITUIOObject.hpp
         SI/src/sigrun/tangible/SITUIOObject.cpp
         SI/src/sigrun/plugin/PythonInvoker.cpp
+        SI/src/sigrun/context/spatial_grid/SpatialHashGrid.cpp
+        SI/src/sigrun/context/spatial_grid/SpatialHashGrid.hpp
 
         SI/lib/tuio_headers/oscpack/ip/IpEndpointName.h
         SI/lib/tuio_headers/oscpack/ip/IpEndpointName.cpp

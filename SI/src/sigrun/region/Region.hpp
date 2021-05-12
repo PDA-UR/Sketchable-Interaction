@@ -82,6 +82,9 @@ public:
     int32_t x();
     int32_t y();
 
+    std::vector<int>& grid_nodes();
+    glm::ivec4& grid_bounds();
+
 private:
     bool d_is_new = true;
 
@@ -92,6 +95,9 @@ private:
     std::shared_ptr<bp::object> d_effect;
 
     RingBuffer<std::tuple<std::string, std::string>> d_link_events;
+
+    std::vector<int> d_grid_nodes;
+    glm::ivec4 d_grid_bounds;
 
     std::unique_ptr<RegionMask> uprm;
     std::unique_ptr<RegionTransform> uprt;

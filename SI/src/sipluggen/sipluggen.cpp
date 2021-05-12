@@ -5,6 +5,8 @@
 
 namespace fs = boost::filesystem;
 
+// e.g. ./sipluggen -std -p empty/Empty
+
 int main(int argc, char** argv)
 {
     if(argc < 3)
