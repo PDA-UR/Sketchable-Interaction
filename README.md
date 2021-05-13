@@ -20,7 +20,7 @@ The dependencies for all components of SI (SIGRun, SIREn, PySI, SIEGen, SITools,
   * QML
   * libglm
   * uuid
-  * python3.x-dev (replace x with your desired version)
+  * python3.9-dev (replace x with your desired version)
   * libtbb-dev
   
 The recommended way of installing the dependencies except for Boost is:
@@ -36,8 +36,8 @@ The recommended way of installing the dependencies except for Boost is:
     * sudo apt install libglm-dev
   * Install libuuid
     * sudo apt install uuid-dev
-  * Install your desired python3 version's dev library (e.g. 3.7)
-    * sudo apt install python3.7-dev
+  * Install your desired python3 version's dev library (e.g. 3.9)
+    * sudo apt install python3.9-dev
   * Install libtbb-dev
     * sudo apt install libtbb-dev
     
@@ -48,7 +48,7 @@ Using other versions should work, therefore the commands then need adjustments a
 * Download and extract Boost:
   * wget https://sourceforge.net/projects/boost/files/boost/1.69.0/boost_1_69_0.tar.gz/download
   * tar xzf download
-* Configure Boost for use with Python3.7
+* Configure Boost for use with Python3.9
   * Open your terminal
   * Navigate to your extracted Boost folder
   * Run the command: sudo ./bootstrap.sh --with-python=$(which python3)
