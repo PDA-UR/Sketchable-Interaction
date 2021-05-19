@@ -85,28 +85,74 @@ $(document).ready(function(){initNavTree('_region_mask_8cpp.html','');});
 </div>
 
 <div class="header">
+  <div class="summary">
+<a href="#define-members">Macros</a>  </div>
   <div class="headertitle">
 <div class="title">RegionMask.cpp File Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
 <div class="textblock"><code>#include &lt;algorithm&gt;</code><br />
 <code>#include &quot;RegionMask.hpp&quot;</code><br />
+<code>#include &lt;tbb/parallel_for.h&gt;</code><br />
 <code>#include &lt;iostream&gt;</code><br />
-<code>#include &lt;sigrun/log/Log.hpp&gt;</code><br />
+<code>#include &lt;fstream&gt;</code><br />
 </div><div class="textblock"><div class="dynheader">
 Include dependency graph for RegionMask.cpp:</div>
 <div class="dyncontent">
 <div class="center"><img src="_region_mask_8cpp__incl.png" border="0" usemap="#_2home_2juergen_21__dev_2projects_2_sketchable-_interaction_2_s_i_2src_2sigrun_2region_2_region_mask_8cpp" alt=""/></div>
 <map name="_2home_2juergen_21__dev_2projects_2_sketchable-_interaction_2_s_i_2src_2sigrun_2region_2_region_mask_8cpp" id="_2home_2juergen_21__dev_2projects_2_sketchable-_interaction_2_s_i_2src_2sigrun_2region_2_region_mask_8cpp">
-<area shape="rect"  title=" " alt="" coords="141,5,307,76"/>
+<area shape="rect"  title=" " alt="" coords="224,5,389,76"/>
 <area shape="rect"  title=" " alt="" coords="5,124,80,151"/>
 <area shape="rect"  title=" " alt="" coords="104,124,224,151"/>
-<area shape="rect"  title=" " alt="" coords="248,124,320,151"/>
-<area shape="rect"  title=" " alt="" coords="344,124,472,151"/>
+<area shape="rect"  title=" " alt="" coords="248,124,365,151"/>
+<area shape="rect"  title=" " alt="" coords="389,124,461,151"/>
+<area shape="rect"  title=" " alt="" coords="485,124,552,151"/>
 </map>
 </div>
 </div>
 <p><a href="_region_mask_8cpp_source.html">Go to the source code of this file.</a></p>
+<table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="define-members"></a>
+Macros</h2></td></tr>
+<tr class="memitem:ab7dc9d237b9834b916eaf2c340353985"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_region_mask_8cpp.html#ab7dc9d237b9834b916eaf2c340353985">NUM_DEFAULT_SCANLINES</a>&#160;&#160;&#160;24</td></tr>
+<tr class="separator:ab7dc9d237b9834b916eaf2c340353985"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0ccf3406408375f6fca560acda750ecb"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_region_mask_8cpp.html#a0ccf3406408375f6fca560acda750ecb">MASK_DEBUG</a></td></tr>
+<tr class="separator:a0ccf3406408375f6fca560acda750ecb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table>
+<h2 class="groupheader">Macro Definition Documentation</h2>
+<a id="a0ccf3406408375f6fca560acda750ecb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0ccf3406408375f6fca560acda750ecb">&#9670;&nbsp;</a></span>MASK_DEBUG</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define MASK_DEBUG</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<b>Value:</b><div class="fragment"><div class="line">++d_num_called; \</div><div class="line">if(d_num_called &gt; <a class="code" href="_region_mask_8cpp.html#ab7dc9d237b9834b916eaf2c340353985">NUM_DEFAULT_SCANLINES</a>) \</div><div class="line">{ \</div><div class="line">    std::ofstream f; \</div><div class="line">    f.open(<span class="stringliteral">&quot;build/test&quot;</span> + std::to_string(d_num_called) + <span class="stringliteral">&quot;.txt&quot;</span>); \</div><div class="line">    for (<span class="keywordtype">int</span> i = 0; i &lt; d_canvas_height; ++i) \</div><div class="line">    { \</div><div class="line">        for (<span class="keywordtype">int</span> k = 0; k &lt; d_canvas_width; ++k) \</div><div class="line">            f &lt;&lt; (<span class="keywordtype">int</span>) d_values[d_canvas_width * i + k]; \</div><div class="line">        f &lt;&lt; <span class="stringliteral">&quot;\n&quot;</span>; \</div><div class="line">    } \</div><div class="line">    f.close();\</div><div class="line">}</div><div class="ttc" id="_region_mask_8cpp_html_ab7dc9d237b9834b916eaf2c340353985"><div class="ttname"><a href="_region_mask_8cpp.html#ab7dc9d237b9834b916eaf2c340353985">NUM_DEFAULT_SCANLINES</a></div><div class="ttdeci">#define NUM_DEFAULT_SCANLINES</div><div class="ttdef"><b>Definition:</b> <a href="_region_mask_8cpp_source.html#l00012">RegionMask.cpp:12</a></div></div>
+</div><!-- fragment -->
+<p class="definition">Definition at line <a class="el" href="_region_mask_8cpp_source.html#l00014">14</a> of file <a class="el" href="_region_mask_8cpp_source.html">RegionMask.cpp</a>.</p>
+
+</div>
+</div>
+<a id="ab7dc9d237b9834b916eaf2c340353985"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab7dc9d237b9834b916eaf2c340353985">&#9670;&nbsp;</a></span>NUM_DEFAULT_SCANLINES</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define NUM_DEFAULT_SCANLINES&#160;&#160;&#160;24</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="_region_mask_8cpp_source.html#l00012">12</a> of file <a class="el" href="_region_mask_8cpp_source.html">RegionMask.cpp</a>.</p>
+
+</div>
+</div>
 </div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->

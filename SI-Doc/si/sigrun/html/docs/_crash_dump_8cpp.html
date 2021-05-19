@@ -134,7 +134,7 @@ Macros</h2></td></tr>
 <tr class="separator:a6a89c0d127eb7aec1e543529eb6904fd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af7b0887c99d5bd54351fa1267fda6ad8"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_crash_dump_8cpp.html#af7b0887c99d5bd54351fa1267fda6ad8">TXT_FILE</a>&#160;&#160;&#160;std::string(&quot;txt&quot;)</td></tr>
 <tr class="separator:af7b0887c99d5bd54351fa1267fda6ad8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6e14f68abb94e4ea16058db799d22284"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_crash_dump_8cpp.html#a6e14f68abb94e4ea16058db799d22284">GCORE_COMMAND</a>&#160;&#160;&#160;&quot;gcore -a -o &quot; + PARENTFOLDERPATH + &quot;/&quot; + <a class="el" href="_crash_dump_8cpp.html#a9e825943e5094505f31c6c0fc141e1a2">SIGRUN_CRASH_NAME_PREFIX</a> + datetime + &quot;/&quot; + <a class="el" href="_crash_dump_8cpp.html#a0af2d88c3aa090acd9b85d8bd9640833">SIGRUN_CRASH_CORE_DUMP_FILENAME</a> + &quot; &quot; + std::to_string(getpid())</td></tr>
+<tr class="memitem:a6e14f68abb94e4ea16058db799d22284"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_crash_dump_8cpp.html#a6e14f68abb94e4ea16058db799d22284">GCORE_COMMAND</a>&#160;&#160;&#160;&quot;sudo gcore -a -o &quot; + PARENTFOLDERPATH + &quot;/&quot; + <a class="el" href="_crash_dump_8cpp.html#a9e825943e5094505f31c6c0fc141e1a2">SIGRUN_CRASH_NAME_PREFIX</a> + datetime + &quot;/&quot; + <a class="el" href="_crash_dump_8cpp.html#a0af2d88c3aa090acd9b85d8bd9640833">SIGRUN_CRASH_CORE_DUMP_FILENAME</a> + &quot; &quot; + std::to_string(getpid())</td></tr>
 <tr class="separator:a6e14f68abb94e4ea16058db799d22284"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Macro Definition Documentation</h2>
@@ -177,7 +177,7 @@ Macros</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">#define GCORE_COMMAND&#160;&#160;&#160;&quot;gcore -a -o &quot; + PARENTFOLDERPATH + &quot;/&quot; + <a class="el" href="_crash_dump_8cpp.html#a9e825943e5094505f31c6c0fc141e1a2">SIGRUN_CRASH_NAME_PREFIX</a> + datetime + &quot;/&quot; + <a class="el" href="_crash_dump_8cpp.html#a0af2d88c3aa090acd9b85d8bd9640833">SIGRUN_CRASH_CORE_DUMP_FILENAME</a> + &quot; &quot; + std::to_string(getpid())</td>
+          <td class="memname">#define GCORE_COMMAND&#160;&#160;&#160;&quot;sudo gcore -a -o &quot; + PARENTFOLDERPATH + &quot;/&quot; + <a class="el" href="_crash_dump_8cpp.html#a9e825943e5094505f31c6c0fc141e1a2">SIGRUN_CRASH_NAME_PREFIX</a> + datetime + &quot;/&quot; + <a class="el" href="_crash_dump_8cpp.html#a0af2d88c3aa090acd9b85d8bd9640833">SIGRUN_CRASH_CORE_DUMP_FILENAME</a> + &quot; &quot; + std::to_string(getpid())</td>
         </tr>
       </table>
 </div><div class="memdoc">
