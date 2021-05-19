@@ -11,7 +11,7 @@
 #include <QGraphicsItem>
 #include <debug/Print.hpp>
 
-RegionRepresentation::RegionRepresentation(QQmlContext* c, QQmlEngine* e, const std::shared_ptr<Region>& region, QGraphicsView* parent):
+RegionRepresentation::RegionRepresentation(QQmlContext* c, const std::shared_ptr<Region>& region, QGraphicsView* parent):
     d_color(QColor(region->color().r, region->color().g, region->color().b, region->color().a)),
     d_qml_path(region->qml_path()),
     d_type(region->type()),
@@ -22,8 +22,8 @@ RegionRepresentation::RegionRepresentation(QQmlContext* c, QQmlEngine* e, const 
 {
     if(!d_qml_path.empty())
     {
-        d_view = new QQuickWidget(e, parent);
-        QQmlComponent* component = new QQmlComponent(e, d_qml_path.c_str());
+        d_view = new QQuickWidget(c->engine(), parent);
+        QQmlComponent* component = new QQmlComponent(c->engine(), d_qml_path.c_str());
         d_view->setContent(component->url(), component, component->create(c));
 
         d_view->rootContext()->setContextProperty("REGION", this);
