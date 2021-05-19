@@ -1,7 +1,6 @@
 
 from libPySI import PySI
 from plugins.__loaded_plugins__.standard_environment_library.notification import SimpleNotification
-from plugins.__loaded_plugins__.standard_environment_library.tag import Tag
 from plugins.__loaded_plugins__.standard_environment_library.filesystem import Directory
 from plugins.__loaded_plugins__.standard_environment_library.cursor import Cursor
 from plugins.__loaded_plugins__.standard_environment_library.deletion import Deletion

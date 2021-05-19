@@ -103,7 +103,7 @@ std::string Scripting::transpile(std::string& path, const std::string& path_addi
         it += calls.size();
         auto it_start = lines.begin() + line_constructor_start;
 
-        lines.insert(it, std::string("        except Exception as ex:\n            print('Exception caught in file %s !' % __file__)\n            print(type(ex).__name__)\n            print(ex.args)"));
+        lines.insert(it, std::string("        except Exception as ex:\n            self.__handle_exception__(ex, __file__)"));
         lines.insert(it_start, std::string("        try:"));
     }
 
