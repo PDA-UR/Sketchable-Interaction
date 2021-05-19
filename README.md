@@ -3,7 +3,7 @@
 **Reference implementation of a novel and generic computational environment for defining user interfaces and workflows**
 
 ##  Plugins
-https://github.com/PDA-UR/Sketchable-Interaction-Plugins
+[Plugin Repository](https://github.com/PDA-UR/Sketchable-Interaction-Plugins)
 
 ## Documentation:
 * [SIGRun](https://pda-ur.github.io/Sketchable-Interaction/SI-Doc/si/sigrun/html/docs/index.html)
