@@ -5,6 +5,7 @@
 #include <algorithm>
 #include <Qt>
 #include <siren/timing/Timing.hpp>
+#include <debug/Print.hpp>
 
 MainWindow::MainWindow(uint32_t width, uint32_t height, uint32_t target_fps):
     QGraphicsView(),
@@ -31,7 +32,6 @@ MainWindow::MainWindow(uint32_t width, uint32_t height, uint32_t target_fps):
     setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
     setScene(p_scene);
-    setViewport(new QOpenGLWidget);
     setRenderHint(QPainter::Antialiasing);
 }
 
@@ -129,7 +129,7 @@ void MainWindow::handle_region_representations()
 
         if(it == d_reg_reps.end())
         {
-            d_reg_reps.push_back(new RegionRepresentation(d_qmlcontext, d_engine, reg, this));
+            d_reg_reps.push_back(new RegionRepresentation(d_qmlcontext, reg, this));
             p_scene->addItem(d_reg_reps.back());
 
             if(!d_reg_reps.back()->qml_path().empty())

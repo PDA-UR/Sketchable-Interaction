@@ -28,7 +28,7 @@ bool SpatialHashGrid::has_shared_cell(Region *a, Region *b)
     const std::vector<int>& a_nodes = a->grid_nodes();
     const std::vector<int>& b_nodes = b->grid_nodes();
 
-    return std::find_first_of(std::execution::par_unseq, a_nodes.begin(), a_nodes.end(), b_nodes.begin(), b_nodes.end()) != a_nodes.end();
+    return std::find_first_of(a_nodes.begin(), a_nodes.end(), b_nodes.begin(), b_nodes.end()) != a_nodes.end();
 }
 
 int SpatialHashGrid::cell_index(int x, int y)
