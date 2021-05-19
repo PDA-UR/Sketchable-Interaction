@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.15"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>SIGRun: /home/juergen/1_dev/projects/Sketchable-Interaction/SI/src/siren/background/UpdateWorker.cpp File Reference</title>
+<title>SIGRun: /home/juergen/1_dev/projects/Sketchable-Interaction/SI/src/e/E.cpp File Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -66,7 +66,7 @@ $(function() {
 </div>
 <script type="text/javascript">
 /* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
-$(document).ready(function(){initNavTree('_update_worker_8cpp.html','');});
+$(document).ready(function(){initNavTree('_e_8cpp.html','');});
 /* @license-end */
 </script>
 <div id="doc-content">
@@ -85,34 +85,69 @@ $(document).ready(function(){initNavTree('_update_worker_8cpp.html','');});
 </div>
 
 <div class="header">
+  <div class="summary">
+<a href="#func-members">Functions</a>  </div>
   <div class="headertitle">
-<div class="title">UpdateWorker.cpp File Reference</div>  </div>
+<div class="title">E.cpp File Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><code>#include &quot;UpdateWorker.hpp&quot;</code><br />
-<code>#include &lt;QApplication&gt;</code><br />
+<div class="textblock"><code>#include &quot;E.hpp&quot;</code><br />
+<code>#include &lt;string&gt;</code><br />
+<code>#include &lt;fstream&gt;</code><br />
+<code>#include &lt;streambuf&gt;</code><br />
+<code>#include &lt;iostream&gt;</code><br />
+<code>#include &lt;pugixml.hpp&gt;</code><br />
+<code>#include &lt;zconf.h&gt;</code><br />
 </div><div class="textblock"><div class="dynheader">
-Include dependency graph for UpdateWorker.cpp:</div>
+Include dependency graph for E.cpp:</div>
 <div class="dyncontent">
-<div class="center"><img src="_update_worker_8cpp__incl.png" border="0" usemap="#_2home_2juergen_21__dev_2projects_2_sketchable-_interaction_2_s_i_2src_2siren_2background_2_update_worker_8cpp" alt=""/></div>
-<map name="_2home_2juergen_21__dev_2projects_2_sketchable-_interaction_2_s_i_2src_2siren_2background_2_update_worker_8cpp" id="_2home_2juergen_21__dev_2projects_2_sketchable-_interaction_2_s_i_2src_2siren_2background_2_update_worker_8cpp">
-<area shape="rect"  title=" " alt="" coords="239,5,443,76"/>
-<area shape="rect"  title=" " alt="" coords="5,124,135,151"/>
-<area shape="rect"  title=" " alt="" coords="159,124,229,151"/>
-<area shape="rect"  title=" " alt="" coords="254,124,331,151"/>
-<area shape="rect"  title=" " alt="" coords="356,124,421,151"/>
-<area shape="rect"  title=" " alt="" coords="446,124,558,151"/>
-<area shape="rect"  title=" " alt="" coords="582,124,678,151"/>
+<div class="center"><img src="_e_8cpp__incl.png" border="0" usemap="#_2home_2juergen_21__dev_2projects_2_sketchable-_interaction_2_s_i_2src_2e_2_e_8cpp" alt=""/></div>
+<map name="_2home_2juergen_21__dev_2projects_2_sketchable-_interaction_2_s_i_2src_2e_2_e_8cpp" id="_2home_2juergen_21__dev_2projects_2_sketchable-_interaction_2_s_i_2src_2e_2_e_8cpp">
+<area shape="rect"  title=" " alt="" coords="321,5,495,61"/>
+<area shape="rect"  title=" " alt="" coords="5,109,61,136"/>
+<area shape="rect"  title=" " alt="" coords="86,109,223,136"/>
+<area shape="rect"  title=" " alt="" coords="247,109,302,136"/>
+<area shape="rect"  title=" " alt="" coords="327,109,393,136"/>
+<area shape="rect"  title=" " alt="" coords="417,109,497,136"/>
+<area shape="rect"  title=" " alt="" coords="521,109,593,136"/>
+<area shape="rect"  title=" " alt="" coords="618,109,710,136"/>
+<area shape="rect"  title=" " alt="" coords="734,109,799,136"/>
 </map>
 </div>
 </div>
-<p><a href="_update_worker_8cpp_source.html">Go to the source code of this file.</a></p>
+<p><a href="_e_8cpp_source.html">Go to the source code of this file.</a></p>
+<table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
+Functions</h2></td></tr>
+<tr class="memitem:ae66f6b31b5ad750f1fe042a706a4e3d4"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_e_8cpp.html#ae66f6b31b5ad750f1fe042a706a4e3d4">main</a> ()</td></tr>
+<tr class="separator:ae66f6b31b5ad750f1fe042a706a4e3d4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table>
+<h2 class="groupheader">Function Documentation</h2>
+<a id="ae66f6b31b5ad750f1fe042a706a4e3d4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae66f6b31b5ad750f1fe042a706a4e3d4">&#9670;&nbsp;</a></span>main()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int main </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="_e_8cpp_source.html#l00063">63</a> of file <a class="el" href="_e_8cpp_source.html">E.cpp</a>.</p>
+
+</div>
+</div>
 </div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="navelem"><a class="el" href="dir_38f2f3d5dc201515ebf546cd419e86e4.html">SI</a></li><li class="navelem"><a class="el" href="dir_40d599b07c8ca68b2235b4647510eee5.html">src</a></li><li class="navelem"><a class="el" href="dir_1c1c4d555e13f9ac62c4c59de880ed25.html">siren</a></li><li class="navelem"><a class="el" href="dir_bea1a1350c060e860a33a001749e43f8.html">background</a></li><li class="navelem"><a class="el" href="_update_worker_8cpp.html">UpdateWorker.cpp</a></li>
+    <li class="navelem"><a class="el" href="dir_38f2f3d5dc201515ebf546cd419e86e4.html">SI</a></li><li class="navelem"><a class="el" href="dir_40d599b07c8ca68b2235b4647510eee5.html">src</a></li><li class="navelem"><a class="el" href="dir_b28dee631995cced6a8aa3ab89ebafc6.html">e</a></li><li class="navelem"><a class="el" href="_e_8cpp.html">E.cpp</a></li>
     <li class="footer">Generated by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.15 </li>

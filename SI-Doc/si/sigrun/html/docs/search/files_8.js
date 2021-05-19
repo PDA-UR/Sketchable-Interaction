@@ -1,10 +1,11 @@
 var searchData=
 [
-  ['region_2ecpp',['Region.cpp',['../_region_8cpp.html',1,'']]],
-  ['regionmanager_2ecpp',['RegionManager.cpp',['../_region_manager_8cpp.html',1,'']]],
-  ['regionmask_2ecpp',['RegionMask.cpp',['../_region_mask_8cpp.html',1,'']]],
-  ['regionrepresentation_2ecpp',['RegionRepresentation.cpp',['../_region_representation_8cpp.html',1,'']]],
-  ['regionresampler_2ecpp',['RegionResampler.cpp',['../_region_resampler_8cpp.html',1,'']]],
-  ['regiontransform_2ecpp',['RegionTransform.cpp',['../_region_transform_8cpp.html',1,'']]],
-  ['renderengineqt5_2ecpp',['RenderEngineQt5.cpp',['../_render_engine_qt5_8cpp.html',1,'']]]
+  ['partialregionrepresentation_2ecpp',['PartialRegionRepresentation.cpp',['../_partial_region_representation_8cpp.html',1,'']]],
+  ['plotitem_2ecpp',['PlotItem.cpp',['../_plot_item_8cpp.html',1,'']]],
+  ['plugincollector_2ecpp',['PluginCollector.cpp',['../_plugin_collector_8cpp.html',1,'']]],
+  ['print_2ecpp',['Print.cpp',['../_print_8cpp.html',1,'']]],
+  ['pysi_2ecpp',['PySI.cpp',['../_py_s_i_8cpp.html',1,'']]],
+  ['pysieffect_2ecpp',['PySIEffect.cpp',['../_py_s_i_effect_8cpp.html',1,'']]],
+  ['pysistartup_2ecpp',['PySIStartup.cpp',['../_py_s_i_startup_8cpp.html',1,'']]],
+  ['pythoninvoker_2ecpp',['PythonInvoker.cpp',['../_python_invoker_8cpp.html',1,'']]]
 ];

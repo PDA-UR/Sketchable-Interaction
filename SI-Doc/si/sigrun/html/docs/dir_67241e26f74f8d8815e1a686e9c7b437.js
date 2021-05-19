@@ -5,5 +5,6 @@ var dir_67241e26f74f8d8815e1a686e9c7b437 =
     [ "ExternalApplicationManager.cpp", "_external_application_manager_8cpp.html", null ],
     [ "InputManager.cpp", "_input_manager_8cpp.html", null ],
     [ "LinkingManager.cpp", "_linking_manager_8cpp.html", null ],
-    [ "RegionManager.cpp", "_region_manager_8cpp.html", null ]
+    [ "RegionManager.cpp", "_region_manager_8cpp.html", null ],
+    [ "TangibleManager.cpp", "_tangible_manager_8cpp.html", null ]
 ];
