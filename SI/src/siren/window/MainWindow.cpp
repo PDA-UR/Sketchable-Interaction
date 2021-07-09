@@ -57,7 +57,7 @@ void MainWindow::loop()
 
         if(frame_counter > 1.0)
         {
-            INFO(frames);
+//            Print::print(frames);
             frame_counter = 0.0;
             frames = 0;
         }
@@ -131,9 +131,6 @@ void MainWindow::handle_region_representations()
         {
             d_reg_reps.push_back(new RegionRepresentation(d_qmlcontext, reg, this));
             p_scene->addItem(d_reg_reps.back());
-
-            if(!d_reg_reps.back()->qml_path().empty())
-                d_reg_reps.back()->view()->show();
         }
         else
         {

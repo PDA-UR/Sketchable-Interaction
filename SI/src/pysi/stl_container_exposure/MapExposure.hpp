@@ -253,10 +253,12 @@ public:
 private:
 };
 
-template <typename MapExposureType, typename MapType>
+template <typename MapExposureType, typename MapType, typename PickleSuite>
 bp::class_<MapType> create_map(const char* name)
 {
     return bp::class_<MapType>(name, bp::no_init)
+            .enable_pickling()
+
             .def("__init__", bp::make_constructor(&MapExposureType::init, bp::default_call_policies(), (bp::arg("dict")=bp::dict())))
             .def("__len__", &MapType::size)
             .def("clear", &MapType::clear)
@@ -271,8 +273,6 @@ bp::class_<MapType> create_map(const char* name)
             .def("items", &MapExposure<MapType>::items)
             .def("index", &MapExposure<MapType>::index)
             .def("__repr__", &MapExposureType::repr)
-
-            .enable_pickling()
             ;
 }
 

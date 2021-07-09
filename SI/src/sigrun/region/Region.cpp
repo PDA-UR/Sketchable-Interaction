@@ -69,6 +69,7 @@ void Region::set_effect(const bp::object& effect, const bp::dict& kwargs)
     HANDLE_PYTHON_CALL(PY_ERROR, "Fatal Error. Plugin broken",
         d_effect = std::make_shared<bp::object>(effect.attr(effect.attr(SI_INTERNAL_NAME))(d_py_effect->contour(), d_py_effect->uuid(), kwargs));
 
+//        char* s = bp::extract<char*>(bp::str(d_effect->attr("__dict__")));
         d_py_effect = bp::extract<PySIEffect*>(*d_effect);
     )
 }
@@ -80,6 +81,7 @@ void Region::set_effect(const std::vector<glm::vec3>& contour, const bp::object&
 
     HANDLE_PYTHON_CALL(PY_ERROR, "Fatal Error. Plugin broken",
         d_effect = std::make_shared<bp::object>(effect.attr(effect.attr(SI_INTERNAL_NAME))(contour, uuid, kwargs));
+//        char* s = bp::extract<char*>(bp::str(d_effect->attr("__dict__")));
         d_py_effect = bp::extract<PySIEffect*>(*d_effect);
      )
 }
@@ -362,28 +364,31 @@ uint8_t Region::handle_collision_event(const std::string &function_name, PySIEff
     for(auto& [capability, emission_functions]: colliding_effect->cap_collision_emit())
     {
         HANDLE_PYTHON_CALL(PY_ERROR, "Fatal Error. Unable to perform collision event " + function_name + " (" + name() + "other: " + colliding_effect->name() + ")",
-           if (!d_py_effect->cap_collision_recv().count(capability))
-               continue;
+            if (emission_functions[function_name].is_none() || !d_py_effect->cap_collision_recv().count(capability))
+                continue;
 
-           if(emission_functions[function_name].is_none())
-               continue;
+//            bp::object T = bp::import("concurrent.futures").attr("ThreadPoolExecutor")().attr("submit")(emission_functions[function_name], *d_effect);
+//            const bp::object& t = T.attr("result")();
 
-           const bp::object &t = emission_functions[function_name](*d_effect);
+            const bp::object& t = emission_functions[function_name](*d_effect);
 
-           if (t.is_none())
-           {
-               if(!d_py_effect->cap_collision_recv()[capability][function_name].is_none())
+            if (t.is_none())
+            {
+                if(!d_py_effect->cap_collision_recv()[capability][function_name].is_none())
+//                    bp::import("threading").attr("Thread")(bp::object(), d_py_effect->cap_collision_recv()[capability][function_name]).attr("start")();
                    d_py_effect->cap_collision_recv()[capability][function_name]();
-           }
-           else
-           {
-               if(d_py_effect->cap_collision_recv()[capability][function_name].is_none())
-                   continue;
+            }
+            else
+            {
+                if(d_py_effect->cap_collision_recv()[capability][function_name].is_none())
+                    continue;
 
-               if (bp::extract<bp::tuple>(t).check())
-                   d_py_effect->cap_collision_recv()[capability][function_name](*t);
-               else
-                   d_py_effect->cap_collision_recv()[capability][function_name](t);
+                if (bp::extract<bp::tuple>(t).check())
+                    d_py_effect->cap_collision_recv()[capability][function_name](*t);
+//                    bp::import("threading").attr("Thread")(bp::object(), d_py_effect->cap_collision_recv()[capability][function_name], bp::object(), t).attr("start")();
+                else
+//                    bp::import("threading").attr("Thread")(bp::object(), d_py_effect->cap_collision_recv()[capability][function_name], bp::object(), bp::make_tuple(t)).attr("start")();
+                    d_py_effect->cap_collision_recv()[capability][function_name](t);
            }
         )
     }

@@ -14,14 +14,14 @@ public:
     TangibleManager();
     ~TangibleManager();
 
-    void update(SITUIOObject *tobj);
+    void update(SITUIOObject *tobj, int sw, int sh);
     void remove(int s_id);
 
     const std::vector<int>& tangible_ids();
 
 private:
-    void add_tangible(SITUIOObject *tobj);
-    void update_tangible(SITUIOObject *tobj);
+    void add_tangible(SITUIOObject *tobj, int sw, int sh);
+    void update_tangible(SITUIOObject *tobj, int sw, int sh);
 
     Region* associated_region(int s_id);
 

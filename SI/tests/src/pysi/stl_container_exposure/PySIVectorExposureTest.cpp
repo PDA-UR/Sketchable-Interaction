@@ -7,6 +7,7 @@
 #include <string>
 #include <sigrun/util/Util.hpp>
 #include <pysi/stl_container_exposure/VectorExposure.hpp>
+#include <pysi/pickling/PickleSuits.hpp>
 
 namespace bp = boost::python;
 
@@ -528,7 +529,7 @@ TEST_F(PySIVectorExposureTest, create_vector)
 {
     Scripting script;
 
-    create_vector<VectorExposureVec3, std::vector<glm::vec3>>("TEST1");
-    create_vector<VectorExposureLinkRelation, std::vector<LinkCandidate>>("TEST2");
-    create_vector<VectorExposureString, std::vector<std::string>>("TEST3");
+    create_vector<VectorExposureVec3, std::vector<glm::vec3>, PointVectorPickleSuite>("TEST1");
+    create_vector<VectorExposureLinkRelation, std::vector<LinkCandidate>, LinkRelationVectorPickleSuite>("TEST2");
+    create_vector<VectorExposureString, std::vector<std::string>, StringVectorPickleSuite>("TEST3");
 }

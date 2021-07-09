@@ -35,6 +35,9 @@ public:
     TangibleListener();
 
 private:
+    int d_source_width = 0;
+    int d_source_height = 0;
+
     std::vector<osc::ReceivedMessage> d_bundle;
     std::vector<SITUIOObject*> d_current_objects;
 

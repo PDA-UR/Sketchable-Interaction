@@ -45,7 +45,7 @@ Scripting::Scripting()
                               "    def wrap(func):\n" +
                               "        def wrapped_func(*args, **kwargs):\n" +
                               "            with open(filename, \'a\') as outputfile:\n" +
-                              "                outputfile.write(str(*args) + \",\" + str(**kwargs))\n" +
+                              "                outputfile.write(str(args).replace(chr(0), '') + \",\" + str(**kwargs).replace(chr(0), ''))\n" +
                               "            return func(\"PySI:\", *args, **kwargs)\n" +
                               "        return wrapped_func\n" +
                               "    return wrap\n\n" +
@@ -138,7 +138,7 @@ void Scripting::extract_line_constructor(int& start, int& end,const std::vector<
         {
             if(lines[k].find("def ") != std::string::npos)
             {
-                end = k - 1;
+                end = lines[k - 2].find("@UnRedoable") != std::string::npos ? k - 2: k - 1;
                 return;
             }
         }
@@ -173,6 +173,7 @@ void Scripting::extract_calls(std::vector<std::string>& calls, std::unordered_ma
         transmission_type = tmp[1].substr(0, tmp[1].find(")"));
 
         std::string temp = lines[i + 1];
+
         temp = temp.substr(temp.find_first_not_of(" \n\r\t\f\v"));
 
         target_function = str_split(temp, '(')[0];
