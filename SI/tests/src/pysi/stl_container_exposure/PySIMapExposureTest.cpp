@@ -7,6 +7,7 @@
 #include <boost/shared_ptr.hpp>
 #include <glm/glm.hpp>
 #include <string>
+#include <pysi/pickling/PickleSuits.hpp>
 
 namespace bp = boost::python;
 
@@ -433,7 +434,7 @@ TEST_F(PySIMapExposureTest, MapExposureString2_String2FunctionMap_Map_repr)
 }
 TEST_F(PySIMapExposureTest, create_map)
 {
-    create_map<MapExposurePartialContour, std::map<std::string, std::vector<glm::vec3>>>("TEST1");
-    create_map<MapExposureString2Function, std::map<std::string, bp::object>>("TEST2");
-    create_map<MapExposureString2_String2FunctionMap_Map, std::map<std::string, std::map<std::string, bp::object>>>("TEST3");
+    create_map<MapExposurePartialContour, std::map<std::string, std::vector<glm::vec3>>, MapExposurePartialContour>("TEST1");
+    create_map<MapExposureString2Function, std::map<std::string, bp::object>, MapExposureString2Function>("TEST2");
+    create_map<MapExposureString2_String2FunctionMap_Map, std::map<std::string, std::map<std::string, bp::object>>, MapExposureString2_String2FunctionMap_Map>("TEST3");
 }

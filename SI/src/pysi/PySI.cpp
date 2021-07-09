@@ -4,6 +4,7 @@
 #include "pysi/stl_container_exposure/VectorExposure.hpp"
 #include "PySIStartup.hpp"
 #include <sigrun/SIConstants.hpp>
+#include <pysi/pickling/PickleSuits.hpp>
 
 BOOST_PYTHON_MODULE(libPySI)
 {
@@ -13,47 +14,50 @@ BOOST_PYTHON_MODULE(libPySI)
         bp::scope effect_scope = bp::class_<PySIEffect>("PySI",bp::init<const std::vector<glm::vec3> &, const std::string &, const std::string &, const bp::dict &>());
 
         bp::class_<glm::vec2>("Point2", bp::init<float, float>())
+                .def_pickle(Point2PickleSuit())
+
                 .def_readwrite("x", &glm::vec2::x)
                 .def_readwrite("y", &glm::vec2::y)
-
-                .enable_pickling()
                 ;
 
         bp::class_<glm::vec3>("Point3", bp::init<float, float, float>())
+                .def_pickle(Point3PickleSuit())
+
                 .def_readwrite("x", &glm::vec3::x)
                 .def_readwrite("y", &glm::vec3::y)
                 .def_readwrite("z", &glm::vec3::z)
-
-                .enable_pickling()
                 ;
 
         bp::class_<glm::vec4>("Color", bp::init<float, float, float, float>())
+                .def_pickle(ColorPickleSuit())
+
                 .def_readwrite("r", &glm::vec4::r)
                 .def_readwrite("g", &glm::vec4::g)
                 .def_readwrite("b", &glm::vec4::b)
                 .def_readwrite("a", &glm::vec4::a)
-
-                .enable_pickling()
                 ;
 
         bp::class_<LinkCandidate>("LinkRelation",bp::init<const std::string &, const std::string &, const std::string &, const std::string &>())
+                .def_pickle(LinkRelationPickleSuit())
+
                 .def_readwrite("sender", &LinkCandidate::sender)
                 .def_readwrite("sender_attrib", &LinkCandidate::sender_attrib)
                 .def_readwrite("recv", &LinkCandidate::recv)
                 .def_readwrite("recv_attrib", &LinkCandidate::recv_attrib)
-
-                .enable_pickling()
                 ;
 
-        create_vector<VectorExposureVec3, std::vector<glm::vec3>>("PointVector");
-        create_vector<VectorExposureLinkRelation, std::vector<LinkCandidate>>("LinkRelationVector");
-        create_vector<VectorExposureString, std::vector<std::string>>("StringVector");
+        create_vector<VectorExposureVec3, std::vector<glm::vec3>, PointVectorPickleSuite>("PointVector");
+        create_vector<VectorExposureLinkRelation, std::vector<LinkCandidate>, LinkRelationVectorPickleSuite>("LinkRelationVector");
+        create_vector<VectorExposureString, std::vector<std::string>, StringVectorPickleSuite>("StringVector");
 
-        create_map<MapExposurePartialContour, std::unordered_map<std::string, std::vector<glm::vec3>>>("PartialContour");
-        create_map<MapExposureString2Function, std::unordered_map<std::string, bp::object>>("String2FunctionMap");
-        create_map<MapExposureString2_String2FunctionMap_Map, std::unordered_map<std::string, std::unordered_map<std::string, bp::object>>>("String2String2FunctionMapMap");
+        create_map<MapExposurePartialContour, std::unordered_map<std::string, std::vector<glm::vec3>>, PartialContourPickleSuite>("PartialContour");
+        create_map<MapExposureString2Function, std::unordered_map<std::string, bp::object>, String2FunctionMapPickleSuite>("String2FunctionMap");
+        create_map<MapExposureString2_String2FunctionMap_Map, std::unordered_map<std::string, std::unordered_map<std::string, bp::object>>, String2String2FunctionMapMapPickleSuite>("String2String2FunctionMapMap");
 
-        bp::class_<PySIEffect, boost::noncopyable>("Effect",bp::init<const std::vector<glm::vec3> &, const std::string &, const std::string &, const bp::dict &>())
+        // , boost::noncopyable
+        bp::class_<PySIEffect>("Effect",bp::init<const std::vector<glm::vec3> &, const std::string &, const std::string &, const bp::dict &>())
+                .def_pickle(EffectPickleSuit())
+
                 .def("__set_data__", &PySIEffect::__set_data__)
                 .def("__signal_deletion__", &PySIEffect::__signal_deletion__)
                 .def("__embed_file_standard_appliation_into_context__", &PySIEffect::__embed_file_standard_appliation_into_context__)
@@ -70,8 +74,7 @@ BOOST_PYTHON_MODULE(libPySI)
 
                 .add_property("shape", &PySIEffect::get_shape, &PySIEffect::set_shape)
 
-                .def_readonly("aabb", &PySIEffect::d_aabb)
-
+                .def_readwrite("aabb", &PySIEffect::d_aabb)
                 .def_readwrite("__recompute_collision_mask__", &PySIEffect::d_recompute_mask)
                 .def_readwrite("__partial_regions__", &PySIEffect::d_partial_regions)
                 .def_readwrite("__registered_regions__", &PySIEffect::d_regions_marked_for_registration)
@@ -84,7 +87,6 @@ BOOST_PYTHON_MODULE(libPySI)
                 .def_readwrite("y", &PySIEffect::d_y)
                 .def_readwrite("transform_x", &PySIEffect::d_transform_x)
                 .def_readwrite("transform_y", &PySIEffect::d_transform_y)
-                .def_readwrite("y", &PySIEffect::d_y)
                 .def_readwrite("width", &PySIEffect::d_width)
                 .def_readwrite("height", &PySIEffect::d_height)
                 .def_readwrite("angle_degrees", &PySIEffect::d_angle_deg)
@@ -102,10 +104,7 @@ BOOST_PYTHON_MODULE(libPySI)
                 .def_readwrite("mouse_wheel_angle_px", &PySIEffect::mouse_wheel_angle_px)
                 .def_readwrite("mouse_wheel_angle_degrees", &PySIEffect::mouse_wheel_angle_degrees)
                 .def_readwrite("with_border", &PySIEffect::d_with_border)
-
-                .enable_pickling()
                 ;
-
 
         bp::enum_<uint32_t>("DataType")
                 .value("INT", SI_DATA_TYPE_INT)
@@ -113,6 +112,7 @@ BOOST_PYTHON_MODULE(libPySI)
                 .value("BOOL", SI_DATA_TYPE_BOOL)
                 .value("STRING", SI_DATA_TYPE_STRING)
                 .value("IMAGE_AS_BYTES", SI_DATA_TYPE_IMAGE_AS_BYTES)
+                .value("VIDEO", SI_DATA_TYPE_VIDEO)
 
                 .export_values()
                 ;
@@ -193,8 +193,6 @@ BOOST_PYTHON_MODULE(libPySI)
             linking_capability.attr("COLOR") = SI_CAPABILITY_LINK_COLOR;
             linking_capability.attr("GEOMETRY") = SI_CAPABILITY_LINK_GEOMETRY;
         }
-
-
 
             bp::class_<PySIStartup, boost::noncopyable>("Startup", bp::no_init)
                 .def("available_plugins_by_name", &PySIEffect::__available_plugins_by_name__).staticmethod("available_plugins_by_name")

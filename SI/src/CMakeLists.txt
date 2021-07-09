@@ -4,7 +4,10 @@ project(SIEngine)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
+set(CMAKE_PREFIX_PATH "~/sw/Qt/Qt_5_4/5.4/gcc_64/")
 
+# sudo apt install python3.9-dev
+# Boost System, Filesystem, Boost.Python compilen mit Python3.9
 # dependent on current install of boostpython  |
 #                                              v
 find_package(Boost 1.69.0 COMPONENTS system python3.9 filesystem REQUIRED)
@@ -28,10 +31,11 @@ set(PATH_INCLUDE_OSC_HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/SI/lib/tuio_headers/osc
 set(THREADS_PREFER_PTHREAD_FLAG ON) # linux only
 find_package(Threads REQUIRED) # linux only
 
-find_package(Qt5Widgets REQUIRED)
+FIND_PACKAGE(Qt5Widgets REQUIRED)
 FIND_PACKAGE(Qt5Qml REQUIRED)
 FIND_PACKAGE(Qt5QuickWidgets REQUIRED)
 FIND_PACKAGE(Qt5Quick REQUIRED)
+FIND_PACKAGE(Qt5Multimedia REQUIRED)
 
 OPTION(DEFINE_TEST "ENABLE TEST MODE" OFF)
 
@@ -52,6 +56,7 @@ target_link_libraries(PySI
         ${PYTHON_LIBRARIES} 
         ${Boost_LIBRARIES}
         Qt5::Widgets
+        Qt5::Multimedia
         -ltbb)
 
 target_precompile_headers(PySI
@@ -64,6 +69,7 @@ target_precompile_headers(PySI
         <execution>
         <QVariant>
         <map>
+        SI/src/pysi/pickling/PickleSuits.hpp
         SI/src/pysi/stl_container_exposure/VectorExposure.hpp
         SI/src/pysi/stl_container_exposure/MapExposure.hpp
         <boost/python/suite/indexing/vector_indexing_suite.hpp>
@@ -116,6 +122,8 @@ set(SIGRunSRC
         SI/src/sigrun/rendering/IRenderEngine.hpp
         SI/src/sigrun/rendering/qml/items/PlotItem.cpp
         SI/src/sigrun/rendering/qml/items/PlotItem.hpp
+        SI/src/sigrun/rendering/qml/items/VideoItem.cpp
+        SI/src/sigrun/rendering/qml/items/VideoItem.hpp
         SI/src/sigrun/context/managers/LinkingManager.cpp
         SI/src/sigrun/context/managers/LinkingManager.hpp
         SI/src/sigrun/context/managers/helpers/linking/Link.cpp
@@ -206,6 +214,8 @@ target_link_libraries(SIGeneralRuntime
         Qt5::Core
         Qt5::Widgets
         Qt5::Qml
+        Qt5::Gui
+        Qt5::Multimedia
         -ltbb
         -ldl
         -lbacktrace)

@@ -48,15 +48,15 @@ public:
 
     float d_x = 0;
     float d_y = 0;
-    uint32_t d_width = 0;
-    uint32_t d_height = 0;
+    int32_t d_width = 0;
+    int32_t d_height = 0;
     uint32_t d_effect_type = SI_TYPE_CUSTOM;
     int32_t d_transform_x = 0;
     int32_t d_transform_y = 0;
-    const uint32_t x() const;
-    const uint32_t y() const;
-    const uint32_t width() const;
-    const uint32_t height() const;
+    const int32_t x() const;
+    const int32_t y() const;
+    const int32_t width() const;
+    const int32_t height() const;
     const uint32_t effect_type() const;
 
     float d_scale = 1.0f;

@@ -27,7 +27,6 @@ public:
     const std::string& name() const;
     const std::string& qml_path() const;
 
-    QQuickWidget* view();
     QColor& color();
 
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;
