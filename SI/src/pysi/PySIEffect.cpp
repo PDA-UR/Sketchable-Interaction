@@ -7,6 +7,7 @@
 #include <boost/python/numpy.hpp>
 #include <QDebug>
 #include <QVideoFrame>
+#include <QImage>
 #include <pysi/pickling/PickleSuits.hpp>
 
 namespace bp = boost::python;
