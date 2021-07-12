@@ -328,6 +328,7 @@ void PySIEffect::__set_data__(const std::string &key, const bp::object &value, c
 
             QImage img(img_width, img_height, QImage::Format::Format_RGB888);
             img.fromData(buf, len);
+            
 
             d_data[QString(key.c_str())] = img.convertToFormat(QVideoFrame::imageFormatFromPixelFormat(QVideoFrame::Format_RGB32));
             break;
