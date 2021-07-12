@@ -224,7 +224,7 @@ public:
     void add_outer_contour_geometry_data(const osc::ReceivedMessage& m);
 
     SITUIOToken *const token_component() const;
-    const SITUIOPointer* pointer_component() const;
+    SITUIOPointer *const pointer_component() const;
     SITUIOBounds *const bounds_component() const;
     const SITUIOSymbol* symbol_component() const;
     const SITUIOOuterContourGeometry* outer_contour_geometry_component() const;

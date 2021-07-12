@@ -13,7 +13,7 @@ TangibleManager::~TangibleManager()
 
 }
 
-void TangibleManager::update(SITUIOObject *tobj)
+void TangibleManager::update(SITUIOObject *tobj, int sw, int sh)
 {
     int s_id = tobj->s_id();
 
@@ -21,13 +21,15 @@ void TangibleManager::update(SITUIOObject *tobj)
     {
         return id == s_id;
     }) == d_tangible_ids.end())
-        add_tangible(tobj);
+        add_tangible(tobj, sw, sh);
     else
-        update_tangible(tobj);
+        update_tangible(tobj, sw, sh);
 }
 
 void TangibleManager::remove(int s_id)
 {
+    PythonGlobalInterpreterLockGuard g;
+
     d_tangible_ids.erase(std::remove_if(d_tangible_ids.begin(), d_tangible_ids.end(), [&](int id)
     {
         if(id == s_id)
@@ -50,32 +52,59 @@ const std::vector<int> &TangibleManager::tangible_ids()
     return d_tangible_ids;
 }
 
-void TangibleManager::add_tangible(SITUIOObject *tobj)
+void TangibleManager::add_tangible(SITUIOObject *tobj, int sw, int sh)
 {
+    PythonGlobalInterpreterLockGuard g;
+
     d_tangible_ids.push_back(tobj->s_id());
+
+    int w = Context::SIContext()->width();
+    int h = Context::SIContext()->height();
 
     if (tobj->has_outer_counter_geometry_component() && tobj->has_symbol_component() && tobj->has_token_component())
     {
         bp::dict kwargs;
-//        Py_IncRef(kwargs.ptr());
         kwargs["s_id"] = tobj->s_id();
         kwargs["angle"] = tobj->token_component()->angle();
+
+        std::vector<glm::vec3> contour = tobj->outer_contour_geometry_component()->contour();
+
+        for(auto& p: contour)
+        {
+            p.x = p.x / sw * w;
+            p.y = p.y / sh * h;
+        }
 
         Context::SIContext()->register_new_region_via_name(tobj->outer_contour_geometry_component()->contour(), tobj->symbol_component()->data(), false, kwargs);
     }
     else if (tobj->has_bounds_component() && tobj->has_symbol_component() && tobj->has_token_component())
     {
         bp::dict kwargs;
-//        Py_IncRef(kwargs.ptr());
         kwargs["s_id"] = tobj->s_id();
         kwargs["angle"] = tobj->token_component()->angle();
 
         std::vector<glm::vec3> contour =
         {
-            glm::vec3(tobj->bounds_component()->x_pos(), tobj->bounds_component()->y_pos(), 1),
-            glm::vec3(tobj->bounds_component()->x_pos(), tobj->bounds_component()->y_pos() + tobj->bounds_component()->height(), 1),
-            glm::vec3(tobj->bounds_component()->x_pos() + tobj->bounds_component()->width(), tobj->bounds_component()->y_pos() + tobj->bounds_component()->height(), 1),
-            glm::vec3(tobj->bounds_component()->x_pos() + tobj->bounds_component()->width(), tobj->bounds_component()->y_pos(), 1)
+            glm::vec3(tobj->bounds_component()->x_pos() / sw *  w, tobj->bounds_component()->y_pos() / sh * h, 1),
+            glm::vec3(tobj->bounds_component()->x_pos() / sw *  w, (tobj->bounds_component()->y_pos() + tobj->bounds_component()->height()) / sh * h, 1),
+            glm::vec3((tobj->bounds_component()->x_pos() + tobj->bounds_component()->width()) / sw *  w, (tobj->bounds_component()->y_pos() + tobj->bounds_component()->height()) / sh * h, 1),
+            glm::vec3((tobj->bounds_component()->x_pos() + tobj->bounds_component()->width()) / sw *  w, tobj->bounds_component()->y_pos()  / sh * h, 1)
+        };
+
+        Context::SIContext()->register_new_region_via_name(contour, tobj->symbol_component()->data(), false, kwargs);
+    }
+    else if(tobj->has_symbol_component() && tobj->has_pointer_component())
+    {
+        bp::dict kwargs;
+        kwargs["s_id"] = tobj->s_id();
+        kwargs["angle"] = tobj->pointer_component()->angle();
+
+        std::vector<glm::vec3> contour =
+        {
+            glm::vec3(tobj->pointer_component()->x_pos() / sw *  w, tobj->pointer_component()->y_pos() / sh * h, 1),
+            glm::vec3(tobj->pointer_component()->x_pos() / sw *  w, (tobj->pointer_component()->y_pos() + 20) / sh * h, 1),
+            glm::vec3((tobj->pointer_component()->x_pos() + 20) / sw *  w, (tobj->pointer_component()->y_pos() + 20) / sh * h, 1),
+            glm::vec3((tobj->pointer_component()->x_pos() + 20) / sw *  w, tobj->pointer_component()->y_pos()  / sh * h, 1)
         };
 
         Context::SIContext()->register_new_region_via_name(contour, tobj->symbol_component()->data(), false, kwargs);
@@ -110,8 +139,13 @@ void TangibleManager::add_tangible(SITUIOObject *tobj)
  * SIGRun can reject the new contour if the tangible did not move significantly or was rotated below a threshold
  * this is currently not implemented
  */
-void TangibleManager::update_tangible(SITUIOObject *tobj)
+void TangibleManager::update_tangible(SITUIOObject *tobj, int sw, int sh)
 {
+    PythonGlobalInterpreterLockGuard g;
+
+    int w = Context::SIContext()->width();
+    int h = Context::SIContext()->height();
+
     if (tobj->has_outer_counter_geometry_component() && tobj->has_symbol_component() && tobj->has_token_component())
     {
         Region* r = associated_region(tobj->s_id());
@@ -136,6 +170,23 @@ void TangibleManager::update_tangible(SITUIOObject *tobj)
             r->effect()->set_shape(contour);
         }
     }
+    else if(tobj->has_symbol_component() && tobj->has_pointer_component())
+    {
+        Region* r = associated_region(tobj->s_id());
+
+        if(r)
+        {
+            std::vector<glm::vec3> contour =
+            {
+                glm::vec3(tobj->pointer_component()->x_pos() / sw *  w, tobj->pointer_component()->y_pos() / sh * h, 1),
+                glm::vec3(tobj->pointer_component()->x_pos() / sw *  w, (tobj->pointer_component()->y_pos() + 20) / sh * h, 1),
+                glm::vec3((tobj->pointer_component()->x_pos() + 20) / sw *  w, (tobj->pointer_component()->y_pos() + 20) / sh * h, 1),
+                glm::vec3((tobj->pointer_component()->x_pos() + 20) / sw *  w, tobj->pointer_component()->y_pos()  / sh * h, 1)
+            };
+
+            r->effect()->set_shape(contour);
+        }
+    }
     else
     {
         WARN("SIGRun can only register combined messages of (sym & tok & ocg) or (sym & tok & bnd) in order to create and assign an interactive region to the tracked tangible.");
@@ -149,6 +200,8 @@ void TangibleManager::update_tangible(SITUIOObject *tobj)
 
 Region *TangibleManager::associated_region(int s_id)
 {
+    PythonGlobalInterpreterLockGuard g;
+
     auto& regions = Context::SIContext()->region_manager()->regions();
 
     auto it = std::find_if(regions.begin(), regions.end(), [s_id](std::shared_ptr<Region>& region)

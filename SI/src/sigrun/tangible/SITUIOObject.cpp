@@ -92,14 +92,16 @@ float SITUIOToken::r_acc()
     return d_r_acc;
 }
 
-SITUIOPointer::SITUIOPointer(const osc::ReceivedMessage &m)
+SITUIOPointer::SITUIOPointer(const osc::ReceivedMessage& m)
 {
     int i = 0;
     for(auto it = m.ArgumentsBegin(); it != m.ArgumentsEnd(); ++it, ++i)
     {
         switch (i)
         {
-            case SITUIOPointer::VALUES::S_ID: d_s_id = it->AsInt32(); break;
+            case SITUIOPointer::VALUES::S_ID:
+                d_s_id = it->AsInt32();
+                break;
             case SITUIOPointer::VALUES::TU_ID:
             {
                 int tu_id = it->AsInt32();
@@ -108,18 +110,18 @@ SITUIOPointer::SITUIOPointer(const osc::ReceivedMessage &m)
                 d_t_id = tu_id & 0xFFFF;
             }
             break;
-            case SITUIOPointer::VALUES::C_ID: d_c_id = it->AsInt32(); break;
-            case SITUIOPointer::VALUES::X_POS: d_x_pos = it->AsFloat(); break;
-            case SITUIOPointer::VALUES::Y_POS: d_y_pos = it->AsFloat(); break;
-            case SITUIOPointer::VALUES::ANGLE: d_angle = it->AsFloat(); break;
-            case SITUIOPointer::VALUES::SHEAR: d_shear = it->AsFloat(); break;
-            case SITUIOPointer::VALUES::RADIUS: d_radius = it->AsFloat(); break;
-            case SITUIOPointer::VALUES::PRESS: d_press = it->AsFloat(); break;
-            case SITUIOPointer::VALUES::X_VEL: d_x_vel = it->AsFloat(); break;
-            case SITUIOPointer::VALUES::Y_VEL: d_y_vel = it->AsFloat(); break;
-            case SITUIOPointer::VALUES::P_VEL: d_p_vel = it->AsFloat(); break;
-            case SITUIOPointer::VALUES::M_ACC: d_m_acc = it->AsFloat(); break;
-            case SITUIOPointer::VALUES::R_ACC: d_r_acc = it->AsFloat(); break;
+            case SITUIOPointer::VALUES::C_ID: d_c_id = it->IsInt32() ? it->AsInt32() : it->AsFloat(); break;
+            case SITUIOPointer::VALUES::X_POS: d_x_pos = it->IsInt32() ? it->AsInt32() : it->AsFloat(); break;
+            case SITUIOPointer::VALUES::Y_POS: d_y_pos = it->IsInt32() ? it->AsInt32() : it->AsFloat(); break;
+            case SITUIOPointer::VALUES::ANGLE: d_angle = it->IsInt32() ? it->AsInt32() : it->AsFloat(); break;
+            case SITUIOPointer::VALUES::SHEAR: d_shear = it->IsInt32() ? it->AsInt32() : it->AsFloat(); break;
+            case SITUIOPointer::VALUES::RADIUS: d_radius = it->IsInt32() ? it->AsInt32() : it->AsFloat(); break;
+            case SITUIOPointer::VALUES::PRESS: d_press = it->IsInt32() ? it->AsInt32() : it->AsFloat(); break;
+            case SITUIOPointer::VALUES::X_VEL: d_x_vel = it->IsInt32() ? it->AsInt32() : it->AsFloat(); break;
+            case SITUIOPointer::VALUES::Y_VEL: d_y_vel = it->IsInt32() ? it->AsInt32() : it->AsFloat(); break;
+            case SITUIOPointer::VALUES::P_VEL: d_p_vel = it->IsInt32() ? it->AsInt32() : it->AsFloat(); break;
+            case SITUIOPointer::VALUES::M_ACC: d_m_acc = it->IsInt32() ? it->AsInt32() : it->AsFloat(); break;
+            case SITUIOPointer::VALUES::R_ACC: d_r_acc = it->IsInt32() ? it->AsInt32() : it->AsFloat(); break;
         }
     }
 }
@@ -479,7 +481,7 @@ SITUIOToken *const SITUIOObject::token_component() const
     return p_token;
 }
 
-const SITUIOPointer *SITUIOObject::pointer_component() const
+SITUIOPointer *const SITUIOObject::pointer_component() const
 {
     return p_pointer;
 }

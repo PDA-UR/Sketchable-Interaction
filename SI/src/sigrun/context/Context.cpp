@@ -16,6 +16,7 @@
 #include <sigrun/plugin/PythonGlobalInterpreterLockGuard.hpp>
 #include <sigrun/log/CrashDump.hpp>
 #include <sigrun/rendering/qml/items/PlotItem.hpp>
+#include <sigrun/rendering/qml/items/VideoItem.hpp>
 #include <sigrun/util/Benchmark.hpp>
 #include <chrono>
 #include <sigrun/tangible/TangibleListener.hpp>
@@ -71,6 +72,7 @@ void Context::begin(const std::unordered_map<std::string, std::unique_ptr<bp::ob
     d_app.installEventFilter(upim.get());
 
     qmlRegisterType<PlotItem>("siqml", 1, 0, "PlotItem");
+    qmlRegisterType<VideoItem>("siqml", 1, 0, "VideoItem");
 
     d_ire = ire;
 
@@ -117,7 +119,9 @@ void Context::begin(const std::unordered_map<std::string, std::unique_ptr<bp::ob
         int port = 3333;
 
         TangibleListener tangible_listener;
+//        UdpListeningReceiveSocket s(IpEndpointName("10.61.3.117", port), &tangible_listener);
         UdpListeningReceiveSocket s(IpEndpointName("127.0.0.1", port), &tangible_listener);
+
 
         s.RunUntilSigInt();
 
@@ -325,7 +329,8 @@ void Context::register_new_region_via_name(const std::vector<glm::vec3>& contour
     if(as_selector)
     {
         HANDLE_PYTHON_CALL(PY_WARNING, "The plugin effect for which a selector effect is to be created does not have the attribute \'region_display_name\' as a static class member.",
-            Region temp(std::vector<glm::vec3>{{0, 0, 1}, {0, 1, 1}, {1, 1, 1}, {1, 0, 1}}, d_plugins[effect_name]);
+            kwargs["is_selector"] = true;
+            Region temp(std::vector<glm::vec3>{{0, 0, 1}, {0, 1, 1}, {1, 1, 1}, {1, 0, 1}}, d_plugins[effect_name], 0 , 0, kwargs);
 
             kwargs[SI_SELECTOR_TARGET_COLOR] = temp.color();
             kwargs[SI_SELECTOR_TARGET_TEXTURE] = temp.raw_effect().attr("texture_path");

@@ -6,6 +6,10 @@
 #include <sigrun/util/Dollar1GestureRecognizer.hpp>
 #include <boost/python/numpy.hpp>
 #include <QDebug>
+#include <QVideoFrame>
+#include <QImage>
+#include <QtGui>
+#include <pysi/pickling/PickleSuits.hpp>
 
 namespace bp = boost::python;
 
@@ -110,12 +114,12 @@ void PySIEffect::__emit_linking_action__(const std::string& sender, const std::s
     Context::SIContext()->register_link_event_emission(_UUID_, sender, linking_action, args);
 }
 
-const uint32_t PySIEffect::x() const
+const int32_t PySIEffect::x() const
 {
     return d_x;
 }
 
-const uint32_t PySIEffect::y() const
+const int32_t PySIEffect::y() const
 {
     return d_y;
 }
@@ -213,12 +217,12 @@ std::unordered_map<std::string, std::vector<glm::vec3>>& PySIEffect::partial_reg
     return d_partial_regions;
 }
 
-const uint32_t PySIEffect::width() const
+const int32_t PySIEffect::width() const
 {
     return d_width;
 }
 
-const uint32_t PySIEffect::height() const
+const int32_t PySIEffect::height() const
 {
     return d_height;
 }
@@ -267,7 +271,7 @@ void PySIEffect::__set_data__(const std::string &key, const bp::object &value, c
             break;
 
         case SI_DATA_TYPE_STRING:
-            d_data[QString(key.c_str())] = QVariant(QString(bp::extract<char*>(value)));
+            d_data[QString(key.c_str())] = QVariant(QString(bp::extract<char *>(value)));
             d_data_changed = true;
             break;
 
@@ -277,6 +281,7 @@ void PySIEffect::__set_data__(const std::string &key, const bp::object &value, c
             break;
 
         case SI_DATA_TYPE_IMAGE_AS_BYTES:
+        {
             int img_width = bp::extract<int>(kwargs["width"]);
             int img_height = bp::extract<int>(kwargs["height"]);
 
@@ -284,23 +289,47 @@ void PySIEffect::__set_data__(const std::string &key, const bp::object &value, c
 
             d_data_changed = true;
 
-            if(value.is_none())
+            if (value.is_none())
             {
                 d_data[QString(key.c_str())] = QVariant(QImage());
                 break;
             }
 
-            const bp::list& bytes = bp::list(value);
+            const bp::list &bytes = bp::list(value);
 
             int len = bp::len(bytes);
             uint8_t buf[len];
 
-            for(int i = 0; i < len; ++i)
+            for (int i = 0; i < len; ++i)
                 buf[i] = (uint8_t) bp::extract<int>(value[i]);
 
             img.fromData(buf, len, "PNG");
 
             d_data[QString(key.c_str())] = QVariant(img);
+            break;
+        }
+
+        case SI_DATA_TYPE_VIDEO:
+            if (value.is_none())
+                return;
+
+            d_data_changed = true;
+
+            int img_width = bp::extract<int>(kwargs["width"]);
+            int img_height = bp::extract<int>(kwargs["height"]);
+
+            const bp::list &bytes = bp::list(value);
+
+            int len = bp::len(bytes);
+            uint8_t buf[len];
+
+            for (int i = 0; i < len; ++i)
+                buf[i] = (uint8_t) bp::extract<int>(value[i]);
+
+            QImage img(img_width, img_height, QImage::Format::Format_RGB888);
+            img.fromData(buf, len);
+
+            d_data[QString(key.c_str())] = img.convertToFormat(QVideoFrame::imageFormatFromPixelFormat(QVideoFrame::Format_RGB32));
             break;
     }
 }

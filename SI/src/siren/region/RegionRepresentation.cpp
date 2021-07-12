@@ -22,9 +22,11 @@ RegionRepresentation::RegionRepresentation(QQmlContext* c, const std::shared_ptr
 {
     if(!d_qml_path.empty())
     {
-        d_view = new QQuickWidget(c->engine(), parent);
-        QQmlComponent* component = new QQmlComponent(c->engine(), d_qml_path.c_str());
-        d_view->setContent(component->url(), component, component->create(c));
+        d_view = new QQuickWidget(parent);
+        d_view->setSource(QUrl::fromLocalFile(d_qml_path.c_str()));
+
+        // leave that here, otherwise after ~600 items no further views are shown
+        d_view->show();
 
         d_view->rootContext()->setContextProperty("REGION", this);
         d_view->setGeometry(d_initial_offset.x, d_initial_offset.y, region->aabb()[3].x - region->aabb()[0].x, region->aabb()[1].y - region->aabb()[0].y);
@@ -131,11 +133,6 @@ void RegionRepresentation::perform_data_update(const std::shared_ptr<Region> &re
 
         d_was_data_received = false;
     }
-}
-
-QQuickWidget* RegionRepresentation::view()
-{
-    return d_view;
 }
 
 QColor& RegionRepresentation::color()

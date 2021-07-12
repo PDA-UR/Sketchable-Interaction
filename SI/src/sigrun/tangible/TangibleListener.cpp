@@ -22,7 +22,7 @@ void TangibleListener::ProcessMessage(const osc::ReceivedMessage &m, const IpEnd
     d_bundle.clear();
 
     for(SITUIOObject* tobj: d_current_objects)
-        Context::SIContext()->tangible_manager()->update(tobj);
+        Context::SIContext()->tangible_manager()->update(tobj, d_source_width, d_source_height);
 }
 
 void TangibleListener::process_message_bundle()
@@ -72,11 +72,40 @@ void TangibleListener::erase_associated_regions_of_removed_tangibles(const std::
 
 int TangibleListener::frame_information()
 {
-    int f_id, dim;
-    osc::TimeTag time;
+    int f_id;
+    uint32_t dim;
+//    osc::TimeTag time;
     const char* source;
+//
+//    d_bundle.front().ArgumentStream() >> f_id >> time >> dim >> source >> osc::EndMessage;
 
-    d_bundle.front().ArgumentStream() >> f_id >> time >> dim >> source >> osc::EndMessage;
+    int i = 0;
+    for(auto it = d_bundle.front().ArgumentsBegin(); it != d_bundle.front().ArgumentsEnd(); ++it, ++i)
+    {
+        switch (i)
+        {
+            case 0:
+                f_id = it->AsInt32();
+                break;
+            case 2:
+                dim = it->AsInt32();
+                break;
+            case 3:
+                source = it->AsString();
+                break;
+            default:
+                break;
+        }
+    }
+
+    int width = dim >> 16;
+    int height = dim & 0xFFFF;
+
+    if(width != d_source_width || height != d_source_height)
+    {
+        d_source_width = width;
+        d_source_height = height;
+    }
 
     return f_id;
 }

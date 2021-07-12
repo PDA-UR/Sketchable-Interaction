@@ -80,11 +80,12 @@ jobs:
           sudo apt install software-properties-common
           sudo add-apt-repository ppa:deadsnakes/ppa
           sudo apt update
-          sudo apt-get --fix-missing install qtbase5-dev -qq > /dev/null
-          sudo apt-get install qtdeclarative5-dev -qq > /dev/null
-          sudo apt-get install libglm-dev -qq > /dev/null
-          sudo apt-get install uuid-dev -qq > /dev/null
-          sudo apt install python3.9-dev -qq > /dev/null
+          sudo apt-get install qtbase5-dev
+          sudo apt-get install qtdeclarative5-dev
+          sudo apt install qtmultimedia5-dev
+          sudo apt-get install libglm-dev
+          sudo apt-get install uuid-dev
+          sudo apt install python3.9-dev
         fi 
         
     - name: Install Boost with components System, Python and Filesystem 

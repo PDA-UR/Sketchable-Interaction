@@ -455,10 +455,12 @@ private:
  *
  * @return the datastructure handling the python binding of the vector
  */
-template <typename VectorExposureType, typename VectorType>
+template <typename VectorExposureType, typename VectorType, typename PickleSuite>
 bp::class_<VectorType> create_vector(const char* name)
 {
     return bp::class_<VectorType>(name, bp::no_init)
+            .def_pickle(PickleSuite())
+
             .def("__init__", bp::make_constructor(&VectorExposureType::init, bp::default_call_policies(), (bp::arg("list")=bp::list())))
             .def("__len__", &VectorType::size)
             .def("clear", &VectorType::clear)
@@ -473,8 +475,6 @@ bp::class_<VectorType> create_vector(const char* name)
             .def("__contains__", &VectorExposure<VectorType>::in)
             .def("index", &VectorExposure<VectorType>::index)
             .def("__repr__", &VectorExposureType::repr)
-
-            .enable_pickling()
             ;
 }
 
