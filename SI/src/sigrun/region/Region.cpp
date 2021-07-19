@@ -36,6 +36,42 @@ Region::Region(const std::vector<glm::vec3> &contour, const bp::object& effect, 
         Context::SIContext()->spatial_hash_grid()->register_region(this);
 }
 
+Region::Region(const bp::object &o, const bp::dict &qml, uint32_t width, uint32_t height):
+        uprt(std::make_unique<RegionTransform>()),
+        d_is_transformed(false),
+        d_link_events(50),
+        d_last_x(0),
+        d_last_y(0),
+        d_last_delta_x(0),
+        d_last_delta_y(0)
+{
+    d_effect = std::make_shared<bp::object>(o);
+    d_py_effect = bp::extract<PySIEffect*>(*d_effect);
+
+    bp::list keys = bp::extract<bp::list>(qml.keys());
+
+    for(uint32_t i = 0; i < bp::len(keys); ++i)
+    {
+        const bp::list& l = bp::extract<bp::list>(qml[keys[i]]);
+        bp::object k = keys[i];
+        bp::object v = l[0];
+        bp::object d = l[1];
+
+        d_effect->attr("set_QML_data")(k, v, d);
+    }
+
+    if(!width && !height)
+    {
+        width = Context::SIContext()->width();
+        height = Context::SIContext()->height();
+    }
+
+    uprm = std::make_unique<RegionMask>(width, height, d_py_effect->contour());
+
+    if(Context::SIContext() && Context::SIContext()->spatial_hash_grid())
+        Context::SIContext()->spatial_hash_grid()->register_region(this);
+}
+
 Region::~Region() = default;
 
 void Region::move()
@@ -171,16 +207,28 @@ void Region::LINK_SLOT(const std::string& uuid_event, const std::string& uuid_se
                 if(Context::SIContext()->linking_manager()->is_linked(uuid_sender, source_cap, uuid(), k, ILink::UD))
                 {
                     if (args.is_none())
+                    {
                         v();
+                    }
                     else
                     {
                         if (bp::extract<bp::tuple>(args).check())
-                            v(*args);
+                       {
+                           v(*args);
+                       }
                         else
                         {
-                            // this is weird, unsure whether its a hack or not; needs investigation when time
                             if(!bp::extract<bp::dict>(args).check())
-                                v(args());
+                            {
+                                if(!PyCallable_Check(args.ptr()))
+                                {
+                                    v(args);
+                                }
+                                else
+                                {
+                                    v(args());
+                                }
+                            }
                         }
                     }
                 }

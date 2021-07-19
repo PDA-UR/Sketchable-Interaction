@@ -23,6 +23,7 @@ class Region: public QObject, public SIObject
 { Q_OBJECT SIGRUN
 public:
     Region(const std::vector<glm::vec3>& contour, const bp::object& effect, uint32_t width=0, uint32_t height=0, const bp::dict& kwargs=bp::dict());
+    Region(const bp::object& o, const bp::dict& qml, uint32_t width=0, uint32_t height=0);
     ~Region();
 
     bool is_transformed() const;

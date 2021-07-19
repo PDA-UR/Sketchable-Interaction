@@ -21,6 +21,7 @@ public:
     ~RegionManager();
 
     void add_region(const std::vector<glm::vec3> &contour, const bp::object &effect, const bp::dict& kwargs=bp::dict());
+    void add_region(const bp::object& o, const bp::dict& qml);
 
     std::vector<std::shared_ptr<Region>>& regions();
     std::unordered_map<std::string, std::vector<glm::vec3>>& partial_regions();

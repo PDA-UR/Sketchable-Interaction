@@ -312,9 +312,14 @@ void Context::disable(uint32_t what)
     }
 }
 
+void Context::register_new_region_from_object(const bp::object &object, const bp::dict &qml)
+{
+    uprm->add_region(object, qml);
+}
+
 void Context::register_new_region(const std::vector<glm::vec3>& contour, const std::string& uuid)
 {
-    if(contour.size() > 5)
+    if(contour.size() > 10)
     {
         bp::dict kwargs;
         kwargs["DRAWN"] = true;
@@ -678,3 +683,5 @@ void Context::perform_collision_update()
     uprcm->collide(uprm->regions());
     uprm->update();
 }
+
+
