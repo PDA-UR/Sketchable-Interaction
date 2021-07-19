@@ -4,7 +4,6 @@
 #include <sigrun/util/Util.hpp>
 #include <boost/python.hpp>
 #include <sigrun/plugin/Scripting.hpp>
-#include <boost/shared_ptr.hpp>
 #include <glm/glm.hpp>
 #include <string>
 #include <pysi/pickling/PickleSuits.hpp>
@@ -434,7 +433,9 @@ TEST_F(PySIMapExposureTest, MapExposureString2_String2FunctionMap_Map_repr)
 }
 TEST_F(PySIMapExposureTest, create_map)
 {
-    create_map<MapExposurePartialContour, std::map<std::string, std::vector<glm::vec3>>, MapExposurePartialContour>("TEST1");
-    create_map<MapExposureString2Function, std::map<std::string, bp::object>, MapExposureString2Function>("TEST2");
-    create_map<MapExposureString2_String2FunctionMap_Map, std::map<std::string, std::map<std::string, bp::object>>, MapExposureString2_String2FunctionMap_Map>("TEST3");
+    Scripting script;
+
+    create_map<MapExposurePartialContour, std::unordered_map<std::string, std::vector<glm::vec3>>, PartialContourPickleSuite>("TEST1");
+    create_map<MapExposureString2Function, std::unordered_map<std::string, bp::object>, String2FunctionMapPickleSuite>("TEST2");
+    create_map<MapExposureString2_String2FunctionMap_Map, std::unordered_map<std::string, std::unordered_map<std::string, bp::object>>, String2String2FunctionMapMapPickleSuite>("TEST3");
 }

@@ -17,6 +17,12 @@ void RegionManager::add_region(const std::vector<glm::vec3> &contour, const bp::
     d_regions.push_back(std::make_shared<Region>(contour, effect, 0, 0, kwargs));
 }
 
+void RegionManager::add_region(const bp::object &o, const bp::dict &qml)
+{
+    std::shared_ptr<Region> r = std::make_shared<Region>(o, qml);
+    d_regions.push_back(r);
+}
+
 std::vector<std::shared_ptr<Region>> &RegionManager::regions()
 {
     return d_regions;
