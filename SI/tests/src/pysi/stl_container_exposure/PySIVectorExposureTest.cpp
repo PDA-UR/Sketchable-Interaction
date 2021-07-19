@@ -2,7 +2,6 @@
 #include "PySIVectorExposureTest.hpp"
 #include <boost/python.hpp>
 #include <sigrun/plugin/Scripting.hpp>
-#include <boost/shared_ptr.hpp>
 #include <glm/glm.hpp>
 #include <string>
 #include <sigrun/util/Util.hpp>

@@ -6,6 +6,7 @@ from plugins.__loaded_plugins__.standard_environment_library.cursor import Curso
 from plugins.__loaded_plugins__.standard_environment_library.deletion import Deletion
 from plugins.__loaded_plugins__.standard_environment_library.slider import SliderBase
 from plugins.__loaded_plugins__.standard_environment_library.slider import SliderTargetDummy
+from plugins.__loaded_plugins__.standard_environment_library.unredo import Undo, Redo
 
 def add_canvas():
     canvas_shape = [[0, 0],
@@ -51,6 +52,21 @@ def add_start_directory():
 
     kwargs = {"cwd": directory_path, "parent": ""}
     PySI.Startup.create_region_by_type(directory_shape, PySI.EffectType.SI_DIRECTORY, kwargs)
+
+def add_unredo():
+    w, h = PySI.Startup.context_dimensions()[0], PySI.Startup.context_dimensions()[1]
+    redo_shape = [[w - 100, h - 100],
+                  [w - 100, h - 5],
+                  [w - 5, h - 5],
+                  [w - 5, h - 100]]
+
+    undo_shape = [[w - 100 - 5 - 95, h - 100],
+                  [w - 100 - 5 - 95, h - 5],
+                  [w - 100 - 5, h - 5],
+                  [w - 100 - 5, h - 100]]
+
+    PySI.Startup.create_region_by_class(undo_shape, Undo, {})
+    PySI.Startup.create_region_by_class(redo_shape, Redo, {})
 
 import math
 
@@ -113,5 +129,6 @@ def on_start():
         add_simple_notification()
         add_palette()
         add_start_directory()
+        add_unredo()
 
     # add_many_regions(500)

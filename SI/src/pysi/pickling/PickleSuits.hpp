@@ -204,7 +204,7 @@ public:
 class PartialContourPickleSuite: public bp::pickle_suite
 {
 public:
-    static bp::tuple getinitargs(std::unordered_map<std::string, std::vector<glm::vec3>>& m)
+    static bp::tuple getinitargs(std::unordered_map<std::string, std::vector<glm::vec3>> m)
     {
         bp::dict d;
 
@@ -228,7 +228,7 @@ public:
 class String2FunctionMapPickleSuite: public bp::pickle_suite
 {
 public:
-    static bp::tuple getinitargs(std::unordered_map<std::string, bp::object>& m)
+    static bp::tuple getinitargs(std::unordered_map<std::string, bp::object> m)
     {
         bp::dict d;
 
@@ -242,7 +242,7 @@ public:
 class String2String2FunctionMapMapPickleSuite: public bp::pickle_suite
 {
 public:
-    static bp::tuple getinitargs(std::unordered_map<std::string, std::unordered_map<std::string, bp::object>>& m)
+    static bp::tuple getinitargs(std::unordered_map<std::string, std::unordered_map<std::string, bp::object>> m)
     {
         bp::dict d;
 

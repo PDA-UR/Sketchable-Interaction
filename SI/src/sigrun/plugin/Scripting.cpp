@@ -63,6 +63,13 @@ std::string Scripting::transpile(std::string& path, const std::string& path_addi
 {
     std::string source = load_plugin_source(path.c_str());
 
+    int last_slash = path.find_last_of('/') + 1;
+    int last_dot = path.find_last_of('.');
+    std::string name = path.substr(last_slash, last_dot - last_slash);
+
+    if(name[0] == '_' && name[1] == '_')
+        return source;
+
     std::vector<std::string> calls;
 
     std::vector<std::string> lines = str_split(source, '\n');

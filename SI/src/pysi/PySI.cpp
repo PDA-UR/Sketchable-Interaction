@@ -54,23 +54,25 @@ BOOST_PYTHON_MODULE(libPySI)
         create_map<MapExposureString2Function, std::unordered_map<std::string, bp::object>, String2FunctionMapPickleSuite>("String2FunctionMap");
         create_map<MapExposureString2_String2FunctionMap_Map, std::unordered_map<std::string, std::unordered_map<std::string, bp::object>>, String2String2FunctionMapMapPickleSuite>("String2String2FunctionMapMap");
 
-        // , boost::noncopyable
         bp::class_<PySIEffect>("Effect",bp::init<const std::vector<glm::vec3> &, const std::string &, const std::string &, const bp::dict &>())
                 .def_pickle(EffectPickleSuit())
 
                 .def("__set_data__", &PySIEffect::__set_data__)
                 .def("__signal_deletion__", &PySIEffect::__signal_deletion__)
+                .def("__signal_deletion_by_uuid__", &PySIEffect::__signal_deletion_by_uuid__)
                 .def("__embed_file_standard_appliation_into_context__", &PySIEffect::__embed_file_standard_appliation_into_context__)
                 .def("__destroy_embedded_window__", &PySIEffect::__destroy_embedded_file_standard_appliation_in_context__)
                 .def < void(PySIEffect::*)(const std::vector<glm::vec3>&, const std::string&, bool, bp::dict &)>("__create_region__", &PySIEffect::__create_region__)
                 .def < void(PySIEffect::*)(const bp::list&, const std::string&, bool,bp::dict &)>("__create_region__", &PySIEffect::__create_region__)
                 .def < void(PySIEffect::*)(const bp::list&, int, bp::dict &)>("__create_region__", &PySIEffect::__create_region__)
+                .def < void(PySIEffect::*)(const bp::object& obj, const bp::dict& qml)>("__create_region__", &PySIEffect::__create_region__)
                 .def("__available_plugins_by_name__", &PySIEffect::__available_plugins_by_name__)
                 .def("__context_dimensions__", &PySIEffect::__context_dimensions__)
                 .def("__assign_effect__", &PySIEffect::__assign_effect__)
                 .def("__emit_linking_action__", &PySIEffect::__emit_linking_action__)
                 .def("__data__", &PySIEffect::__data__)
                 .def("__logger_messages__", &PySIEffect::__logger_messages__)
+                .def("__qml_data_keys_and_types__", &PySIEffect::__qml_data_keys_and_types__)
 
                 .add_property("shape", &PySIEffect::get_shape, &PySIEffect::set_shape)
 

@@ -257,7 +257,7 @@ template <typename MapExposureType, typename MapType, typename PickleSuite>
 bp::class_<MapType> create_map(const char* name)
 {
     return bp::class_<MapType>(name, bp::no_init)
-            .enable_pickling()
+            .def_pickle(PickleSuite())
 
             .def("__init__", bp::make_constructor(&MapExposureType::init, bp::default_call_policies(), (bp::arg("dict")=bp::dict())))
             .def("__len__", &MapType::size)

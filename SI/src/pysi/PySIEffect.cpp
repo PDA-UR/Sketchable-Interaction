@@ -94,6 +94,19 @@ void PySIEffect::__signal_deletion__()
     d_flagged_for_deletion = true;
 }
 
+void PySIEffect::__signal_deletion_by_uuid__(const std::string& uuid)
+{
+    const auto& regions = Context::SIContext()->region_manager()->regions();
+
+    auto it = std::find_if(regions.begin(), regions.end(), [&uuid](auto& r)
+    {
+       return uuid == r->uuid();
+    });
+
+    if(it != regions.end())
+        it->get()->effect()->d_flagged_for_deletion = true;
+}
+
 bool PySIEffect::is_flagged_for_deletion()
 {
     return d_flagged_for_deletion;
@@ -437,6 +450,11 @@ void PySIEffect::__create_region__(const bp::list& contour, int effect_type, bp:
         Context::SIContext()->register_new_region_via_type(_contour, effect_type, kwargs);
 }
 
+void PySIEffect::__create_region__(const bp::object &object, const bp::dict &qml)
+{
+    Context::SIContext()->register_new_region_from_object(object, qml);
+}
+
 void PySIEffect::__update_transform__(int32_t delta_x, int32_t delta_y)
 {
     d_transform_x += delta_x;
@@ -456,4 +474,40 @@ bp::tuple PySIEffect::__context_dimensions__()
 void PySIEffect::__assign_effect__(const std::string& sender, const std::string& effect_name, const std::string& effect_display_name, bp::dict& kwargs)
 {
     Context::SIContext()->set_effect(sender, effect_name, effect_display_name, kwargs);
+}
+
+bp::dict PySIEffect::__qml_data_keys_and_types__()
+{
+    bp::dict ret;
+
+    for(auto& k0: d_data.keys())
+    {
+        std::string k = k0.toStdString();
+
+        if(std::string(d_data[k0].typeName()) == "int")
+        {
+            ret[k] = SI_DATA_TYPE_INT;
+            continue;
+        }
+
+        if(std::string(d_data[k0].typeName()) == "QString")
+        {
+            ret[k] = SI_DATA_TYPE_STRING;
+            continue;
+        }
+
+        if(std::string(d_data[k0].typeName()) == "float")
+        {
+            ret[k] = SI_DATA_TYPE_FLOAT;
+            continue;
+        }
+
+        if(std::string(d_data[k0].typeName()) == "bool")
+        {
+            ret[k] = SI_DATA_TYPE_BOOL;
+            continue;
+        }
+    }
+
+    return ret;
 }
