@@ -73,6 +73,7 @@ BOOST_PYTHON_MODULE(libPySI)
                 .def("__data__", &PySIEffect::__data__)
                 .def("__logger_messages__", &PySIEffect::__logger_messages__)
                 .def("__qml_data_keys_and_types__", &PySIEffect::__qml_data_keys_and_types__)
+                .def("__current_regions__", &PySIEffect::__current_regions__)
 
                 .add_property("shape", &PySIEffect::get_shape, &PySIEffect::set_shape)
 

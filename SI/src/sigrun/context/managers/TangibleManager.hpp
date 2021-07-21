@@ -9,11 +9,14 @@
 
 class TangibleManager: public SIObject
 { SIGRUN
+
+
 public:
 
     TangibleManager();
     ~TangibleManager();
 
+    void manage_requested_linking_relationships(int s_id, bool is_linked, int *linked, int size);
     void update(SITUIOObject *tobj, int sw, int sh);
     void remove(int s_id);
 
@@ -24,6 +27,7 @@ private:
     void update_tangible(SITUIOObject *tobj, int sw, int sh);
 
     Region* associated_region(int s_id);
+    std::shared_ptr<Region> associated_region_sp(int s_id);
 
     std::vector<int> d_tangible_ids;
 };

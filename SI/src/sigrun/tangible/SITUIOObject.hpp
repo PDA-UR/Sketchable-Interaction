@@ -209,6 +209,19 @@ private:
     std::vector<glm::vec3> d_contour;
 };
 
+class SITUIOLinkAssociation: public SIObject
+{ SIGRUN
+
+public:
+    SITUIOLinkAssociation(const std::vector<int>& link_associations);
+    ~SITUIOLinkAssociation();
+
+    const std::vector<int>& link_associations();
+
+private:
+    std::vector<int> d_link_associations;
+};
+
 class SITUIOObject : public SIObject
 { SIGRUN
 
@@ -222,18 +235,21 @@ public:
     void add_bounds_data(const osc::ReceivedMessage& m);
     void add_symbol_data(const osc::ReceivedMessage& m);
     void add_outer_contour_geometry_data(const osc::ReceivedMessage& m);
+    void add_link_association_data(const std::vector<int>& link_associations);
 
     SITUIOToken *const token_component() const;
     SITUIOPointer *const pointer_component() const;
     SITUIOBounds *const bounds_component() const;
     const SITUIOSymbol* symbol_component() const;
     const SITUIOOuterContourGeometry* outer_contour_geometry_component() const;
+    SITUIOLinkAssociation *const link_association() const;
 
     bool has_token_component();
     bool has_pointer_component();
     bool has_bounds_component();
     bool has_symbol_component();
     bool has_outer_counter_geometry_component();
+    bool has_linking_association_component();
     bool has_any_component();
 
     int s_id();
@@ -242,11 +258,12 @@ private:
     int d_s_id;
     int d_f_id;
 
-    SITUIOToken* p_token;
-    SITUIOPointer* p_pointer;
-    SITUIOBounds* p_bounds;
-    SITUIOSymbol* p_symbol;
-    SITUIOOuterContourGeometry* p_ocg;
+    SITUIOToken* p_token = nullptr;
+    SITUIOPointer* p_pointer = nullptr;
+    SITUIOBounds* p_bounds = nullptr;
+    SITUIOSymbol* p_symbol = nullptr;
+    SITUIOOuterContourGeometry* p_ocg = nullptr;
+    SITUIOLinkAssociation* p_lia = nullptr;
 };
 
 #endif // SI_SIGRUN_SITUIOObject

@@ -75,6 +75,18 @@ void TangibleManager::add_tangible(SITUIOObject *tobj, int sw, int sh)
             p.y = p.y / sh * h;
         }
 
+        if(tobj->has_linking_association_component())
+        {
+            bp::list l;
+
+            const auto& v = tobj->link_association()->link_associations();
+
+            for(auto i: v)
+                l.append(i);
+
+            kwargs["links"] = l;
+        }
+
         Context::SIContext()->register_new_region_via_name(tobj->outer_contour_geometry_component()->contour(), tobj->symbol_component()->data(), false, kwargs);
     }
     else if (tobj->has_bounds_component() && tobj->has_symbol_component() && tobj->has_token_component())
@@ -198,7 +210,17 @@ void TangibleManager::update_tangible(SITUIOObject *tobj, int sw, int sh)
     }
 }
 
+
+
 Region *TangibleManager::associated_region(int s_id)
+{
+    PythonGlobalInterpreterLockGuard g;
+
+    std::shared_ptr<Region> r = associated_region_sp(s_id);
+    return r == nullptr ? nullptr: r.get();
+}
+
+std::shared_ptr<Region> TangibleManager::associated_region_sp(int s_id)
 {
     PythonGlobalInterpreterLockGuard g;
 
@@ -215,5 +237,20 @@ Region *TangibleManager::associated_region(int s_id)
 
     });
 
-    return it == regions.end() ? nullptr: (*it).get();
+    return it == regions.end() ? nullptr: *it;
+}
+
+void TangibleManager::manage_requested_linking_relationships(int s_id, bool is_linked, int *linked, int size)
+{
+    std::shared_ptr<Region> root = associated_region_sp(s_id);
+
+    for(int i = 0; i < size; ++i)
+    {
+        std::shared_ptr<Region> other = associated_region_sp(linked[i]);
+
+
+
+//        Context::SIContext()->linking_manager()->add_link(root, SI_CAPABILITY_LINK_POSITION, other, SI_CAPABILITY_LINK_POSITION, ILink::UD);
+//        Context::SIContext()->linking_manager()->add_link(other, SI_CAPABILITY_LINK_POSITION, root, SI_CAPABILITY_LINK_POSITION, ILink::UD);
+    }
 }
