@@ -23,6 +23,7 @@
 #define BOUNDS_MESSAGE "/tuio2/bnd"
 #define SYMBOL_MESSAGE "/tuio2/sym"
 #define OCG_MESSAGE "/tuio2/ocg"
+#define LIA_MESSAGE "/tuio2/lia"
 
 
 class TangibleListener: public osc::OscPacketListener, public SIObject
@@ -54,6 +55,7 @@ private:
     void handle_bnd_message(const osc::ReceivedMessage& m, int f_id);
     void handle_sym_message(const osc::ReceivedMessage& m, int f_id);
     void handle_ocg_message(const osc::ReceivedMessage& m, int f_id);
+    void handle_lia_message(const osc::ReceivedMessage& m, int f_id);
 
     SITUIOObject* current_object(int s_id);
 };

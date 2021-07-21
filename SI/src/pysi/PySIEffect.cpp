@@ -455,6 +455,18 @@ void PySIEffect::__create_region__(const bp::object &object, const bp::dict &qml
     Context::SIContext()->register_new_region_from_object(object, qml);
 }
 
+bp::list PySIEffect::__current_regions__()
+{
+    bp::list ret;
+
+    auto& regions = Context::SIContext()->region_manager()->regions();
+
+    for(auto& r: regions)
+        ret.append(r->raw_effect());
+
+    return ret;
+}
+
 void PySIEffect::__update_transform__(int32_t delta_x, int32_t delta_y)
 {
     d_transform_x += delta_x;

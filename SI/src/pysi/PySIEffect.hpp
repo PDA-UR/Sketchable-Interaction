@@ -34,6 +34,7 @@ public:
     void __create_region__(const bp::list& contour, const std::string& name, bool as_selector, bp::dict& kwargs);
     void __create_region__(const bp::list& contour, int effect_type, bp::dict& kwargs);
     void __create_region__(const bp::object& contour, const bp::dict& qml);
+    bp::list __current_regions__();
 
     bp::dict __qml_data_keys_and_types__();
 

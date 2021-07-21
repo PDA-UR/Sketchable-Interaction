@@ -17,6 +17,7 @@ void TangibleListener::ProcessMessage(const osc::ReceivedMessage &m, const IpEnd
 
     std::mutex mutex;
     std::lock_guard<std::mutex> guard(mutex);
+    PythonGlobalInterpreterLockGuard g;
 
     process_message_bundle();
     d_bundle.clear();
@@ -126,6 +127,8 @@ void TangibleListener::handle_message_bundle(int f_id)
                 handle_sym_message(*it, f_id);
             else if(!strcmp(it->AddressPattern(), OCG_MESSAGE))
                 handle_ocg_message(*it, f_id);
+            else if(!strcmp(it->AddressPattern(), LIA_MESSAGE))
+                handle_lia_message(*it, f_id);
             else
                 WARN("unknown message " + std::string(it->AddressPattern()));
         }
@@ -204,6 +207,44 @@ void TangibleListener::handle_ocg_message(const osc::ReceivedMessage &m, int f_i
     }
     else
         o->add_outer_contour_geometry_data(m);
+}
+
+void TangibleListener::handle_lia_message(const osc::ReceivedMessage &m, int f_id)
+{
+    auto it = m.ArgumentsBegin();
+    int s_id = it++->AsInt32();
+    bool is_linked = it++->AsBool();
+
+    if(is_linked)
+    {
+        int len = (m.ArgumentCount() - 2) / 2 + 1;
+        int* linked = (int*) malloc((len) * sizeof(int));
+
+        linked[0] = s_id;
+
+        for(int i = 0, k = 1; it != m.ArgumentsEnd(); ++it, ++i)
+            if(!(i & 1))
+                linked[k++] = it->AsInt32();
+
+        for(int i = 0; i < len; ++i)
+        {
+            SITUIOObject* o = current_object(linked[i]);
+            std::vector<int> link_associations;
+
+            for(int k = 0; k < len; ++k)
+            {
+                if(i == k)
+                    continue;
+
+                link_associations.push_back(linked[k]);
+            }
+
+            o->add_link_association_data(link_associations);
+        }
+
+        free(linked);
+        return;
+    }
 }
 
 SITUIOObject *TangibleListener::current_object(int s_id)
