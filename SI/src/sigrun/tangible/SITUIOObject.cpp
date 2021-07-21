@@ -372,6 +372,18 @@ const std::vector<glm::vec3> &SITUIOOuterContourGeometry::contour() const
     return d_contour;
 }
 
+SITUIOLinkAssociation::SITUIOLinkAssociation(const std::vector<int>& link_associations):
+    d_link_associations(link_associations)
+{}
+
+SITUIOLinkAssociation::~SITUIOLinkAssociation()
+{}
+
+const std::vector<int> &SITUIOLinkAssociation::link_associations()
+{
+    return d_link_associations;
+}
+
 SITUIOObject::SITUIOObject(int s_id, int f_id):
     d_s_id(s_id),
     d_f_id(f_id)
@@ -441,6 +453,18 @@ void SITUIOObject::add_outer_contour_geometry_data(const osc::ReceivedMessage &m
     p_ocg = new SITUIOOuterContourGeometry(m);
 }
 
+void SITUIOObject::add_link_association_data(const std::vector<int>& link_associations)
+{
+    if(p_lia)
+    {
+        delete p_lia;
+        p_lia = nullptr;
+    }
+
+    p_lia = new SITUIOLinkAssociation(link_associations);
+
+}
+
 int SITUIOObject::s_id()
 {
     return d_s_id;
@@ -471,9 +495,14 @@ bool SITUIOObject::has_outer_counter_geometry_component()
     return p_ocg;
 }
 
+bool SITUIOObject::has_linking_association_component()
+{
+    return p_lia;
+}
+
 bool SITUIOObject::has_any_component()
 {
-    return p_token || p_pointer || p_bounds || p_symbol || p_ocg;
+    return p_token || p_pointer || p_bounds || p_symbol || p_ocg || p_lia;
 }
 
 SITUIOToken *const SITUIOObject::token_component() const
@@ -499,4 +528,9 @@ const SITUIOSymbol *SITUIOObject::symbol_component() const
 const SITUIOOuterContourGeometry *SITUIOObject::outer_contour_geometry_component() const
 {
     return p_ocg;
+}
+
+SITUIOLinkAssociation *const SITUIOObject::link_association() const
+{
+    return p_lia;
 }
