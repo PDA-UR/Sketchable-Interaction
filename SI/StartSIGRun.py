@@ -7,6 +7,9 @@ from plugins.__loaded_plugins__.standard_environment_library.deletion import Del
 from plugins.__loaded_plugins__.standard_environment_library.slider import SliderBase
 from plugins.__loaded_plugins__.standard_environment_library.slider import SliderTargetDummy
 from plugins.__loaded_plugins__.standard_environment_library.unredo import Undo, Redo
+from plugins.standard_environment_library.tangible.camera.ScanCameraAreaDetection import ScanCameraAreaDetection
+
+import math
 
 def add_canvas():
     canvas_shape = [[0, 0],
@@ -35,8 +38,8 @@ def add_simple_notification():
     PySI.Startup.create_region_by_class(simple_notification_shape, SimpleNotification, {})
 
 def add_palette():
-    palette_shape = [[PySI.Startup.context_dimensions()[0] - 300, 75],
-                     [PySI.Startup.context_dimensions()[0] - 300, 475],
+    palette_shape = [[PySI.Startup.context_dimensions()[0] - 400, 75],
+                     [PySI.Startup.context_dimensions()[0] - 400, 475],
                      [PySI.Startup.context_dimensions()[0] - 100, 475],
                      [PySI.Startup.context_dimensions()[0] - 100, 75]]
 
@@ -67,8 +70,6 @@ def add_unredo():
 
     PySI.Startup.create_region_by_class(undo_shape, Undo, {})
     PySI.Startup.create_region_by_class(redo_shape, Redo, {})
-
-import math
 
 ## Author: RW
 def add_many_regions(num = 100, area_width= 1600, area_height=800):
@@ -102,6 +103,13 @@ def add_slider(shape, c):
 def add_slider_target(shape):
     PySI.Startup.create_region_by_class(shape, SliderTargetDummy, {})
 
+def add_camera_calibration():
+    shape = [[0, 0],
+             [0, PySI.Startup.context_dimensions()[1]],
+             [PySI.Startup.context_dimensions()[0], PySI.Startup.context_dimensions()[1]],
+             [PySI.Startup.context_dimensions()[0], 0]]
+
+    PySI.Startup.create_region_by_name(shape, ScanCameraAreaDetection.regionname, {})
 
 def on_start():
     # PySI.Startup.disable(PySI.Configuration.SI_CRASH_DUMP)
@@ -113,22 +121,27 @@ def on_start():
     PySI.Startup.logger_quench_messages_from_class("recognizer")
     PySI.Startup.logger_quench_messages_from_class("mainwindow")
 
-    # color_picker = True
-    color_picker = False
+    APPLICATION = 1
+    COLOR_PICKER = 2
+    CAMERA_CALIBRATION = 4
+    BENCHMARK = 8
+
+    CHOICE = APPLICATION
 
     add_canvas()
     add_mouse_cursor()
 
-    if color_picker:
-        add_slider([[500, 500], [500, 530], [800, 530], [800, 500]], "r")
-        add_slider([[500, 600], [500, 630], [800, 630], [800, 600]], "g")
-        add_slider([[500, 700], [500, 730], [800, 730], [800, 700]], "b")
-
-        add_slider_target([[1000, 570], [1000, 670], [1100, 670], [1100, 570]])
-    else:
+    if(APPLICATION & CHOICE):
         add_simple_notification()
         add_palette()
         add_start_directory()
         add_unredo()
-
-    # add_many_regions(500)
+    elif(COLOR_PICKER & CHOICE):
+        add_slider([[500, 500], [500, 530], [800, 530], [800, 500]], "r")
+        add_slider([[500, 600], [500, 630], [800, 630], [800, 600]], "g")
+        add_slider([[500, 700], [500, 730], [800, 730], [800, 700]], "b")
+        add_slider_target([[1000, 570], [1000, 670], [1100, 670], [1100, 570]])
+    elif(CAMERA_CALIBRATION & CHOICE):
+        add_camera_calibration()
+    elif(BENCHMARK & CHOICE):
+        add_many_regions(500)
