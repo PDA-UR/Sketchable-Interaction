@@ -6,18 +6,28 @@ from plugins.__loaded_plugins__.standard_environment_library.cursor import Curso
 from plugins.__loaded_plugins__.standard_environment_library.deletion import Deletion
 from plugins.__loaded_plugins__.standard_environment_library.slider import SliderBase
 from plugins.__loaded_plugins__.standard_environment_library.slider import SliderTargetDummy
+from plugins.__loaded_plugins__.standard_environment_library.tag import Tag
+from plugins.__loaded_plugins__.standard_environment_library.presentation import Presentation
+from plugins.__loaded_plugins__.standard_environment_library.preview import Preview
+from plugins.__loaded_plugins__.standard_environment_library.lasso import Lasso
+from plugins.__loaded_plugins__.standard_environment_library.plot import Plot
+from plugins.__loaded_plugins__.standard_environment_library.image_editor import ImageEditor
+from plugins.__loaded_plugins__.standard_environment_library.video import Video
+from plugins.__loaded_plugins__.standard_environment_library.terminal import Terminal
 from plugins.__loaded_plugins__.standard_environment_library.unredo import Undo, Redo
+from plugins.__loaded_plugins__.standard_environment_library.automation import ConveyorBelt, ConveyorBeltMerger, ConveyorBeltSplitter
 from plugins.standard_environment_library.tangible.camera.ScanCameraAreaDetection import ScanCameraAreaDetection
+from plugins.standard_environment_library.tangible.camera.TableArea import TableArea
 
 import math
 
-def add_canvas():
+def add_canvas(kwargs={}):
     canvas_shape = [[0, 0],
                     [0, PySI.Startup.context_dimensions()[1]],
                     [PySI.Startup.context_dimensions()[0], PySI.Startup.context_dimensions()[1]],
                     [PySI.Startup.context_dimensions()[0], 0]]
 
-    PySI.Startup.create_region_by_type(canvas_shape, PySI.EffectType.SI_CANVAS, {})
+    PySI.Startup.create_region_by_type(canvas_shape, PySI.EffectType.SI_CANVAS, kwargs)
 
 def add_mouse_cursor():
     mouse_shape = [[0, 0],
@@ -46,7 +56,7 @@ def add_palette():
     PySI.Startup.create_region_by_type(palette_shape, PySI.EffectType.SI_PALETTE, {})
 
 def add_start_directory():
-    directory_path = "" # if empty, the Desktop will be used
+    directory_path = "/home/juergen/Desktop/"
 
     directory_shape = [[75, 75],
                        [75, 75 + Directory.Directory.region_height],
@@ -111,6 +121,24 @@ def add_camera_calibration():
 
     PySI.Startup.create_region_by_name(shape, ScanCameraAreaDetection.regionname, {})
 
+
+APPLICATION = 1
+COLOR_PICKER = 2
+CAMERA_CALIBRATION = 4
+BENCHMARK = 8
+TABLE_AREA_CALIBRATION = 16
+
+def start_application():
+    rgba = {}
+    # rgba = {"rgba": (0, 0, 0, 255)}
+
+    add_canvas(rgba)
+    add_mouse_cursor()
+    add_simple_notification()
+    add_palette()
+    add_start_directory()
+    add_unredo()
+
 def on_start():
     # PySI.Startup.disable(PySI.Configuration.SI_CRASH_DUMP)
     PySI.Startup.enable(PySI.Configuration.SI_ANTI_ALIASING_8x)
@@ -121,27 +149,46 @@ def on_start():
     PySI.Startup.logger_quench_messages_from_class("recognizer")
     PySI.Startup.logger_quench_messages_from_class("mainwindow")
 
-    APPLICATION = 1
-    COLOR_PICKER = 2
-    CAMERA_CALIBRATION = 4
-    BENCHMARK = 8
+    PySI.Startup.exclude_plugins([
+        ConveyorBelt.ConveyorBelt.regionname,
+        ConveyorBeltSplitter.ConveyorBeltSplitter.regionname,
+        ConveyorBeltMerger.ConveyorBeltMerger.regionname,
+        Tag.Tag.regionname,
+        Plot.Plot.regionname,
+        Presentation.Presentation.regionname,
+        Lasso.Lasso.regionname,
+        Preview.Preview.regionname,
+        ImageEditor.ImageEditor.regionname,
+        # OpenEntry.OpenEntry.regionname,
+        Terminal.Terminal.regionname,
+        Undo.Undo.regionname,
+        Redo.Redo.regionname,
+        Video.Video.regionname
+    ])
 
     CHOICE = APPLICATION
 
-    add_canvas()
-    add_mouse_cursor()
-
-    if(APPLICATION & CHOICE):
-        add_simple_notification()
-        add_palette()
-        add_start_directory()
-        add_unredo()
-    elif(COLOR_PICKER & CHOICE):
+    if APPLICATION & CHOICE:
+        start_application()
+    elif COLOR_PICKER & CHOICE:
+        add_canvas()
+        add_mouse_cursor()
         add_slider([[500, 500], [500, 530], [800, 530], [800, 500]], "r")
         add_slider([[500, 600], [500, 630], [800, 630], [800, 600]], "g")
         add_slider([[500, 700], [500, 730], [800, 730], [800, 700]], "b")
         add_slider_target([[1000, 570], [1000, 670], [1100, 670], [1100, 570]])
-    elif(CAMERA_CALIBRATION & CHOICE):
+    elif CAMERA_CALIBRATION & CHOICE:
+        add_canvas()
+        add_mouse_cursor()
         add_camera_calibration()
-    elif(BENCHMARK & CHOICE):
+    elif BENCHMARK & CHOICE:
+        add_canvas()
+        add_mouse_cursor()
         add_many_regions(500)
+    elif TABLE_AREA_CALIBRATION & CHOICE:
+        add_canvas()
+        add_mouse_cursor()
+
+        w, h = PySI.Startup.context_dimensions()[0], PySI.Startup.context_dimensions()[1]
+
+        PySI.Startup.create_region_by_name([[1, 1], [1, h - 1], [w + 1, h - 1], [w + 1, 1]], TableArea.regionname, {})

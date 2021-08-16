@@ -12,7 +12,7 @@ void TangibleListener::ProcessMessage(const osc::ReceivedMessage &m, const IpEnd
 {
     d_bundle.push_back(m);
 
-    if (strcmp(m.AddressPattern(), ALIVE_MESSAGE) != 0)
+    if (strcmp(m.AddressPattern(), ALIVE_MESSAGE))
         return;
 
     std::mutex mutex;
@@ -146,7 +146,7 @@ void TangibleListener::handle_tok_message(const osc::ReceivedMessage &m, int f_i
 
     if(!o)
     {
-        d_current_objects.push_back(new SITUIOObject(s_id, f_id));
+        d_current_objects.push_back(new SITUIOObject(s_id, f_id, d_source_width, d_source_height));
         d_current_objects.back()->add_token_data(m);
     }
     else
@@ -160,7 +160,7 @@ void TangibleListener::handle_ptr_message(const osc::ReceivedMessage &m, int f_i
 
     if(!o)
     {
-        d_current_objects.push_back(new SITUIOObject(s_id, f_id));
+        d_current_objects.push_back(new SITUIOObject(s_id, f_id, d_source_width, d_source_height));
         d_current_objects.back()->add_pointer_data(m);
     }
     else
@@ -174,7 +174,7 @@ void TangibleListener::handle_bnd_message(const osc::ReceivedMessage &m, int f_i
 
     if(!o)
     {
-        d_current_objects.push_back(new SITUIOObject(s_id, f_id));
+        d_current_objects.push_back(new SITUIOObject(s_id, f_id, d_source_width, d_source_height));
         d_current_objects.back()->add_bounds_data(m);
     }
     else
@@ -188,7 +188,7 @@ void TangibleListener::handle_sym_message(const osc::ReceivedMessage &m, int f_i
 
     if(!o)
     {
-        d_current_objects.push_back(new SITUIOObject(s_id, f_id));
+        d_current_objects.push_back(new SITUIOObject(s_id, f_id, d_source_width, d_source_height));
         d_current_objects.back()->add_symbol_data(m);
     }
     else
@@ -202,7 +202,7 @@ void TangibleListener::handle_ocg_message(const osc::ReceivedMessage &m, int f_i
 
     if(!o)
     {
-        d_current_objects.push_back(new SITUIOObject(s_id, f_id));
+        d_current_objects.push_back(new SITUIOObject(s_id, f_id, d_source_width, d_source_height));
         d_current_objects.back()->add_outer_contour_geometry_data(m);
     }
     else

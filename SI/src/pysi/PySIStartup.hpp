@@ -28,6 +28,8 @@ public:
     static void logger_set_log_output(int32_t flags);
     static void enable(int32_t flags);
     static void disable(int32_t flags);
+
+    static void exclude_plugins(const bp::list& plugins);
 };
 
 #endif //SITEST_PYSISTARTUP_HPP

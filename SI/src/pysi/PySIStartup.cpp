@@ -102,3 +102,13 @@ void PySIStartup::disable(int32_t flags)
 {
     Context::SIContext()->disable(flags);
 }
+
+void PySIStartup::exclude_plugins(const bp::list &plugins)
+{
+    std::vector<std::string> plugs(bp::len(plugins));
+
+    for(int i = 0; i < bp::len(plugins); ++i)
+        plugs[i] = bp::extract<std::string>(plugins[i]);
+
+    Context::SIContext()->exclude_plugins(plugs);
+}

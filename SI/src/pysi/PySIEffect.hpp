@@ -35,6 +35,7 @@ public:
     void __create_region__(const bp::list& contour, int effect_type, bp::dict& kwargs);
     void __create_region__(const bp::object& contour, const bp::dict& qml);
     bp::list __current_regions__();
+    bp::list __excluded_plugins__();
 
     bp::dict __qml_data_keys_and_types__();
 
@@ -85,6 +86,7 @@ public:
 
     bool d_recompute_mask = false;
     bool d_with_border = false;
+    bool d_visible = true;
 
     float mouse_wheel_angle_degrees = 0.0;
     float mouse_wheel_angle_px = 0.0;
@@ -95,6 +97,8 @@ public:
     bool d_flagged_for_deletion = false;
     bool is_flagged_for_deletion();
     bool is_border_present();
+    bool visible();
+
 
     const bool has_data_changed() const;
 

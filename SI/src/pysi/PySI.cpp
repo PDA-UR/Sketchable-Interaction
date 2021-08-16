@@ -74,6 +74,7 @@ BOOST_PYTHON_MODULE(libPySI)
                 .def("__logger_messages__", &PySIEffect::__logger_messages__)
                 .def("__qml_data_keys_and_types__", &PySIEffect::__qml_data_keys_and_types__)
                 .def("__current_regions__", &PySIEffect::__current_regions__)
+                .def("__excluded_plugins__", &PySIEffect::__excluded_plugins__)
 
                 .add_property("shape", &PySIEffect::get_shape, &PySIEffect::set_shape)
 
@@ -107,6 +108,7 @@ BOOST_PYTHON_MODULE(libPySI)
                 .def_readwrite("mouse_wheel_angle_px", &PySIEffect::mouse_wheel_angle_px)
                 .def_readwrite("mouse_wheel_angle_degrees", &PySIEffect::mouse_wheel_angle_degrees)
                 .def_readwrite("with_border", &PySIEffect::d_with_border)
+                .def_readwrite("visible", &PySIEffect::d_visible)
                 ;
 
         bp::enum_<uint32_t>("DataType")
@@ -209,6 +211,7 @@ BOOST_PYTHON_MODULE(libPySI)
                 .def("logger_set_log_output", &PySIStartup::logger_set_log_output).staticmethod("logger_set_log_output")
                 .def("enable", &PySIStartup::enable).staticmethod("enable")
                 .def("disable", &PySIStartup::disable).staticmethod("disable")
+                .def("exclude_plugins", &PySIStartup::exclude_plugins).staticmethod("exclude_plugins")
 
                 .enable_pickling()
                 ;

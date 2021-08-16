@@ -4,7 +4,6 @@ project(SIEngine)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
-set(CMAKE_PREFIX_PATH "~/sw/Qt/Qt_5_4/5.4/gcc_64/")
 
 # sudo apt install python3.9-dev
 # Boost System, Filesystem, Boost.Python compilen mit Python3.9
@@ -133,8 +132,6 @@ set(SIGRunSRC
         SI/src/sigrun/context/managers/InputManager.hpp
         SI/src/sigrun/context/managers/helpers/input/ExternalObject.cpp
         SI/src/sigrun/context/managers/helpers/input/ExternalObject.hpp
-        SI/src/sigrun/context/managers/helpers/input/FileSystem.cpp
-        SI/src/sigrun/context/managers/helpers/input/FileSystem.hpp
         SI/src/sigrun/context/managers/ExternalApplicationManager.cpp
         SI/src/sigrun/context/managers/ExternalApplicationManager.hpp
         SI/src/sigrun/parallel/JobSystem.hpp

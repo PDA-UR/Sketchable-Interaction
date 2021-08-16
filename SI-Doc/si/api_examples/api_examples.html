@@ -219,7 +219,7 @@
 <h4 id="structure-2">Structure</h4>
 <div class="sourceCode" id="cb4"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true"></a>Item</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true"></a>{</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true"></a>    <span class="kw">function</span> updateData(data)</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true"></a>    <span class="kw">function</span> <span class="fu">updateData</span>(data)</span>
 <span id="cb4-4"><a href="#cb4-4" aria-hidden="true"></a>    {</span>
 <span id="cb4-5"><a href="#cb4-5" aria-hidden="true"></a>        <span class="co">// apply data</span></span>
 <span id="cb4-6"><a href="#cb4-6" aria-hidden="true"></a>        <span class="co">// e.g. </span></span>
@@ -251,7 +251,7 @@
 <p>and then data is applied in QML for registering the styling changes</p>
 <div class="sourceCode" id="cb6"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true"></a>Item</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true"></a>{</span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true"></a>    <span class="kw">function</span> updateData(data)</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true"></a>    <span class="kw">function</span> <span class="fu">updateData</span>(data)</span>
 <span id="cb6-4"><a href="#cb6-4" aria-hidden="true"></a>    {</span>
 <span id="cb6-5"><a href="#cb6-5" aria-hidden="true"></a>        <span class="co">// update the width, height and visibility of the container with data </span></span>
 <span id="cb6-6"><a href="#cb6-6" aria-hidden="true"></a>        <span class="co">//    received from the associated plugin-file</span></span>
@@ -552,7 +552,7 @@
 <span id="cb20-3"><a href="#cb20-3" aria-hidden="true"></a>Item</span>
 <span id="cb20-4"><a href="#cb20-4" aria-hidden="true"></a>{</span>
 <span id="cb20-5"><a href="#cb20-5" aria-hidden="true"></a>    <span class="co">// apply data provided by the SI-plugin</span></span>
-<span id="cb20-6"><a href="#cb20-6" aria-hidden="true"></a>    <span class="kw">function</span> updateData(data)</span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true"></a>    <span class="kw">function</span> <span class="fu">updateData</span>(data)</span>
 <span id="cb20-7"><a href="#cb20-7" aria-hidden="true"></a>    {</span>
 <span id="cb20-8"><a href="#cb20-8" aria-hidden="true"></a>        image<span class="op">.</span><span class="at">width</span> <span class="op">=</span> data<span class="op">.</span><span class="at">img_width</span><span class="op">;</span></span>
 <span id="cb20-9"><a href="#cb20-9" aria-hidden="true"></a>        image<span class="op">.</span><span class="at">height</span> <span class="op">=</span> data<span class="op">.</span><span class="at">img_height</span><span class="op">;</span></span>
@@ -623,7 +623,7 @@
 <p>And within the container component (<em>Item</em>), we add a <em>Rectangle</em> component:</p>
 <div class="sourceCode" id="cb24"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true"></a>    Item</span>
 <span id="cb24-2"><a href="#cb24-2" aria-hidden="true"></a>    {</span>
-<span id="cb24-3"><a href="#cb24-3" aria-hidden="true"></a>        <span class="kw">function</span> updateData(data)</span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true"></a>        <span class="kw">function</span> <span class="fu">updateData</span>(data)</span>
 <span id="cb24-4"><a href="#cb24-4" aria-hidden="true"></a>        {</span>
 <span id="cb24-5"><a href="#cb24-5" aria-hidden="true"></a>            <span class="co">// .</span></span>
 <span id="cb24-6"><a href="#cb24-6" aria-hidden="true"></a>            <span class="co">// .</span></span>
@@ -742,7 +742,7 @@
 <span id="cb26-2"><a href="#cb26-2" aria-hidden="true"></a><span class="im">import</span> siqml <span class="fl">1.0</span></span>
 <span id="cb26-3"><a href="#cb26-3" aria-hidden="true"></a></span>
 <span id="cb26-4"><a href="#cb26-4" aria-hidden="true"></a>Item {</span>
-<span id="cb26-5"><a href="#cb26-5" aria-hidden="true"></a>    <span class="kw">function</span> updateData(data) {</span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true"></a>    <span class="kw">function</span> <span class="fu">updateData</span>(data) {</span>
 <span id="cb26-6"><a href="#cb26-6" aria-hidden="true"></a>        <span class="cf">if</span>(data<span class="op">.</span><span class="at">image</span>)</span>
 <span id="cb26-7"><a href="#cb26-7" aria-hidden="true"></a>        {</span>
 <span id="cb26-8"><a href="#cb26-8" aria-hidden="true"></a>            plot_texture<span class="op">.</span><span class="at">image</span> <span class="op">=</span> data<span class="op">.</span><span class="at">image</span><span class="op">;</span></span>

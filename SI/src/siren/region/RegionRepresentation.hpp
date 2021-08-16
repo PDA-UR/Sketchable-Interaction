@@ -48,6 +48,7 @@ private:
 
     bool d_was_data_received = false;
     bool d_with_border = true;
+    bool d_visible = true;
 
     QMap<QString, QVariant> d_received_data;
 

@@ -48,7 +48,7 @@ Context::Context()
     uplm = std::make_unique<LinkingManager>();
     upim = std::make_unique<InputManager>();
     uprcm = std::make_unique<CollisionManager>();
-    upfs = std::make_unique<FileSystem>();
+//    upfs = std::make_unique<FileSystem>();
     upeam = std::make_unique<ExternalApplicationManager>();
     upjs = std::make_unique<JobSystem<void, 512>>();
     uptm = std::make_unique<TangibleManager>();
@@ -119,9 +119,8 @@ void Context::begin(const std::unordered_map<std::string, std::unique_ptr<bp::ob
         int port = 3333;
 
         TangibleListener tangible_listener;
-        UdpListeningReceiveSocket s(IpEndpointName("10.61.3.117", port), &tangible_listener);
-//        UdpListeningReceiveSocket s(IpEndpointName("127.0.0.1", port), &tangible_listener);
-
+//        UdpListeningReceiveSocket s(IpEndpointName("10.61.3.117", port), &tangible_listener);
+        UdpListeningReceiveSocket s(IpEndpointName("127.0.0.1", port), &tangible_listener);
 
         s.RunUntilSigInt();
 
@@ -331,44 +330,23 @@ void Context::register_new_region_via_name(const std::vector<glm::vec3>& contour
 {
     int id = bp::extract<int>(d_plugins[effect_name].attr(d_plugins[effect_name].attr(SI_INTERNAL_NAME)).attr(SI_INTERNAL_REGION_TYPE));
 
-    if(as_selector)
+    if(!as_selector)
     {
-        HANDLE_PYTHON_CALL(PY_WARNING, "The plugin effect for which a selector effect is to be created does not have the attribute \'region_display_name\' as a static class member.",
-            kwargs["is_selector"] = true;
-            Region temp(std::vector<glm::vec3>{{0, 0, 1}, {0, 1, 1}, {1, 1, 1}, {1, 0, 1}}, d_plugins[effect_name], 0 , 0, kwargs);
-
-            kwargs[SI_SELECTOR_TARGET_COLOR] = temp.color();
-            kwargs[SI_SELECTOR_TARGET_TEXTURE] = temp.raw_effect().attr("texture_path");
-            kwargs[SI_SELECTOR_TARGET_DISPLAY_NAME] = d_plugins[effect_name].attr(d_plugins[effect_name].attr(SI_INTERNAL_NAME)).attr(SI_INTERNAL_REGION_DISPLAY_NAME);
-            kwargs[SI_SELECTOR_TARGET_NAME] = effect_name;
-
-            d_region_insertion_queue.emplace(contour, d_plugins[SI_NAME_EFFECT_SELECTOR], id, kwargs);
-        )
-
+        d_region_insertion_queue.emplace(contour, d_plugins[effect_name], id, kwargs);
         return;
     }
 
-    if(id == SI_TYPE_DIRECTORY)
-    {
-        std::string k_cwd = std::string(bp::extract<char*>(kwargs[SI_CWD]));
+    HANDLE_PYTHON_CALL(PY_WARNING, "The plugin effect for which a selector effect is to be created does not have the attribute \'region_display_name\' as a static class member.",
+        kwargs["is_selector"] = true;
+        Region temp(std::vector<glm::vec3>{{0, 0, 1}, {0, 1, 1}, {1, 1, 1}, {1, 0, 1}}, d_plugins[effect_name], 0 , 0, kwargs);
 
-        if(!k_cwd.empty())
-            upfs->set_cwd(k_cwd);
+        kwargs[SI_SELECTOR_TARGET_COLOR] = temp.color();
+        kwargs[SI_SELECTOR_TARGET_TEXTURE] = temp.raw_effect().attr("texture_path");
+        kwargs[SI_SELECTOR_TARGET_DISPLAY_NAME] = d_plugins[effect_name].attr(d_plugins[effect_name].attr(SI_INTERNAL_NAME)).attr(SI_INTERNAL_REGION_DISPLAY_NAME);
+        kwargs[SI_SELECTOR_TARGET_NAME] = effect_name;
 
-        const std::string& cwd = upfs->cwd();
-        const std::vector<std::string> children_paths = upfs->cwd_contents_paths(cwd);
-        const std::vector<int> children_types = upfs->cwd_contents_types(children_paths);
-
-        bp::list children;
-
-        for(int32_t i = 0; i < children_paths.size(); ++i)
-            children.append(bp::make_tuple(children_paths[i], children_types[i]));
-
-        kwargs[SI_CWD] = cwd;
-        kwargs[SI_CHILDREN] = children;
-    }
-
-    d_region_insertion_queue.emplace(contour, d_plugins[effect_name], id, kwargs);
+        d_region_insertion_queue.emplace(contour, d_plugins[SI_NAME_EFFECT_SELECTOR], id, kwargs);
+    )
 }
 
 void Context::register_new_region_via_type(const std::vector<glm::vec3>& contour, int id, bp::dict& kwargs)
@@ -380,29 +358,7 @@ void Context::register_new_region_via_type(const std::vector<glm::vec3>& contour
         });
 
         if(effect != d_plugins.end())
-        {
-            if(id == SI_TYPE_DIRECTORY)
-            {
-                std::string k_cwd = std::string(bp::extract<char*>(kwargs[SI_CWD]));
-
-                if(!k_cwd.empty())
-                    upfs->set_cwd(k_cwd);
-
-                const std::string& cwd = upfs->cwd();
-                const std::vector<std::string> children_paths = upfs->cwd_contents_paths(cwd);
-                const std::vector<int> children_types = upfs->cwd_contents_types(children_paths);
-
-                bp::list children;
-
-                for(int32_t i = 0; i < children_paths.size(); ++i)
-                    children.append(bp::make_tuple(children_paths[i], children_types[i]));
-
-                kwargs[SI_CWD] = cwd;
-                kwargs[SI_CHILDREN] = children;
-            }
-
             d_region_insertion_queue.emplace(contour, effect->second, id, kwargs);
-        }
     )
 }
 
@@ -416,27 +372,6 @@ void Context::register_region_via_class_object(const std::vector<glm::vec3>& con
     if(effect != d_plugins.end())
     {
         int id = bp::extract<int>(clazz.attr(clazz.attr(SI_INTERNAL_NAME)).attr(SI_INTERNAL_REGION_TYPE));
-
-        if(id == SI_TYPE_DIRECTORY)
-        {
-            std::string k_cwd = std::string(bp::extract<char*>(kwargs[SI_CWD]));
-
-            if(!k_cwd.empty())
-                upfs->set_cwd(k_cwd);
-
-            const std::string& cwd = upfs->cwd();
-            const std::vector<std::string> children_paths = upfs->cwd_contents_paths(cwd);
-            const std::vector<int> children_types = upfs->cwd_contents_types(children_paths);
-
-            bp::list children;
-
-            for(int32_t i = 0; i < children_paths.size(); ++i)
-                children.append(bp::make_tuple(children_paths[i], children_types[i]));
-
-            kwargs[SI_CWD] = cwd;
-            kwargs[SI_CHILDREN] = children;
-        }
-
         d_region_insertion_queue.emplace(contour, effect->second, id, kwargs);
     }
 }
@@ -476,6 +411,7 @@ void Context::unregister_external_application(const std::string& file_uuid)
 
 const std::vector<std::string>& Context::available_plugins_names()
 {
+    std::vector<std::string> ret;
     return d_available_plugins_names;
 }
 
@@ -684,4 +620,12 @@ void Context::perform_collision_update()
     uprm->update();
 }
 
+void Context::exclude_plugins(const std::vector<std::string>& excluded_plugins)
+{
+    d_excluded_plugins = excluded_plugins;
+}
 
+const std::vector<std::string>& Context::excluded_plugins()
+{
+    return d_excluded_plugins;
+}

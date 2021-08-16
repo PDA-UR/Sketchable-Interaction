@@ -92,19 +92,13 @@ void RegionRepresentation::perform_transform_update(const std::shared_ptr<Region
 
         if(!d_qml_path.empty())
             d_view->move(x, y);
-
-//        if(angle - d_last_angle > 0.1)
-//        {
-//            setTransformOriginPoint(boundingRect().x() + boundingRect().width() / 2, boundingRect().y() + boundingRect().y());
-//            setRotation(angle);
-//            d_last_angle = angle;
-//        }
     }
 }
 
 void RegionRepresentation::perform_data_update(const std::shared_ptr<Region> &region)
 {
     QColor color(region->color().r, region->color().g, region->color().b, region->color().a);
+    bool d_visible = region->effect()->visible();
 
     if(d_color != color)
     {
@@ -152,13 +146,16 @@ void RegionRepresentation::set_data(const QVariantMap& data)
 
 void RegionRepresentation::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
+    if(!d_visible)
+        return;
+
     if(d_with_border)
     {
         QPen pen(QColor(72, 79, 81));
 
         pen.setWidth(4);
-
         painter->setPen(pen);
+
         painter->drawPolygon(this->polygon());
     }
 

@@ -60,6 +60,11 @@ bool PySIEffect::is_border_present()
     return d_with_border;
 }
 
+bool PySIEffect::visible()
+{
+    return d_visible;
+}
+
 bp::object PySIEffect::__data__(const std::string& key, const uint32_t type)
 {
     switch (type)
@@ -522,4 +527,16 @@ bp::dict PySIEffect::__qml_data_keys_and_types__()
     }
 
     return ret;
+}
+
+bp::list PySIEffect::__excluded_plugins__()
+{
+    auto& plugins = Context::SIContext()->excluded_plugins();
+
+    bp::list l;
+
+    for(auto& s: plugins)
+        l.append(s);
+
+    return l;
 }
