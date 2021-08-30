@@ -1,7 +1,9 @@
 
 from libPySI import PySI
 from plugins.__loaded_plugins__.standard_environment_library.notification import SimpleNotification
+from plugins.__loaded_plugins__.standard_environment_library.canvas import Canvas
 from plugins.__loaded_plugins__.standard_environment_library.filesystem import Directory
+from plugins.__loaded_plugins__.standard_environment_library.palette import Palette
 from plugins.__loaded_plugins__.standard_environment_library.cursor import Cursor
 from plugins.__loaded_plugins__.standard_environment_library.deletion import Deletion
 from plugins.__loaded_plugins__.standard_environment_library.slider import SliderBase
@@ -27,7 +29,7 @@ def add_canvas(kwargs={}):
                     [PySI.Startup.context_dimensions()[0], PySI.Startup.context_dimensions()[1]],
                     [PySI.Startup.context_dimensions()[0], 0]]
 
-    PySI.Startup.create_region_by_type(canvas_shape, PySI.EffectType.SI_CANVAS, kwargs)
+    PySI.Startup.create_region_by_name(canvas_shape, Canvas.Canvas.regionname, kwargs)
 
 def add_mouse_cursor():
     mouse_shape = [[0, 0],
@@ -35,7 +37,7 @@ def add_mouse_cursor():
                    [Cursor.Cursor.region_width, Cursor.Cursor.region_height],
                    [Cursor.Cursor.region_width, 0]]
 
-    PySI.Startup.create_region_by_class(mouse_shape, Cursor, {})
+    PySI.Startup.create_region_by_name(mouse_shape, Cursor.Cursor.regionname, {})
 
 def add_simple_notification():
     x = PySI.Startup.context_dimensions()[0] / 2 - SimpleNotification.SimpleNotification.region_width / 2
@@ -45,7 +47,7 @@ def add_simple_notification():
                                  [x + SimpleNotification.SimpleNotification.region_width, 75 + SimpleNotification.SimpleNotification.region_height],
                                  [x + SimpleNotification.SimpleNotification.region_width, 75]]
 
-    PySI.Startup.create_region_by_class(simple_notification_shape, SimpleNotification, {})
+    PySI.Startup.create_region_by_name(simple_notification_shape, SimpleNotification.SimpleNotification.regionname, {})
 
 def add_palette():
     palette_shape = [[PySI.Startup.context_dimensions()[0] - 400, 75],
@@ -53,7 +55,7 @@ def add_palette():
                      [PySI.Startup.context_dimensions()[0] - 100, 475],
                      [PySI.Startup.context_dimensions()[0] - 100, 75]]
 
-    PySI.Startup.create_region_by_type(palette_shape, PySI.EffectType.SI_PALETTE, {})
+    PySI.Startup.create_region_by_name(palette_shape, Palette.Palette.regionname, {})
 
 def add_start_directory():
     directory_path = "/home/juergen/Desktop/"
@@ -64,7 +66,7 @@ def add_start_directory():
                        [75 + Directory.Directory.region_width, 75]]
 
     kwargs = {"cwd": directory_path, "parent": ""}
-    PySI.Startup.create_region_by_type(directory_shape, PySI.EffectType.SI_DIRECTORY, kwargs)
+    PySI.Startup.create_region_by_name(directory_shape, Directory.Directory.regionname, kwargs)
 
 def add_unredo():
     w, h = PySI.Startup.context_dimensions()[0], PySI.Startup.context_dimensions()[1]
@@ -78,8 +80,8 @@ def add_unredo():
                   [w - 100 - 5, h - 5],
                   [w - 100 - 5, h - 100]]
 
-    PySI.Startup.create_region_by_class(undo_shape, Undo, {})
-    PySI.Startup.create_region_by_class(redo_shape, Redo, {})
+    PySI.Startup.create_region_by_name(undo_shape, Undo.Undo.regionname, {})
+    PySI.Startup.create_region_by_name(redo_shape, Redo.Redo.regionname, {})
 
 ## Author: RW
 def add_many_regions(num = 100, area_width= 1600, area_height=800):
@@ -103,15 +105,15 @@ def add_many_regions(num = 100, area_width= 1600, area_height=800):
 
         kwargs = {"cwd": directory_path, "parent": ""}
 
-        PySI.Startup.create_region_by_class(r_shape, Deletion, kwargs)
+        PySI.Startup.create_region_create_region_by_name(r_shape, Deletion.Deletion.regionname, kwargs)
 
 
 def add_slider(shape, c):
-    PySI.Startup.create_region_by_class(shape, SliderBase, {"color_channel": c})
+    PySI.Startup.create_region_create_region_by_name(shape, SliderBase.SliderBase.regionname, {"color_channel": c})
 
 
 def add_slider_target(shape):
-    PySI.Startup.create_region_by_class(shape, SliderTargetDummy, {})
+    PySI.Startup.create_region_by_name(shape, SliderTargetDummy.SliderTargetDummy.regionname, {})
 
 def add_camera_calibration():
     shape = [[0, 0],
@@ -149,22 +151,22 @@ def on_start():
     PySI.Startup.logger_quench_messages_from_class("recognizer")
     PySI.Startup.logger_quench_messages_from_class("mainwindow")
 
-    PySI.Startup.exclude_plugins([
-        ConveyorBelt.ConveyorBelt.regionname,
-        ConveyorBeltSplitter.ConveyorBeltSplitter.regionname,
-        ConveyorBeltMerger.ConveyorBeltMerger.regionname,
-        Tag.Tag.regionname,
-        Plot.Plot.regionname,
-        Presentation.Presentation.regionname,
-        Lasso.Lasso.regionname,
-        Preview.Preview.regionname,
-        ImageEditor.ImageEditor.regionname,
-        # OpenEntry.OpenEntry.regionname,
-        Terminal.Terminal.regionname,
-        Undo.Undo.regionname,
-        Redo.Redo.regionname,
-        Video.Video.regionname
-    ])
+    # PySI.Startup.exclude_plugins([
+    #     ConveyorBelt.ConveyorBelt.regionname,
+    #     ConveyorBeltSplitter.ConveyorBeltSplitter.regionname,
+    #     ConveyorBeltMerger.ConveyorBeltMerger.regionname,
+    #     Tag.Tag.regionname,
+    #     Plot.Plot.regionname,
+    #     Presentation.Presentation.regionname,
+    #     Lasso.Lasso.regionname,
+    #     Preview.Preview.regionname,
+    #     ImageEditor.ImageEditor.regionname,
+    #     # OpenEntry.OpenEntry.regionname,
+    #     Terminal.Terminal.regionname,
+    #     Undo.Undo.regionname,
+    #     Redo.Redo.regionname,
+    #     Video.Video.regionname
+    # ])
 
     CHOICE = APPLICATION
 

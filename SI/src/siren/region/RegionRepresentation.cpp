@@ -18,7 +18,8 @@ RegionRepresentation::RegionRepresentation(QQmlContext* c, const std::shared_ptr
     d_uuid(region->uuid()),
     d_name(region->name()),
     d_initial_offset(region->aabb()[0].x, region->aabb()[0].y, 1),
-    d_with_border(region->effect()->is_border_present())
+    d_with_border(region->effect()->is_border_present()),
+    d_drawing_additions(region->effect()->drawing_additions())
 {
     if(!d_qml_path.empty())
     {
@@ -111,6 +112,8 @@ void RegionRepresentation::perform_data_update(const std::shared_ptr<Region> &re
     {
         d_with_border = region->effect()->is_border_present();
 
+        d_drawing_additions = region->effect()->drawing_additions();
+
         QPolygonF poly;
         for(auto& p: region->contour())
             poly << QPointF(p.x, p.y);
@@ -149,19 +152,24 @@ void RegionRepresentation::paint(QPainter *painter, const QStyleOptionGraphicsIt
     if(!d_visible)
         return;
 
+    QGraphicsPolygonItem::paint(painter, option, widget);
+
+    QPen pen(QColor(0, 0, 0));
+    painter->setPen(pen);
+    pen.setWidth(4);
+
     if(d_with_border)
     {
-        QPen pen(QColor(72, 79, 81));
-
+        pen = QPen(QColor(72, 79, 81));
         pen.setWidth(4);
-        painter->setPen(pen);
 
+        painter->setPen(pen);
         painter->drawPolygon(this->polygon());
     }
 
     if(d_type == SI_TYPE_DIRECTORY || d_type == SI_TYPE_IMAGE_FILE || d_type == SI_TYPE_TEXT_FILE)
     {
-        QPen pen(QColor(72, 79, 81));
+        pen = QPen(QColor(72, 79, 81));
         pen.setWidth(1);
         painter->setPen(pen);
 
@@ -169,5 +177,23 @@ void RegionRepresentation::paint(QPainter *painter, const QStyleOptionGraphicsIt
         painter->drawPolygon(this->polygon());
     }
 
-    QGraphicsPolygonItem::paint(painter, option, widget);
+    if(!d_drawing_additions.empty())
+    {
+        pen = QPen(QColor(0, 0, 0));
+        painter->setPen(pen);
+        pen.setWidth(4);
+
+        for(std::vector<std::vector<glm::vec3>>& shape: d_drawing_additions)
+        {
+            for(std::vector<glm::vec3>& shape_part: shape)
+            {
+                QPolygonF poly;
+
+                for(glm::vec3& p: shape_part)
+                    poly << QPointF(p.x, p.y);
+
+                painter->drawPolyline(poly);
+            }
+        }
+    }
 }

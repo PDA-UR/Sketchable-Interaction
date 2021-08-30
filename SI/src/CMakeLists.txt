@@ -149,7 +149,12 @@ set(SIGRunSRC
         SI/src/sigrun/plugin/PythonInvoker.cpp
         SI/src/sigrun/context/spatial_grid/SpatialHashGrid.cpp
         SI/src/sigrun/context/spatial_grid/SpatialHashGrid.hpp
+        SI/src/e/E.cpp
+        SI/src/e/E.hpp
 
+        SI/lib/pugixml-1.10/src/pugiconfig.hpp
+        SI/lib/pugixml-1.10/src/pugixml.cpp
+        SI/lib/pugixml-1.10/src/pugixml.hpp
         SI/lib/tuio_headers/oscpack/ip/IpEndpointName.h
         SI/lib/tuio_headers/oscpack/ip/IpEndpointName.cpp
         SI/lib/tuio_headers/oscpack/ip/UdpSocket.h)

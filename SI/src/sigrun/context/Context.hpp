@@ -81,9 +81,13 @@ public:
 
     std::unordered_map<std::string, std::shared_ptr<ExternalObject>>& external_objects();
 
+    const std::vector<std::string>& conditional_variables() const;
+
     void set_message(const std::string& msg);
 
     void exclude_plugins(const std::vector<std::string>& excluded_plugins);
+
+    void set_conditional_variables(const std::vector<std::string>& conditionals);
 
 private:
 
@@ -108,6 +112,7 @@ private:
     std::queue<std::tuple<std::string, std::string, std::string, bp::object>> d_link_emission_queue;
 
     std::vector<std::string> d_excluded_plugins;
+    std::vector<std::string> d_conditionals;
 
     std::vector<std::string> d_available_plugins_names;
     std::unordered_map<std::string, bp::object> d_available_plugins;

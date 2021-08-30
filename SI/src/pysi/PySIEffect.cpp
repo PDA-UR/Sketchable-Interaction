@@ -8,6 +8,8 @@
 #include <QDebug>
 #include <QVideoFrame>
 #include <QImage>
+#include <QVariant>
+#include <QList>
 #include <QtGui>
 #include <pysi/pickling/PickleSuits.hpp>
 
@@ -103,13 +105,13 @@ void PySIEffect::__signal_deletion_by_uuid__(const std::string& uuid)
 {
     const auto& regions = Context::SIContext()->region_manager()->regions();
 
-    auto it = std::find_if(regions.begin(), regions.end(), [&uuid](auto& r)
+    std::find_if(regions.begin(), regions.end(), [&uuid](auto& r)
     {
+       if(uuid == r->uuid())
+           r->effect()->d_flagged_for_deletion = true;
+
        return uuid == r->uuid();
     });
-
-    if(it != regions.end())
-        it->get()->effect()->d_flagged_for_deletion = true;
 }
 
 bool PySIEffect::is_flagged_for_deletion()
@@ -328,8 +330,9 @@ void PySIEffect::__set_data__(const std::string &key, const bp::object &value, c
         }
 
         case SI_DATA_TYPE_VIDEO:
+        {
             if (value.is_none())
-                return;
+                break;
 
             d_data_changed = true;
 
@@ -349,6 +352,28 @@ void PySIEffect::__set_data__(const std::string &key, const bp::object &value, c
 
             d_data[QString(key.c_str())] = img.convertToFormat(QVideoFrame::imageFormatFromPixelFormat(QVideoFrame::Format_RGB32));
             break;
+        }
+
+        case SI_DATA_TYPE_LIST:
+        {
+            if(value.is_none())
+                break;
+
+            d_data_changed = true;
+
+            QList<QString> list;
+
+            for (int i = 0; i < bp::len(value); ++i)
+            {
+                std::string s = bp::extract<std::string>(value[i]);
+
+                list.push_back(s.c_str());
+            }
+
+            d_data[QString(key.c_str())] = QVariant(list);
+
+            break;
+        }
     }
 }
 
@@ -539,4 +564,78 @@ bp::list PySIEffect::__excluded_plugins__()
         l.append(s);
 
     return l;
+}
+
+bp::list PySIEffect::__conditional_variables__()
+{
+    auto& vars = Context::SIContext()->conditional_variables();
+
+    bp::list l;
+
+    for(auto& s: vars)
+        l.append(s);
+
+    return l;
+}
+
+void PySIEffect::__set_drawing_additions__(const bp::list &drawing_additions)
+{
+    d_drawing_additions.clear();
+
+    for(int i = 0; i < bp::len(drawing_additions); ++i)
+    {
+        std::vector<std::vector<glm::vec3>> shapes;
+        for(int k = 0; k < bp::len(drawing_additions[i]); ++k)
+        {
+            std::vector<glm::vec3> shape_part;
+
+            for(int l = 0; l < bp::len(drawing_additions[i][k]); ++l)
+            {
+                int x = bp::extract<float>(drawing_additions[i][k][l][0]);
+                int y = bp::extract<float>(drawing_additions[i][k][l][1]);
+
+                shape_part.emplace_back(x, y, 1);
+            }
+
+            shapes.push_back(shape_part);
+        }
+
+        d_drawing_additions.push_back(shapes);
+    }
+
+    d_data_changed = true;
+}
+
+bp::list PySIEffect::__drawing_additions__()
+{
+    bp::list ret;
+
+    for(std::vector<std::vector<glm::vec3>>& shape: d_drawing_additions)
+    {
+        bp::list shapes;
+        for(std::vector<glm::vec3>& shape_part: shape)
+        {
+            bp::list shape_parts;
+            for(glm::vec3& p: shape_part)
+            {
+                bp::list point;
+
+                point.append(p.x);
+                point.append(p.y);
+
+                shape_parts.append(point);
+            }
+
+            shapes.append(shape_parts);
+        }
+
+        ret.append(shapes);
+    }
+
+    return ret;
+}
+
+std::vector<std::vector<std::vector<glm::vec3>>> &PySIEffect::drawing_additions()
+{
+    return d_drawing_additions;
 }

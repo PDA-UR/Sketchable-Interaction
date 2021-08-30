@@ -72,6 +72,7 @@
 #define SI_DATA_TYPE_BOOL 3
 #define SI_DATA_TYPE_IMAGE_AS_BYTES 4
 #define SI_DATA_TYPE_VIDEO 5
+#define SI_DATA_TYPE_LIST 6
 
 #define SI_START_FILE "StartSIGRun"
 #define SI_START_FUNCTION "on_start"

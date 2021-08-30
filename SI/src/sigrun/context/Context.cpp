@@ -48,7 +48,6 @@ Context::Context()
     uplm = std::make_unique<LinkingManager>();
     upim = std::make_unique<InputManager>();
     uprcm = std::make_unique<CollisionManager>();
-//    upfs = std::make_unique<FileSystem>();
     upeam = std::make_unique<ExternalApplicationManager>();
     upjs = std::make_unique<JobSystem<void, 512>>();
     uptm = std::make_unique<TangibleManager>();
@@ -96,8 +95,6 @@ void Context::begin(const std::unordered_map<std::string, std::unique_ptr<bp::ob
                 case SI_TYPE_UNKNOWN_FILE:
                 case SI_TYPE_CURSOR:
                 case SI_TYPE_ENTRY:
-                case SI_TYPE_PALETTE:
-                case SI_TYPE_SELECTOR:
                 case SI_TYPE_CUSTOM_NON_DRAWABLE:
                     break;
 
@@ -306,9 +303,7 @@ void Context::disable(uint32_t what)
     }
 
     if(what & SI_ANTI_ALIASING_OFF || what & SI_ANTI_ALIASING_4x || what & SI_ANTI_ALIASING_8x || what & SI_ANTI_ALIASING_16x)
-    {
         d_ire->disable_anti_aliasing();
-    }
 }
 
 void Context::register_new_region_from_object(const bp::object &object, const bp::dict &qml)
@@ -438,9 +433,7 @@ void Context::set_message(const std::string& msg)
     });
 
     if(it != uprm->regions().end())
-    {
         (*it)->raw_effect().attr("update_message")(msg);
-    }
 }
 
 void Context::perform_external_object_update()
@@ -628,4 +621,14 @@ void Context::exclude_plugins(const std::vector<std::string>& excluded_plugins)
 const std::vector<std::string>& Context::excluded_plugins()
 {
     return d_excluded_plugins;
+}
+
+void Context::set_conditional_variables(const std::vector<std::string>& conditionals)
+{
+    d_conditionals = conditionals;
+}
+
+const std::vector<std::string>& Context::conditional_variables() const
+{
+    return d_conditionals;
 }

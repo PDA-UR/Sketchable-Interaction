@@ -75,6 +75,9 @@ BOOST_PYTHON_MODULE(libPySI)
                 .def("__qml_data_keys_and_types__", &PySIEffect::__qml_data_keys_and_types__)
                 .def("__current_regions__", &PySIEffect::__current_regions__)
                 .def("__excluded_plugins__", &PySIEffect::__excluded_plugins__)
+                .def("__conditional_variables__", &PySIEffect::__conditional_variables__)
+                .def("__set_drawing_additions__", &PySIEffect::__set_drawing_additions__)
+                .def("__drawing_additions__", &PySIEffect::__drawing_additions__)
 
                 .add_property("shape", &PySIEffect::get_shape, &PySIEffect::set_shape)
 
@@ -118,6 +121,7 @@ BOOST_PYTHON_MODULE(libPySI)
                 .value("STRING", SI_DATA_TYPE_STRING)
                 .value("IMAGE_AS_BYTES", SI_DATA_TYPE_IMAGE_AS_BYTES)
                 .value("VIDEO", SI_DATA_TYPE_VIDEO)
+                .value("LIST", SI_DATA_TYPE_LIST)
 
                 .export_values()
                 ;

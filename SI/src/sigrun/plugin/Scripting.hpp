@@ -33,6 +33,8 @@ private:
     void extract_calls(std::vector<std::string>& calls, const std::unordered_map<std::string, std::unordered_map<std::string, std::unordered_map<std::string, std::string>>>& collision_events);
     std::string load_plugin_source(const char *source);
 
+    std::vector<std::string> d_conditionals;
+
     void adjust_imports(std::string& s, const std::string& path_addition);
 
     std::vector<std::string> str_split(const std::string& str, char delim) {

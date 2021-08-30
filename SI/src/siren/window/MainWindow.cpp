@@ -73,6 +73,7 @@ void MainWindow::loop()
         {
             __loop();
             Context::SIContext()->update();
+            p_scene->update();
 
             frames++;
         }

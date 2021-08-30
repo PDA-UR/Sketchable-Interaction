@@ -207,27 +207,19 @@ void Region::LINK_SLOT(const std::string& uuid_event, const std::string& uuid_se
                 if(Context::SIContext()->linking_manager()->is_linked(uuid_sender, source_cap, uuid(), k, ILink::UD))
                 {
                     if (args.is_none())
-                    {
                         v();
-                    }
                     else
                     {
                         if (bp::extract<bp::tuple>(args).check())
-                       {
-                           v(*args);
-                       }
+                            v(*args);
                         else
                         {
                             if(!bp::extract<bp::dict>(args).check())
                             {
                                 if(!PyCallable_Check(args.ptr()))
-                                {
                                     v(args);
-                                }
                                 else
-                                {
                                     v(args());
-                                }
                             }
                         }
                     }

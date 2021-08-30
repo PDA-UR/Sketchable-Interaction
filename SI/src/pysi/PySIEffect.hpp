@@ -36,6 +36,10 @@ public:
     void __create_region__(const bp::object& contour, const bp::dict& qml);
     bp::list __current_regions__();
     bp::list __excluded_plugins__();
+    bp::list __conditional_variables__();
+
+    void __set_drawing_additions__(const bp::list& drawing_additions);
+    bp::list __drawing_additions__();
 
     bp::dict __qml_data_keys_and_types__();
 
@@ -51,6 +55,7 @@ public:
 
     std::vector<glm::vec3> get_shape();
     void set_shape(const std::vector<glm::vec3>& shape);
+
 
     float d_x = 0;
     float d_y = 0;
@@ -99,7 +104,6 @@ public:
     bool is_border_present();
     bool visible();
 
-
     const bool has_data_changed() const;
 
     std::vector<std::string> d_regions_marked_for_registration;
@@ -111,8 +115,11 @@ public:
     std::vector<glm::vec3> d_contour;
     std::vector<glm::vec3> d_aabb;
 
+    std::vector<std::vector<std::vector<glm::vec3>>> d_drawing_additions;
+
     std::vector<glm::vec3>& contour();
     std::vector<glm::vec3>& aabb();
+    std::vector<std::vector<std::vector<glm::vec3>>>& drawing_additions();
 
     glm::vec4 d_color;
     const glm::vec4& color() const;
