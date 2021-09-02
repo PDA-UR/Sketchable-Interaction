@@ -11,6 +11,7 @@
 #include <glm/vec3.hpp>
 #include "PythonInvoker.hpp"
 #include <filesystem>
+#include <sigrun/context/Context.hpp>
 
 namespace bp = boost::python;
 
@@ -38,14 +39,18 @@ Scripting::Scripting()
         d_globals["__builtins__"] = bp::import("builtins");
         d_cwd = directory;
 
+        d_conditionals.push_back("<condition>");
+
         bp::exec((std::string("import builtins\nimport os\n\n") +
                               "os.remove(\".TEST.TXT\")\n" +
                               "open(\".TEST.TXT\", 'x').close()\n" +
-                              "def si_print(filename):\n" +
+                              "def si_print(filename):\n"
                               "    def wrap(func):\n" +
                               "        def wrapped_func(*args, **kwargs):\n" +
                               "            with open(filename, \'a\') as outputfile:\n" +
-                              "                outputfile.write(str(args).replace(chr(0), '') + \",\" + str(**kwargs).replace(chr(0), ''))\n" +
+                              "                out = str(args).replace(chr(0), '')\n" +
+                              "                outputfile.write(out)\n" +
+                              "                outputfile.write('\\n')\n" +
                               "            return func(\"PySI:\", *args, **kwargs)\n" +
                               "        return wrapped_func\n" +
                               "    return wrap\n\n" +
@@ -86,7 +91,12 @@ std::string Scripting::transpile(std::string& path, const std::string& path_addi
             extract_line_constructor(line_constructor_start, line_constructor_end, lines, i);
 
         extract_calls(calls, collision_events, lines, i);
+
+        if(lines[i].find("SIEffect.SI_CONDITION") != std::string::npos)
+            d_conditionals.push_back(lines[i].substr(0, lines[i].find(":")).substr(lines[i].find(".") + 1));
     }
+
+    Context::SIContext()->set_conditional_variables(d_conditionals);
 
     extract_calls(calls, collision_events);
 
@@ -110,7 +120,7 @@ std::string Scripting::transpile(std::string& path, const std::string& path_addi
         it += calls.size();
         auto it_start = lines.begin() + line_constructor_start;
 
-        lines.insert(it, std::string("        except Exception as ex:\n            self.__handle_exception__(ex, __file__)"));
+        lines.insert(it, std::string("        except Exception as ex:\n            self.__handle_exception__(ex, __file__)\n"));
         lines.insert(it_start, std::string("        try:"));
     }
 

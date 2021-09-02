@@ -65,6 +65,7 @@ void TangibleManager::add_tangible(SITUIOObject *tobj, int sw, int sh)
     {
         bp::dict kwargs;
         kwargs["s_id"] = tobj->s_id();
+        kwargs["c_id"] = tobj->symbol_component()->c_id();
         kwargs["angle"] = tobj->token_component()->angle();
 
         std::vector<glm::vec3> contour = tobj->outer_contour_geometry_component()->contour();
@@ -87,7 +88,33 @@ void TangibleManager::add_tangible(SITUIOObject *tobj, int sw, int sh)
             kwargs["links"] = l;
         }
 
-        Context::SIContext()->register_new_region_via_name(tobj->outer_contour_geometry_component()->contour(), tobj->symbol_component()->data(), false, kwargs);
+        if(contour.size() == 4)
+        {
+            const glm::vec3& tlc = contour[0];
+            const glm::vec3& blc = contour[1];
+            const glm::vec3& trc = contour[3];
+
+            glm::vec3 p = trc - tlc;
+            glm::vec3 q = blc - tlc;
+            glm::vec2 xa = glm::normalize(p);
+            glm::vec2 ya = glm::normalize(q);
+
+            float width = glm::length(p);
+            float height = glm::length(q);
+
+            kwargs["x"] = tlc.x;
+            kwargs["y"] = tlc.y;
+            kwargs["x_axis"] = bp::list(bp::make_tuple(xa.x, xa.y));
+            kwargs["y_axis"] = bp::list(bp::make_tuple(ya.x, ya.y));
+            kwargs["width"] = width;
+            kwargs["height"] = height;
+            kwargs["orig_x"] = tobj->outer_contour_geometry_component()->contour()[0].x;
+            kwargs["orig_y"] = tobj->outer_contour_geometry_component()->contour()[0].y;
+            kwargs["orig_width"] = glm::length(tobj->outer_contour_geometry_component()->contour()[3] - tobj->outer_contour_geometry_component()->contour()[0]);
+            kwargs["orig_height"] = glm::length(tobj->outer_contour_geometry_component()->contour()[1] - tobj->outer_contour_geometry_component()->contour()[0]);
+        }
+
+        Context::SIContext()->register_new_region_via_name(contour, tobj->symbol_component()->data(), false, kwargs);
     }
     else if (tobj->has_bounds_component() && tobj->has_symbol_component() && tobj->has_token_component())
     {
@@ -98,9 +125,9 @@ void TangibleManager::add_tangible(SITUIOObject *tobj, int sw, int sh)
         std::vector<glm::vec3> contour =
         {
             glm::vec3(tobj->bounds_component()->x_pos() / sw *  w, tobj->bounds_component()->y_pos() / sh * h, 1),
-            glm::vec3(tobj->bounds_component()->x_pos() / sw *  w, (tobj->bounds_component()->y_pos() + tobj->bounds_component()->height()) / sh * h, 1),
-            glm::vec3((tobj->bounds_component()->x_pos() + tobj->bounds_component()->width()) / sw *  w, (tobj->bounds_component()->y_pos() + tobj->bounds_component()->height()) / sh * h, 1),
-            glm::vec3((tobj->bounds_component()->x_pos() + tobj->bounds_component()->width()) / sw *  w, tobj->bounds_component()->y_pos()  / sh * h, 1)
+            glm::vec3(tobj->bounds_component()->x_pos() / sw *  w, (tobj->bounds_component()->y_pos() / sh * h + tobj->bounds_component()->height()) / sh * h, 1),
+            glm::vec3((tobj->bounds_component()->x_pos() / sw *  w + tobj->bounds_component()->width()) / sw *  w, (tobj->bounds_component()->y_pos() / sh * h + tobj->bounds_component()->height()) / sh * h, 1),
+            glm::vec3((tobj->bounds_component()->x_pos() / sw *  w + tobj->bounds_component()->width()) / sw *  w, tobj->bounds_component()->y_pos()  / sh * h, 1)
         };
 
         Context::SIContext()->register_new_region_via_name(contour, tobj->symbol_component()->data(), false, kwargs);
@@ -108,15 +135,20 @@ void TangibleManager::add_tangible(SITUIOObject *tobj, int sw, int sh)
     else if(tobj->has_symbol_component() && tobj->has_pointer_component())
     {
         bp::dict kwargs;
+
         kwargs["s_id"] = tobj->s_id();
         kwargs["angle"] = tobj->pointer_component()->angle();
+        kwargs["press"] = tobj->pointer_component()->press();
+        kwargs["finger"] = tobj->pointer_component()->t_id();
+
+        int size = 5;
 
         std::vector<glm::vec3> contour =
         {
             glm::vec3(tobj->pointer_component()->x_pos() / sw *  w, tobj->pointer_component()->y_pos() / sh * h, 1),
-            glm::vec3(tobj->pointer_component()->x_pos() / sw *  w, (tobj->pointer_component()->y_pos() + 20) / sh * h, 1),
-            glm::vec3((tobj->pointer_component()->x_pos() + 20) / sw *  w, (tobj->pointer_component()->y_pos() + 20) / sh * h, 1),
-            glm::vec3((tobj->pointer_component()->x_pos() + 20) / sw *  w, tobj->pointer_component()->y_pos()  / sh * h, 1)
+            glm::vec3(tobj->pointer_component()->x_pos() / sw *  w, (tobj->pointer_component()->y_pos() + size) / sh * h, 1),
+            glm::vec3((tobj->pointer_component()->x_pos() + size) / sw *  w, (tobj->pointer_component()->y_pos() + size) / sh * h, 1),
+            glm::vec3((tobj->pointer_component()->x_pos() + size) / sw *  w, tobj->pointer_component()->y_pos()  / sh * h, 1)
         };
 
         Context::SIContext()->register_new_region_via_name(contour, tobj->symbol_component()->data(), false, kwargs);
@@ -163,7 +195,17 @@ void TangibleManager::update_tangible(SITUIOObject *tobj, int sw, int sh)
         Region* r = associated_region(tobj->s_id());
 
         if(r)
-            r->effect()->set_shape(tobj->outer_contour_geometry_component()->contour());
+        {
+            std::vector<glm::vec3> contour = tobj->outer_contour_geometry_component()->contour();
+
+            for(auto& p: contour)
+            {
+                p.x = p.x / sw * w;
+                p.y = p.y / sh * h;
+            }
+
+//            r->effect()->set_shape(contour);
+        }
     }
     else if (tobj->has_bounds_component() && tobj->has_symbol_component() && tobj->has_token_component())
     {
@@ -182,8 +224,12 @@ void TangibleManager::update_tangible(SITUIOObject *tobj, int sw, int sh)
             r->effect()->set_shape(contour);
         }
     }
-    else if(tobj->has_symbol_component() && tobj->has_pointer_component())
+    else if(tobj->has_symbol_component() && tobj->has_pointer_component()) // touch / drag
     {
+        // ptr
+        // press: -1 <=> hover, 0 <=> touch, 1 <=> drag
+        // tu_id: t part <=> 1 for right index finger, 6 for left index finger
+
         Region* r = associated_region(tobj->s_id());
 
         if(r)
@@ -196,7 +242,19 @@ void TangibleManager::update_tangible(SITUIOObject *tobj, int sw, int sh)
                 glm::vec3((tobj->pointer_component()->x_pos() + 20) / sw *  w, tobj->pointer_component()->y_pos()  / sh * h, 1)
             };
 
-            r->effect()->set_shape(contour);
+            bp::dict update;
+            update["press"] = tobj->pointer_component()->press();
+            update["finger"] = tobj->pointer_component()->press();
+
+            int tx = tobj->pointer_component()->x_pos() / sw *  w;
+            int ty = tobj->pointer_component()->y_pos() / sh * h;
+
+            r->raw_effect().attr("last_x") = r->effect()->d_x;
+            r->raw_effect().attr("last_y") = r->effect()->d_y;
+            r->effect()->d_x = tx - r->aabb()[0].x;
+            r->effect()->d_y = ty - r->aabb()[0].y;
+
+            r->raw_effect().attr("__update__")(update);
         }
     }
     else
@@ -250,7 +308,7 @@ void TangibleManager::manage_requested_linking_relationships(int s_id, bool is_l
 
 
 
-//        Context::SIContext()->linking_manager()->add_link(root, SI_CAPABILITY_LINK_POSITION, other, SI_CAPABILITY_LINK_POSITION, ILink::UD);
-//        Context::SIContext()->linking_manager()->add_link(other, SI_CAPABILITY_LINK_POSITION, root, SI_CAPABILITY_LINK_POSITION, ILink::UD);
+        Context::SIContext()->linking_manager()->add_link(root, SI_CAPABILITY_LINK_POSITION, other, SI_CAPABILITY_LINK_POSITION, ILink::UD);
+        Context::SIContext()->linking_manager()->add_link(other, SI_CAPABILITY_LINK_POSITION, root, SI_CAPABILITY_LINK_POSITION, ILink::UD);
     }
 }

@@ -13,6 +13,7 @@ MainWindow::MainWindow(uint32_t width, uint32_t height, uint32_t target_fps):
     d_height(height),
     d_is_running(true),
     d_target_fps(target_fps),
+    d_drawing_pen_color(Context::SIContext()->pen_color()),
     p_scene(new QGraphicsScene())
 {
     setWindowTitle("SI");
@@ -57,7 +58,7 @@ void MainWindow::loop()
 
         if(frame_counter > 1.0)
         {
-//            Print::print(frames);
+//            Print::print(frames, d_target_fps);
             frame_counter = 0.0;
             frames = 0;
         }
@@ -73,7 +74,6 @@ void MainWindow::loop()
         {
             __loop();
             Context::SIContext()->update();
-
             frames++;
         }
     }
@@ -166,7 +166,7 @@ void MainWindow::handle_partial_region_representations()
 
         if(it == d_par_reg_reps.end())
         {
-            d_par_reg_reps.push_back(new PartialRegionRepresentation(source, path));
+            d_par_reg_reps.push_back(new PartialRegionRepresentation(source, path, d_drawing_pen_color));
             p_scene->addItem(d_par_reg_reps.back());
         }
         else

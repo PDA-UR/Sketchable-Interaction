@@ -69,8 +69,6 @@ set(SIUnitTestSrc
         SI/tests/src/pysi/PySIPySIEffectTest.hpp
         SI/tests/src/sigrun/context/managers/helpers/input/SIGRunExternalObjectTest.cpp
         SI/tests/src/sigrun/context/managers/helpers/input/SIGRunExternalObjectTest.hpp
-        SI/tests/src/sigrun/context/managers/helpers/input/SIGRunFilesystemTest.cpp
-        SI/tests/src/sigrun/context/managers/helpers/input/SIGRunFilesystemTest.hpp
         SI/tests/src/sigrun/context/managers/helpers/linking/SIGRunLinkCandidateTest.cpp
         SI/tests/src/sigrun/context/managers/helpers/linking/SIGRunLinkCandidateTest.hpp
         SI/tests/src/sigrun/context/managers/helpers/linking/SIGRunLinkTest.cpp

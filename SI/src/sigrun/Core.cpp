@@ -7,7 +7,7 @@
 #include <algorithm>
 #include <execution>
 #include <filesystem>
-#include <fstream>
+#include <e/E.hpp>
 
 namespace sfs = std::filesystem;
 
@@ -43,7 +43,13 @@ void Core::start(char** argv, int argc, IRenderEngine* ire)
 {
     SI_BENCHMARK_START;
 
+    std::unique_ptr<Context> upctx(new Context());
+
     INFO("Initializing... ");
+
+    INFO("Generating E class... ");
+    E::generate();
+    INFO("Generated E class");
 
     std::unordered_map<std::string, std::unique_ptr<bp::object>> plugins;
     std::string path = "plugins";
@@ -59,7 +65,6 @@ void Core::start(char** argv, int argc, IRenderEngine* ire)
     else
         ERROR("No plugins loaded");
 
-    std::unique_ptr<Context> upctx(new Context());
 
     INFO("Initialization finished");
 

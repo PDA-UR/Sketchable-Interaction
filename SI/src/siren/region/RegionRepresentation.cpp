@@ -18,7 +18,8 @@ RegionRepresentation::RegionRepresentation(QQmlContext* c, const std::shared_ptr
     d_uuid(region->uuid()),
     d_name(region->name()),
     d_initial_offset(region->aabb()[0].x, region->aabb()[0].y, 1),
-    d_with_border(region->effect()->is_border_present())
+    d_with_border(region->effect()->is_border_present()),
+    d_drawing_additions(region->effect()->drawing_additions())
 {
     if(!d_qml_path.empty())
     {
@@ -92,19 +93,15 @@ void RegionRepresentation::perform_transform_update(const std::shared_ptr<Region
 
         if(!d_qml_path.empty())
             d_view->move(x, y);
-
-//        if(angle - d_last_angle > 0.1)
-//        {
-//            setTransformOriginPoint(boundingRect().x() + boundingRect().width() / 2, boundingRect().y() + boundingRect().y());
-//            setRotation(angle);
-//            d_last_angle = angle;
-//        }
     }
 }
 
 void RegionRepresentation::perform_data_update(const std::shared_ptr<Region> &region)
 {
     QColor color(region->color().r, region->color().g, region->color().b, region->color().a);
+    bool d_visible = region->effect()->visible();
+
+    d_border_color = QColor(region->effect()->d_border_color.r, region->effect()->d_border_color.g, region->effect()->d_border_color.b, region->effect()->d_border_color.a);
 
     if(d_color != color)
     {
@@ -116,6 +113,8 @@ void RegionRepresentation::perform_data_update(const std::shared_ptr<Region> &re
     if (region->effect()->has_data_changed())
     {
         d_with_border = region->effect()->is_border_present();
+
+        d_drawing_additions = region->effect()->drawing_additions();
 
         QPolygonF poly;
         for(auto& p: region->contour())
@@ -152,10 +151,18 @@ void RegionRepresentation::set_data(const QVariantMap& data)
 
 void RegionRepresentation::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
+    if(!d_visible)
+        return;
+
+    QGraphicsPolygonItem::paint(painter, option, widget);
+
+    QPen pen(QColor(0, 0, 0));
+    painter->setPen(pen);
+    pen.setWidth(4);
+
     if(d_with_border)
     {
-        QPen pen(QColor(72, 79, 81));
-
+        pen = QPen(d_border_color);
         pen.setWidth(4);
 
         painter->setPen(pen);
@@ -164,7 +171,7 @@ void RegionRepresentation::paint(QPainter *painter, const QStyleOptionGraphicsIt
 
     if(d_type == SI_TYPE_DIRECTORY || d_type == SI_TYPE_IMAGE_FILE || d_type == SI_TYPE_TEXT_FILE)
     {
-        QPen pen(QColor(72, 79, 81));
+        pen = QPen(QColor(72, 79, 81));
         pen.setWidth(1);
         painter->setPen(pen);
 
@@ -172,5 +179,23 @@ void RegionRepresentation::paint(QPainter *painter, const QStyleOptionGraphicsIt
         painter->drawPolygon(this->polygon());
     }
 
-    QGraphicsPolygonItem::paint(painter, option, widget);
+    if(!d_drawing_additions.empty())
+    {
+        pen = QPen(QColor(0, 0, 0));
+        painter->setPen(pen);
+        pen.setWidth(4);
+
+        for(std::vector<std::vector<glm::vec3>>& shape: d_drawing_additions)
+        {
+            for(std::vector<glm::vec3>& shape_part: shape)
+            {
+                QPolygonF poly;
+
+                for(glm::vec3& p: shape_part)
+                    poly << QPointF(p.x, p.y);
+
+                painter->drawPolyline(poly);
+            }
+        }
+    }
 }

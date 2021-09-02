@@ -384,9 +384,11 @@ const std::vector<int> &SITUIOLinkAssociation::link_associations()
     return d_link_associations;
 }
 
-SITUIOObject::SITUIOObject(int s_id, int f_id):
+SITUIOObject::SITUIOObject(int s_id, int f_id, int source_width, int source_height):
     d_s_id(s_id),
-    d_f_id(f_id)
+    d_f_id(f_id),
+    d_sw(source_width),
+    d_sh(source_height)
 {}
 
 SITUIOObject::~SITUIOObject()
@@ -470,6 +472,16 @@ int SITUIOObject::s_id()
     return d_s_id;
 }
 
+int SITUIOObject::source_width()
+{
+    return d_sw;
+}
+
+int SITUIOObject::source_height()
+{
+    return d_sh;
+}
+
 bool SITUIOObject::has_token_component()
 {
     return p_token;
@@ -520,7 +532,7 @@ SITUIOBounds *const SITUIOObject::bounds_component() const
     return p_bounds;
 }
 
-const SITUIOSymbol *SITUIOObject::symbol_component() const
+SITUIOSymbol *const SITUIOObject::symbol_component() const
 {
     return p_symbol;
 }
