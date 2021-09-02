@@ -639,3 +639,25 @@ std::vector<std::vector<std::vector<glm::vec3>>> &PySIEffect::drawing_additions(
 {
     return d_drawing_additions;
 }
+
+std::vector<std::string> PySIEffect::get_collisions()
+{
+    return d_collisions;
+}
+
+void PySIEffect::set_collisions(const std::vector<std::string> &collisions)
+{
+    d_collisions.clear();
+    d_collisions = collisions;
+}
+
+bp::dict PySIEffect::__selected_effects_by_cursor_id__ ()
+{
+    const auto& selected_effects_by_id = Context::SIContext()->selected_effects_by_cursor_id();
+
+    bp::dict ret;
+    for(auto& [k, v]: selected_effects_by_id)
+        ret[k] = v.attr(v.attr(SI_INTERNAL_NAME)).attr("regionname");
+
+    return ret;
+}

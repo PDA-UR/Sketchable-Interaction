@@ -78,7 +78,9 @@ BOOST_PYTHON_MODULE(libPySI)
                 .def("__conditional_variables__", &PySIEffect::__conditional_variables__)
                 .def("__set_drawing_additions__", &PySIEffect::__set_drawing_additions__)
                 .def("__drawing_additions__", &PySIEffect::__drawing_additions__)
+                .def("__selected_effects_by_cursor_id__", &PySIEffect::__selected_effects_by_cursor_id__)
 
+                .add_property("current_collisions", &PySIEffect::get_collisions, &PySIEffect::set_collisions)
                 .add_property("shape", &PySIEffect::get_shape, &PySIEffect::set_shape)
 
                 .def_readwrite("aabb", &PySIEffect::d_aabb)
@@ -216,6 +218,8 @@ BOOST_PYTHON_MODULE(libPySI)
                 .def("enable", &PySIStartup::enable).staticmethod("enable")
                 .def("disable", &PySIStartup::disable).staticmethod("disable")
                 .def("exclude_plugins", &PySIStartup::exclude_plugins).staticmethod("exclude_plugins")
+                .def("set_tangible_ip_address_and_port", &PySIStartup::set_tangible_ip_address_and_port).staticmethod("set_tangible_ip_address_and_port")
+                .def("set_pen_color", &PySIStartup::set_pen_color).staticmethod("set_pen_color")
 
                 .enable_pickling()
                 ;
@@ -244,6 +248,8 @@ BOOST_PYTHON_MODULE(libPySI)
             startup_scope.attr("SI_ANTI_ALIASING_4x") = (int32_t) SI_ANTI_ALIASING_4x;
             startup_scope.attr("SI_ANTI_ALIASING_8x") = (int32_t) SI_ANTI_ALIASING_8x;
             startup_scope.attr("SI_ANTI_ALIASING_16x") = (int32_t) SI_ANTI_ALIASING_16x;
+            startup_scope.attr("PEN_CLOLOR_BLACK") = (int32_t) SI_BLACK_DRAWING_COLOR;
+            startup_scope.attr("PEN_CLOLOR_WHITE") = (int32_t) SI_WHITE_DRAWING_COLOR;
 
         } // scope ended for everything which shall be part of startup_scope
     } // scope ended for everything which shall be part of effect_scope

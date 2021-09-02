@@ -89,6 +89,13 @@ public:
 
     void set_conditional_variables(const std::vector<std::string>& conditionals);
 
+    void set_tangible_ip_address_and_port(const std::string& ip, int port);
+    void set_pen_color(int color);
+
+    const int pen_color() const;
+
+    const std::unordered_map<std::string, bp::object>& selected_effects_by_cursor_id() const;
+
 private:
 
     static Context* self;
@@ -127,6 +134,10 @@ private:
     std::unique_ptr<JobSystem<void, 512>> upjs;
     std::unique_ptr<TangibleManager> uptm;
     std::unique_ptr<SpatialHashGrid> upshg;
+
+    std::string d_tangible_ip = "";
+    int d_tangible_port = 0;
+    int d_pen_color = 0;
 
     uint32_t s_width = 0;
     uint32_t s_height = 0;

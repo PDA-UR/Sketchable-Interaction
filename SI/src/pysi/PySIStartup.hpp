@@ -26,6 +26,8 @@ public:
     static void logger_unquench_messages_from_class(const std::string& class_name);
     static void logger_log(bool flag);
     static void logger_set_log_output(int32_t flags);
+    static void set_tangible_ip_address_and_port(const std::string& ip, int port);
+    static void set_pen_color(int color_id);
     static void enable(int32_t flags);
     static void disable(int32_t flags);
 

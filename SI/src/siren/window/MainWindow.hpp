@@ -40,6 +40,7 @@ private:
     std::vector<RegionRepresentation*> d_reg_reps;
     std::vector<PartialRegionRepresentation*> d_par_reg_reps;
 
+    uint8_t d_drawing_pen_color = 0;
     uint32_t d_width, d_height, d_target_fps;
 
     QQmlEngine* d_engine;

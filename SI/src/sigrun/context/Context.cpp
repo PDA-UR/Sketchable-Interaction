@@ -111,22 +111,21 @@ void Context::begin(const std::unordered_map<std::string, std::unique_ptr<bp::ob
 
     INFO("Drawable Plugins: " + tmp.substr(0, tmp.length() - 2));
 
+    HANDLE_PYTHON_CALL(PY_ERROR, "Could not load startup file! A python file called \'StartSIGRun\' is required to be present in plugins folder!",
+        bp::import(SI_START_FILE).attr(SI_START_FUNCTION)();
+    )
+
+    INFO("Launching and Detaching Thread for Tangible Data Reception with IP: " + d_tangible_ip + " and Port: " + std::to_string(d_tangible_port));
+
     std::thread{[&]() -> int
     {
-        int port = 3333;
-
         TangibleListener tangible_listener;
-//        UdpListeningReceiveSocket s(IpEndpointName("10.61.3.117", port), &tangible_listener);
-        UdpListeningReceiveSocket s(IpEndpointName("127.0.0.1", port), &tangible_listener);
-
+        UdpListeningReceiveSocket s(IpEndpointName(d_tangible_ip.c_str(), d_tangible_port), &tangible_listener);
         s.RunUntilSigInt();
 
         return 0;
     }}.detach();
 
-    HANDLE_PYTHON_CALL(PY_ERROR, "Could not load startup file! A python file called \'StartSIGRun\' is required to be present in plugins folder!",
-        bp::import(SI_START_FILE).attr(SI_START_FUNCTION)();
-    )
 
     d_ire->start(s_width, s_height, 120);
 
@@ -252,7 +251,7 @@ void Context::set_effect(const std::string& target_uuid, const std::string& effe
     if (!(it != uprm->regions().end()))
         return;
 
-    if (it->get()->type() == SI_TYPE_MOUSE_CURSOR)
+    if (it->get()->type() == SI_TYPE_MOUSE_CURSOR || it->get()->name() == "__ Touch __")
     {
         d_selected_effects_by_id[target_uuid] = d_available_plugins[effect_name];
 
@@ -631,4 +630,25 @@ void Context::set_conditional_variables(const std::vector<std::string>& conditio
 const std::vector<std::string>& Context::conditional_variables() const
 {
     return d_conditionals;
+}
+
+void Context::set_tangible_ip_address_and_port(const std::string& ip, int port)
+{
+    d_tangible_ip = ip;
+    d_tangible_port = port;
+}
+
+void Context::set_pen_color(int color)
+{
+    d_pen_color = color;
+}
+
+const int Context::pen_color() const
+{
+    return d_pen_color;
+}
+
+const std::unordered_map<std::string, bp::object> &Context::selected_effects_by_cursor_id() const
+{
+    return d_selected_effects_by_id;
 }

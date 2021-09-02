@@ -112,3 +112,16 @@ void PySIStartup::exclude_plugins(const bp::list &plugins)
 
     Context::SIContext()->exclude_plugins(plugs);
 }
+
+void PySIStartup::set_tangible_ip_address_and_port(const std::string &ip, int port)
+{
+    Context::SIContext()->set_tangible_ip_address_and_port(ip, port);
+}
+
+void PySIStartup::set_pen_color(int color)
+{
+    Context::SIContext()->set_pen_color(SI_BLACK_DRAWING_COLOR);
+
+    if(color == SI_BLACK_DRAWING_COLOR || color == SI_WHITE_DRAWING_COLOR)
+        Context::SIContext()->set_pen_color(color);
+}

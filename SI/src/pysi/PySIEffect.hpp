@@ -56,6 +56,8 @@ public:
     std::vector<glm::vec3> get_shape();
     void set_shape(const std::vector<glm::vec3>& shape);
 
+    std::vector<std::string> get_collisions();
+    void set_collisions(const std::vector<std::string>& collisions);
 
     float d_x = 0;
     float d_y = 0;
@@ -106,6 +108,8 @@ public:
 
     const bool has_data_changed() const;
 
+    bp::dict __selected_effects_by_cursor_id__();
+
     std::vector<std::string> d_regions_marked_for_registration;
     std::vector<std::string>& regions_for_registration();
 
@@ -114,6 +118,8 @@ public:
 
     std::vector<glm::vec3> d_contour;
     std::vector<glm::vec3> d_aabb;
+
+    std::vector<std::string> d_collisions;
 
     std::vector<std::vector<std::vector<glm::vec3>>> d_drawing_additions;
 

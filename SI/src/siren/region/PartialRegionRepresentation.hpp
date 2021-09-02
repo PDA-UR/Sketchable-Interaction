@@ -15,7 +15,7 @@ class PartialRegionRepresentation: public QGraphicsPathItem, public SIObject
 { SIREN
 
 public:
-    PartialRegionRepresentation(const std::string& id, const std::vector<glm::vec3>& source_contour);
+    PartialRegionRepresentation(const std::string& id, const std::vector<glm::vec3>& source_contour, int color);
     ~PartialRegionRepresentation();
 
     void update(const std::vector<glm::vec3>& path);

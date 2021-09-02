@@ -69,6 +69,23 @@ void CollisionManager::perform_collision_check(tbb::concurrent_vector<std::tuple
             });
         }
     });
+
+    std::unordered_map<Region*, std::vector<std::string>> current_collisions;
+
+    for(std::tuple<Region*, Region*, bool> tuple: out)
+    {
+        if(std::get<2>(tuple))
+        {
+            const auto& a = std::get<0>(tuple);
+            const auto& b = std::get<1>(tuple);
+
+            current_collisions[a].push_back(b->uuid());
+            current_collisions[b].push_back(a->uuid());
+        }
+    }
+
+    for(auto& [k, v]: current_collisions)
+        k->effect()->set_collisions(v);
 }
 
 void CollisionManager::perform_collision_events(tbb::concurrent_vector<std::tuple<Region*, Region*, bool>> &in)

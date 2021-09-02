@@ -15,11 +15,13 @@ from plugins.__loaded_plugins__.standard_environment_library.lasso import Lasso
 from plugins.__loaded_plugins__.standard_environment_library.plot import Plot
 from plugins.__loaded_plugins__.standard_environment_library.image_editor import ImageEditor
 from plugins.__loaded_plugins__.standard_environment_library.video import Video
+from plugins.__loaded_plugins__.standard_environment_library.filesystem import OpenEntry
 from plugins.__loaded_plugins__.standard_environment_library.terminal import Terminal
 from plugins.__loaded_plugins__.standard_environment_library.unredo import Undo, Redo
 from plugins.__loaded_plugins__.standard_environment_library.automation import ConveyorBelt, ConveyorBeltMerger, ConveyorBeltSplitter
 from plugins.standard_environment_library.tangible.camera.ScanCameraAreaDetection import ScanCameraAreaDetection
 from plugins.standard_environment_library.tangible.camera.TableArea import TableArea
+from plugins.standard_environment_library.tangible.document.tools.Color import Color
 
 import math
 
@@ -105,11 +107,11 @@ def add_many_regions(num = 100, area_width= 1600, area_height=800):
 
         kwargs = {"cwd": directory_path, "parent": ""}
 
-        PySI.Startup.create_region_create_region_by_name(r_shape, Deletion.Deletion.regionname, kwargs)
+        PySI.Startup.create_region_by_name(r_shape, Deletion.Deletion.regionname, kwargs)
 
 
 def add_slider(shape, c):
-    PySI.Startup.create_region_create_region_by_name(shape, SliderBase.SliderBase.regionname, {"color_channel": c})
+    PySI.Startup.create_region_by_name(shape, SliderBase.SliderBase.regionname, {"color_channel": c})
 
 
 def add_slider_target(shape):
@@ -123,6 +125,13 @@ def add_camera_calibration():
 
     PySI.Startup.create_region_by_name(shape, ScanCameraAreaDetection.regionname, {})
 
+def add_annotation_color():
+    w, h = PySI.Startup.context_dimensions()[0], PySI.Startup.context_dimensions()[1]
+    tw, th = 100, 100
+    x = w // 2 - tw // 2
+    y = 200
+    shape = [[x, y], [x, y + th], [x + tw, y + th], [x + tw, y]]
+    PySI.Startup.create_region_by_name(shape, Color.regionname, {"color": PySI.Color(100, 100, 20, 255)})
 
 APPLICATION = 1
 COLOR_PICKER = 2
@@ -131,8 +140,8 @@ BENCHMARK = 8
 TABLE_AREA_CALIBRATION = 16
 
 def start_application():
-    rgba = {}
-    # rgba = {"rgba": (0, 0, 0, 255)}
+    # rgba = {}
+    rgba = {"rgba": (0, 0, 0, 255)}
 
     add_canvas(rgba)
     add_mouse_cursor()
@@ -140,6 +149,7 @@ def start_application():
     add_palette()
     add_start_directory()
     add_unredo()
+    add_annotation_color()
 
 def on_start():
     # PySI.Startup.disable(PySI.Configuration.SI_CRASH_DUMP)
@@ -149,24 +159,32 @@ def on_start():
     PySI.Startup.logger_set_log_output(PySI.Logger.SI_LOG_SHOW_ALL)
     PySI.Startup.logger_quench_messages_from_class("linkingmanager")
     PySI.Startup.logger_quench_messages_from_class("recognizer")
-    PySI.Startup.logger_quench_messages_from_class("mainwindow")
+    # PySI.Startup.logger_quench_messages_from_class("mainwindow")
 
-    # PySI.Startup.exclude_plugins([
-    #     ConveyorBelt.ConveyorBelt.regionname,
-    #     ConveyorBeltSplitter.ConveyorBeltSplitter.regionname,
-    #     ConveyorBeltMerger.ConveyorBeltMerger.regionname,
-    #     Tag.Tag.regionname,
-    #     Plot.Plot.regionname,
-    #     Presentation.Presentation.regionname,
-    #     Lasso.Lasso.regionname,
-    #     Preview.Preview.regionname,
-    #     ImageEditor.ImageEditor.regionname,
-    #     # OpenEntry.OpenEntry.regionname,
-    #     Terminal.Terminal.regionname,
-    #     Undo.Undo.regionname,
-    #     Redo.Redo.regionname,
+    # PySI.Startup.set_pen_color(PySI.Configuration.PEN_CLOLOR_BLACK)
+    PySI.Startup.set_pen_color(PySI.Configuration.PEN_CLOLOR_WHITE)
+
+    PySI.Startup.set_tangible_ip_address_and_port("132.199.128.250", 3333)
+    # PySI.Startup.set_tangible_ip_address_and_port("10.61.3.117", 3333)
+    # PySI.Startup.set_tangible_ip_address_and_port("127.0.0.1", 3333)
+
+    PySI.Startup.exclude_plugins([
+        # SimpleNotification.SimpleNotification.regionname
+        ConveyorBelt.ConveyorBelt.regionname,
+        ConveyorBeltSplitter.ConveyorBeltSplitter.regionname,
+        ConveyorBeltMerger.ConveyorBeltMerger.regionname,
+        Tag.Tag.regionname,
+        Plot.Plot.regionname,
+        Presentation.Presentation.regionname,
+        Lasso.Lasso.regionname,
+        Preview.Preview.regionname,
+        ImageEditor.ImageEditor.regionname,
+        # OpenEntry.OpenEntry.regionname,
+        Terminal.Terminal.regionname,
+        Undo.Undo.regionname,
+        Redo.Redo.regionname,
     #     Video.Video.regionname
-    # ])
+    ])
 
     CHOICE = APPLICATION
 
