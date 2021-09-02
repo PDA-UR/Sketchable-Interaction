@@ -112,8 +112,6 @@ void TangibleManager::add_tangible(SITUIOObject *tobj, int sw, int sh)
             kwargs["orig_y"] = tobj->outer_contour_geometry_component()->contour()[0].y;
             kwargs["orig_width"] = glm::length(tobj->outer_contour_geometry_component()->contour()[3] - tobj->outer_contour_geometry_component()->contour()[0]);
             kwargs["orig_height"] = glm::length(tobj->outer_contour_geometry_component()->contour()[1] - tobj->outer_contour_geometry_component()->contour()[0]);
-
-            Print::print(tobj->symbol_component()->data());
         }
 
         Context::SIContext()->register_new_region_via_name(contour, tobj->symbol_component()->data(), false, kwargs);
@@ -188,8 +186,6 @@ void TangibleManager::add_tangible(SITUIOObject *tobj, int sw, int sh)
 void TangibleManager::update_tangible(SITUIOObject *tobj, int sw, int sh)
 {
     PythonGlobalInterpreterLockGuard g;
-
-    Print::print("update", tobj->symbol_component()->data());
 
     int w = Context::SIContext()->width();
     int h = Context::SIContext()->height();

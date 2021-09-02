@@ -38,6 +38,7 @@ private:
     void perform_data_update(const std::shared_ptr<Region>& region);
 
     QColor d_color;
+    QColor d_border_color = QColor(72, 79, 81);
     std::string d_qml_path;
     std::string d_uuid;
     std::string d_name;

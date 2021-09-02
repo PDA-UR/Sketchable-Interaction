@@ -128,6 +128,7 @@ public:
     std::vector<std::vector<std::vector<glm::vec3>>>& drawing_additions();
 
     glm::vec4 d_color;
+    glm::vec4 d_border_color;
     const glm::vec4& color() const;
 
     std::unordered_map<std::string, bp::object> d_cap_link_emit;

@@ -101,6 +101,8 @@ void RegionRepresentation::perform_data_update(const std::shared_ptr<Region> &re
     QColor color(region->color().r, region->color().g, region->color().b, region->color().a);
     bool d_visible = region->effect()->visible();
 
+    d_border_color = QColor(region->effect()->d_border_color.r, region->effect()->d_border_color.g, region->effect()->d_border_color.b, region->effect()->d_border_color.a);
+
     if(d_color != color)
     {
         d_color = color;
@@ -160,7 +162,7 @@ void RegionRepresentation::paint(QPainter *painter, const QStyleOptionGraphicsIt
 
     if(d_with_border)
     {
-        pen = QPen(QColor(72, 79, 81));
+        pen = QPen(d_border_color);
         pen.setWidth(4);
 
         painter->setPen(pen);
