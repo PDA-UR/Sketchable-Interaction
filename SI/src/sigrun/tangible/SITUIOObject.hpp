@@ -227,7 +227,7 @@ class SITUIOObject : public SIObject
 
 
 public:
-    SITUIOObject(int s_id, int f_id);
+    SITUIOObject(int s_id, int f_id, int source_width, int source_height);
     ~SITUIOObject();
 
     void add_token_data(const osc::ReceivedMessage& m);
@@ -240,7 +240,7 @@ public:
     SITUIOToken *const token_component() const;
     SITUIOPointer *const pointer_component() const;
     SITUIOBounds *const bounds_component() const;
-    const SITUIOSymbol* symbol_component() const;
+    SITUIOSymbol *const symbol_component() const;
     const SITUIOOuterContourGeometry* outer_contour_geometry_component() const;
     SITUIOLinkAssociation *const link_association() const;
 
@@ -253,10 +253,14 @@ public:
     bool has_any_component();
 
     int s_id();
+    int source_width();
+    int source_height();
 
 private:
     int d_s_id;
     int d_f_id;
+    int d_sw;
+    int d_sh;
 
     SITUIOToken* p_token = nullptr;
     SITUIOPointer* p_pointer = nullptr;

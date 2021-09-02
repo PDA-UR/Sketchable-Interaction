@@ -74,7 +74,13 @@ BOOST_PYTHON_MODULE(libPySI)
                 .def("__logger_messages__", &PySIEffect::__logger_messages__)
                 .def("__qml_data_keys_and_types__", &PySIEffect::__qml_data_keys_and_types__)
                 .def("__current_regions__", &PySIEffect::__current_regions__)
+                .def("__excluded_plugins__", &PySIEffect::__excluded_plugins__)
+                .def("__conditional_variables__", &PySIEffect::__conditional_variables__)
+                .def("__set_drawing_additions__", &PySIEffect::__set_drawing_additions__)
+                .def("__drawing_additions__", &PySIEffect::__drawing_additions__)
+                .def("__selected_effects_by_cursor_id__", &PySIEffect::__selected_effects_by_cursor_id__)
 
+                .add_property("current_collisions", &PySIEffect::get_collisions, &PySIEffect::set_collisions)
                 .add_property("shape", &PySIEffect::get_shape, &PySIEffect::set_shape)
 
                 .def_readwrite("aabb", &PySIEffect::d_aabb)
@@ -107,6 +113,7 @@ BOOST_PYTHON_MODULE(libPySI)
                 .def_readwrite("mouse_wheel_angle_px", &PySIEffect::mouse_wheel_angle_px)
                 .def_readwrite("mouse_wheel_angle_degrees", &PySIEffect::mouse_wheel_angle_degrees)
                 .def_readwrite("with_border", &PySIEffect::d_with_border)
+                .def_readwrite("visible", &PySIEffect::d_visible)
                 ;
 
         bp::enum_<uint32_t>("DataType")
@@ -116,6 +123,7 @@ BOOST_PYTHON_MODULE(libPySI)
                 .value("STRING", SI_DATA_TYPE_STRING)
                 .value("IMAGE_AS_BYTES", SI_DATA_TYPE_IMAGE_AS_BYTES)
                 .value("VIDEO", SI_DATA_TYPE_VIDEO)
+                .value("LIST", SI_DATA_TYPE_LIST)
 
                 .export_values()
                 ;
@@ -209,6 +217,9 @@ BOOST_PYTHON_MODULE(libPySI)
                 .def("logger_set_log_output", &PySIStartup::logger_set_log_output).staticmethod("logger_set_log_output")
                 .def("enable", &PySIStartup::enable).staticmethod("enable")
                 .def("disable", &PySIStartup::disable).staticmethod("disable")
+                .def("exclude_plugins", &PySIStartup::exclude_plugins).staticmethod("exclude_plugins")
+                .def("set_tangible_ip_address_and_port", &PySIStartup::set_tangible_ip_address_and_port).staticmethod("set_tangible_ip_address_and_port")
+                .def("set_pen_color", &PySIStartup::set_pen_color).staticmethod("set_pen_color")
 
                 .enable_pickling()
                 ;
@@ -237,6 +248,8 @@ BOOST_PYTHON_MODULE(libPySI)
             startup_scope.attr("SI_ANTI_ALIASING_4x") = (int32_t) SI_ANTI_ALIASING_4x;
             startup_scope.attr("SI_ANTI_ALIASING_8x") = (int32_t) SI_ANTI_ALIASING_8x;
             startup_scope.attr("SI_ANTI_ALIASING_16x") = (int32_t) SI_ANTI_ALIASING_16x;
+            startup_scope.attr("PEN_CLOLOR_BLACK") = (int32_t) SI_BLACK_DRAWING_COLOR;
+            startup_scope.attr("PEN_CLOLOR_WHITE") = (int32_t) SI_WHITE_DRAWING_COLOR;
 
         } // scope ended for everything which shall be part of startup_scope
     } // scope ended for everything which shall be part of effect_scope

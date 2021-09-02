@@ -48,10 +48,13 @@ private:
 
     bool d_was_data_received = false;
     bool d_with_border = true;
+    bool d_visible = true;
 
     QMap<QString, QVariant> d_received_data;
 
     glm::vec3 d_initial_offset;
+
+    std::vector<std::vector<std::vector<glm::vec3>>> d_drawing_additions;
 };
 
 #endif //SITEST_REGIONREPRESENTATION_HPP

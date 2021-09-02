@@ -17,7 +17,6 @@
 #include <sigrun/context/managers/InputManager.hpp>
 #include <sigrun/context/managers/ExternalApplicationManager.hpp>
 #include <sigrun/rendering/IRenderEngine.hpp>
-#include <sigrun/context/managers/helpers/input/FileSystem.hpp>
 #include <queue>
 #include <QGraphicsView>
 #include <sigrun/parallel/JobSystem.hpp>
@@ -78,10 +77,24 @@ public:
     const bp::object& plugin_by_name(const std::string& name);
 
     const std::vector<std::string>& available_plugins_names();
+    const std::vector<std::string>& excluded_plugins();
 
     std::unordered_map<std::string, std::shared_ptr<ExternalObject>>& external_objects();
 
+    const std::vector<std::string>& conditional_variables() const;
+
     void set_message(const std::string& msg);
+
+    void exclude_plugins(const std::vector<std::string>& excluded_plugins);
+
+    void set_conditional_variables(const std::vector<std::string>& conditionals);
+
+    void set_tangible_ip_address_and_port(const std::string& ip, int port);
+    void set_pen_color(int color);
+
+    const int pen_color() const;
+
+    const std::unordered_map<std::string, bp::object>& selected_effects_by_cursor_id() const;
 
 private:
 
@@ -105,6 +118,9 @@ private:
     std::queue<std::tuple<std::vector<glm::vec3>, bp::object, int32_t, bp::dict>> d_region_insertion_queue;
     std::queue<std::tuple<std::string, std::string, std::string, bp::object>> d_link_emission_queue;
 
+    std::vector<std::string> d_excluded_plugins;
+    std::vector<std::string> d_conditionals;
+
     std::vector<std::string> d_available_plugins_names;
     std::unordered_map<std::string, bp::object> d_available_plugins;
     std::unordered_map<std::string, bp::object> d_plugins;
@@ -114,11 +130,14 @@ private:
     std::unique_ptr<LinkingManager> uplm;
     std::unique_ptr<InputManager> upim;
     std::unique_ptr<CollisionManager> uprcm;
-    std::unique_ptr<FileSystem> upfs;
     std::unique_ptr<ExternalApplicationManager> upeam;
     std::unique_ptr<JobSystem<void, 512>> upjs;
     std::unique_ptr<TangibleManager> uptm;
     std::unique_ptr<SpatialHashGrid> upshg;
+
+    std::string d_tangible_ip = "";
+    int d_tangible_port = 0;
+    int d_pen_color = 0;
 
     uint32_t s_width = 0;
     uint32_t s_height = 0;
@@ -130,6 +149,8 @@ private:
     friend class SIGRunCollisionManagerTest;
     friend class SIGRunLinkingManagerTest;
     friend class PySIPySIEffectTest;
+    friend class PySIPySIEffectTest;
+    friend class SIGRunLinkTest;
 };
 
 
