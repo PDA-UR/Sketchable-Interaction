@@ -102,6 +102,10 @@ void RegionRepresentation::perform_data_update(const std::shared_ptr<Region> &re
     bool d_visible = region->effect()->visible();
 
     d_border_color = QColor(region->effect()->d_border_color.r, region->effect()->d_border_color.g, region->effect()->d_border_color.b, region->effect()->d_border_color.a);
+    d_border_width = region->effect()->d_border_width;
+    d_with_border = region->effect()->d_with_border;
+
+    d_border_width = d_border_width > 20 || d_border_width < 0 ? 4 : d_border_width;
 
     if(d_color != color)
     {
@@ -154,6 +158,11 @@ void RegionRepresentation::paint(QPainter *painter, const QStyleOptionGraphicsIt
     if(!d_visible)
         return;
 
+    int area = polygon().boundingRect().width() * polygon().boundingRect().height();
+
+    if(area < 100)
+        return;
+
     QGraphicsPolygonItem::paint(painter, option, widget);
 
     QPen pen(QColor(0, 0, 0));
@@ -163,7 +172,7 @@ void RegionRepresentation::paint(QPainter *painter, const QStyleOptionGraphicsIt
     if(d_with_border)
     {
         pen = QPen(d_border_color);
-        pen.setWidth(4);
+        pen.setWidth(d_border_width);
 
         painter->setPen(pen);
         painter->drawPolygon(this->polygon());

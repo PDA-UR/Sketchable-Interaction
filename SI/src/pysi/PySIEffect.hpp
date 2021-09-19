@@ -129,6 +129,7 @@ public:
 
     glm::vec4 d_color;
     glm::vec4 d_border_color;
+    int d_border_width;
     const glm::vec4& color() const;
 
     std::unordered_map<std::string, bp::object> d_cap_link_emit;
