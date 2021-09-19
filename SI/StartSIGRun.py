@@ -22,6 +22,7 @@ from plugins.__loaded_plugins__.standard_environment_library.automation import C
 from plugins.standard_environment_library.tangible.camera.ScanCameraAreaDetection import ScanCameraAreaDetection
 from plugins.standard_environment_library.tangible.camera.TableArea import TableArea
 from plugins.standard_environment_library.tangible.document.tools.Color import Color
+from plugins.standard_environment_library.tangible.document.draw.Stroke import Stroke
 
 import math
 
@@ -145,11 +146,11 @@ def start_application():
 
     add_canvas(rgba)
     add_mouse_cursor()
-    add_simple_notification()
-    add_palette()
-    add_start_directory()
-    add_unredo()
-    add_annotation_color()
+    # add_simple_notification()
+    # add_palette()
+    # add_start_directory()
+    # add_unredo()
+    # add_annotation_color()
 
 def on_start():
     # PySI.Startup.disable(PySI.Configuration.SI_CRASH_DUMP)
@@ -164,12 +165,13 @@ def on_start():
     # PySI.Startup.set_pen_color(PySI.Configuration.PEN_CLOLOR_BLACK)
     PySI.Startup.set_pen_color(PySI.Configuration.PEN_CLOLOR_WHITE)
 
-    PySI.Startup.set_tangible_ip_address_and_port("132.199.128.250", 3333)
+    # PySI.Startup.set_tangible_ip_address_and_port("132.199.128.250", 3333)
     # PySI.Startup.set_tangible_ip_address_and_port("10.61.3.117", 3333)
     # PySI.Startup.set_tangible_ip_address_and_port("127.0.0.1", 3333)
+    PySI.Startup.set_tangible_ip_address_and_port("0.0.0.0", 3333)
 
     PySI.Startup.exclude_plugins([
-        # SimpleNotification.SimpleNotification.regionname
+        SimpleNotification.SimpleNotification.regionname,
         ConveyorBelt.ConveyorBelt.regionname,
         ConveyorBeltSplitter.ConveyorBeltSplitter.regionname,
         ConveyorBeltMerger.ConveyorBeltMerger.regionname,
@@ -179,11 +181,12 @@ def on_start():
         Lasso.Lasso.regionname,
         Preview.Preview.regionname,
         ImageEditor.ImageEditor.regionname,
-        # OpenEntry.OpenEntry.regionname,
+        OpenEntry.OpenEntry.regionname,
         Terminal.Terminal.regionname,
         Undo.Undo.regionname,
         Redo.Redo.regionname,
-    #     Video.Video.regionname
+        Video.Video.regionname,
+        Stroke.regionname
     ])
 
     CHOICE = APPLICATION

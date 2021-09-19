@@ -204,7 +204,37 @@ void TangibleManager::update_tangible(SITUIOObject *tobj, int sw, int sh)
                 p.y = p.y / sh * h;
             }
 
-//            r->effect()->set_shape(contour);
+            bp::dict kwargs;
+
+            kwargs["contour"] = contour;
+
+            if(contour.size() == 4)
+            {
+                const glm::vec3& tlc = contour[0];
+                const glm::vec3& blc = contour[1];
+                const glm::vec3& trc = contour[3];
+
+                glm::vec3 p = trc - tlc;
+                glm::vec3 q = blc - tlc;
+                glm::vec2 xa = glm::normalize(p);
+                glm::vec2 ya = glm::normalize(q);
+
+                float width = glm::length(p);
+                float height = glm::length(q);
+
+                kwargs["x"] = tlc.x;
+                kwargs["y"] = tlc.y;
+                kwargs["x_axis"] = bp::list(bp::make_tuple(xa.x, xa.y));
+                kwargs["y_axis"] = bp::list(bp::make_tuple(ya.x, ya.y));
+                kwargs["width"] = width;
+                kwargs["height"] = height;
+                kwargs["orig_x"] = tobj->outer_contour_geometry_component()->contour()[0].x;
+                kwargs["orig_y"] = tobj->outer_contour_geometry_component()->contour()[0].y;
+                kwargs["orig_width"] = glm::length(tobj->outer_contour_geometry_component()->contour()[3] - tobj->outer_contour_geometry_component()->contour()[0]);
+                kwargs["orig_height"] = glm::length(tobj->outer_contour_geometry_component()->contour()[1] - tobj->outer_contour_geometry_component()->contour()[0]);
+            }
+
+            r->raw_effect().attr("__update__")(kwargs);
         }
     }
     else if (tobj->has_bounds_component() && tobj->has_symbol_component() && tobj->has_token_component())
