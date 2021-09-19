@@ -44,6 +44,7 @@ private:
     std::string d_name;
     QQuickWidget* d_view;
     uint32_t d_type;
+    int d_border_width = 4;
 
     float d_last_angle = 0.0f;
 
