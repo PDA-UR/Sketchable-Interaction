@@ -141,15 +141,15 @@ BENCHMARK = 8
 TABLE_AREA_CALIBRATION = 16
 
 def start_application():
-    # rgba = {}
-    rgba = {"rgba": (0, 0, 0, 255)}
+    rgba = {}
+    # rgba = {"rgba": (0, 0, 0, 255)}
 
     add_canvas(rgba)
     add_mouse_cursor()
-    # add_simple_notification()
-    # add_palette()
-    # add_start_directory()
-    # add_unredo()
+    add_simple_notification()
+    add_palette()
+    add_start_directory()
+    add_unredo()
     # add_annotation_color()
 
 def on_start():
@@ -162,8 +162,8 @@ def on_start():
     PySI.Startup.logger_quench_messages_from_class("recognizer")
     # PySI.Startup.logger_quench_messages_from_class("mainwindow")
 
-    # PySI.Startup.set_pen_color(PySI.Configuration.PEN_CLOLOR_BLACK)
-    PySI.Startup.set_pen_color(PySI.Configuration.PEN_CLOLOR_WHITE)
+    PySI.Startup.set_pen_color(PySI.Configuration.PEN_CLOLOR_BLACK)
+    # PySI.Startup.set_pen_color(PySI.Configuration.PEN_CLOLOR_WHITE)
 
     # PySI.Startup.set_tangible_ip_address_and_port("132.199.128.250", 3333)
     # PySI.Startup.set_tangible_ip_address_and_port("10.61.3.117", 3333)
@@ -171,22 +171,21 @@ def on_start():
     PySI.Startup.set_tangible_ip_address_and_port("0.0.0.0", 3333)
 
     PySI.Startup.exclude_plugins([
-        SimpleNotification.SimpleNotification.regionname,
-        ConveyorBelt.ConveyorBelt.regionname,
-        ConveyorBeltSplitter.ConveyorBeltSplitter.regionname,
-        ConveyorBeltMerger.ConveyorBeltMerger.regionname,
-        Tag.Tag.regionname,
-        Plot.Plot.regionname,
-        Presentation.Presentation.regionname,
-        Lasso.Lasso.regionname,
-        Preview.Preview.regionname,
-        ImageEditor.ImageEditor.regionname,
-        OpenEntry.OpenEntry.regionname,
-        Terminal.Terminal.regionname,
-        Undo.Undo.regionname,
-        Redo.Redo.regionname,
-        Video.Video.regionname,
-        Stroke.regionname
+        # SimpleNotification.SimpleNotification.regionname,
+        # ConveyorBelt.ConveyorBelt.regionname,
+        # ConveyorBeltSplitter.ConveyorBeltSplitter.regionname,
+        # ConveyorBeltMerger.ConveyorBeltMerger.regionname,
+        # Tag.Tag.regionname,
+        # Plot.Plot.regionname,
+        # Presentation.Presentation.regionname,
+        # Lasso.Lasso.regionname,
+        # Preview.Preview.regionname,
+        # ImageEditor.ImageEditor.regionname,
+        # OpenEntry.OpenEntry.regionname,
+        # Terminal.Terminal.regionname,
+        # Undo.Undo.regionname,
+        # Redo.Redo.regionname,
+        # Video.Video.regionname,
     ])
 
     CHOICE = APPLICATION
