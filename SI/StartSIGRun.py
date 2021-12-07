@@ -34,13 +34,13 @@ def add_canvas(kwargs={}):
 
     PySI.Startup.create_region_by_name(canvas_shape, Canvas.Canvas.regionname, kwargs)
 
-def add_mouse_cursor():
+def add_mouse_cursor(kwargs):
     mouse_shape = [[0, 0],
                    [0, Cursor.Cursor.region_height],
                    [Cursor.Cursor.region_width, Cursor.Cursor.region_height],
                    [Cursor.Cursor.region_width, 0]]
 
-    PySI.Startup.create_region_by_name(mouse_shape, Cursor.Cursor.regionname, {})
+    PySI.Startup.create_region_by_name(mouse_shape, Cursor.Cursor.regionname, kwargs)
 
 def add_simple_notification():
     x = PySI.Startup.context_dimensions()[0] / 2 - SimpleNotification.SimpleNotification.region_width / 2
@@ -194,22 +194,22 @@ def on_start():
         start_application()
     elif COLOR_PICKER & CHOICE:
         add_canvas()
-        add_mouse_cursor()
+        add_mouse_cursor({"draw": "RMB"})
         add_slider([[500, 500], [500, 530], [800, 530], [800, 500]], "r")
         add_slider([[500, 600], [500, 630], [800, 630], [800, 600]], "g")
         add_slider([[500, 700], [500, 730], [800, 730], [800, 700]], "b")
         add_slider_target([[1000, 570], [1000, 670], [1100, 670], [1100, 570]])
     elif CAMERA_CALIBRATION & CHOICE:
         add_canvas()
-        add_mouse_cursor()
+        add_mouse_cursor({"draw": "RMB"})
         add_camera_calibration()
     elif BENCHMARK & CHOICE:
         add_canvas()
-        add_mouse_cursor()
+        add_mouse_cursor({"draw": "RMB"})
         add_many_regions(500)
     elif TABLE_AREA_CALIBRATION & CHOICE:
         add_canvas()
-        add_mouse_cursor()
+        add_mouse_cursor({"draw": "RMB"})
 
         w, h = PySI.Startup.context_dimensions()[0], PySI.Startup.context_dimensions()[1]
 
