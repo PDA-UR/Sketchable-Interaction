@@ -55,9 +55,12 @@ Context::Context()
 //    p_py_garbage_collector = new bp::object(bp::import(SI_PYTHON_GARBAGE_COLLECTOR));
 }
 
-void Context::begin(const std::unordered_map<std::string, std::unique_ptr<bp::object>>& plugins, IRenderEngine* ire, int argc, char** argv)
+void Context::begin(const std::unordered_map<std::string, std::unique_ptr<bp::object>>& plugins, IRenderEngine* ire, IROS2Environment* ros, int argc, char** argv)
 {
     if (!ire)
+        return;
+
+    if(!ros)
         return;
 
     INFO("Creating Qt5 Application...");
@@ -74,6 +77,7 @@ void Context::begin(const std::unordered_map<std::string, std::unique_ptr<bp::ob
     qmlRegisterType<VideoItem>("siqml", 1, 0, "VideoItem");
 
     d_ire = ire;
+    d_ros = ros;
 
     std::string tmp;
 
@@ -115,18 +119,19 @@ void Context::begin(const std::unordered_map<std::string, std::unique_ptr<bp::ob
         bp::import(SI_START_FILE).attr(SI_START_FUNCTION)();
     )
 
-    INFO("Launching and Detaching Thread for Tangible Data Reception with IP: " + d_tangible_ip + " and Port: " + std::to_string(d_tangible_port));
+//    INFO("Launching and Detaching Thread for Tangible Data Reception with IP: " + d_tangible_ip + " and Port: " + std::to_string(d_tangible_port));
+//
+//    std::thread{[&]() -> int
+//    {
+//        TangibleListener tangible_listener;
+//        UdpListeningReceiveSocket s(IpEndpointName(d_tangible_ip.c_str(), d_tangible_port), &tangible_listener);
+//        s.RunUntilSigInt();
+//
+//        return 0;
+//    }}.detach();
 
-    std::thread{[&]() -> int
-    {
-        TangibleListener tangible_listener;
-        UdpListeningReceiveSocket s(IpEndpointName(d_tangible_ip.c_str(), d_tangible_port), &tangible_listener);
-        s.RunUntilSigInt();
-
-        return 0;
-    }}.detach();
-
-
+    // sequence matters
+    d_ros->start(argc, argv);
     d_ire->start(s_width, s_height, 120);
 
     d_app.exec();
@@ -135,6 +140,9 @@ void Context::begin(const std::unordered_map<std::string, std::unique_ptr<bp::ob
 
 void Context::end()
 {
+    if(d_ros)
+        d_ros->stop();
+
     if(d_ire)
         d_ire->stop();
 }

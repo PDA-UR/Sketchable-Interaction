@@ -16,10 +16,6 @@ find_package(PythonInterp 3 REQUIRED)
 find_package(PythonLibs 3 REQUIRED)
 find_package(glm REQUIRED)
 
-message(STATUS "PYTHON_LIBRARIES = ${PYTHON_LIBRARIES}")
-message(STATUS "PYTHON_EXECUTABLE = ${PYTHON_EXECUTABLE}")
-message(STATUS "PYTHON_INCLUDE_DIRS = ${PYTHON_INCLUDE_DIRS}")
-
 include_directories(${Boost_INCLUDE_DIRS})
 include_directories(${PYTHON_INCLUDE_DIRS})
 
@@ -52,7 +48,7 @@ set(PySISrc
 # SI PYTHON3 MODULE
 add_library(PySI MODULE ${PySISrc})
 target_link_libraries(PySI
-        ${PYTHON_LIBRARIES} 
+        ${PYTHON_LIBRARIES}
         ${Boost_LIBRARIES}
         Qt5::Widgets
         Qt5::Multimedia
@@ -119,6 +115,7 @@ set(SIGRunSRC
         SI/src/sigrun/region/RegionResampler.cpp
         SI/src/sigrun/region/RegionResampler.hpp
         SI/src/sigrun/rendering/IRenderEngine.hpp
+        SI/src/sigrun/network/IROS2Environment.hpp
         SI/src/sigrun/rendering/qml/items/PlotItem.cpp
         SI/src/sigrun/rendering/qml/items/PlotItem.hpp
         SI/src/sigrun/rendering/qml/items/VideoItem.cpp

@@ -300,3 +300,5 @@ SI/lib/tuio_headers/oscpack/examples/
 SI/lib/tuio_headers/oscpack/tests/
 
 *.TXT
+
+SI/log/

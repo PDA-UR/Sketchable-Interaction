@@ -1,0 +1,28 @@
+// generated from rosidl_adapter/resource/msg.idl.em
+// with input from ros2_si_interface/msg/VTKSIObject.msg
+// generated code does not contain a copyright notice
+
+
+module ros2_si_interface {
+  module msg {
+    struct VTKSIObject {
+      int64 id;
+
+      string plugin;
+
+      sequence<float> geometry;
+
+      boolean click;
+
+      boolean drag;
+
+      float x;
+
+      float y;
+
+      boolean alive;
+
+      boolean touch;
+    };
+  };
+};

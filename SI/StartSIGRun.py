@@ -145,7 +145,7 @@ def start_application():
     # rgba = {"rgba": (0, 0, 0, 255)}
 
     add_canvas(rgba)
-    add_mouse_cursor()
+    add_mouse_cursor({"draw": "RMB"})
     add_simple_notification()
     add_palette()
     add_start_directory()

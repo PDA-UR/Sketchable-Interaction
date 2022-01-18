@@ -39,7 +39,7 @@ Core::~Core()
 \details
     Entry point of SIGRun's core which performs Plugin loading and initializes the SI Context.
 */
-void Core::start(char** argv, int argc, IRenderEngine* ire)
+void Core::start(char** argv, int argc, IRenderEngine* ire, IROS2Environment* ros)
 {
     SI_BENCHMARK_START;
 
@@ -68,7 +68,7 @@ void Core::start(char** argv, int argc, IRenderEngine* ire)
 
     INFO("Initialization finished");
 
-    upctx->begin(plugins, ire, argc, argv);
+    upctx->begin(plugins, ire, ros, argc, argv);
     INFO("Context closed");
 }
 

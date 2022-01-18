@@ -33,7 +33,7 @@ class Core: public SIObject
 public:
     ~Core();
 
-    void start(char** argv, int argc, IRenderEngine* ire);
+    void start(char** argv, int argc, IRenderEngine* ire, IROS2Environment* ros);
     void stop();
 
 protected:

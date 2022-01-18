@@ -22,7 +22,7 @@ public:
     SIGRun();
     ~SIGRun();
 
-    int exec(int argc, char **argv, IRenderEngine* ire);
+    int exec(int argc, char **argv, IRenderEngine* ire, IROS2Environment* ros);
 
     static int quit();
 

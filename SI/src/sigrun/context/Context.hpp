@@ -17,6 +17,7 @@
 #include <sigrun/context/managers/InputManager.hpp>
 #include <sigrun/context/managers/ExternalApplicationManager.hpp>
 #include <sigrun/rendering/IRenderEngine.hpp>
+#include <sigrun/network/IROS2Environment.hpp>
 #include <queue>
 #include <QGraphicsView>
 #include <sigrun/parallel/JobSystem.hpp>
@@ -38,7 +39,7 @@ public:
 
     ~Context();
 
-    void begin(const std::unordered_map<std::string, std::unique_ptr<bp::object>>& plugins, IRenderEngine* ire, int argc, char** argv);
+    void begin(const std::unordered_map<std::string, std::unique_ptr<bp::object>>& plugins, IRenderEngine* ire, IROS2Environment* ros, int argc, char** argv);
     void end();
 
     RegionManager* region_manager();
@@ -143,6 +144,7 @@ private:
     uint32_t s_height = 0;
 
     IRenderEngine* d_ire;
+    IROS2Environment* d_ros;
     QGraphicsView* d_main_window;
 
     friend class Core;

@@ -1,0 +1,9 @@
+int64 id
+string plugin
+float32[] geometry
+bool click
+bool drag
+float32 x
+float32 y
+bool alive
+bool touch
