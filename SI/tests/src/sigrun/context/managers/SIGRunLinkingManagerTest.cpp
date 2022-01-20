@@ -21,40 +21,26 @@ TEST_F(SIGRunLinkingManagerTest, construction)
 
 TEST_F(SIGRunLinkingManagerTest, link_creation_uni)
 {
-    std::string path = "tests/res/region";
+    char buf[FILENAME_MAX];
+    getcwd(buf, FILENAME_MAX);
+    std::string directory(buf);
 
-    std::vector<std::tuple<std::string, std::string>> files;
-    std::vector<std::string> classes;
+    bp::import("sys").attr("path").attr("insert")(0, directory + "/tests/res/region");
 
-    PluginCollector().collect("/" + path, files);
-    Scripting script;
+    bp::object o = bp::import("Dummy1");
+    o.attr(SI_INTERNAL_NAME) = "Dummy1";
 
-    const std::string& full_path = std::get<0>(files[0]);
-    const std::string& name = std::get<1>(files[0]);
-
-    std::string module_name = name.substr(0, name.find_last_of('.'));
-    std::string rpath = full_path.substr(full_path.find(path)) + "/" + name;
-
-    bp::object o = script.si_plugin(module_name, rpath);
-
-    classes.clear();
-
-    const std::string& full_path2 = std::get<0>(files[1]);
-    const std::string& name2 = std::get<1>(files[1]);
-
-    module_name = name2.substr(0, name2.find_last_of('.'));
-    rpath = full_path2.substr(full_path2.find(path)) + "/" + name2;
-    
-    std::shared_ptr<bp::object> t = std::make_shared<bp::object>(script.si_plugin(module_name, rpath));
+    bp::object t = bp::import("Dummy2");
+    t.attr(SI_INTERNAL_NAME) = "Dummy2";
 
     std::vector<glm::vec3> contour1{glm::vec3(100, 100, 1), glm::vec3(100, 600, 1), glm::vec3(600, 600, 1),
                                     glm::vec3(600, 100, 1)};
     std::vector<glm::vec3> contour2{glm::vec3(150, 150, 1), glm::vec3(150, 550, 1), glm::vec3(550, 550, 1),
                                     glm::vec3(550, 150, 1)};
 
-    std::shared_ptr<Region> a = std::make_shared<Region>(contour1, *o, 1920, 1080);
-    std::shared_ptr<Region> b = std::make_shared<Region>(contour2, *t, 1920, 1080);
-    std::shared_ptr<Region> c = std::make_shared<Region>(contour2, *o, 1920, 1080);
+    std::shared_ptr<Region> a = std::make_shared<Region>(contour1, o, 1920, 1080);
+    std::shared_ptr<Region> b = std::make_shared<Region>(contour2, t, 1920, 1080);
+    std::shared_ptr<Region> c = std::make_shared<Region>(contour2, o, 1920, 1080);
 
     LinkingManager lm;
 
@@ -76,44 +62,26 @@ TEST_F(SIGRunLinkingManagerTest, link_creation_uni)
 
 TEST_F(SIGRunLinkingManagerTest, is_linked_uni)
 {
-    std::string path = "tests/res/region";
+    char buf[FILENAME_MAX];
+    getcwd(buf, FILENAME_MAX);
+    std::string directory(buf);
 
-    std::vector<std::tuple<std::string, std::string>> files;
-    std::vector<std::string> classes;
+    bp::import("sys").attr("path").attr("insert")(0, directory + "/tests/res/region");
 
-    PluginCollector().collect("/" + path, files);
-    Scripting script;
+    bp::object o = bp::import("Dummy1");
+    o.attr(SI_INTERNAL_NAME) = "Dummy1";
 
-    const std::string& full_path = std::get<0>(files[0]);
-    const std::string& name = std::get<1>(files[0]);
-
-    std::string module_name = name.substr(0, name.find_last_of('.'));
-    std::string rpath = full_path.substr(full_path.find(path)) + "/" + name;
-
-    
-
-    bp::object o = script.si_plugin(module_name, rpath);
-
-    classes.clear();
-
-    const std::string& full_path2 = std::get<0>(files[1]);
-    const std::string& name2 = std::get<1>(files[1]);
-
-    module_name = name2.substr(0, name2.find_last_of('.'));
-    rpath = full_path2.substr(full_path2.find(path)) + "/" + name2;
-
-    
-
-    std::shared_ptr<bp::object> t = std::make_shared<bp::object>(script.si_plugin(module_name, rpath));
+    bp::object t = bp::import("Dummy2");
+    t.attr(SI_INTERNAL_NAME) = "Dummy2";
 
     std::vector<glm::vec3> contour1{glm::vec3(100, 100, 1), glm::vec3(100, 600, 1), glm::vec3(600, 600, 1),
                                     glm::vec3(600, 100, 1)};
     std::vector<glm::vec3> contour2{glm::vec3(150, 150, 1), glm::vec3(150, 550, 1), glm::vec3(550, 550, 1),
                                     glm::vec3(550, 150, 1)};
 
-    std::shared_ptr<Region> a = std::make_shared<Region>(contour1, *o, 1920, 1080);
-    std::shared_ptr<Region> b = std::make_shared<Region>(contour2, *t, 1920, 1080);
-    std::shared_ptr<Region> c = std::make_shared<Region>(contour2, *o, 1920, 1080);
+    std::shared_ptr<Region> a = std::make_shared<Region>(contour1, o, 1920, 1080);
+    std::shared_ptr<Region> b = std::make_shared<Region>(contour2, t, 1920, 1080);
+    std::shared_ptr<Region> c = std::make_shared<Region>(contour2, o, 1920, 1080);
 
     LinkingManager lm;
 
@@ -133,45 +101,27 @@ TEST_F(SIGRunLinkingManagerTest, is_linked_uni)
 
 TEST_F(SIGRunLinkingManagerTest, link_event_execution_uni)
 {
-    std::string path = "tests/res/region";
+    char buf[FILENAME_MAX];
+    getcwd(buf, FILENAME_MAX);
+    std::string directory(buf);
 
-    std::vector<std::tuple<std::string, std::string>> files;
-    std::vector<std::string> classes;
+    bp::import("sys").attr("path").attr("insert")(0, directory + "/tests/res/region");
 
-    PluginCollector().collect("/" + path, files);
-    Scripting script;
+    bp::object o = bp::import("Dummy1");
+    o.attr(SI_INTERNAL_NAME) = "Dummy1";
 
-    const std::string& full_path = std::get<0>(files[0]);
-    const std::string& name = std::get<1>(files[0]);
-
-    std::string module_name = name.substr(0, name.find_last_of('.'));
-    std::string rpath = full_path.substr(full_path.find(path)) + "/" + name;
-
-    
-
-    bp::object o = script.si_plugin(module_name, rpath);
-
-    classes.clear();
-
-    const std::string& full_path2 = std::get<0>(files[1]);
-    const std::string& name2 = std::get<1>(files[1]);
-
-    module_name = name2.substr(0, name2.find_last_of('.'));
-    rpath = full_path2.substr(full_path2.find(path)) + "/" + name2;
-
-    
-
-    std::shared_ptr<bp::object> t = std::make_shared<bp::object>(script.si_plugin(module_name, rpath));
+    bp::object t = bp::import("Dummy2");
+    t.attr(SI_INTERNAL_NAME) = "Dummy2";
 
     std::vector<glm::vec3> contour1{glm::vec3(100, 100, 1), glm::vec3(100, 600, 1), glm::vec3(600, 600, 1),
                                     glm::vec3(600, 100, 1)};
     std::vector<glm::vec3> contour2{glm::vec3(150, 150, 1), glm::vec3(150, 550, 1), glm::vec3(550, 550, 1),
                                     glm::vec3(550, 150, 1)};
 
-    std::shared_ptr<Region> a = std::make_shared<Region>(contour1, *o, 1920, 1080);
-    std::shared_ptr<Region> b = std::make_shared<Region>(contour2, *t, 1920, 1080);
-    std::shared_ptr<Region> c = std::make_shared<Region>(contour2, *o, 1920, 1080);
-    std::shared_ptr<Region> d = std::make_shared<Region>(contour2, *t, 1920, 1080);
+    std::shared_ptr<Region> a = std::make_shared<Region>(contour1, o, 1920, 1080);
+    std::shared_ptr<Region> b = std::make_shared<Region>(contour2, t, 1920, 1080);
+    std::shared_ptr<Region> c = std::make_shared<Region>(contour2, o, 1920, 1080);
+    std::shared_ptr<Region> d = std::make_shared<Region>(contour2, t, 1920, 1080);
 
     LinkingManager* lm = d_c.linking_manager();
 
@@ -194,53 +144,30 @@ TEST_F(SIGRunLinkingManagerTest, link_event_execution_uni)
     ASSERT_TRUE(lm->links()[3]->sender_a()->uuid() == c->uuid());
 
     lm->emit_link_event(a, SI_CAPABILITY_LINK_POSITION);
-
-//    ASSERT_EQ(spy1.count(), 1);
-//    ASSERT_EQ(spy2.count(), 1);
-//    ASSERT_EQ(spy3.count(), 1);
-//    ASSERT_EQ(spy4.count(), 1);
 }
 
 TEST_F(SIGRunLinkingManagerTest, link_removal_uni)
 {
-    std::string path = "tests/res/region";
+    char buf[FILENAME_MAX];
+    getcwd(buf, FILENAME_MAX);
+    std::string directory(buf);
 
-    std::vector<std::tuple<std::string, std::string>> files;
-    std::vector<std::string> classes;
+    bp::import("sys").attr("path").attr("insert")(0, directory + "/tests/res/region");
 
-    PluginCollector().collect("/" + path, files);
-    Scripting script;
+    bp::object o = bp::import("Dummy1");
+    o.attr(SI_INTERNAL_NAME) = "Dummy1";
 
-    const std::string& full_path = std::get<0>(files[0]);
-    const std::string& name = std::get<1>(files[0]);
-
-    std::string module_name = name.substr(0, name.find_last_of('.'));
-    std::string rpath = full_path.substr(full_path.find(path)) + "/" + name;
-
-    
-
-    bp::object o = script.si_plugin(module_name, rpath);
-
-    classes.clear();
-
-    const std::string& full_path2 = std::get<0>(files[1]);
-    const std::string& name2 = std::get<1>(files[1]);
-
-    module_name = name2.substr(0, name2.find_last_of('.'));
-    rpath = full_path2.substr(full_path2.find(path)) + "/" + name2;
-
-    
-
-    std::shared_ptr<bp::object> t = std::make_shared<bp::object>(script.si_plugin(module_name, rpath));
+    bp::object t = bp::import("Dummy2");
+    t.attr(SI_INTERNAL_NAME) = "Dummy2";
 
     std::vector<glm::vec3> contour1{glm::vec3(100, 100, 1), glm::vec3(100, 600, 1), glm::vec3(600, 600, 1),
                                     glm::vec3(600, 100, 1)};
     std::vector<glm::vec3> contour2{glm::vec3(150, 150, 1), glm::vec3(150, 550, 1), glm::vec3(550, 550, 1),
                                     glm::vec3(550, 150, 1)};
 
-    std::shared_ptr<Region> a = std::make_shared<Region>(contour1, *o, 1920, 1080);
-    std::shared_ptr<Region> b = std::make_shared<Region>(contour2, *t, 1920, 1080);
-    std::shared_ptr<Region> c = std::make_shared<Region>(contour2, *o, 1920, 1080);
+    std::shared_ptr<Region> a = std::make_shared<Region>(contour1, o, 1920, 1080);
+    std::shared_ptr<Region> b = std::make_shared<Region>(contour2, t, 1920, 1080);
+    std::shared_ptr<Region> c = std::make_shared<Region>(contour2, o, 1920, 1080);
 
     LinkingManager* lm = d_c.linking_manager();
 
@@ -261,10 +188,6 @@ TEST_F(SIGRunLinkingManagerTest, link_removal_uni)
 
     lm->emit_link_event(a, SI_CAPABILITY_LINK_POSITION);
 
-//    ASSERT_EQ(spy1.count(), 1);
-//    ASSERT_EQ(spy2.count(), 1);
-//    ASSERT_EQ(spy3.count(), 1);
-
     lm->remove_link(b, SI_CAPABILITY_LINK_POSITION, c, SI_CAPABILITY_LINK_POSITION, ILink::LINK_TYPE::UD);
 
     ASSERT_TRUE(lm->links().size() == 2);
@@ -274,57 +197,31 @@ TEST_F(SIGRunLinkingManagerTest, link_removal_uni)
 
     lm->emit_link_event(a, SI_CAPABILITY_LINK_POSITION);
 
-//    ASSERT_EQ(spy1.count(), 2);
-//    ASSERT_EQ(spy2.count(), 2);
-//    ASSERT_EQ(spy3.count(), 1);
-
     lm->emit_link_event(c, SI_CAPABILITY_LINK_POSITION);
-
-//    ASSERT_EQ(spy1.count(), 3);
-//    ASSERT_EQ(spy2.count(), 3);
-//    ASSERT_EQ(spy3.count(), 2);
 }
 
 TEST_F(SIGRunLinkingManagerTest, link_creation_bi)
 {
-    std::string path = "tests/res/region";
+    char buf[FILENAME_MAX];
+    getcwd(buf, FILENAME_MAX);
+    std::string directory(buf);
 
-    std::vector<std::tuple<std::string, std::string>> files;
-    std::vector<std::string> classes;
+    bp::import("sys").attr("path").attr("insert")(0, directory + "/tests/res/region");
 
-    PluginCollector().collect("/" + path, files);
-    Scripting script;
+    bp::object o = bp::import("Dummy1");
+    o.attr(SI_INTERNAL_NAME) = "Dummy1";
 
-    const std::string& full_path = std::get<0>(files[0]);
-    const std::string& name = std::get<1>(files[0]);
-
-    std::string module_name = name.substr(0, name.find_last_of('.'));
-    std::string rpath = full_path.substr(full_path.find(path)) + "/" + name;
-
-    
-
-    bp::object o = script.si_plugin(module_name, rpath);
-
-    classes.clear();
-
-    const std::string& full_path2 = std::get<0>(files[1]);
-    const std::string& name2 = std::get<1>(files[1]);
-
-    module_name = name2.substr(0, name2.find_last_of('.'));
-    rpath = full_path2.substr(full_path2.find(path)) + "/" + name2;
-
-    
-
-    std::shared_ptr<bp::object> t = std::make_shared<bp::object>(script.si_plugin(module_name, rpath));
+    bp::object t = bp::import("Dummy2");
+    t.attr(SI_INTERNAL_NAME) = "Dummy2";
 
     std::vector<glm::vec3> contour1{glm::vec3(100, 100, 1), glm::vec3(100, 600, 1), glm::vec3(600, 600, 1),
                                     glm::vec3(600, 100, 1)};
     std::vector<glm::vec3> contour2{glm::vec3(150, 150, 1), glm::vec3(150, 550, 1), glm::vec3(550, 550, 1),
                                     glm::vec3(550, 150, 1)};
 
-    std::shared_ptr<Region> a = std::make_shared<Region>(contour1, *o, 1920, 1080);
-    std::shared_ptr<Region> b = std::make_shared<Region>(contour2, *t, 1920, 1080);
-    std::shared_ptr<Region> c = std::make_shared<Region>(contour2, *o, 1920, 1080);
+    std::shared_ptr<Region> a = std::make_shared<Region>(contour1, o, 1920, 1080);
+    std::shared_ptr<Region> b = std::make_shared<Region>(contour2, t, 1920, 1080);
+    std::shared_ptr<Region> c = std::make_shared<Region>(contour2, o, 1920, 1080);
 
     LinkingManager* lm = d_c.linking_manager();
 
@@ -352,43 +249,25 @@ TEST_F(SIGRunLinkingManagerTest, link_creation_bi)
 
 TEST_F(SIGRunLinkingManagerTest, is_linked_bi)
 {
-    std::string path = "tests/res/region";
+    char buf[FILENAME_MAX];
+    getcwd(buf, FILENAME_MAX);
+    std::string directory(buf);
 
-    std::vector<std::tuple<std::string, std::string>> files;
-    std::vector<std::string> classes;
+    bp::import("sys").attr("path").attr("insert")(0, directory + "/tests/res/region");
 
-    PluginCollector().collect("/" + path, files);
-    Scripting script;
+    bp::object o = bp::import("Dummy1");
+    o.attr(SI_INTERNAL_NAME) = "Dummy1";
 
-    const std::string& full_path = std::get<0>(files[0]);
-    const std::string& name = std::get<1>(files[0]);
-
-    std::string module_name = name.substr(0, name.find_last_of('.'));
-    std::string rpath = full_path.substr(full_path.find(path)) + "/" + name;
-
-    
-
-    bp::object o = script.si_plugin(module_name, rpath);
-
-    classes.clear();
-
-    const std::string& full_path2 = std::get<0>(files[1]);
-    const std::string& name2 = std::get<1>(files[1]);
-
-    module_name = name2.substr(0, name2.find_last_of('.'));
-    rpath = full_path2.substr(full_path2.find(path)) + "/" + name2;
-
-    
-
-    std::shared_ptr<bp::object> t = std::make_shared<bp::object>(script.si_plugin(module_name, rpath));
+    bp::object t = bp::import("Dummy2");
+    t.attr(SI_INTERNAL_NAME) = "Dummy2";
 
     std::vector<glm::vec3> contour1{glm::vec3(100, 100, 1), glm::vec3(100, 600, 1), glm::vec3(600, 600, 1),
                                     glm::vec3(600, 100, 1)};
     std::vector<glm::vec3> contour2{glm::vec3(150, 150, 1), glm::vec3(150, 550, 1), glm::vec3(550, 550, 1),
                                     glm::vec3(550, 150, 1)};
 
-    std::shared_ptr<Region> a = std::make_shared<Region>(contour1, *o, 1920, 1080);
-    std::shared_ptr<Region> b = std::make_shared<Region>(contour2, *t, 1920, 1080);
+    std::shared_ptr<Region> a = std::make_shared<Region>(contour1, o, 1920, 1080);
+    std::shared_ptr<Region> b = std::make_shared<Region>(contour2, t, 1920, 1080);
 
     LinkingManager* lm = d_c.linking_manager();
 
@@ -406,44 +285,26 @@ TEST_F(SIGRunLinkingManagerTest, is_linked_bi)
 
 TEST_F(SIGRunLinkingManagerTest, link_event_execution_bi)
 {
-    std::string path = "tests/res/region";
+    char buf[FILENAME_MAX];
+    getcwd(buf, FILENAME_MAX);
+    std::string directory(buf);
 
-    std::vector<std::tuple<std::string, std::string>> files;
-    std::vector<std::string> classes;
+    bp::import("sys").attr("path").attr("insert")(0, directory + "/tests/res/region");
 
-    PluginCollector().collect("/" + path, files);
-    Scripting script;
+    bp::object o = bp::import("Dummy1");
+    o.attr(SI_INTERNAL_NAME) = "Dummy1";
 
-    const std::string& full_path = std::get<0>(files[0]);
-    const std::string& name = std::get<1>(files[0]);
-
-    std::string module_name = name.substr(0, name.find_last_of('.'));
-    std::string rpath = full_path.substr(full_path.find(path)) + "/" + name;
-
-    
-
-    bp::object o = script.si_plugin(module_name, rpath);
-
-    classes.clear();
-
-    const std::string& full_path2 = std::get<0>(files[1]);
-    const std::string& name2 = std::get<1>(files[1]);
-
-    module_name = name2.substr(0, name2.find_last_of('.'));
-    rpath = full_path2.substr(full_path2.find(path)) + "/" + name2;
-
-    
-
-    std::shared_ptr<bp::object> t = std::make_shared<bp::object>(script.si_plugin(module_name, rpath));
+    bp::object t = bp::import("Dummy2");
+    t.attr(SI_INTERNAL_NAME) = "Dummy2";
 
     std::vector<glm::vec3> contour1{glm::vec3(100, 100, 1), glm::vec3(100, 600, 1), glm::vec3(600, 600, 1),
                                     glm::vec3(600, 100, 1)};
     std::vector<glm::vec3> contour2{glm::vec3(150, 150, 1), glm::vec3(150, 550, 1), glm::vec3(550, 550, 1),
                                     glm::vec3(550, 150, 1)};
 
-    std::shared_ptr<Region> a = std::make_shared<Region>(contour1, *o, 1920, 1080);
-    std::shared_ptr<Region> b = std::make_shared<Region>(contour2, *t, 1920, 1080);
-    std::shared_ptr<Region> c = std::make_shared<Region>(contour2, *o, 1920, 1080);
+    std::shared_ptr<Region> a = std::make_shared<Region>(contour1, o, 1920, 1080);
+    std::shared_ptr<Region> b = std::make_shared<Region>(contour2, t, 1920, 1080);
+    std::shared_ptr<Region> c = std::make_shared<Region>(contour2, o, 1920, 1080);
 
     LinkingManager* lm = d_c.linking_manager();
 
@@ -460,53 +321,31 @@ TEST_F(SIGRunLinkingManagerTest, link_event_execution_bi)
     ASSERT_EQ(lm->links()[4]->sender_a()->uuid(), c->uuid());
 
     lm->emit_link_event(a, SI_CAPABILITY_LINK_POSITION);
-
-//    ASSERT_EQ(spy1.count(), 1);
-//    ASSERT_EQ(spy2.count(), 1);
-//    ASSERT_EQ(spy3.count(), 1);
 }
 
 TEST_F(SIGRunLinkingManagerTest, link_removal_bi)
 {
-    std::string path = "tests/res/region";
+    char buf[FILENAME_MAX];
+    getcwd(buf, FILENAME_MAX);
+    std::string directory(buf);
 
-    std::vector<std::tuple<std::string, std::string>> files;
-    std::vector<std::string> classes;
+    bp::import("sys").attr("path").attr("insert")(0, directory + "/tests/res/region");
 
-    PluginCollector().collect("/" + path, files);
-    Scripting script;
+    bp::object o = bp::import("Dummy1");
+    o.attr(SI_INTERNAL_NAME) = "Dummy1";
 
-    const std::string& full_path = std::get<0>(files[0]);
-    const std::string& name = std::get<1>(files[0]);
-
-    std::string module_name = name.substr(0, name.find_last_of('.'));
-    std::string rpath = full_path.substr(full_path.find(path)) + "/" + name;
-
-    
-
-    bp::object o = script.si_plugin(module_name, rpath);
-
-    classes.clear();
-
-    const std::string& full_path2 = std::get<0>(files[1]);
-    const std::string& name2 = std::get<1>(files[1]);
-
-    module_name = name2.substr(0, name2.find_last_of('.'));
-    rpath = full_path2.substr(full_path2.find(path)) + "/" + name2;
-
-    
-
-    std::shared_ptr<bp::object> t = std::make_shared<bp::object>(script.si_plugin(module_name, rpath));
+    bp::object t = bp::import("Dummy2");
+    t.attr(SI_INTERNAL_NAME) = "Dummy2";
 
     std::vector<glm::vec3> contour1{glm::vec3(100, 100, 1), glm::vec3(100, 600, 1), glm::vec3(600, 600, 1),
                                     glm::vec3(600, 100, 1)};
     std::vector<glm::vec3> contour2{glm::vec3(150, 150, 1), glm::vec3(150, 550, 1), glm::vec3(550, 550, 1),
                                     glm::vec3(550, 150, 1)};
 
-    std::shared_ptr<Region> a = std::make_shared<Region>(contour1, *o, 1920, 1080);
-    std::shared_ptr<Region> b = std::make_shared<Region>(contour2, *t, 1920, 1080);
-    std::shared_ptr<Region> c = std::make_shared<Region>(contour2, *o, 1920, 1080);
-    std::shared_ptr<Region> d = std::make_shared<Region>(contour2, *t, 1920, 1080);
+    std::shared_ptr<Region> a = std::make_shared<Region>(contour1, o, 1920, 1080);
+    std::shared_ptr<Region> b = std::make_shared<Region>(contour2, t, 1920, 1080);
+    std::shared_ptr<Region> c = std::make_shared<Region>(contour2, o, 1920, 1080);
+    std::shared_ptr<Region> d = std::make_shared<Region>(contour2, t, 1920, 1080);
 
 
     LinkingManager* lm = d_c.linking_manager();
@@ -528,11 +367,6 @@ TEST_F(SIGRunLinkingManagerTest, link_removal_bi)
 
     lm->emit_link_event(a, SI_CAPABILITY_LINK_POSITION);
 
-//    ASSERT_EQ(spy1.count(), 1);
-//    ASSERT_EQ(spy2.count(), 1);
-//    ASSERT_EQ(spy3.count(), 1);
-//    ASSERT_EQ(spy4.count(), 1);
-
     lm->remove_link(b, SI_CAPABILITY_LINK_POSITION, c, SI_CAPABILITY_LINK_POSITION, ILink::LINK_TYPE::BD);
 
     ASSERT_EQ(lm->links().size(), 5);
@@ -551,22 +385,10 @@ TEST_F(SIGRunLinkingManagerTest, link_removal_bi)
 
     lm->emit_link_event(a, SI_CAPABILITY_LINK_POSITION);
 
-//    ASSERT_EQ(spy1.count(), 2);
-//    ASSERT_EQ(spy2.count(), 2);
-//    ASSERT_EQ(spy3.count(), 2);
-//    ASSERT_EQ(spy4.count(), 2);
 
     lm->emit_link_event(b, SI_CAPABILITY_LINK_POSITION);
 
-//    ASSERT_EQ(spy1.count(), 3);
-//    ASSERT_EQ(spy2.count(), 3);
-//    ASSERT_EQ(spy3.count(), 3);
-//    ASSERT_EQ(spy4.count(), 3);
 
     lm->emit_link_event(c, SI_CAPABILITY_LINK_POSITION);
 
-//    ASSERT_EQ(spy1.count(), 4);
-//    ASSERT_EQ(spy2.count(), 4);
-//    ASSERT_EQ(spy3.count(), 4);
-//    ASSERT_EQ(spy4.count(), 4);
 }

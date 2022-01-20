@@ -31,8 +31,7 @@ Scripting::Scripting()
         bp::object sys_module = bp::import("sys");
         bp::object os_module = bp::import("os");
 
-        bp::str module_directory = directory.c_str();
-        sys_module.attr("path").attr("insert")(0, module_directory);
+        sys_module.attr("path").attr("insert")(0, directory);
 
         d_main = bp::import("__main__");
         d_globals = d_main.attr("__dict__");
@@ -277,7 +276,7 @@ bp::object Scripting::si_plugin(std::string &module_name, std::string &path)
 {
     std::string temp = path.substr(0, path.length() - 3); // -3 removes .py
     std::replace(temp.begin(), temp.end(), SI_SLASH_CHAR, SI_DOT_CHAR);
-    bp::object ret = bp::import(bp::str((temp).c_str()));
+    bp::object ret = bp::import(temp.c_str());
     ret.attr(SI_INTERNAL_NAME) = module_name.c_str();
 
     return ret;
