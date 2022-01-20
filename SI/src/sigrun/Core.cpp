@@ -39,7 +39,7 @@ Core::~Core()
 \details
     Entry point of SIGRun's core which performs Plugin loading and initializes the SI Context.
 */
-void Core::start(char** argv, int argc, IRenderEngine* ire, IROS2Environment* ros)
+void Core::start(char** argv, int argc, IRenderEngine* ire, IPhysicalEnvironment* ros)
 {
     SI_BENCHMARK_START;
 

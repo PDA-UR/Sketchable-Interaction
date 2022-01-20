@@ -41,7 +41,7 @@ SIGRun::~SIGRun()
     @param argc cli argc
     @param argv cli argv
 */
-int SIGRun::exec(int argc, char **argv, IRenderEngine* ire, IROS2Environment* ros)
+int SIGRun::exec(int argc, char **argv, IRenderEngine* ire, IPhysicalEnvironment* ros)
 {
     up_core->start(argv, argc, ire, ros);
 

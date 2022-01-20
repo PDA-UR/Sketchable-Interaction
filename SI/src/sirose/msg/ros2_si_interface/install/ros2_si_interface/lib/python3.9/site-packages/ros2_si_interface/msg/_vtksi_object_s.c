@@ -196,6 +196,86 @@ bool ros2_si_interface__msg__vtksi_object__convert_from_py(PyObject * _pymsg, vo
     ros_message->touch = (Py_True == field);
     Py_DECREF(field);
   }
+  {  // links
+    PyObject * field = PyObject_GetAttrString(_pymsg, "links");
+    if (!field) {
+      return false;
+    }
+    if (PyObject_CheckBuffer(field)) {
+      // Optimization for converting arrays of primitives
+      Py_buffer view;
+      int rc = PyObject_GetBuffer(field, &view, PyBUF_SIMPLE);
+      if (rc < 0) {
+        Py_DECREF(field);
+        return false;
+      }
+      Py_ssize_t size = view.len / sizeof(int32_t);
+      if (!rosidl_runtime_c__int32__Sequence__init(&(ros_message->links), size)) {
+        PyErr_SetString(PyExc_RuntimeError, "unable to create int32__Sequence ros_message");
+        PyBuffer_Release(&view);
+        Py_DECREF(field);
+        return false;
+      }
+      int32_t * dest = ros_message->links.data;
+      rc = PyBuffer_ToContiguous(dest, &view, view.len, 'C');
+      if (rc < 0) {
+        PyBuffer_Release(&view);
+        Py_DECREF(field);
+        return false;
+      }
+      PyBuffer_Release(&view);
+    } else {
+      PyObject * seq_field = PySequence_Fast(field, "expected a sequence in 'links'");
+      if (!seq_field) {
+        Py_DECREF(field);
+        return false;
+      }
+      Py_ssize_t size = PySequence_Size(field);
+      if (-1 == size) {
+        Py_DECREF(seq_field);
+        Py_DECREF(field);
+        return false;
+      }
+      if (!rosidl_runtime_c__int32__Sequence__init(&(ros_message->links), size)) {
+        PyErr_SetString(PyExc_RuntimeError, "unable to create int32__Sequence ros_message");
+        Py_DECREF(seq_field);
+        Py_DECREF(field);
+        return false;
+      }
+      int32_t * dest = ros_message->links.data;
+      for (Py_ssize_t i = 0; i < size; ++i) {
+        PyObject * item = PySequence_Fast_GET_ITEM(seq_field, i);
+        if (!item) {
+          Py_DECREF(seq_field);
+          Py_DECREF(field);
+          return false;
+        }
+        assert(PyLong_Check(item));
+        int32_t tmp = (int32_t)PyLong_AsLong(item);
+        memcpy(&dest[i], &tmp, sizeof(int32_t));
+      }
+      Py_DECREF(seq_field);
+    }
+    Py_DECREF(field);
+  }
+  {  // tracker_dimension_x
+    PyObject * field = PyObject_GetAttrString(_pymsg, "tracker_dimension_x");
+    if (!field) {
+      return false;
+    }
+    assert(PyLong_Check(field));
+    ros_message->tracker_dimension_x = (int32_t)PyLong_AsLong(field);
+    Py_DECREF(field);
+  }
+  {  // tracker_dimension_y
+    PyObject * field = PyObject_GetAttrString(_pymsg, "tracker_dimension_y");
+    if (!field) {
+      return false;
+    }
+    assert(PyLong_Check(field));
+    ros_message->tracker_dimension_y = (int32_t)PyLong_AsLong(field);
+    Py_DECREF(field);
+  }
 
   return true;
 }
@@ -363,6 +443,85 @@ PyObject * ros2_si_interface__msg__vtksi_object__convert_to_py(void * raw_ros_me
     field = PyBool_FromLong(ros_message->touch ? 1 : 0);
     {
       int rc = PyObject_SetAttrString(_pymessage, "touch", field);
+      Py_DECREF(field);
+      if (rc) {
+        return NULL;
+      }
+    }
+  }
+  {  // links
+    PyObject * field = NULL;
+    field = PyObject_GetAttrString(_pymessage, "links");
+    if (!field) {
+      return NULL;
+    }
+    assert(field->ob_type != NULL);
+    assert(field->ob_type->tp_name != NULL);
+    assert(strcmp(field->ob_type->tp_name, "array.array") == 0);
+    // ensure that itemsize matches the sizeof of the ROS message field
+    PyObject * itemsize_attr = PyObject_GetAttrString(field, "itemsize");
+    assert(itemsize_attr != NULL);
+    size_t itemsize = PyLong_AsSize_t(itemsize_attr);
+    Py_DECREF(itemsize_attr);
+    if (itemsize != sizeof(int32_t)) {
+      PyErr_SetString(PyExc_RuntimeError, "itemsize doesn't match expectation");
+      Py_DECREF(field);
+      return NULL;
+    }
+    // clear the array, poor approach to remove potential default values
+    Py_ssize_t length = PyObject_Length(field);
+    if (-1 == length) {
+      Py_DECREF(field);
+      return NULL;
+    }
+    if (length > 0) {
+      PyObject * pop = PyObject_GetAttrString(field, "pop");
+      assert(pop != NULL);
+      for (Py_ssize_t i = 0; i < length; ++i) {
+        PyObject * ret = PyObject_CallFunctionObjArgs(pop, NULL);
+        if (!ret) {
+          Py_DECREF(pop);
+          Py_DECREF(field);
+          return NULL;
+        }
+        Py_DECREF(ret);
+      }
+      Py_DECREF(pop);
+    }
+    if (ros_message->links.size > 0) {
+      // populating the array.array using the frombytes method
+      PyObject * frombytes = PyObject_GetAttrString(field, "frombytes");
+      assert(frombytes != NULL);
+      int32_t * src = &(ros_message->links.data[0]);
+      PyObject * data = PyBytes_FromStringAndSize((const char *)src, ros_message->links.size * sizeof(int32_t));
+      assert(data != NULL);
+      PyObject * ret = PyObject_CallFunctionObjArgs(frombytes, data, NULL);
+      Py_DECREF(data);
+      Py_DECREF(frombytes);
+      if (!ret) {
+        Py_DECREF(field);
+        return NULL;
+      }
+      Py_DECREF(ret);
+    }
+    Py_DECREF(field);
+  }
+  {  // tracker_dimension_x
+    PyObject * field = NULL;
+    field = PyLong_FromLong(ros_message->tracker_dimension_x);
+    {
+      int rc = PyObject_SetAttrString(_pymessage, "tracker_dimension_x", field);
+      Py_DECREF(field);
+      if (rc) {
+        return NULL;
+      }
+    }
+  }
+  {  // tracker_dimension_y
+    PyObject * field = NULL;
+    field = PyLong_FromLong(ros_message->tracker_dimension_y);
+    {
+      int rc = PyObject_SetAttrString(_pymessage, "tracker_dimension_y", field);
       Py_DECREF(field);
       if (rc) {
         return NULL;

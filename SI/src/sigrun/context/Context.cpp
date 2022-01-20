@@ -19,9 +19,6 @@
 #include <sigrun/rendering/qml/items/VideoItem.hpp>
 #include <sigrun/util/Benchmark.hpp>
 #include <chrono>
-#include <sigrun/tangible/TangibleListener.hpp>
-
-#include "../lib/tuio_headers/oscpack/ip/UdpSocket.h"
 
 #define NEW_REGIONS_PER_FRAME 50
 
@@ -36,9 +33,6 @@ Context::~Context()
     p_py_garbage_collector = nullptr;
     INFO("Destroyed Context");
 }
-
-// Either move QApp to separate thread
-// or leave GUI in Main thread and move Context logic to another thread
 
 Context::Context()
 {
@@ -55,7 +49,7 @@ Context::Context()
 //    p_py_garbage_collector = new bp::object(bp::import(SI_PYTHON_GARBAGE_COLLECTOR));
 }
 
-void Context::begin(const std::unordered_map<std::string, std::unique_ptr<bp::object>>& plugins, IRenderEngine* ire, IROS2Environment* ros, int argc, char** argv)
+void Context::begin(const std::unordered_map<std::string, std::unique_ptr<bp::object>>& plugins, IRenderEngine* ire, IPhysicalEnvironment* ros, int argc, char** argv)
 {
     if (!ire)
         return;
@@ -118,17 +112,6 @@ void Context::begin(const std::unordered_map<std::string, std::unique_ptr<bp::ob
     HANDLE_PYTHON_CALL(PY_ERROR, "Could not load startup file! A python file called \'StartSIGRun\' is required to be present in plugins folder!",
         bp::import(SI_START_FILE).attr(SI_START_FUNCTION)();
     )
-
-//    INFO("Launching and Detaching Thread for Tangible Data Reception with IP: " + d_tangible_ip + " and Port: " + std::to_string(d_tangible_port));
-//
-//    std::thread{[&]() -> int
-//    {
-//        TangibleListener tangible_listener;
-//        UdpListeningReceiveSocket s(IpEndpointName(d_tangible_ip.c_str(), d_tangible_port), &tangible_listener);
-//        s.RunUntilSigInt();
-//
-//        return 0;
-//    }}.detach();
 
     // sequence matters
     d_ros->start(argc, argv);

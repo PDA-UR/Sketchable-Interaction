@@ -52,6 +52,14 @@ cdr_serialize(
   cdr << (ros_message.alive ? true : false);
   // Member: touch
   cdr << (ros_message.touch ? true : false);
+  // Member: links
+  {
+    cdr << ros_message.links;
+  }
+  // Member: tracker_dimension_x
+  cdr << ros_message.tracker_dimension_x;
+  // Member: tracker_dimension_y
+  cdr << ros_message.tracker_dimension_y;
   return true;
 }
 
@@ -105,6 +113,17 @@ cdr_deserialize(
     cdr >> tmp;
     ros_message.touch = tmp ? true : false;
   }
+
+  // Member: links
+  {
+    cdr >> ros_message.links;
+  }
+
+  // Member: tracker_dimension_x
+  cdr >> ros_message.tracker_dimension_x;
+
+  // Member: tracker_dimension_y
+  cdr >> ros_message.tracker_dimension_y;
 
   return true;
 }
@@ -175,6 +194,28 @@ get_serialized_size(
   // Member: touch
   {
     size_t item_size = sizeof(ros_message.touch);
+    current_alignment += item_size +
+      eprosima::fastcdr::Cdr::alignment(current_alignment, item_size);
+  }
+  // Member: links
+  {
+    size_t array_size = ros_message.links.size();
+
+    current_alignment += padding +
+      eprosima::fastcdr::Cdr::alignment(current_alignment, padding);
+    size_t item_size = sizeof(ros_message.links[0]);
+    current_alignment += array_size * item_size +
+      eprosima::fastcdr::Cdr::alignment(current_alignment, item_size);
+  }
+  // Member: tracker_dimension_x
+  {
+    size_t item_size = sizeof(ros_message.tracker_dimension_x);
+    current_alignment += item_size +
+      eprosima::fastcdr::Cdr::alignment(current_alignment, item_size);
+  }
+  // Member: tracker_dimension_y
+  {
+    size_t item_size = sizeof(ros_message.tracker_dimension_y);
     current_alignment += item_size +
       eprosima::fastcdr::Cdr::alignment(current_alignment, item_size);
   }
@@ -270,6 +311,33 @@ max_serialized_size_VTKSIObject(
     size_t array_size = 1;
 
     current_alignment += array_size * sizeof(uint8_t);
+  }
+
+  // Member: links
+  {
+    size_t array_size = 0;
+    full_bounded = false;
+    current_alignment += padding +
+      eprosima::fastcdr::Cdr::alignment(current_alignment, padding);
+
+    current_alignment += array_size * sizeof(uint32_t) +
+      eprosima::fastcdr::Cdr::alignment(current_alignment, sizeof(uint32_t));
+  }
+
+  // Member: tracker_dimension_x
+  {
+    size_t array_size = 1;
+
+    current_alignment += array_size * sizeof(uint32_t) +
+      eprosima::fastcdr::Cdr::alignment(current_alignment, sizeof(uint32_t));
+  }
+
+  // Member: tracker_dimension_y
+  {
+    size_t array_size = 1;
+
+    current_alignment += array_size * sizeof(uint32_t) +
+      eprosima::fastcdr::Cdr::alignment(current_alignment, sizeof(uint32_t));
   }
 
   return current_alignment - initial_alignment;

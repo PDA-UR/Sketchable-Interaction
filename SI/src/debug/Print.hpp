@@ -16,6 +16,7 @@
 #include <glm/glm.hpp>
 #include <pysi/PySIEffect.hpp>
 #include <sigrun/SIConstants.hpp>
+#include <sigrun/network/TangibleObjectMessage.hpp>
 
 namespace bp = boost::python;
 
@@ -50,6 +51,9 @@ public:
     template<typename T>
     inline static std::string _print(const std::vector<std::vector<T>> &v)
     {
+        if(v.empty())
+            return "[]";
+
         std::string ret = std::transform_reduce(std::execution::par, v.begin(), v.end(), std::string("["), [](const std::string& a, const std::string& b)
         {
             return a + ", " + b;
@@ -64,6 +68,9 @@ public:
     template<typename T>
     inline static std::string _print(const std::vector<T>& v)
     {
+        if(v.empty())
+            return "[]";
+
         std::string ret = std::transform_reduce(std::execution::par, v.begin(), v.end(), std::string(""), [](const std::string& a, const std::string& b)
         {
             return a + ", " + b;
@@ -112,7 +119,7 @@ public:
         return p;
     }
 
-    inline static std::string _print(int32_t p)
+    inline static std::string _print(int p)
     {
         return std::to_string(p);
     }
@@ -172,9 +179,19 @@ public:
         return "(" + std::to_string(p.x) + ", " + std::to_string(p.y) + ")";
     }
 
+    inline static std::string _print(const glm::vec2& p)
+    {
+        return "(" + std::to_string(p.x) + ", " + std::to_string(p.y) + ")";
+    }
+
     inline static std::string _print(const glm::ivec4& p)
     {
         return "(" + std::to_string(p.x) + ", " + std::to_string(p.y) + ", " + std::to_string(p.z) + ", " + std::to_string(p.w) + ")";
+    }
+
+    inline static std::string _print(const TangibleObjectMessage* msg)
+    {
+        return "TangibleObjectMessage(" + _print(msg->id()) + ", " + _print(msg->shape()) + ", " + msg->plugin_identifier() + ", " + _print(msg->x()) + ", " + _print(msg->y()) + ", " + _print(msg->is_click()) + ", " + _print(msg->is_drag()) + ", " + _print(msg->is_touch()) + ", " + _print(msg->is_alive()) + ", " + _print(msg->tracker_dimensions()) + ", " + _print(msg->links());
     }
 
     template<class... Args>

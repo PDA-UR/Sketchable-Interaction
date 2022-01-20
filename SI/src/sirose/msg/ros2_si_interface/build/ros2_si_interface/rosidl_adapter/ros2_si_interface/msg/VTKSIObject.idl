@@ -23,6 +23,12 @@ module ros2_si_interface {
       boolean alive;
 
       boolean touch;
+
+      sequence<int32> links;
+
+      int32 tracker_dimension_x;
+
+      int32 tracker_dimension_y;
     };
   };
 };

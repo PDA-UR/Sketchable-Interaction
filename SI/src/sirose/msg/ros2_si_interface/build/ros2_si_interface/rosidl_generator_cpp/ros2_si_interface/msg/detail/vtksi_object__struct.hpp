@@ -45,6 +45,8 @@ struct VTKSIObject_
       this->y = 0.0f;
       this->alive = false;
       this->touch = false;
+      this->tracker_dimension_x = 0l;
+      this->tracker_dimension_y = 0l;
     }
   }
 
@@ -62,6 +64,8 @@ struct VTKSIObject_
       this->y = 0.0f;
       this->alive = false;
       this->touch = false;
+      this->tracker_dimension_x = 0l;
+      this->tracker_dimension_y = 0l;
     }
   }
 
@@ -93,6 +97,15 @@ struct VTKSIObject_
   using _touch_type =
     bool;
   _touch_type touch;
+  using _links_type =
+    std::vector<int32_t, typename std::allocator_traits<ContainerAllocator>::template rebind_alloc<int32_t>>;
+  _links_type links;
+  using _tracker_dimension_x_type =
+    int32_t;
+  _tracker_dimension_x_type tracker_dimension_x;
+  using _tracker_dimension_y_type =
+    int32_t;
+  _tracker_dimension_y_type tracker_dimension_y;
 
   // setters for named parameter idiom
   Type & set__id(
@@ -147,6 +160,24 @@ struct VTKSIObject_
     const bool & _arg)
   {
     this->touch = _arg;
+    return *this;
+  }
+  Type & set__links(
+    const std::vector<int32_t, typename std::allocator_traits<ContainerAllocator>::template rebind_alloc<int32_t>> & _arg)
+  {
+    this->links = _arg;
+    return *this;
+  }
+  Type & set__tracker_dimension_x(
+    const int32_t & _arg)
+  {
+    this->tracker_dimension_x = _arg;
+    return *this;
+  }
+  Type & set__tracker_dimension_y(
+    const int32_t & _arg)
+  {
+    this->tracker_dimension_y = _arg;
     return *this;
   }
 
@@ -217,6 +248,15 @@ struct VTKSIObject_
       return false;
     }
     if (this->touch != other.touch) {
+      return false;
+    }
+    if (this->links != other.links) {
+      return false;
+    }
+    if (this->tracker_dimension_x != other.tracker_dimension_x) {
+      return false;
+    }
+    if (this->tracker_dimension_y != other.tracker_dimension_y) {
       return false;
     }
     return true;

@@ -13,6 +13,7 @@
 // Member `plugin`
 #include "rosidl_runtime_c/string_functions.h"
 // Member `geometry`
+// Member `links`
 #include "rosidl_runtime_c/primitives_sequence_functions.h"
 
 bool
@@ -38,6 +39,13 @@ ros2_si_interface__msg__VTKSIObject__init(ros2_si_interface__msg__VTKSIObject * 
   // y
   // alive
   // touch
+  // links
+  if (!rosidl_runtime_c__int32__Sequence__init(&msg->links, 0)) {
+    ros2_si_interface__msg__VTKSIObject__fini(msg);
+    return false;
+  }
+  // tracker_dimension_x
+  // tracker_dimension_y
   return true;
 }
 
@@ -58,6 +66,10 @@ ros2_si_interface__msg__VTKSIObject__fini(ros2_si_interface__msg__VTKSIObject * 
   // y
   // alive
   // touch
+  // links
+  rosidl_runtime_c__int32__Sequence__fini(&msg->links);
+  // tracker_dimension_x
+  // tracker_dimension_y
 }
 
 ros2_si_interface__msg__VTKSIObject *

@@ -8,14 +8,17 @@ Subscriber::Subscriber(): Node("Subscriber")
 
 void Subscriber::object_callback(ros2_si_interface::msg::VTKSIObject::SharedPtr message)
 {
-    std::vector<glm::vec3> shape(message->geometry.size() / 2);
+    std::vector<glm::vec3> shape;
     to_shape(shape, message->geometry);
 
-    Print::print(shape);
+    TangibleObjectMessage msg(message->id, shape, message->plugin, message->x, message->y, message->click, message->drag,
+                              message->touch, message->alive, message->links, message->tracker_dimension_x, message->tracker_dimension_y);
+    msg.send();
 }
 
 void Subscriber::to_shape(std::vector<glm::vec3>& out, const std::vector<float> &raw)
 {
+    out.resize(raw.size() / 2);
     for(int i = 0; i < raw.size(); i+=2)
     {
         out[i / 2].x = raw[i];

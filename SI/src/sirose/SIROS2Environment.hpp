@@ -7,7 +7,7 @@
 #include "Subscriber.hpp"
 #include <thread>
 
-class SIROS2Environment: public IROS2Environment, public SIObject
+class SIROS2Environment: public IPhysicalEnvironment, public SIObject
 { SIROSE
 public:
     SIROS2Environment();

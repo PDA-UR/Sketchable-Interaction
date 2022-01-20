@@ -7,3 +7,6 @@ float32 x
 float32 y
 bool alive
 bool touch
+int32[] links
+int32 tracker_dimension_x
+int32 tracker_dimension_y

@@ -20,16 +20,64 @@ namespace msg
 namespace builder
 {
 
+class Init_VTKSIObject_tracker_dimension_y
+{
+public:
+  explicit Init_VTKSIObject_tracker_dimension_y(::ros2_si_interface::msg::VTKSIObject & msg)
+  : msg_(msg)
+  {}
+  ::ros2_si_interface::msg::VTKSIObject tracker_dimension_y(::ros2_si_interface::msg::VTKSIObject::_tracker_dimension_y_type arg)
+  {
+    msg_.tracker_dimension_y = std::move(arg);
+    return std::move(msg_);
+  }
+
+private:
+  ::ros2_si_interface::msg::VTKSIObject msg_;
+};
+
+class Init_VTKSIObject_tracker_dimension_x
+{
+public:
+  explicit Init_VTKSIObject_tracker_dimension_x(::ros2_si_interface::msg::VTKSIObject & msg)
+  : msg_(msg)
+  {}
+  Init_VTKSIObject_tracker_dimension_y tracker_dimension_x(::ros2_si_interface::msg::VTKSIObject::_tracker_dimension_x_type arg)
+  {
+    msg_.tracker_dimension_x = std::move(arg);
+    return Init_VTKSIObject_tracker_dimension_y(msg_);
+  }
+
+private:
+  ::ros2_si_interface::msg::VTKSIObject msg_;
+};
+
+class Init_VTKSIObject_links
+{
+public:
+  explicit Init_VTKSIObject_links(::ros2_si_interface::msg::VTKSIObject & msg)
+  : msg_(msg)
+  {}
+  Init_VTKSIObject_tracker_dimension_x links(::ros2_si_interface::msg::VTKSIObject::_links_type arg)
+  {
+    msg_.links = std::move(arg);
+    return Init_VTKSIObject_tracker_dimension_x(msg_);
+  }
+
+private:
+  ::ros2_si_interface::msg::VTKSIObject msg_;
+};
+
 class Init_VTKSIObject_touch
 {
 public:
   explicit Init_VTKSIObject_touch(::ros2_si_interface::msg::VTKSIObject & msg)
   : msg_(msg)
   {}
-  ::ros2_si_interface::msg::VTKSIObject touch(::ros2_si_interface::msg::VTKSIObject::_touch_type arg)
+  Init_VTKSIObject_links touch(::ros2_si_interface::msg::VTKSIObject::_touch_type arg)
   {
     msg_.touch = std::move(arg);
-    return std::move(msg_);
+    return Init_VTKSIObject_links(msg_);
   }
 
 private:

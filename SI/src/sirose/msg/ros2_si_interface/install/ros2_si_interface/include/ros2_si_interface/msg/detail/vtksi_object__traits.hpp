@@ -118,6 +118,46 @@ inline void to_yaml(
     value_to_yaml(msg.touch, out);
     out << "\n";
   }
+
+  // member: links
+  {
+    if (indentation > 0) {
+      out << std::string(indentation, ' ');
+    }
+    if (msg.links.size() == 0) {
+      out << "links: []\n";
+    } else {
+      out << "links:\n";
+      for (auto item : msg.links) {
+        if (indentation > 0) {
+          out << std::string(indentation, ' ');
+        }
+        out << "- ";
+        value_to_yaml(item, out);
+        out << "\n";
+      }
+    }
+  }
+
+  // member: tracker_dimension_x
+  {
+    if (indentation > 0) {
+      out << std::string(indentation, ' ');
+    }
+    out << "tracker_dimension_x: ";
+    value_to_yaml(msg.tracker_dimension_x, out);
+    out << "\n";
+  }
+
+  // member: tracker_dimension_y
+  {
+    if (indentation > 0) {
+      out << std::string(indentation, ' ');
+    }
+    out << "tracker_dimension_y: ";
+    value_to_yaml(msg.tracker_dimension_y, out);
+    out << "\n";
+  }
 }  // NOLINT(readability/fn_size)
 
 inline std::string to_yaml(const ros2_si_interface::msg::VTKSIObject & msg)

@@ -6,6 +6,7 @@
 # Import statements for member types
 
 # Member 'geometry'
+# Member 'links'
 import array  # noqa: E402, I100
 
 import rosidl_parser.definition  # noqa: E402, I100
@@ -65,6 +66,9 @@ class VTKSIObject(metaclass=Metaclass_VTKSIObject):
         '_y',
         '_alive',
         '_touch',
+        '_links',
+        '_tracker_dimension_x',
+        '_tracker_dimension_y',
     ]
 
     _fields_and_field_types = {
@@ -77,6 +81,9 @@ class VTKSIObject(metaclass=Metaclass_VTKSIObject):
         'y': 'float',
         'alive': 'boolean',
         'touch': 'boolean',
+        'links': 'sequence<int32>',
+        'tracker_dimension_x': 'int32',
+        'tracker_dimension_y': 'int32',
     }
 
     SLOT_TYPES = (
@@ -89,6 +96,9 @@ class VTKSIObject(metaclass=Metaclass_VTKSIObject):
         rosidl_parser.definition.BasicType('float'),  # noqa: E501
         rosidl_parser.definition.BasicType('boolean'),  # noqa: E501
         rosidl_parser.definition.BasicType('boolean'),  # noqa: E501
+        rosidl_parser.definition.UnboundedSequence(rosidl_parser.definition.BasicType('int32')),  # noqa: E501
+        rosidl_parser.definition.BasicType('int32'),  # noqa: E501
+        rosidl_parser.definition.BasicType('int32'),  # noqa: E501
     )
 
     def __init__(self, **kwargs):
@@ -104,6 +114,9 @@ class VTKSIObject(metaclass=Metaclass_VTKSIObject):
         self.y = kwargs.get('y', float())
         self.alive = kwargs.get('alive', bool())
         self.touch = kwargs.get('touch', bool())
+        self.links = array.array('i', kwargs.get('links', []))
+        self.tracker_dimension_x = kwargs.get('tracker_dimension_x', int())
+        self.tracker_dimension_y = kwargs.get('tracker_dimension_y', int())
 
     def __repr__(self):
         typename = self.__class__.__module__.split('.')
@@ -151,6 +164,12 @@ class VTKSIObject(metaclass=Metaclass_VTKSIObject):
         if self.alive != other.alive:
             return False
         if self.touch != other.touch:
+            return False
+        if self.links != other.links:
+            return False
+        if self.tracker_dimension_x != other.tracker_dimension_x:
+            return False
+        if self.tracker_dimension_y != other.tracker_dimension_y:
             return False
         return True
 
@@ -292,3 +311,61 @@ class VTKSIObject(metaclass=Metaclass_VTKSIObject):
                 isinstance(value, bool), \
                 "The 'touch' field must be of type 'bool'"
         self._touch = value
+
+    @property
+    def links(self):
+        """Message field 'links'."""
+        return self._links
+
+    @links.setter
+    def links(self, value):
+        if isinstance(value, array.array):
+            assert value.typecode == 'i', \
+                "The 'links' array.array() must have the type code of 'i'"
+            self._links = value
+            return
+        if __debug__:
+            from collections.abc import Sequence
+            from collections.abc import Set
+            from collections import UserList
+            from collections import UserString
+            assert \
+                ((isinstance(value, Sequence) or
+                  isinstance(value, Set) or
+                  isinstance(value, UserList)) and
+                 not isinstance(value, str) and
+                 not isinstance(value, UserString) and
+                 all(isinstance(v, int) for v in value) and
+                 all(val >= -2147483648 and val < 2147483648 for val in value)), \
+                "The 'links' field must be a set or sequence and each value of type 'int' and each integer in [-2147483648, 2147483647]"
+        self._links = array.array('i', value)
+
+    @property
+    def tracker_dimension_x(self):
+        """Message field 'tracker_dimension_x'."""
+        return self._tracker_dimension_x
+
+    @tracker_dimension_x.setter
+    def tracker_dimension_x(self, value):
+        if __debug__:
+            assert \
+                isinstance(value, int), \
+                "The 'tracker_dimension_x' field must be of type 'int'"
+            assert value >= -2147483648 and value < 2147483648, \
+                "The 'tracker_dimension_x' field must be an integer in [-2147483648, 2147483647]"
+        self._tracker_dimension_x = value
+
+    @property
+    def tracker_dimension_y(self):
+        """Message field 'tracker_dimension_y'."""
+        return self._tracker_dimension_y
+
+    @tracker_dimension_y.setter
+    def tracker_dimension_y(self, value):
+        if __debug__:
+            assert \
+                isinstance(value, int), \
+                "The 'tracker_dimension_y' field must be of type 'int'"
+            assert value >= -2147483648 and value < 2147483648, \
+                "The 'tracker_dimension_y' field must be an integer in [-2147483648, 2147483647]"
+        self._tracker_dimension_y = value
