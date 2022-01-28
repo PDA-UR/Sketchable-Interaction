@@ -11,6 +11,7 @@ jobs:
     strategy:
       matrix:
         python-version: [3.9]
+        ros: [galactic]
 
     steps:
     - uses: actions/checkout@v1
@@ -18,56 +19,10 @@ jobs:
       uses: actions/setup-python@v1
       with:
         python-version: ${{ matrix.python-version }}
-        
-    - name: Retrieve Version
-      if: success()
-      run: |
-        current=$(cat .version)
-        IFS="." tokens=($current)
-        last_major_version=${tokens[0]}
-        new_major_version=${tokens[0]}
-        last_minor_version=${tokens[1]}
-        new_minor_version=${tokens[1]}
-        last_patch_version=${tokens[2]}
-        new_patch_version=${tokens[2]}
-                
-        if [[ "${{ github.event.head_commit.message }}" == *"[MAJOR]"* ]]; then
-          new_major_version=$((${last_major_version} + 1))
-          new_minor_version=0
-          new_patch_version=0
-        elif [[ "${{ github.event.head_commit.message }}" == *"[MINOR]"* ]]; then
-          new_minor_version=$((${last_minor_version} + 1))
-          new_patch_version=0
-        else
-          new_patch_version=$((${last_patch_version} + 1))
-        fi
-        
-        echo Old Version: $last_major_version.$last_minor_version.$last_patch_version
-        echo New Version: $new_major_version.$new_minor_version.$new_patch_version
-        previous=$current
-        filename_sigrun_prev=sigrun"${previous}".html
-        filename_pysi_prev=pysi"${previous}".html
-
-        echo $new_major_version.$new_minor_version.$new_patch_version > '.version'  
-            
-        current=$(cat .version)
-        
-        sed -i 's|SIGRun'"$previous"'|SIGRun'"$current"'|g' SI-Doc/si/sigrun/html/docs/index.html
-        sed -i 's|PySI'"$previous"'|PySI'"$current"'|g' SI-Doc/si/pysi/html/docs/index.html
-        
-        filename_sigrun=sigrun"${current}".html
-        filename_pysi=pysi"${current}".html
-
-        git mv SI-Doc/si/sigrun/html/"$filename_sigrun_prev" SI-Doc/si/sigrun/html/"$filename_sigrun"  
-        git mv SI-Doc/si/pysi/html/"$filename_pysi_prev" SI-Doc/si/pysi/html/"$filename_pysi"   
-
-        git config --local user.email "action@github.com"
-        git config --local user.name "GitHub Action"
-        git add .version
-        git add SI-Doc/si/sigrun/html/docs/index.html
-        git add SI-Doc/si/pysi/html/docs/index.html
-
-        git commit -m "Update Version"
+    - name: Set up ROS2
+      uses: ros-tooling/setup-ros@v0.2
+      with:
+        required-ros-distributions: ${{ matrix.ros }}
         
     - name: Set C++ Compiler
       run: |
@@ -86,6 +41,14 @@ jobs:
           sudo apt-get install libglm-dev
           sudo apt-get install uuid-dev
           sudo apt install python3.9-dev
+        
+          sudo apt install ros-galactic-rmw-fastrtps-cpp
+          
+          python3 -m pip install \
+            empy \
+            catkin_pkg \
+            numpy \
+            lark
         fi 
         
     - name: Install Boost with components System, Python and Filesystem 
@@ -117,6 +80,18 @@ jobs:
       if: success()
       run: |
         if [[ "${{ github.event.head_commit.message }}" != *"[NO CI]"* ]]; then
+          (cd /home/runner/work/Sketchable-Interaction/Sketchable-Interaction/SI/src/sirose/msg/ros2_si_interface; rm -rf build)
+          (cd /home/runner/work/Sketchable-Interaction/Sketchable-Interaction/SI/src/sirose/msg/ros2_si_interface;source /opt/ros/galactic/setup.bash; colcon build --packages-select ros2_si_interface)
+          
+          sed -i 's,find_package(Boost 1.69.0 COMPONENTS system python3.9 filesystem REQUIRED),find_package(Boost 1.69.0 EXACT REQUIRED COMPONENTS system python3.9 filesystem REQUIRED),g' /home/runner/work/Sketchable-Interaction/Sketchable-Interaction/SI/src/CMakeLists.txt
+          sed -i 's,find_package(Boost 1.69.0 COMPONENTS system python3.9 REQUIRED),find_package(Boost 1.69.0 EXACT REQUIRED COMPONENTS system python3.9 filesystem REQUIRED),'g /home/runner/work/Sketchable-Interaction/Sketchable-Interaction/SI/tests/CMakeLists.txt
+          sed -i -E 's,set\(ENV\{AMENT_PREFIX_PATH\}[\{A-Z_\} $/a-z0-9:.-]*\),list(APPEND AMENT_PREFIX_PATH ${PROJECT_SOURCE_DIR}/SI/src/sirose/msg/ros2_si_interface/install/ros2_si_interface),'g /home/runner/work/Sketchable-Interaction/Sketchable-Interaction/SI/src/sirose/CMakeLists.txt
+          sed -i -E 's,set\(ENV\{CMAKE_PREFIX_PATH\}[\{A-Z_\} $/a-z0-9:.-]*\),list(APPEND CMAKE_PREFIX_PATH ${PROJECT_SOURCE_DIR}/SI/src/sirose/msg/ros2_si_interface/install/ros2_si_interface),'g /home/runner/work/Sketchable-Interaction/Sketchable-Interaction/SI/src/sirose/CMakeLists.txt
+          sed -i -E 's,set\(ENV\{PYTHONPATH\}[\{A-Z_\} $/a-z0-9:.-]*\),,'g /home/runner/work/Sketchable-Interaction/Sketchable-Interaction/SI/src/sirose/CMakeLists.txt
+          sed -i -E 's,set\(ENV\{COLCON_PREFIX_PATH\}[\{A-Z_\} $/a-z0-9:.-]*\),,'g /home/runner/work/Sketchable-Interaction/Sketchable-Interaction/SI/src/sirose/CMakeLists.txt
+          
+          source /opt/ros/galactic/setup.bash   
+          
           cmake -DDEFINE_TEST=ON .
           cmake --build /home/runner/work/Sketchable-Interaction/Sketchable-Interaction --target all -j 8
         fi
