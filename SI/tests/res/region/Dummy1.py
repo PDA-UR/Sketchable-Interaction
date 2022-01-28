@@ -8,10 +8,10 @@ class Dummy1(SIEffect):
     regionname = "Dummy1"
 
     def __init__(self, shape=PySI.PointVector(), uuid="", kwargs={}):
-        super(Dummy1, self).__init__(shape, uuid, "", Dummy1.regiontype, Dummy1.regionname, kwargs)
-        self.source = "testSI"
-        self.x = 0
-        self.y = 0
+        super().__init__(shape, uuid, "", Dummy1.regiontype, Dummy1.regionname, kwargs)
+        # self.source = "testSI"
+        # self.x = 0
+        # self.y = 0
 
 
         self.cap_emit = PySI.String2String2FunctionMapMap({

@@ -4,6 +4,7 @@
 
 #include "../../src/SIGRun.hpp"
 #include "../../src/siren/RenderEngineQt5.hpp"
+#include "sigrun/network/TangibleObjectMessage.hpp"
 #include "sigrun/log/Log.hpp"
 #include "sigrun/SIObject.hpp"
 #include "sigrun/SITypes.hpp"
