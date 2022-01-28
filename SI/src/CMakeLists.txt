@@ -9,23 +9,15 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 # Boost System, Filesystem, Boost.Python compilen mit Python3.9
 # dependent on current install of boostpython  |
 #                                              v
-find_package(Boost 1.69.0 COMPONENTS system python3.9 filesystem REQUIRED)
+find_package(Boost 1.69.0 EXACT REQUIRED COMPONENTS system python3.9 filesystem REQUIRED)
 
 find_package(Python REQUIRED)
 find_package(PythonInterp 3 REQUIRED)
 find_package(PythonLibs 3 REQUIRED)
 find_package(glm REQUIRED)
 
-message(STATUS "PYTHON_LIBRARIES = ${PYTHON_LIBRARIES}")
-message(STATUS "PYTHON_EXECUTABLE = ${PYTHON_EXECUTABLE}")
-message(STATUS "PYTHON_INCLUDE_DIRS = ${PYTHON_INCLUDE_DIRS}")
-
 include_directories(${Boost_INCLUDE_DIRS})
 include_directories(${PYTHON_INCLUDE_DIRS})
-
-set(PATH_LIB ${CMAKE_CURRENT_SOURCE_DIR}/SI/lib/libTUIO2.a)
-set(PATH_INCLUDE_TUIO2_HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/SI/lib/tuio_headers/TUIO2)
-set(PATH_INCLUDE_OSC_HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/SI/lib/tuio_headers/oscpack)
 
 set(THREADS_PREFER_PTHREAD_FLAG ON) # linux only
 find_package(Threads REQUIRED) # linux only
@@ -42,8 +34,6 @@ IF(DEFINE_TEST)
     ADD_DEFINITIONS(-DIS_TEST)
 ENDIF(DEFINE_TEST)
 
-include_directories(${PATH_INCLUDE_TUIO2_HEADERS} ${PATH_INCLUDE_OSC_HEADERS})
-
 set(PySISrc
         SI/src/pysi/PySIEffect.cpp
         SI/src/pysi/PySI.cpp
@@ -52,7 +42,7 @@ set(PySISrc
 # SI PYTHON3 MODULE
 add_library(PySI MODULE ${PySISrc})
 target_link_libraries(PySI
-        ${PYTHON_LIBRARIES} 
+        ${PYTHON_LIBRARIES}
         ${Boost_LIBRARIES}
         Qt5::Widgets
         Qt5::Multimedia
@@ -119,6 +109,9 @@ set(SIGRunSRC
         SI/src/sigrun/region/RegionResampler.cpp
         SI/src/sigrun/region/RegionResampler.hpp
         SI/src/sigrun/rendering/IRenderEngine.hpp
+        SI/src/sigrun/network/IPhysicalEnvironment.hpp
+        SI/src/sigrun/network/TangibleObjectMessage.cpp
+        SI/src/sigrun/network/TangibleObjectMessage.hpp
         SI/src/sigrun/rendering/qml/items/PlotItem.cpp
         SI/src/sigrun/rendering/qml/items/PlotItem.hpp
         SI/src/sigrun/rendering/qml/items/VideoItem.cpp
@@ -142,10 +135,6 @@ set(SIGRunSRC
         SI/src/sigrun/util/Dollar1GestureRecognizer.hpp
         SI/src/sigrun/context/managers/TangibleManager.cpp
         SI/src/sigrun/context/managers/TangibleManager.hpp
-        SI/src/sigrun/tangible/TangibleListener.cpp
-        SI/src/sigrun/tangible/TangibleListener.hpp
-        SI/src/sigrun/tangible/SITUIOObject.hpp
-        SI/src/sigrun/tangible/SITUIOObject.cpp
         SI/src/sigrun/plugin/PythonInvoker.cpp
         SI/src/sigrun/context/spatial_grid/SpatialHashGrid.cpp
         SI/src/sigrun/context/spatial_grid/SpatialHashGrid.hpp
@@ -154,10 +143,7 @@ set(SIGRunSRC
 
         SI/lib/pugixml-1.10/src/pugiconfig.hpp
         SI/lib/pugixml-1.10/src/pugixml.cpp
-        SI/lib/pugixml-1.10/src/pugixml.hpp
-        SI/lib/tuio_headers/oscpack/ip/IpEndpointName.h
-        SI/lib/tuio_headers/oscpack/ip/IpEndpointName.cpp
-        SI/lib/tuio_headers/oscpack/ip/UdpSocket.h)
+        SI/lib/pugixml-1.10/src/pugixml.hpp)
 
 ADD_DEFINITIONS(-DQT_NO_KEYWORDS)
 
@@ -207,7 +193,6 @@ target_precompile_headers(SIGeneralRuntime
 
 set_target_properties(SIGeneralRuntime PROPERTIES AUTOMOC TRUE)
 target_link_libraries(SIGeneralRuntime
-        ${PATH_LIB}
         -luuid
         ${PYTHON_LIBRARIES}
         ${Boost_LIBRARIES}

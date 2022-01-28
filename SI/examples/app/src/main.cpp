@@ -1,4 +1,5 @@
 #include <SI/SI.hpp>
+#include <sirose/SIROS2Environment.hpp>
 
 int main(int argc, char** argv)
 {
@@ -7,8 +8,9 @@ int main(int argc, char** argv)
     Log::WHERE = LOG_CONSOLE;
 
     RenderEngineQT5 re;
+    SIROS2Environment ros;
 
-    SIGRun().exec(argc, argv, &re);
+    SIGRun().exec(argc, argv, &re, &ros);
 
     return 0;
 }

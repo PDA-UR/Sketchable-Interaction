@@ -1,0 +1,19 @@
+{
+  "package_name": "ros2_si_interface",
+  "output_dir": "/home/juergen/1_dev/projects/Sketchable-Interaction/SI/src/sirose/msg/ros2_si_interface/build/ros2_si_interface/rosidl_typesupport_introspection_cpp/ros2_si_interface",
+  "template_dir": "/home/juergen/ros2_galactic/install/rosidl_typesupport_introspection_cpp/share/rosidl_typesupport_introspection_cpp/resource",
+  "idl_tuples": [
+    "/home/juergen/1_dev/projects/Sketchable-Interaction/SI/src/sirose/msg/ros2_si_interface/build/ros2_si_interface/rosidl_adapter/ros2_si_interface:msg/VTKSIObject.idl"
+  ],
+  "target_dependencies": [
+    "/home/juergen/ros2_galactic/install/rosidl_typesupport_introspection_cpp/lib/rosidl_typesupport_introspection_cpp/rosidl_typesupport_introspection_cpp",
+    "/home/juergen/ros2_galactic/install/rosidl_typesupport_introspection_cpp/lib/python3.9/site-packages/rosidl_typesupport_introspection_cpp/__init__.py",
+    "/home/juergen/ros2_galactic/install/rosidl_typesupport_introspection_cpp/share/rosidl_typesupport_introspection_cpp/resource/idl__rosidl_typesupport_introspection_cpp.hpp.em",
+    "/home/juergen/ros2_galactic/install/rosidl_typesupport_introspection_cpp/share/rosidl_typesupport_introspection_cpp/resource/idl__type_support.cpp.em",
+    "/home/juergen/ros2_galactic/install/rosidl_typesupport_introspection_cpp/share/rosidl_typesupport_introspection_cpp/resource/msg__rosidl_typesupport_introspection_cpp.hpp.em",
+    "/home/juergen/ros2_galactic/install/rosidl_typesupport_introspection_cpp/share/rosidl_typesupport_introspection_cpp/resource/msg__type_support.cpp.em",
+    "/home/juergen/ros2_galactic/install/rosidl_typesupport_introspection_cpp/share/rosidl_typesupport_introspection_cpp/resource/srv__rosidl_typesupport_introspection_cpp.hpp.em",
+    "/home/juergen/ros2_galactic/install/rosidl_typesupport_introspection_cpp/share/rosidl_typesupport_introspection_cpp/resource/srv__type_support.cpp.em",
+    "/home/juergen/1_dev/projects/Sketchable-Interaction/SI/src/sirose/msg/ros2_si_interface/build/ros2_si_interface/rosidl_adapter/ros2_si_interface/msg/VTKSIObject.idl"
+  ]
+}

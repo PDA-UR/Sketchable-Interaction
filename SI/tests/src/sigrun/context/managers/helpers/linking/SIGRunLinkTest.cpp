@@ -11,24 +11,17 @@ TEST_F(SIGRunLinkTest, region_region_unidirectional_construction)
 {
     std::vector<glm::vec3> contour {glm::vec3(100, 100, 1), glm::vec3(100, 600, 1), glm::vec3(600, 600, 1), glm::vec3(600, 100, 1)};
 
-    std::string path = "tests/res/region";
+    char buf[FILENAME_MAX];
+    getcwd(buf, FILENAME_MAX);
+    std::string directory(buf);
 
-    std::vector<std::tuple<std::string, std::string>> files;
-    std::vector<std::string> classes;
+    bp::import("sys").attr("path").attr("insert")(0, directory + "/tests/res/region");
 
-    PluginCollector().collect("/" + path, files);
-    Scripting script;
+    bp::object o = bp::import("Dummy1");
+    o.attr(SI_INTERNAL_NAME) = "Dummy1";
 
-    const std::string& full_path = std::get<0>(files[0]);
-    const std::string& name = std::get<1>(files[0]);
-
-    std::string module_name = name.substr(0, name.find_last_of('.'));
-    std::string rpath = full_path.substr(full_path.find(path)) + "/" + name;
-
-    std::shared_ptr<bp::object> o = std::make_shared<bp::object>(script.si_plugin(module_name, rpath));
-
-    std::shared_ptr<Region> a = std::make_shared<Region>(contour, *o, 1920, 1080);
-    std::shared_ptr<Region> b = std::make_shared<Region>(contour, *o, 1920, 1080);
+    std::shared_ptr<Region> a = std::make_shared<Region>(contour, o, 1920, 1080);
+    std::shared_ptr<Region> b = std::make_shared<Region>(contour, o, 1920, 1080);
 
     ASSERT_NO_FATAL_FAILURE(UnidirectionalLink udl(a, b, "test", "test"));
 }
@@ -37,23 +30,16 @@ TEST_F(SIGRunLinkTest, external_object_region_unidirectional_construction)
 {
     std::vector<glm::vec3> contour {glm::vec3(100, 100, 1), glm::vec3(100, 600, 1), glm::vec3(600, 600, 1), glm::vec3(600, 100, 1)};
 
-    std::string path = "tests/res/region";
+    char buf[FILENAME_MAX];
+    getcwd(buf, FILENAME_MAX);
+    std::string directory(buf);
 
-    std::vector<std::tuple<std::string, std::string>> files;
-    std::vector<std::string> classes;
+    bp::import("sys").attr("path").attr("insert")(0, directory + "/tests/res/region");
 
-    PluginCollector().collect("/" + path, files);
-    Scripting script;
+    bp::object o = bp::import("Dummy1");
+    o.attr(SI_INTERNAL_NAME) = "Dummy1";
 
-    const std::string& full_path = std::get<0>(files[0]);
-    const std::string& name = std::get<1>(files[0]);
-
-    std::string module_name = name.substr(0, name.find_last_of('.'));
-    std::string rpath = full_path.substr(full_path.find(path)) + "/" + name;
-
-    std::shared_ptr<bp::object> o = std::make_shared<bp::object>(script.si_plugin(module_name, rpath));
-
-    std::shared_ptr<Region> a = std::make_shared<Region>(contour, *o, 1920, 1080);
+    std::shared_ptr<Region> a = std::make_shared<Region>(contour, o, 1920, 1080);
 
     std::shared_ptr<ExternalObject> eom = std::make_shared<ExternalObject>(ExternalObject::ExternalObjectType::MOUSE);
     std::shared_ptr<ExternalObject> eoa = std::make_shared<ExternalObject>(ExternalObject::ExternalObjectType::APPLICATION);
@@ -70,24 +56,17 @@ TEST_F(SIGRunLinkTest, type)
 {
     std::vector<glm::vec3> contour {glm::vec3(100, 100, 1), glm::vec3(100, 600, 1), glm::vec3(600, 600, 1), glm::vec3(600, 100, 1)};
 
-    std::string path = "tests/res/region";
+    char buf[FILENAME_MAX];
+    getcwd(buf, FILENAME_MAX);
+    std::string directory(buf);
 
-    std::vector<std::tuple<std::string, std::string>> files;
-    std::vector<std::string> classes;
+    bp::import("sys").attr("path").attr("insert")(0, directory + "/tests/res/region");
 
-    PluginCollector().collect("/" + path, files);
-    Scripting script;
+    bp::object o = bp::import("Dummy1");
+    o.attr(SI_INTERNAL_NAME) = "Dummy1";
 
-    const std::string& full_path = std::get<0>(files[0]);
-    const std::string& name = std::get<1>(files[0]);
-
-    std::string module_name = name.substr(0, name.find_last_of('.'));
-    std::string rpath = full_path.substr(full_path.find(path)) + "/" + name;
-
-    std::shared_ptr<bp::object> o = std::make_shared<bp::object>(script.si_plugin(module_name, rpath));
-
-    std::shared_ptr<Region> a = std::make_shared<Region>(contour, *o, 1920, 1080);
-    std::shared_ptr<Region> b = std::make_shared<Region>(contour, *o, 1920, 1080);
+    std::shared_ptr<Region> a = std::make_shared<Region>(contour, o, 1920, 1080);
+    std::shared_ptr<Region> b = std::make_shared<Region>(contour, o, 1920, 1080);
 
     UnidirectionalLink udl(a, b, "test", "test");
 
@@ -103,24 +82,17 @@ TEST_F(SIGRunLinkTest, sender_a)
 {
     std::vector<glm::vec3> contour {glm::vec3(100, 100, 1), glm::vec3(100, 600, 1), glm::vec3(600, 600, 1), glm::vec3(600, 100, 1)};
 
-    std::string path = "tests/res/region";
+    char buf[FILENAME_MAX];
+    getcwd(buf, FILENAME_MAX);
+    std::string directory(buf);
 
-    std::vector<std::tuple<std::string, std::string>> files;
-    std::vector<std::string> classes;
+    bp::import("sys").attr("path").attr("insert")(0, directory + "/tests/res/region");
 
-    PluginCollector().collect("/" + path, files);
-    Scripting script;
+    bp::object o = bp::import("Dummy1");
+    o.attr(SI_INTERNAL_NAME) = "Dummy1";
 
-    const std::string& full_path = std::get<0>(files[0]);
-    const std::string& name = std::get<1>(files[0]);
-
-    std::string module_name = name.substr(0, name.find_last_of('.'));
-    std::string rpath = full_path.substr(full_path.find(path)) + "/" + name;
-
-    std::shared_ptr<bp::object> o = std::make_shared<bp::object>(script.si_plugin(module_name, rpath));
-
-    std::shared_ptr<Region> a = std::make_shared<Region>(contour, *o, 1920, 1080);
-    std::shared_ptr<Region> b = std::make_shared<Region>(contour, *o, 1920, 1080);
+    std::shared_ptr<Region> a = std::make_shared<Region>(contour, o, 1920, 1080);
+    std::shared_ptr<Region> b = std::make_shared<Region>(contour, o, 1920, 1080);
 
     UnidirectionalLink udl(a, b, "test", "test");
 
@@ -136,24 +108,17 @@ TEST_F(SIGRunLinkTest, sender_b)
 {
     std::vector<glm::vec3> contour {glm::vec3(100, 100, 1), glm::vec3(100, 600, 1), glm::vec3(600, 600, 1), glm::vec3(600, 100, 1)};
 
-    std::string path = "tests/res/region";
+    char buf[FILENAME_MAX];
+    getcwd(buf, FILENAME_MAX);
+    std::string directory(buf);
 
-    std::vector<std::tuple<std::string, std::string>> files;
-    std::vector<std::string> classes;
+    bp::import("sys").attr("path").attr("insert")(0, directory + "/tests/res/region");
 
-    PluginCollector().collect("/" + path, files);
-    Scripting script;
+    bp::object o = bp::import("Dummy1");
+    o.attr(SI_INTERNAL_NAME) = "Dummy1";
 
-    const std::string& full_path = std::get<0>(files[0]);
-    const std::string& name = std::get<1>(files[0]);
-
-    std::string module_name = name.substr(0, name.find_last_of('.'));
-    std::string rpath = full_path.substr(full_path.find(path)) + "/" + name;
-
-    std::shared_ptr<bp::object> o = std::make_shared<bp::object>(script.si_plugin(module_name, rpath));
-
-    std::shared_ptr<Region> a = std::make_shared<Region>(contour, *o, 1920, 1080);
-    std::shared_ptr<Region> b = std::make_shared<Region>(contour, *o, 1920, 1080);
+    std::shared_ptr<Region> a = std::make_shared<Region>(contour, o, 1920, 1080);
+    std::shared_ptr<Region> b = std::make_shared<Region>(contour, o, 1920, 1080);
 
     UnidirectionalLink udl(a, b, "test", "test");
 
@@ -169,24 +134,17 @@ TEST_F(SIGRunLinkTest, receiver_a)
 {
     std::vector<glm::vec3> contour {glm::vec3(100, 100, 1), glm::vec3(100, 600, 1), glm::vec3(600, 600, 1), glm::vec3(600, 100, 1)};
 
-    std::string path = "tests/res/region";
+    char buf[FILENAME_MAX];
+    getcwd(buf, FILENAME_MAX);
+    std::string directory(buf);
 
-    std::vector<std::tuple<std::string, std::string>> files;
-    std::vector<std::string> classes;
+    bp::import("sys").attr("path").attr("insert")(0, directory + "/tests/res/region");
 
-    PluginCollector().collect("/" + path, files);
-    Scripting script;
+    bp::object o = bp::import("Dummy1");
+    o.attr(SI_INTERNAL_NAME) = "Dummy1";
 
-    const std::string& full_path = std::get<0>(files[0]);
-    const std::string& name = std::get<1>(files[0]);
-
-    std::string module_name = name.substr(0, name.find_last_of('.'));
-    std::string rpath = full_path.substr(full_path.find(path)) + "/" + name;
-
-    std::shared_ptr<bp::object> o = std::make_shared<bp::object>(script.si_plugin(module_name, rpath));
-
-    std::shared_ptr<Region> a = std::make_shared<Region>(contour, *o, 1920, 1080);
-    std::shared_ptr<Region> b = std::make_shared<Region>(contour, *o, 1920, 1080);
+    std::shared_ptr<Region> a = std::make_shared<Region>(contour, o, 1920, 1080);
+    std::shared_ptr<Region> b = std::make_shared<Region>(contour, o, 1920, 1080);
 
     UnidirectionalLink udl(a, b, "test", "test");
 
@@ -201,25 +159,17 @@ TEST_F(SIGRunLinkTest, receiver_a)
 TEST_F(SIGRunLinkTest, receiver_b)
 {
     std::vector<glm::vec3> contour {glm::vec3(100, 100, 1), glm::vec3(100, 600, 1), glm::vec3(600, 600, 1), glm::vec3(600, 100, 1)};
+    char buf[FILENAME_MAX];
+    getcwd(buf, FILENAME_MAX);
+    std::string directory(buf);
 
-    std::string path = "tests/res/region";
+    bp::import("sys").attr("path").attr("insert")(0, directory + "/tests/res/region");
 
-    std::vector<std::tuple<std::string, std::string>> files;
-    std::vector<std::string> classes;
+    bp::object o = bp::import("Dummy1");
+    o.attr(SI_INTERNAL_NAME) = "Dummy1";
 
-    PluginCollector().collect("/" + path, files);
-    Scripting script;
-
-    const std::string& full_path = std::get<0>(files[0]);
-    const std::string& name = std::get<1>(files[0]);
-
-    std::string module_name = name.substr(0, name.find_last_of('.'));
-    std::string rpath = full_path.substr(full_path.find(path)) + "/" + name;
-
-    std::shared_ptr<bp::object> o = std::make_shared<bp::object>(script.si_plugin(module_name, rpath));
-
-    std::shared_ptr<Region> a = std::make_shared<Region>(contour, *o, 1920, 1080);
-    std::shared_ptr<Region> b = std::make_shared<Region>(contour, *o, 1920, 1080);
+    std::shared_ptr<Region> a = std::make_shared<Region>(contour, o, 1920, 1080);
+    std::shared_ptr<Region> b = std::make_shared<Region>(contour, o, 1920, 1080);
 
     UnidirectionalLink udl(a, b, "test", "test");
 
@@ -235,24 +185,17 @@ TEST_F(SIGRunLinkTest, external_sender_a)
 {
     std::vector<glm::vec3> contour {glm::vec3(100, 100, 1), glm::vec3(100, 600, 1), glm::vec3(600, 600, 1), glm::vec3(600, 100, 1)};
 
-    std::string path = "tests/res/region";
+    char buf[FILENAME_MAX];
+    getcwd(buf, FILENAME_MAX);
+    std::string directory(buf);
 
-    std::vector<std::tuple<std::string, std::string>> files;
-    std::vector<std::string> classes;
+    bp::import("sys").attr("path").attr("insert")(0, directory + "/tests/res/region");
 
-    PluginCollector().collect("/" + path, files);
-    Scripting script;
+    bp::object o = bp::import("Dummy1");
+    o.attr(SI_INTERNAL_NAME) = "Dummy1";
 
-    const std::string& full_path = std::get<0>(files[0]);
-    const std::string& name = std::get<1>(files[0]);
-
-    std::string module_name = name.substr(0, name.find_last_of('.'));
-    std::string rpath = full_path.substr(full_path.find(path)) + "/" + name;
-
-    std::shared_ptr<bp::object> o = std::make_shared<bp::object>(script.si_plugin(module_name, rpath));
-
-    std::shared_ptr<Region> a = std::make_shared<Region>(contour, *o, 1920, 1080);
-    std::shared_ptr<Region> b = std::make_shared<Region>(contour, *o, 1920, 1080);
+    std::shared_ptr<Region> a = std::make_shared<Region>(contour, o, 1920, 1080);
+    std::shared_ptr<Region> b = std::make_shared<Region>(contour, o, 1920, 1080);
 
     UnidirectionalLink udl(a, b, "test", "test");
 
@@ -267,25 +210,17 @@ TEST_F(SIGRunLinkTest, external_sender_a)
 TEST_F(SIGRunLinkTest, attribute_a)
 {
     std::vector<glm::vec3> contour {glm::vec3(100, 100, 1), glm::vec3(100, 600, 1), glm::vec3(600, 600, 1), glm::vec3(600, 100, 1)};
+    char buf[FILENAME_MAX];
+    getcwd(buf, FILENAME_MAX);
+    std::string directory(buf);
 
-    std::string path = "tests/res/region";
+    bp::import("sys").attr("path").attr("insert")(0, directory + "/tests/res/region");
 
-    std::vector<std::tuple<std::string, std::string>> files;
-    std::vector<std::string> classes;
+    bp::object o = bp::import("Dummy1");
+    o.attr(SI_INTERNAL_NAME) = "Dummy1";
 
-    PluginCollector().collect("/" + path, files);
-    Scripting script;
-
-    const std::string& full_path = std::get<0>(files[0]);
-    const std::string& name = std::get<1>(files[0]);
-
-    std::string module_name = name.substr(0, name.find_last_of('.'));
-    std::string rpath = full_path.substr(full_path.find(path)) + "/" + name;
-
-    std::shared_ptr<bp::object> o = std::make_shared<bp::object>(script.si_plugin(module_name, rpath));
-
-    std::shared_ptr<Region> a = std::make_shared<Region>(contour, *o, 1920, 1080);
-    std::shared_ptr<Region> b = std::make_shared<Region>(contour, *o, 1920, 1080);
+    std::shared_ptr<Region> a = std::make_shared<Region>(contour, o, 1920, 1080);
+    std::shared_ptr<Region> b = std::make_shared<Region>(contour, o, 1920, 1080);
 
     UnidirectionalLink udl(a, b, "test", "test");
 
@@ -300,25 +235,17 @@ TEST_F(SIGRunLinkTest, attribute_a)
 TEST_F(SIGRunLinkTest, attribute_b)
 {
     std::vector<glm::vec3> contour {glm::vec3(100, 100, 1), glm::vec3(100, 600, 1), glm::vec3(600, 600, 1), glm::vec3(600, 100, 1)};
+    char buf[FILENAME_MAX];
+    getcwd(buf, FILENAME_MAX);
+    std::string directory(buf);
 
-    std::string path = "tests/res/region";
+    bp::import("sys").attr("path").attr("insert")(0, directory + "/tests/res/region");
 
-    std::vector<std::tuple<std::string, std::string>> files;
-    std::vector<std::string> classes;
+    bp::object o = bp::import("Dummy1");
+    o.attr(SI_INTERNAL_NAME) = "Dummy1";
 
-    PluginCollector().collect("/" + path, files);
-    Scripting script;
-
-    const std::string& full_path = std::get<0>(files[0]);
-    const std::string& name = std::get<1>(files[0]);
-
-    std::string module_name = name.substr(0, name.find_last_of('.'));
-    std::string rpath = full_path.substr(full_path.find(path)) + "/" + name;
-
-    std::shared_ptr<bp::object> o = std::make_shared<bp::object>(script.si_plugin(module_name, rpath));
-
-    std::shared_ptr<Region> a = std::make_shared<Region>(contour, *o, 1920, 1080);
-    std::shared_ptr<Region> b = std::make_shared<Region>(contour, *o, 1920, 1080);
+    std::shared_ptr<Region> a = std::make_shared<Region>(contour, o, 1920, 1080);
+    std::shared_ptr<Region> b = std::make_shared<Region>(contour, o, 1920, 1080);
 
     UnidirectionalLink udl(a, b, "test", "test");
 
@@ -333,25 +260,17 @@ TEST_F(SIGRunLinkTest, attribute_b)
 TEST_F(SIGRunLinkTest, is_external)
 {
     std::vector<glm::vec3> contour {glm::vec3(100, 100, 1), glm::vec3(100, 600, 1), glm::vec3(600, 600, 1), glm::vec3(600, 100, 1)};
+    char buf[FILENAME_MAX];
+    getcwd(buf, FILENAME_MAX);
+    std::string directory(buf);
 
-    std::string path = "tests/res/region";
+    bp::import("sys").attr("path").attr("insert")(0, directory + "/tests/res/region");
 
-    std::vector<std::tuple<std::string, std::string>> files;
-    std::vector<std::string> classes;
+    bp::object o = bp::import("Dummy1");
+    o.attr(SI_INTERNAL_NAME) = "Dummy1";
 
-    PluginCollector().collect("/" + path, files);
-    Scripting script;
-
-    const std::string& full_path = std::get<0>(files[0]);
-    const std::string& name = std::get<1>(files[0]);
-
-    std::string module_name = name.substr(0, name.find_last_of('.'));
-    std::string rpath = full_path.substr(full_path.find(path)) + "/" + name;
-
-    std::shared_ptr<bp::object> o = std::make_shared<bp::object>(script.si_plugin(module_name, rpath));
-
-    std::shared_ptr<Region> a = std::make_shared<Region>(contour, *o, 1920, 1080);
-    std::shared_ptr<Region> b = std::make_shared<Region>(contour, *o, 1920, 1080);
+    std::shared_ptr<Region> a = std::make_shared<Region>(contour, o, 1920, 1080);
+    std::shared_ptr<Region> b = std::make_shared<Region>(contour, o, 1920, 1080);
 
     UnidirectionalLink udl(a, b, "test", "test");
 

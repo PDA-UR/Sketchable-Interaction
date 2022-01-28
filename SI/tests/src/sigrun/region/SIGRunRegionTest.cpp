@@ -8,80 +8,62 @@
 #include <boost/python.hpp>
 #include <sigrun/plugin/PluginCollector.hpp>
 #include <sigrun/plugin/Scripting.hpp>
+#include <debug/Print.hpp>
 
 namespace bp = boost::python;
 
 TEST_F(SIGRunRegionTest, construction)
 {
+    char buf[FILENAME_MAX];
+    getcwd(buf, FILENAME_MAX);
+    std::string directory(buf);
+
     std::vector<glm::vec3> contour {glm::vec3(100, 100, 1), glm::vec3(100, 600, 1), glm::vec3(600, 600, 1), glm::vec3(600, 100, 1)};
 
-    std::string path = "tests/res/region";
+    bp::import("sys").attr("path").attr("insert")(0, directory + "/tests/res/region");
 
-    std::vector<std::tuple<std::string, std::string>> files;
-    std::vector<std::string> classes;
+    bp::object o = bp::import("Dummy3");
+    o.attr(SI_INTERNAL_NAME) = "Dummy3";
 
-    PluginCollector().collect("/" + path, files);
-    Scripting script;
+    EXPECT_NO_FATAL_FAILURE(Region r(contour, o, 1920, 1080));
 
-    const std::string& full_path = std::get<0>(files[0]);
-    const std::string& name = std::get<1>(files[0]);
+    Region r(contour, o, 1920, 1080);
 
-    std::string module_name = name.substr(0, name.find_last_of('.'));
-    std::string rpath = full_path.substr(full_path.find(path)) + "/" + name;
-
-//    script.load_class_names(classes, rpath);
-
-    std::shared_ptr<bp::object> o = std::make_shared<bp::object>(script.si_plugin(module_name, rpath));
-
-    EXPECT_NO_FATAL_FAILURE(Region r(contour, *o, 1920, 1080));
+    EXPECT_EQ(r.name(), "__ Dummy3 __");
 }
 
 TEST_F(SIGRunRegionTest, aabb)
 {
+    char buf[FILENAME_MAX];
+    getcwd(buf, FILENAME_MAX);
+    std::string directory(buf);
+
     std::vector<glm::vec3> contour {glm::vec3(100, 100, 1), glm::vec3(100, 600, 1), glm::vec3(600, 600, 1), glm::vec3(600, 100, 1)};
 
-    std::string path = "tests/res/region";
+    bp::import("sys").attr("path").attr("insert")(0, directory + "/tests/res/region");
 
-    std::vector<std::tuple<std::string, std::string>> files;
-    std::vector<std::string> classes;
+    bp::object o = bp::import("Dummy3");
+    o.attr(SI_INTERNAL_NAME) = "Dummy3";
 
-    PluginCollector().collect("/" + path, files);
-    Scripting script;
-
-    const std::string& full_path = std::get<0>(files[0]);
-    const std::string& name = std::get<1>(files[0]);
-
-    std::string module_name = name.substr(0, name.find_last_of('.'));
-    std::string rpath = full_path.substr(full_path.find(path)) + "/" + name;
-
-
-    std::shared_ptr<bp::object> o = std::make_shared<bp::object>(script.si_plugin(module_name, rpath));
-
-    Region r(contour, *o, 1920, 1080);
+    Region r(contour, o, 1920, 1080);
 
     ASSERT_EQ(contour.size(), r.aabb().size());
 }
 
 TEST_F(SIGRunRegionTest, contour)
 {
+    char buf[FILENAME_MAX];
+    getcwd(buf, FILENAME_MAX);
+    std::string directory(buf);
+
     std::vector<glm::vec3> contour {glm::vec3(100, 100, 1), glm::vec3(100, 600, 1), glm::vec3(600, 600, 1), glm::vec3(600, 100, 1)};
 
-    std::string path = "tests/res/region";
+    bp::import("sys").attr("path").attr("insert")(0, directory + "/tests/res/region");
 
-    std::vector<std::tuple<std::string, std::string>> files;
-    std::vector<std::string> classes;
+    bp::object o = bp::import("Dummy3");
+    o.attr(SI_INTERNAL_NAME) = "Dummy3";
 
-    PluginCollector().collect("/" + path, files);
-    Scripting script;
-
-    const std::string& full_path = std::get<0>(files[0]);
-    const std::string& name = std::get<1>(files[0]);
-
-    std::string module_name = name.substr(0, name.find_last_of('.'));
-    std::string rpath = full_path.substr(full_path.find(path)) + "/" + name;
-
-    std::shared_ptr<bp::object> o = std::make_shared<bp::object>(script.si_plugin(module_name, rpath));
-    Region r(contour, *o, 1920, 1080);
+    Region r(contour, o, 1920, 1080);
 
     ASSERT_EQ(contour.size(), 4);
     ASSERT_EQ(r.contour().size(), SI_CONTOUR_STEPCOUNT);
@@ -89,108 +71,66 @@ TEST_F(SIGRunRegionTest, contour)
 
 TEST_F(SIGRunRegionTest, on_enter)
 {
-    std::string path = "tests/res/region";
+    char buf[FILENAME_MAX];
+    getcwd(buf, FILENAME_MAX);
+    std::string directory(buf);
 
-    std::vector<std::tuple<std::string, std::string>> files;
-    std::vector<std::string> classes;
+    bp::import("sys").attr("path").attr("insert")(0, directory + "/tests/res/region");
 
-    PluginCollector().collect("/" + path, files);
-    Scripting script;
+    bp::object o = bp::import("Dummy1");
+    o.attr(SI_INTERNAL_NAME) = "Dummy1";
 
-    const std::string& full_path = std::get<0>(files[0]);
-    const std::string& name = std::get<1>(files[0]);
-
-    std::string module_name = name.substr(0, name.find_last_of('.'));
-    std::string rpath = full_path.substr(full_path.find(path)) + "/" + name;
-
-    bp::object o = script.si_plugin(module_name, rpath);
-
-    classes.clear();
-
-    const std::string& full_path2 = std::get<0>(files[1]);
-    const std::string& name2 = std::get<1>(files[1]);
-
-    module_name = name2.substr(0, name2.find_last_of('.'));
-    rpath = full_path2.substr(full_path2.find(path)) + "/" + name2;
-
-    std::shared_ptr<bp::object> t = std::make_shared<bp::object>(script.si_plugin(module_name, rpath));
+    bp::object t = bp::import("Dummy2");
+    t.attr(SI_INTERNAL_NAME) = "Dummy2";
 
     std::vector<glm::vec3> contour {glm::vec3(100, 100, 1), glm::vec3(100, 600, 1), glm::vec3(600, 600, 1), glm::vec3(600, 100, 1)};
 
-    Region r(contour, *o, 1920, 1080);
-    Region rt(contour, *t, 1920, 1080);
+    Region r(contour, o, 1920, 1080);
+    Region rt(contour, t, 1920, 1080);
 
     EXPECT_NO_FATAL_FAILURE(r.on_enter(rt.effect()));
 }
 
 TEST_F(SIGRunRegionTest, on_continuous)
 {
-    std::string path = "tests/res/region";
+    char buf[FILENAME_MAX];
+    getcwd(buf, FILENAME_MAX);
+    std::string directory(buf);
 
-    std::vector<std::tuple<std::string, std::string>> files;
-    std::vector<std::string> classes;
+    bp::import("sys").attr("path").attr("insert")(0, directory + "/tests/res/region");
 
-    PluginCollector().collect("/" + path, files);
-    Scripting script;
+    bp::object o = bp::import("Dummy1");
+    o.attr(SI_INTERNAL_NAME) = "Dummy1";
 
-    const std::string& full_path = std::get<0>(files[0]);
-    const std::string& name = std::get<1>(files[0]);
-
-    std::string module_name = name.substr(0, name.find_last_of('.'));
-    std::string rpath = full_path.substr(full_path.find(path)) + "/" + name;
-
-    bp::object o = script.si_plugin(module_name, rpath);
-
-    classes.clear();
-
-    const std::string& full_path2 = std::get<0>(files[1]);
-    const std::string& name2 = std::get<1>(files[1]);
-
-    module_name = name2.substr(0, name2.find_last_of('.'));
-    rpath = full_path2.substr(full_path2.find(path)) + "/" + name2;
-
-    std::shared_ptr<bp::object> t = std::make_shared<bp::object>(script.si_plugin(module_name, rpath));
+    bp::object t = bp::import("Dummy2");
+    t.attr(SI_INTERNAL_NAME) = "Dummy2";
 
     std::vector<glm::vec3> contour {glm::vec3(100, 100, 1), glm::vec3(100, 600, 1), glm::vec3(600, 600, 1), glm::vec3(600, 100, 1)};
 
-    Region r(contour, *o, 1920, 1080);
-    Region rt(contour, *t, 1920, 1080);
+    Region r(contour, o, 1920, 1080);
+    Region rt(contour, t, 1920, 1080);
 
     EXPECT_NO_FATAL_FAILURE(r.on_continuous(rt.effect()));
 }
 
 TEST_F(SIGRunRegionTest, on_leave)
 {
-    std::string path = "tests/res/region";
+    char buf[FILENAME_MAX];
+    getcwd(buf, FILENAME_MAX);
+    std::string directory(buf);
 
-    std::vector<std::tuple<std::string, std::string>> files;
-    std::vector<std::string> classes;
+    bp::import("sys").attr("path").attr("insert")(0, directory + "/tests/res/region");
 
-    PluginCollector().collect("/" + path, files);
-    Scripting script;
+    bp::object o = bp::import("Dummy1");
+    o.attr(SI_INTERNAL_NAME) = "Dummy1";
 
-    const std::string& full_path = std::get<0>(files[0]);
-    const std::string& name = std::get<1>(files[0]);
-
-    std::string module_name = name.substr(0, name.find_last_of('.'));
-    std::string rpath = full_path.substr(full_path.find(path)) + "/" + name;
-
-    bp::object o = script.si_plugin(module_name, rpath);
-
-    classes.clear();
-
-    const std::string& full_path2 = std::get<0>(files[1]);
-    const std::string& name2 = std::get<1>(files[1]);
-
-    module_name = name2.substr(0, name2.find_last_of('.'));
-    rpath = full_path2.substr(full_path2.find(path)) + "/" + name2;
-
-    std::shared_ptr<bp::object> t = std::make_shared<bp::object>(script.si_plugin(module_name, rpath));
+    bp::object t = bp::import("Dummy2");
+    t.attr(SI_INTERNAL_NAME) = "Dummy2";
 
     std::vector<glm::vec3> contour {glm::vec3(100, 100, 1), glm::vec3(100, 600, 1), glm::vec3(600, 600, 1), glm::vec3(600, 100, 1)};
 
-    Region r(contour, *o, 1920, 1080);
-    Region rt(contour, *t, 1920, 1080);
+    Region r(contour, o, 1920, 1080);
+    Region rt(contour, t, 1920, 1080);
 
     EXPECT_NO_FATAL_FAILURE(r.on_leave(rt.effect()));
 }

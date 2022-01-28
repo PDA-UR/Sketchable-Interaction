@@ -1,0 +1,24 @@
+{
+  "package_name": "ros2_si_interface",
+  "output_dir": "/home/juergen/1_dev/projects/Sketchable-Interaction/SI/src/sirose/msg/ros2_si_interface/build/ros2_si_interface/rosidl_generator_py/ros2_si_interface",
+  "template_dir": "/home/juergen/ros2_galactic/install/rosidl_generator_py/share/rosidl_generator_py/cmake/../resource",
+  "idl_tuples": [
+    "/home/juergen/1_dev/projects/Sketchable-Interaction/SI/src/sirose/msg/ros2_si_interface/build/ros2_si_interface/rosidl_adapter/ros2_si_interface:msg/VTKSIObject.idl"
+  ],
+  "target_dependencies": [
+    "/home/juergen/ros2_galactic/install/rosidl_generator_py/share/rosidl_generator_py/cmake/../../../lib/rosidl_generator_py/rosidl_generator_py",
+    "/home/juergen/ros2_galactic/install/rosidl_generator_py/lib/python3.9/site-packages/rosidl_generator_py/__init__.py",
+    "/home/juergen/ros2_galactic/install/rosidl_generator_py/lib/python3.9/site-packages/rosidl_generator_py/generate_py_impl.py",
+    "/home/juergen/ros2_galactic/install/rosidl_generator_py/share/rosidl_generator_py/cmake/../resource/_action_pkg_typesupport_entry_point.c.em",
+    "/home/juergen/ros2_galactic/install/rosidl_generator_py/share/rosidl_generator_py/cmake/../resource/_action.py.em",
+    "/home/juergen/ros2_galactic/install/rosidl_generator_py/share/rosidl_generator_py/cmake/../resource/_idl_pkg_typesupport_entry_point.c.em",
+    "/home/juergen/ros2_galactic/install/rosidl_generator_py/share/rosidl_generator_py/cmake/../resource/_idl_support.c.em",
+    "/home/juergen/ros2_galactic/install/rosidl_generator_py/share/rosidl_generator_py/cmake/../resource/_idl.py.em",
+    "/home/juergen/ros2_galactic/install/rosidl_generator_py/share/rosidl_generator_py/cmake/../resource/_msg_pkg_typesupport_entry_point.c.em",
+    "/home/juergen/ros2_galactic/install/rosidl_generator_py/share/rosidl_generator_py/cmake/../resource/_msg_support.c.em",
+    "/home/juergen/ros2_galactic/install/rosidl_generator_py/share/rosidl_generator_py/cmake/../resource/_msg.py.em",
+    "/home/juergen/ros2_galactic/install/rosidl_generator_py/share/rosidl_generator_py/cmake/../resource/_srv_pkg_typesupport_entry_point.c.em",
+    "/home/juergen/ros2_galactic/install/rosidl_generator_py/share/rosidl_generator_py/cmake/../resource/_srv.py.em",
+    "/home/juergen/1_dev/projects/Sketchable-Interaction/SI/src/sirose/msg/ros2_si_interface/build/ros2_si_interface/rosidl_adapter/ros2_si_interface/msg/VTKSIObject.idl"
+  ]
+}

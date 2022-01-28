@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 rm -rf temp_download
 git clone --quiet https://github.com/PDA-UR/Sketchable-Interaction-Plugins.git temp_download
@@ -25,7 +25,8 @@ rm -rf temp_download
 
 ./egen
 
-
+# source SIROSE extension
+source "${PWD}/bin/ros2_si_interface/install/local_setup.bash"
 
 echo "Launching SI"
 
@@ -34,5 +35,5 @@ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:./bin/
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:./bin/libSIRenderEngine.so
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:./lib/
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib
-./bin/si_test_application
 
+./bin/si_test_application

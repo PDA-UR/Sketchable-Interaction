@@ -300,3 +300,7 @@ SI/lib/tuio_headers/oscpack/examples/
 SI/lib/tuio_headers/oscpack/tests/
 
 *.TXT
+
+SI/log/
+
+SI/src/sirose/msg/ros2_si_interface/log/

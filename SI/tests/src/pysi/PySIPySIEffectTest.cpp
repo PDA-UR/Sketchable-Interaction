@@ -7,11 +7,14 @@
 
 TEST_F(PySIPySIEffectTest, PySIEffect_Python_Side)
 {
-    Scripting script;
+    char buf[FILENAME_MAX];
+    getcwd(buf, FILENAME_MAX);
+    std::string directory(buf);
 
-    std::string module = "PySIPySIEffectTest";
-    std::string path = "tests/src/pysi/PySIPySIEffectTest.py";
-    std::string clazz = "PySIPySIEffectTest";
+    bp::import("sys").attr("path").attr("insert")(0, directory + "/tests/src/pysi");
+
+    bp::object o = bp::import("PySIPySIEffectTest");
+    o.attr(SI_INTERNAL_NAME) = "PySIPySIEffectTest";
 
     std::vector<glm::vec3> contour
     {
@@ -21,7 +24,7 @@ TEST_F(PySIPySIEffectTest, PySIEffect_Python_Side)
         glm::vec3(5, 1, 1)
     };
 
-    ASSERT_TRUE(bp::extract<bool>(script.si_plugin(module, path).attr(clazz.c_str())().attr("start")()));
+    ASSERT_TRUE(bp::extract<bool>(o.attr("PySIPySIEffectTest")().attr("start")()));
 }
 
 TEST_F(PySIPySIEffectTest, init)
