@@ -1,10 +1,7 @@
 build_all: build_debug build_release
 
 build_debug:
-#	rm -rf ${CURDIR}/src/sirose/msg/ros2_si_interface
-
-	xterm -e "(cd ${CURDIR}/src/sirose/msg/ros2_si_interface;. ~/ros2_galactic/install/local_setup.bash; colcon build --packages-select ros2_si_interface)"
-
+	#xterm -e "(cd ${CURDIR}/src/sirose/msg/ros2_si_interface;. ~/ros2_galactic/install/local_setup.bash; colcon build --packages-select ros2_si_interface)"
 	cmake -S .. -B ${CURDIR}/build/Debug -D CMAKE_BUILD_TYPE=Debug
 	cmake --build ${CURDIR}/build/Debug --target si_test_application -j 8
 

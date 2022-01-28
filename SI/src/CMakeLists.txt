@@ -9,7 +9,7 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 # Boost System, Filesystem, Boost.Python compilen mit Python3.9
 # dependent on current install of boostpython  |
 #                                              v
-find_package(Boost 1.69.0 COMPONENTS system python3.9 filesystem REQUIRED)
+find_package(Boost 1.69.0 EXACT REQUIRED COMPONENTS system python3.9 filesystem REQUIRED)
 
 find_package(Python REQUIRED)
 find_package(PythonInterp 3 REQUIRED)

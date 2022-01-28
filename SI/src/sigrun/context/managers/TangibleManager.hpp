@@ -18,8 +18,6 @@ public:
     ~TangibleManager();
 
     void receive(const TangibleObjectMessage *p_message);
-
-    void manage_requested_linking_relationships(int s_id, bool is_linked, int *linked, int size);
     void remove(int id);
 
     const std::vector<int>& tangible_ids();
