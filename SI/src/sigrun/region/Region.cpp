@@ -20,7 +20,8 @@ Region::Region(const std::vector<glm::vec3> &contour, const bp::object& effect, 
     d_last_x(0),
     d_last_y(0),
     d_last_delta_x(0),
-    d_last_delta_y(0)
+    d_last_delta_y(0),
+    d_last_angle(0)
 {
     set_effect(contour, effect, std::string(_UUID_), kwargs);
 
@@ -78,11 +79,13 @@ void Region::move()
 {
     const int32_t& x = d_py_effect->x();
     const int32_t& y = d_py_effect->y();
+    d_last_angle = d_py_effect->angle_degrees();
 
-    if (x == d_last_x && y == d_last_y)
+
+    if (x == d_last_x && y == d_last_y && d_last_angle == 0)
         return;
 
-    glm::vec2 center(d_last_x + (d_py_effect->aabb()[0].x + (d_py_effect->aabb()[3].x - d_py_effect->aabb()[0].x)) / 2, d_last_y + (d_py_effect->aabb()[0].y + (d_py_effect->aabb()[1].y - d_py_effect->aabb()[0].y)) / 2);
+    glm::vec2 center(d_last_x + (d_py_effect->aabb()[0].x + (d_py_effect->aabb()[3].x - d_py_effect->aabb()[0].x) / 2), d_last_y + (d_py_effect->aabb()[0].y + (d_py_effect->aabb()[1].y - d_py_effect->aabb()[0].y) / 2));
 
     uprt->update(glm::vec2(x, y), 0, 1, center);
 
@@ -294,15 +297,15 @@ void Region::update()
 {
     d_is_transformed = false;
 
-    if(d_py_effect->d_recompute_mask)
-    {
-        uprm = std::make_unique<RegionMask>(Context::SIContext()->width(), Context::SIContext()->height(), d_py_effect->contour());
-        uprm->move(glm::vec2(d_last_x, d_last_y));
-
-        HANDLE_PYTHON_CALL(PY_ERROR, "Fatal Error. Region Collision broken (" + name() + ")",
-            d_py_effect->d_recompute_mask = false;
-        )
-    }
+//    if(d_py_effect->d_recompute_mask)
+//    {
+//        uprm = std::make_unique<RegionMask>(Context::SIContext()->width(), Context::SIContext()->height(), d_py_effect->contour());
+//        uprm->move(glm::vec2(d_last_x, d_last_y));
+//
+//        HANDLE_PYTHON_CALL(PY_ERROR, "Fatal Error. Region Collision broken (" + name() + ")",
+//            d_py_effect->d_recompute_mask = false;
+//        )
+//    }
 
     move();
 
@@ -321,6 +324,11 @@ int32_t Region::x()
 int32_t Region::y()
 {
     return d_last_y;
+}
+
+float Region::angle()
+{
+    return d_last_angle;
 }
 
 void Region::process_canvas_specifics()

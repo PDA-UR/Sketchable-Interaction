@@ -267,6 +267,15 @@ std::vector<glm::vec3> &PySIEffect::contour()
     return d_contour;
 }
 
+void PySIEffect::set_aabb(const std::vector<glm::vec3> &aabb)
+{
+    d_aabb.clear();
+    d_aabb.resize(4);
+
+    for(int i = 0; i < aabb.size(); i++)
+        d_aabb[i] = aabb[i];
+}
+
 std::vector<glm::vec3> &PySIEffect::aabb()
 {
     return d_aabb;
@@ -394,10 +403,17 @@ std::vector<glm::vec3> PySIEffect::get_shape()
     return d_contour;
 }
 
+const std::vector<glm::vec3>& PySIEffect::original_shape()
+{
+    return d_original_contour;
+}
+
 void PySIEffect::set_shape(const std::vector<glm::vec3>& shape)
 {
     if (shape.empty() || d_name.empty())
         return;
+
+
 
     d_contour.clear();
     std::vector<glm::vec3> temp, smoothed;
@@ -411,6 +427,12 @@ void PySIEffect::set_shape(const std::vector<glm::vec3>& shape)
     {
         temp = shape;
     }
+
+    d_original_contour.clear();
+    d_original_contour.resize(temp.size());
+
+    for(int i = 0; i < temp.size(); ++i)
+        d_original_contour[i] = temp[i];
 
     int32_t x_min = INT32_MAX;
     int32_t x_max = INT32_MIN;

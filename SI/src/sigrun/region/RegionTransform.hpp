@@ -83,6 +83,9 @@ private:
         float storing the cumulative rotation angle
     */
     float d_angle;
+
+    float d_x;
+    float d_y;
 };
 
 

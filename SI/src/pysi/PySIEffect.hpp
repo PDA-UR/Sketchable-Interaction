@@ -54,6 +54,7 @@ public:
     std::vector<std::string> __available_plugins_by_name__();
 
     std::vector<glm::vec3> get_shape();
+    const std::vector<glm::vec3>& original_shape();
     void set_shape(const std::vector<glm::vec3>& shape);
 
     std::vector<std::string> get_collisions();
@@ -117,6 +118,7 @@ public:
     std::vector<LinkCandidate>& link_relations();
 
     std::vector<glm::vec3> d_contour;
+    std::vector<glm::vec3> d_original_contour;
     std::vector<glm::vec3> d_aabb;
 
     std::vector<std::string> d_collisions;
@@ -124,6 +126,8 @@ public:
     std::vector<std::vector<std::vector<glm::vec3>>> d_drawing_additions;
 
     std::vector<glm::vec3>& contour();
+
+    void set_aabb(const std::vector<glm::vec3>& aabb);
     std::vector<glm::vec3>& aabb();
     std::vector<std::vector<std::vector<glm::vec3>>>& drawing_additions();
 

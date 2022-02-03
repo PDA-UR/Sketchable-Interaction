@@ -17,6 +17,7 @@
 #include <pysi/PySIEffect.hpp>
 #include <sigrun/SIConstants.hpp>
 #include <sigrun/network/TangibleObjectMessage.hpp>
+#include <sigrun/region/RegionTransform.hpp>
 
 namespace bp = boost::python;
 
@@ -192,6 +193,21 @@ public:
     inline static std::string _print(const TangibleObjectMessage* msg)
     {
         return "TangibleObjectMessage(" + _print(msg->id()) + ", " + _print(msg->shape()) + ", " + msg->plugin_identifier() + ", " + _print(msg->x()) + ", " + _print(msg->y()) + ", " + _print(msg->is_click()) + ", " + _print(msg->is_drag()) + ", " + _print(msg->is_touch()) + ", " + _print(msg->is_alive()) + ", " + _print(msg->tracker_dimensions()) + ", " + _print(msg->links());
+    }
+
+    inline static std::string _print(RegionTransform* tform)
+    {
+        const glm::mat3x3& transform = tform->transform();
+
+        const glm::vec3& r1 = transform[0];
+        const glm::vec3& r2 = transform[1];
+        const glm::vec3& r3 = transform[2];
+
+        std::string ret = "|" + _print(r1.x) + " " + _print(r1.y) + " " + _print(r1.z) + "|\n"
+                          "|" + _print(r2.x) + " " + _print(r2.y) + " " + _print(r2.z) + "|\n"
+                          "|" + _print(r3.x) + " " + _print(r3.y) + " " + _print(r3.z) + "|";
+
+        return ret;
     }
 
     template<class... Args>

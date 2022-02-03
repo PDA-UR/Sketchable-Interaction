@@ -84,15 +84,21 @@ void RegionRepresentation::perform_transform_update(const std::shared_ptr<Region
 {
     if(region->is_transformed())
     {
-//        float angle = 45;
+        if(region->name() == "__TAG__")
+            Print::print(region->angle());
 
-        int x = d_initial_offset.x + region->transform()[0].z;
-        int y = d_initial_offset.y + region->transform()[1].z;
+        setPolygon(QTransform()
+            .translate(polygon().boundingRect().x() + polygon().boundingRect().width() / 2, polygon().boundingRect().y() + polygon().boundingRect().height() / 2)
+            .rotate(region->angle())
+            .translate(-polygon().boundingRect().x() - polygon().boundingRect().width() / 2, -polygon().boundingRect().y() - polygon().boundingRect().height() / 2)
+            .translate(region->last_delta_x(), region->last_delta_y())
+            .map(polygon()));
 
-        moveBy(region->last_delta_x(), region->last_delta_y());
+        d_initial_offset.x += region->last_delta_x();
+        d_initial_offset.y += region->last_delta_y();
 
         if(!d_qml_path.empty())
-            d_view->move(x, y);
+            d_view->move(d_initial_offset.x, d_initial_offset.y);
     }
 }
 
