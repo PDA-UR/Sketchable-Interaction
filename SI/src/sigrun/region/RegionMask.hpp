@@ -6,6 +6,7 @@
 #include <vector>
 #include <glm/glm.hpp>
 #include <sigrun/SIObject.hpp>
+#include "RegionTransform.hpp"
 
 
 /**
@@ -49,8 +50,6 @@ public:
     void clear_bit(const glm::vec3& v);
 
     void move(const glm::vec2& v);
-
-    void rebuild(const std::vector<glm::vec3>& contour);
 
     bool operator[](int32_t i) const;
     bool operator[](const glm::vec3& v) const;

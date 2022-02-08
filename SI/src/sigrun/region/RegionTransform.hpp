@@ -42,6 +42,10 @@ public:
     const glm::mat3x3& transform();
     const glm::vec3& operator[](uint32_t index);
 
+    const glm::vec3 operator *(const glm::vec3& p);
+
+    const glm::mat3x3 mult(const glm::mat3x3 &n, const glm::mat3x3& m);
+
 private:
     /**
         3x3 matrix object storing the relative translation of a contour

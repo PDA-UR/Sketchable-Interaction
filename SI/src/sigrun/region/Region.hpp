@@ -45,7 +45,7 @@ public:
 
     const std::string& qml_path() const;
 
-    void move();
+    void move_and_rotate();
 
     const glm::mat3x3& transform() const;
 
@@ -94,6 +94,9 @@ private:
 
     void process_canvas_specifics();
     void process_linking_relationships();
+
+    void rotate(const glm::vec2& center);
+    void move(const glm::vec2& center, int x, int y);
 
     PySIEffect* d_py_effect;
     std::shared_ptr<bp::object> d_effect;

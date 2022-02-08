@@ -52,17 +52,20 @@ void CollisionManager::perform_collision_check(tbb::concurrent_vector<std::tuple
             {
                 for(auto k = r2.begin(); k != r2.end(); ++k)
                 {
-                    if(Context::SIContext() && Context::SIContext()->spatial_hash_grid()->has_shared_cell(in[i].get(), in[k].get()))
-                    {
-                        if (collides_with_aabb(in[i].get(), in[k].get()))
+//                    if(Context::SIContext() && Context::SIContext()->spatial_hash_grid()->has_shared_cell(in[i].get(), in[k].get()))
+//                    {
+                        if(has_capabilities_in_common(in[i], in[k]))
                         {
-                            if (collides_with_mask(in[i], in[k]))
+                            if (collides_with_aabb(in[i].get(), in[k].get()))
                             {
-                                out.emplace_back(in[i].get(), in[k].get(), has_capabilities_in_common(in[i], in[k]));
-                                continue;
+                                if (collides_with_mask(in[i], in[k]))
+                                {
+                                    out.emplace_back(in[i].get(), in[k].get(), true);
+                                    continue;
+                                }
                             }
                         }
-                    }
+//                    }
 
                     out.emplace_back(in[i].get(), in[k].get(), false);
                 }

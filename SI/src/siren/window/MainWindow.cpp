@@ -86,6 +86,7 @@ void MainWindow::__loop()
 {
     handle_region_representations();
     handle_partial_region_representations();
+    update();
 }
 
 void MainWindow::pause()

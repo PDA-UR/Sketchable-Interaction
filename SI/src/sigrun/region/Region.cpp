@@ -75,29 +75,54 @@ Region::Region(const bp::object &o, const bp::dict &qml, uint32_t width, uint32_
 
 Region::~Region() = default;
 
-void Region::move()
+void Region::move_and_rotate()
 {
-    const int32_t& x = d_py_effect->x();
-    const int32_t& y = d_py_effect->y();
-    d_last_angle = d_py_effect->angle_degrees();
+    int32_t x = d_py_effect->x();
+    int32_t y = d_py_effect->y();
 
+    d_last_angle = d_py_effect->angle_degrees();
 
     if (x == d_last_x && y == d_last_y && d_last_angle == 0)
         return;
 
-    glm::vec2 center(d_last_x + (d_py_effect->aabb()[0].x + (d_py_effect->aabb()[3].x - d_py_effect->aabb()[0].x) / 2), d_last_y + (d_py_effect->aabb()[0].y + (d_py_effect->aabb()[1].y - d_py_effect->aabb()[0].y) / 2));
+    glm::vec2 center(d_py_effect->aabb()[0].x + (d_py_effect->aabb()[3].x - d_py_effect->aabb()[0].x) / 2, d_py_effect->aabb()[0].y + (d_py_effect->aabb()[1].y - d_py_effect->aabb()[0].y) / 2);
 
-    uprt->update(glm::vec2(x, y), 0, 1, center);
+    rotate(center);
 
+    center = glm::vec2(d_py_effect->aabb()[0].x + (d_py_effect->aabb()[3].x - d_py_effect->aabb()[0].x) / 2, d_py_effect->aabb()[0].y + (d_py_effect->aabb()[1].y - d_py_effect->aabb()[0].y) / 2);
+    uprt->update(glm::vec2(x, y), d_last_angle, 1, center);
+
+    move(center, x, y);
+
+    d_is_transformed = true;
+}
+
+void Region::rotate(const glm::vec2 &center)
+{
+    if(d_last_angle != 0)
+    {
+        uprt->update(glm::vec2(0, 0), d_last_angle, 1, center);
+
+        std::vector<glm::vec3> new_contour(contour().size());
+
+        for(int i = 0; i < contour().size(); ++i)
+            new_contour[i] = (*uprt) * contour()[i];
+
+        raw_effect().attr("shape") = new_contour;
+
+        uprm = std::make_unique<RegionMask>(Context::SIContext()->width(), Context::SIContext()->height(), d_py_effect->contour());
+        uprm->move(glm::vec2(d_last_x, d_last_y));
+    }
+}
+
+void Region::move(const glm::vec2 &center, int x, int y)
+{
     d_last_delta_x = x - d_last_x;
     d_last_delta_y = y - d_last_y;
-
     d_last_x = x;
     d_last_y = y;
 
     uprm->move(glm::vec2(d_last_delta_x, d_last_delta_y));
-
-    d_is_transformed = true;
 }
 
 void Region::set_effect(const bp::object& effect, const bp::dict& kwargs)
@@ -297,17 +322,7 @@ void Region::update()
 {
     d_is_transformed = false;
 
-//    if(d_py_effect->d_recompute_mask)
-//    {
-//        uprm = std::make_unique<RegionMask>(Context::SIContext()->width(), Context::SIContext()->height(), d_py_effect->contour());
-//        uprm->move(glm::vec2(d_last_x, d_last_y));
-//
-//        HANDLE_PYTHON_CALL(PY_ERROR, "Fatal Error. Region Collision broken (" + name() + ")",
-//            d_py_effect->d_recompute_mask = false;
-//        )
-//    }
-
-    move();
+    move_and_rotate();
 
     if(Context::SIContext())
         Context::SIContext()->spatial_hash_grid()->update_region(this);

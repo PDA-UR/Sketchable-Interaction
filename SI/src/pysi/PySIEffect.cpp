@@ -413,8 +413,6 @@ void PySIEffect::set_shape(const std::vector<glm::vec3>& shape)
     if (shape.empty() || d_name.empty())
         return;
 
-
-
     d_contour.clear();
     std::vector<glm::vec3> temp, smoothed;
 
@@ -434,17 +432,17 @@ void PySIEffect::set_shape(const std::vector<glm::vec3>& shape)
     for(int i = 0; i < temp.size(); ++i)
         d_original_contour[i] = temp[i];
 
-    int32_t x_min = INT32_MAX;
-    int32_t x_max = INT32_MIN;
-    int32_t y_min = INT32_MAX;
-    int32_t y_max = INT32_MIN;
+    int x_min = INT32_MAX;
+    int x_max = INT32_MIN;
+    int y_min = INT32_MAX;
+    int y_max = INT32_MIN;
 
-    for(const auto& v: temp)
+    for(const auto& v: d_original_contour)
     {
-        x_max = v.x > x_max ? v.x : x_max;
-        y_max = v.y > y_max ? v.y : y_max;
-        x_min = v.x < x_min ? v.x : x_min;
-        y_min = v.y < y_min ? v.y : y_min;
+        x_max = v.x > x_max ? std::round(v.x) : x_max;
+        y_max = v.y > y_max ? std::round(v.y) : y_max;
+        x_min = v.x < x_min ? std::round(v.x) : x_min;
+        y_min = v.y < y_min ? std::round(v.y) : y_min;
     }
 
     glm::vec3 tlc(x_min, y_min, 1), blc(x_min, y_max, 1), brc(x_max, y_max, 1), trc(x_max, y_min, 1);
@@ -454,7 +452,10 @@ void PySIEffect::set_shape(const std::vector<glm::vec3>& shape)
         tlc, blc, brc, trc
     };
 
-    RegionResampler::resample(d_contour, temp);
+    if(temp.size() != SI_CONTOUR_STEPCOUNT)
+        RegionResampler::resample(d_contour, temp);
+    else
+        d_contour = temp;
 
     d_recompute_mask = true;
 }

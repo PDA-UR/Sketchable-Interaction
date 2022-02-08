@@ -58,8 +58,6 @@ RegionMask::RegionMask(uint32_t canvas_width, uint32_t canvas_height, const std:
     d_values(std::vector<bool>(d_canvas_width * d_canvas_height))
 {
     scanlinefill(contour);
-
-//    MASK_DEBUG
 }
 /**
 \brief copy constructor
@@ -180,14 +178,6 @@ void RegionMask::clear_bit(const glm::vec3 &v)
 
     if(index > -1 && index < d_values.size())
         this->clear_bit(index);
-}
-
-void RegionMask::rebuild(const std::vector<glm::vec3> &contour)
-{
-    d_values.clear();
-    d_values.reserve(d_canvas_width * d_canvas_height);
-
-    scanlinefill(contour);
 }
 
 /**

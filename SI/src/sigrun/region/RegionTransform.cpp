@@ -1,5 +1,7 @@
 
 #include "RegionTransform.hpp"
+#define GLM_ENABLE_EXPERIMENTAL
+#include <glm/gtx/string_cast.hpp>
 
 /**
 \brief default constructor initializing instance variables to default values
@@ -60,22 +62,16 @@ void RegionTransform::update(const glm::vec2& translation, float angle, float sc
     d_negative_rotation_origin[0][2] = -rotation_origin.x;
     d_negative_rotation_origin[1][2] = -rotation_origin.y;
 
-    d_angle += angle;
-
-    if(angle >= 0.1)
-    {
-        float radians = PI_DIV_180 * d_angle;
-
-        d_rotation[0][0] = std::cos(radians);
-        d_rotation[1][0] = -std::sin(radians);
-        d_rotation[0][1] = std::sin(radians);
-        d_rotation[1][1] = std::cos(radians);
-    }
+    float radians = PI_DIV_180 * angle;
+    d_rotation[0][0] = std::cos(radians);
+    d_rotation[1][0] = -std::sin(radians);
+    d_rotation[0][1] = std::sin(radians);
+    d_rotation[1][1] = std::cos(radians);
 
     d_scale[0][0] = scale;
     d_scale[1][1] = scale;
 
-    d_transform = d_translation * d_positive_rotation_origin * d_rotation * d_negative_rotation_origin * d_scale;
+    d_transform = mult(mult(d_translation, mult(mult(d_positive_rotation_origin, d_rotation), d_negative_rotation_origin)), d_scale);
 }
 
 /**
@@ -104,4 +100,30 @@ const glm::mat3x3& RegionTransform::transform()
 const glm::vec3& RegionTransform::operator[](uint32_t index)
 {
     return d_transform[index];
+}
+
+const glm::vec3 RegionTransform::operator*(const glm::vec3 &v)
+{
+    float x = d_transform[0].x * v.x + d_transform[0].y * v.y + d_transform[0].z * v.z;
+    float y = d_transform[1].x * v.x + d_transform[1].y * v.y + d_transform[1].z * v.z;
+    float z = d_transform[2].x * v.x + d_transform[2].y * v.y + d_transform[2].z * v.z;
+
+    return glm::vec3(x / z, y / z, 1);
+}
+
+const glm::mat3x3 RegionTransform::mult(const glm::mat3x3& n, const glm::mat3x3& m)
+{
+    glm::mat3x3 ret(1);
+
+    ret[0].x = n[0].x * m[0].x + n[0].y * m[1].x + n[0].z * m[2].x;
+    ret[0].y = n[0].x * m[0].y + n[0].y * m[1].y + n[0].z * m[2].y;
+    ret[0].z = n[0].x * m[0].z + n[0].y * m[1].z + n[0].z * m[2].z;
+    ret[1].x = n[1].x * m[0].x + n[1].y * m[1].x + n[1].z * m[2].x;
+    ret[1].y = n[1].x * m[0].y + n[1].y * m[1].y + n[1].z * m[2].y;
+    ret[1].z = n[1].x * m[0].z + n[1].y * m[1].z + n[1].z * m[2].z;
+    ret[2].x = n[2].x * m[0].x + n[2].y * m[1].x + n[2].z * m[2].x;
+    ret[2].y = n[2].x * m[0].y + n[2].y * m[1].y + n[2].z * m[2].y;
+    ret[2].z = n[2].x * m[0].z + n[2].y * m[1].z + n[2].z * m[2].z;
+
+    return ret;
 }

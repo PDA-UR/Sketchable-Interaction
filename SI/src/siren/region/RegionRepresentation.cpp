@@ -84,15 +84,15 @@ void RegionRepresentation::perform_transform_update(const std::shared_ptr<Region
 {
     if(region->is_transformed())
     {
-        if(region->name() == "__TAG__")
-            Print::print(region->angle());
-
         setPolygon(QTransform()
-            .translate(polygon().boundingRect().x() + polygon().boundingRect().width() / 2, polygon().boundingRect().y() + polygon().boundingRect().height() / 2)
-            .rotate(region->angle())
-            .translate(-polygon().boundingRect().x() - polygon().boundingRect().width() / 2, -polygon().boundingRect().y() - polygon().boundingRect().height() / 2)
+            .translate(polygon().boundingRect().x() + (polygon().boundingRect().width() / 2), polygon().boundingRect().y() + (polygon().boundingRect().height() / 2))
+            .rotate(-region->angle())
+            .translate(-polygon().boundingRect().x() - (polygon().boundingRect().width() / 2), -polygon().boundingRect().y() - (polygon().boundingRect().height() / 2))
             .translate(region->last_delta_x(), region->last_delta_y())
             .map(polygon()));
+
+        d_last_delta_x = region->x();
+        d_last_delta_y = region->y();
 
         d_initial_offset.x += region->last_delta_x();
         d_initial_offset.y += region->last_delta_y();
@@ -130,7 +130,12 @@ void RegionRepresentation::perform_data_update(const std::shared_ptr<Region> &re
         for(auto& p: region->contour())
             poly << QPointF(p.x, p.y);
 
-        setPolygon(poly);
+        setPolygon(QTransform()
+           .translate(poly.boundingRect().x() + (poly.boundingRect().width() / 2), poly.boundingRect().y() + (poly.boundingRect().height() / 2))
+           .rotate(-region->angle())
+           .translate(-poly.boundingRect().x() - (poly.boundingRect().width() / 2), -poly.boundingRect().y() - (poly.boundingRect().height() / 2))
+           .translate(region->x(), region->y())
+           .map(poly));
 
         if(!d_qml_path.empty())
             QMetaObject::invokeMethod(reinterpret_cast<QObject *>(d_view->rootObject()), "updateData", QGenericReturnArgument(), Q_ARG(QVariant, region->data()));
@@ -207,7 +212,7 @@ void RegionRepresentation::paint(QPainter *painter, const QStyleOptionGraphicsIt
                 QPolygonF poly;
 
                 for(glm::vec3& p: shape_part)
-                    poly << QPointF(p.x, p.y);
+                    poly << QPointF(p.x + d_last_delta_x, p.y + d_last_delta_y);
 
                 painter->drawPolyline(poly);
             }
