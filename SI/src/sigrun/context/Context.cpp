@@ -231,7 +231,7 @@ uint32_t Context::height()
     return s_height;
 }
 
-void Context::set_effect(const std::string& target_uuid, const std::string& effect_name, const std::string& effect_display_name, bp::dict& kwargs)
+void Context::set_effect(const std::string& target_uuid, const std::string& effect_name, bp::dict& kwargs)
 {
     auto it = std::find_if(uprm->regions().begin(),uprm->regions().end(),
     [&](auto &region)
@@ -245,8 +245,6 @@ void Context::set_effect(const std::string& target_uuid, const std::string& effe
     if (it->get()->type() == SI_TYPE_MOUSE_CURSOR || it->get()->name() == "__ Touch __")
     {
         d_selected_effects_by_id[target_uuid] = d_available_plugins[effect_name];
-
-        set_message("Mouse Cursor set to " + effect_display_name);
     }
     else
     {
@@ -413,17 +411,6 @@ const bp::object& Context::plugin_by_name(const std::string& name)
 std::unordered_map<std::string, std::shared_ptr<ExternalObject>> &Context::external_objects()
 {
     return deo;
-}
-
-void Context::set_message(const std::string& msg)
-{
-    auto it = std::find_if(uprm->regions().begin(), uprm->regions().end(), [&](auto& region)
-    {
-        return region->type() == SI_TYPE_NOTIFICATION;
-    });
-
-    if(it != uprm->regions().end())
-        (*it)->raw_effect().attr("update_message")(msg);
 }
 
 void Context::perform_external_object_update()

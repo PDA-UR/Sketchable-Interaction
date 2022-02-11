@@ -70,6 +70,9 @@ public:
     const uint32_t width() const;
     const uint32_t height() const;
 
+    const uint32_t visualization_width() const;
+    const uint32_t visualization_height() const;
+
     uint8_t handle_collision_event(const std::string& function_name, PySIEffect* colliding_effect);
 
     void update();

@@ -61,7 +61,7 @@ public:
     uint32_t width();
     uint32_t height();
 
-    void set_effect(const std::string& target_uuid, const std::string& effect_name, const std::string& effect_display_name, bp::dict& kwargs);
+    void set_effect(const std::string& target_uuid, const std::string& effect_name, bp::dict& kwargs);
 
     void register_new_region(const std::vector<glm::vec3>& contour, const std::string& uuid);
     void register_new_region_via_name(const std::vector<glm::vec3>& contour, const std::string& name, bool as_selector, bp::dict& kwargs);
@@ -83,8 +83,6 @@ public:
     std::unordered_map<std::string, std::shared_ptr<ExternalObject>>& external_objects();
 
     const std::vector<std::string>& conditional_variables() const;
-
-    void set_message(const std::string& msg);
 
     void exclude_plugins(const std::vector<std::string>& excluded_plugins);
 

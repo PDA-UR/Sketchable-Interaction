@@ -57,13 +57,17 @@ public:
     const std::vector<glm::vec3>& original_shape();
     void set_shape(const std::vector<glm::vec3>& shape);
 
-    std::vector<std::string> get_collisions();
-    void set_collisions(const std::vector<std::string>& collisions);
+    std::vector<std::vector<std::string>> get_collisions();
+    void set_collisions(const std::vector<std::vector<std::string>>& collisions);
 
     float d_x = 0;
     float d_y = 0;
+    int32_t d_visualization_width = 0;
+    int32_t d_visualization_height = 0;
+
     int32_t d_width = 0;
     int32_t d_height = 0;
+
     uint32_t d_effect_type = SI_TYPE_CUSTOM;
     int32_t d_transform_x = 0;
     int32_t d_transform_y = 0;
@@ -71,6 +75,10 @@ public:
     const int32_t y() const;
     const int32_t width() const;
     const int32_t height() const;
+
+    const int32_t visualization_width() const;
+    const int32_t visualization_height() const;
+
     const uint32_t effect_type() const;
 
     float d_scale = 1.0f;
@@ -121,7 +129,7 @@ public:
     std::vector<glm::vec3> d_original_contour;
     std::vector<glm::vec3> d_aabb;
 
-    std::vector<std::string> d_collisions;
+    std::vector<std::vector<std::string>> d_collisions;
 
     std::vector<std::vector<std::vector<glm::vec3>>> d_drawing_additions;
 

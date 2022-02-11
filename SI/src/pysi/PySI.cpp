@@ -49,6 +49,7 @@ BOOST_PYTHON_MODULE(libPySI)
         create_vector<VectorExposureVec3, std::vector<glm::vec3>, PointVectorPickleSuite>("PointVector");
         create_vector<VectorExposureLinkRelation, std::vector<LinkCandidate>, LinkRelationVectorPickleSuite>("LinkRelationVector");
         create_vector<VectorExposureString, std::vector<std::string>, StringVectorPickleSuite>("StringVector");
+        create_vector<VectorExposureStringVector, std::vector<std::vector<std::string>>, StringVectorVectorPickleSuite>("StringVectorVector");
 
         create_map<MapExposurePartialContour, std::unordered_map<std::string, std::vector<glm::vec3>>, PartialContourPickleSuite>("PartialContour");
         create_map<MapExposureString2Function, std::unordered_map<std::string, bp::object>, String2FunctionMapPickleSuite>("String2FunctionMap");
@@ -100,6 +101,8 @@ BOOST_PYTHON_MODULE(libPySI)
                 .def_readwrite("transform_y", &PySIEffect::d_transform_y)
                 .def_readwrite("width", &PySIEffect::d_width)
                 .def_readwrite("height", &PySIEffect::d_height)
+                .def_readwrite("visualization_width", &PySIEffect::d_visualization_width)
+                .def_readwrite("visualization_height", &PySIEffect::d_visualization_height)
                 .def_readwrite("angle_degrees", &PySIEffect::d_angle_deg)
                 .def_readwrite("scale", &PySIEffect::d_scale)
                 .def_readwrite("name", &PySIEffect::d_name)

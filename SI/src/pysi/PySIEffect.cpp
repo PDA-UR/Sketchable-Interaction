@@ -247,6 +247,16 @@ const int32_t PySIEffect::height() const
     return d_height;
 }
 
+const int32_t PySIEffect::visualization_width() const
+{
+    return d_visualization_width;
+}
+
+const int32_t PySIEffect::visualization_height() const
+{
+    return d_visualization_height;
+}
+
 const float PySIEffect::scale() const
 {
     return d_scale;
@@ -538,7 +548,7 @@ bp::tuple PySIEffect::__context_dimensions__()
 
 void PySIEffect::__assign_effect__(const std::string& sender, const std::string& effect_name, const std::string& effect_display_name, bp::dict& kwargs)
 {
-    Context::SIContext()->set_effect(sender, effect_name, effect_display_name, kwargs);
+    Context::SIContext()->set_effect(sender, effect_name, kwargs);
 }
 
 bp::dict PySIEffect::__qml_data_keys_and_types__()
@@ -663,12 +673,12 @@ std::vector<std::vector<std::vector<glm::vec3>>> &PySIEffect::drawing_additions(
     return d_drawing_additions;
 }
 
-std::vector<std::string> PySIEffect::get_collisions()
+std::vector<std::vector<std::string>> PySIEffect::get_collisions()
 {
     return d_collisions;
 }
 
-void PySIEffect::set_collisions(const std::vector<std::string> &collisions)
+void PySIEffect::set_collisions(const std::vector<std::vector<std::string>> &collisions)
 {
     d_collisions.clear();
     d_collisions = collisions;

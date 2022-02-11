@@ -308,6 +308,16 @@ const uint32_t Region::height() const
     return d_py_effect->height();
 }
 
+const uint32_t Region::visualization_width() const
+{
+    return d_py_effect->visualization_width();
+}
+
+const uint32_t Region::visualization_height() const
+{
+    return d_py_effect->visualization_height();
+}
+
 const int32_t Region::last_delta_x() const
 {
     return d_last_delta_x;

@@ -1,6 +1,5 @@
 
 from libPySI import PySI
-from plugins.__loaded_plugins__.standard_environment_library.notification import SimpleNotification
 from plugins.__loaded_plugins__.standard_environment_library.canvas import Canvas
 from plugins.__loaded_plugins__.standard_environment_library.filesystem import Directory
 from plugins.__loaded_plugins__.standard_environment_library.palette import Palette
@@ -41,16 +40,6 @@ def add_mouse_cursor(kwargs):
                    [Cursor.Cursor.region_width, 0]]
 
     PySI.Startup.create_region_by_name(mouse_shape, Cursor.Cursor.regionname, kwargs)
-
-def add_simple_notification():
-    x = PySI.Startup.context_dimensions()[0] / 2 - SimpleNotification.SimpleNotification.region_width / 2
-
-    simple_notification_shape = [[x, 75],
-                                 [x, 75 + SimpleNotification.SimpleNotification.region_height],
-                                 [x + SimpleNotification.SimpleNotification.region_width, 75 + SimpleNotification.SimpleNotification.region_height],
-                                 [x + SimpleNotification.SimpleNotification.region_width, 75]]
-
-    PySI.Startup.create_region_by_name(simple_notification_shape, SimpleNotification.SimpleNotification.regionname, {})
 
 def add_palette():
     palette_shape = [[PySI.Startup.context_dimensions()[0] - 400, 75],
@@ -146,7 +135,6 @@ def start_application():
 
     add_canvas(rgba)
     add_mouse_cursor({"draw": "RMB"})
-    add_simple_notification()
     add_palette()
     add_start_directory()
     add_unredo()
@@ -171,7 +159,6 @@ def on_start():
     PySI.Startup.set_tangible_ip_address_and_port("0.0.0.0", 3333)
 
     PySI.Startup.exclude_plugins([
-        # SimpleNotification.SimpleNotification.regionname,
         # ConveyorBelt.ConveyorBelt.regionname,
         # ConveyorBeltSplitter.ConveyorBeltSplitter.regionname,
         # ConveyorBeltMerger.ConveyorBeltMerger.regionname,

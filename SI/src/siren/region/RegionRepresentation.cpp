@@ -30,7 +30,8 @@ RegionRepresentation::RegionRepresentation(QQmlContext* c, const std::shared_ptr
         d_view->show();
 
         d_view->rootContext()->setContextProperty("REGION", this);
-        d_view->setGeometry(d_initial_offset.x, d_initial_offset.y, region->aabb()[3].x - region->aabb()[0].x, region->aabb()[1].y - region->aabb()[0].y);
+//        d_view->setGeometry(d_initial_offset.x, d_initial_offset.y, region->aabb()[3].x - region->aabb()[0].x, region->aabb()[1].y - region->aabb()[0].y);
+        d_view->setGeometry(d_initial_offset.x, d_initial_offset.y, region->visualization_width(), region->visualization_height());
         d_view->setAttribute(Qt::WA_AlwaysStackOnTop);
         d_view->setAttribute(Qt::WA_NoSystemBackground);
         d_view->setClearColor(Qt::transparent);

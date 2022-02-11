@@ -201,6 +201,27 @@ public:
     }
 };
 
+class StringVectorVectorPickleSuite: public bp::pickle_suite
+{
+public:
+    static bp::tuple getinitargs(std::vector<std::vector<std::string>>& vs)
+    {
+        bp::list l;
+
+        for(auto& v: vs)
+        {
+            bp::list inner;
+
+            for(auto& s: v)
+                inner.append(s);
+
+            l.append(inner);
+        }
+
+        return bp::make_tuple(l);
+    }
+};
+
 class PartialContourPickleSuite: public bp::pickle_suite
 {
 public:
