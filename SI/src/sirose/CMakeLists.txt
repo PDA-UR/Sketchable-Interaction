@@ -22,7 +22,9 @@ set(SIROS2EnvironmentSrc
         SI/src/sirose/SIROS2Environment.cpp
         SI/src/sirose/SIROS2Environment.hpp
         SI/src/sirose/Subscriber.cpp
-        SI/src/sirose/Subscriber.hpp)
+        SI/src/sirose/Subscriber.hpp
+        SI/src/sirose/Publisher.cpp
+        SI/src/sirose/Publisher.hpp)
 
 add_library(SIROS2Environment SHARED ${SIROS2EnvironmentSrc})
 ament_target_dependencies(SIROS2Environment rclcpp std_msgs ros2_si_interface)

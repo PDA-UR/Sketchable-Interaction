@@ -91,7 +91,34 @@ void resize_function__VTKSIObject__links(void * untyped_member, size_t size)
   member->resize(size);
 }
 
-static const ::rosidl_typesupport_introspection_cpp::MessageMember VTKSIObject_message_member_array[12] = {
+size_t size_function__VTKSIObject__color(const void * untyped_member)
+{
+  const auto * member = reinterpret_cast<const std::vector<int32_t> *>(untyped_member);
+  return member->size();
+}
+
+const void * get_const_function__VTKSIObject__color(const void * untyped_member, size_t index)
+{
+  const auto & member =
+    *reinterpret_cast<const std::vector<int32_t> *>(untyped_member);
+  return &member[index];
+}
+
+void * get_function__VTKSIObject__color(void * untyped_member, size_t index)
+{
+  auto & member =
+    *reinterpret_cast<std::vector<int32_t> *>(untyped_member);
+  return &member[index];
+}
+
+void resize_function__VTKSIObject__color(void * untyped_member, size_t size)
+{
+  auto * member =
+    reinterpret_cast<std::vector<int32_t> *>(untyped_member);
+  member->resize(size);
+}
+
+static const ::rosidl_typesupport_introspection_cpp::MessageMember VTKSIObject_message_member_array[13] = {
   {
     "id",  // name
     ::rosidl_typesupport_introspection_cpp::ROS_TYPE_INT64,  // type
@@ -271,13 +298,28 @@ static const ::rosidl_typesupport_introspection_cpp::MessageMember VTKSIObject_m
     nullptr,  // get_const(index) function pointer
     nullptr,  // get(index) function pointer
     nullptr  // resize(index) function pointer
+  },
+  {
+    "color",  // name
+    ::rosidl_typesupport_introspection_cpp::ROS_TYPE_INT32,  // type
+    0,  // upper bound of string
+    nullptr,  // members of sub message
+    true,  // is array
+    0,  // array size
+    false,  // is upper bound
+    offsetof(ros2_si_interface::msg::VTKSIObject, color),  // bytes offset in struct
+    nullptr,  // default value
+    size_function__VTKSIObject__color,  // size() function pointer
+    get_const_function__VTKSIObject__color,  // get_const(index) function pointer
+    get_function__VTKSIObject__color,  // get(index) function pointer
+    resize_function__VTKSIObject__color  // resize(index) function pointer
   }
 };
 
 static const ::rosidl_typesupport_introspection_cpp::MessageMembers VTKSIObject_message_members = {
   "ros2_si_interface::msg",  // message namespace
   "VTKSIObject",  // message name
-  12,  // number of fields
+  13,  // number of fields
   sizeof(ros2_si_interface::msg::VTKSIObject),
   VTKSIObject_message_member_array,  // message members
   VTKSIObject_init_function,  // function to initialize message memory (memory has to be allocated)

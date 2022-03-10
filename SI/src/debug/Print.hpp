@@ -210,6 +210,17 @@ public:
         return ret;
     }
 
+    inline static std::string _print(const bp::dict& d)
+    {
+        return _print(bp::str(d));
+    }
+
+    inline static std::string _print(const bp::str str)
+    {
+        const std::string& s = bp::extract<std::string>(str);
+        return s;
+    }
+
     template<class... Args>
     static void print(Args &&... args)
     {

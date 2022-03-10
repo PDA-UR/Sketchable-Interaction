@@ -30,7 +30,6 @@ RegionRepresentation::RegionRepresentation(QQmlContext* c, const std::shared_ptr
         d_view->show();
 
         d_view->rootContext()->setContextProperty("REGION", this);
-//        d_view->setGeometry(d_initial_offset.x, d_initial_offset.y, region->aabb()[3].x - region->aabb()[0].x, region->aabb()[1].y - region->aabb()[0].y);
         d_view->setGeometry(d_initial_offset.x, d_initial_offset.y, region->visualization_width(), region->visualization_height());
         d_view->setAttribute(Qt::WA_AlwaysStackOnTop);
         d_view->setAttribute(Qt::WA_NoSystemBackground);
@@ -48,7 +47,7 @@ RegionRepresentation::RegionRepresentation(QQmlContext* c, const std::shared_ptr
     setBrush(QBrush(d_color));
     setPen(QPen(d_color));
     setZValue(-1);
-    setFillRule(Qt::WindingFill);
+    setFillRule(Qt::FillRule::WindingFill);
 }
 
 RegionRepresentation::~RegionRepresentation()
@@ -101,6 +100,8 @@ void RegionRepresentation::perform_transform_update(const std::shared_ptr<Region
         if(!d_qml_path.empty())
             d_view->move(d_initial_offset.x, d_initial_offset.y);
     }
+
+//    prepareGeometryChange();
 }
 
 void RegionRepresentation::perform_data_update(const std::shared_ptr<Region> &region)
@@ -123,13 +124,14 @@ void RegionRepresentation::perform_data_update(const std::shared_ptr<Region> &re
 
     if (region->effect()->has_data_changed())
     {
-        d_with_border = region->effect()->is_border_present();
-
         d_drawing_additions = region->effect()->drawing_additions();
 
         QPolygonF poly;
         for(auto& p: region->contour())
             poly << QPointF(p.x, p.y);
+
+        float x = this->boundingRect().x();
+        float y = this->boundingRect().y();
 
         setPolygon(QTransform()
            .translate(poly.boundingRect().x() + (poly.boundingRect().width() / 2), poly.boundingRect().y() + (poly.boundingRect().height() / 2))
@@ -139,7 +141,16 @@ void RegionRepresentation::perform_data_update(const std::shared_ptr<Region> &re
            .map(poly));
 
         if(!d_qml_path.empty())
+        {
+            if(x != this->boundingRect().x() && y != this->boundingRect().y())
+            {
+                d_initial_offset.x = this->boundingRect().x();
+                d_initial_offset.y = this->boundingRect().y();
+                d_view->move(d_initial_offset.x, d_initial_offset.y);
+            }
+
             QMetaObject::invokeMethod(reinterpret_cast<QObject *>(d_view->rootObject()), "updateData", QGenericReturnArgument(), Q_ARG(QVariant, region->data()));
+        }
     }
 
     if(d_was_data_received)
@@ -148,6 +159,7 @@ void RegionRepresentation::perform_data_update(const std::shared_ptr<Region> &re
 
         d_was_data_received = false;
     }
+    prepareGeometryChange();
 }
 
 QColor& RegionRepresentation::color()
@@ -176,6 +188,7 @@ void RegionRepresentation::paint(QPainter *painter, const QStyleOptionGraphicsIt
         return;
 
     QGraphicsPolygonItem::paint(painter, option, widget);
+
 
     QPen pen(QColor(0, 0, 0));
     painter->setPen(pen);

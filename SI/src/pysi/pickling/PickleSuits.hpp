@@ -27,6 +27,7 @@ public:
                                      e.d_recompute_mask,
                                      e.partial_region_contours(),
                                      e.regions_for_registration(),
+                                     e.regions_for_registration_kwargs(),
                                      e.cap_collision_emit(),
                                      e.cap_collision_recv(),
                                      e.d_cap_link_emit,
@@ -74,32 +75,33 @@ public:
         e.d_recompute_mask = bp::extract<bool>(state[3]);
         e.d_partial_regions = bp::extract<std::unordered_map<std::string, std::vector<glm::vec3>>>(state[4]);
         e.d_regions_marked_for_registration = bp::extract<std::vector<std::string>>(state[5]);
-        e.d_cap_collision_emit = bp::extract<std::unordered_map<std::string, std::unordered_map<std::string, bp::object>>>(state[6]);
-        e.d_cap_collision_recv = bp::extract<std::unordered_map<std::string, std::unordered_map<std::string, bp::object>>>(state[7]);
-        e.d_cap_link_emit = bp::extract<std::unordered_map<std::string, bp::object>>(state[8]);
-        e.d_cap_link_recv = bp::extract<std::unordered_map<std::string, std::unordered_map<std::string, bp::object>>>(state[9]);
-        e.d_color = bp::extract<glm::vec4>(state[10]);
-        e.d_x = bp::extract<float>(state[11]);
-        e.d_y = bp::extract<float>(state[12]);
-        e.d_transform_x = bp::extract<int32_t>(state[13]);
-        e.d_transform_y = bp::extract<int32_t>(state[14]);
-        e.d_width = bp::extract<uint32_t>(state[15]);
-        e.d_height = bp::extract<uint32_t>(state[16]);
-        e.d_angle_deg = bp::extract<float>(state[17]);
-        e.d_scale = bp::extract<float>(state[18]);
-        e.d_name = bp::extract<std::string>(state[19]);
-        e.d_uuid = bp::extract<std::string>(state[20]);
-        e.d_source = bp::extract<std::string>(state[21]);
-        e.d_qml_path = bp::extract<std::string>(state[22]);
-        e.d_effect_type = bp::extract<uint32_t>(state[23]);
-        e.d_is_left_mouse_clicked = bp::extract<bool>(state[24]);
-        e.d_is_right_mouse_clicked = bp::extract<bool>(state[25]);
-        e.d_is_middle_mouse_clicked = bp::extract<bool>(state[26]);
-        e.d_link_relations = bp::extract<std::vector<LinkCandidate>>(state[27]);
-        e.d_data_changed = bp::extract<bool>(state[28]);
-        e.mouse_wheel_angle_px = bp::extract<float>(state[29]);
-        e.mouse_wheel_angle_degrees = bp::extract<float>(state[30]);
-        e.d_with_border = bp::extract<bool>(state[31]);
+        e.d_regions_marked_for_registration_kwargs = bp::extract<bp::list>(state[6]);
+        e.d_cap_collision_emit = bp::extract<std::unordered_map<std::string, std::unordered_map<std::string, bp::object>>>(state[7]);
+        e.d_cap_collision_recv = bp::extract<std::unordered_map<std::string, std::unordered_map<std::string, bp::object>>>(state[8]);
+        e.d_cap_link_emit = bp::extract<std::unordered_map<std::string, bp::object>>(state[9]);
+        e.d_cap_link_recv = bp::extract<std::unordered_map<std::string, std::unordered_map<std::string, bp::object>>>(state[10]);
+        e.d_color = bp::extract<glm::vec4>(state[11]);
+        e.d_x = bp::extract<float>(state[12]);
+        e.d_y = bp::extract<float>(state[13]);
+        e.d_transform_x = bp::extract<int32_t>(state[14]);
+        e.d_transform_y = bp::extract<int32_t>(state[15]);
+        e.d_width = bp::extract<uint32_t>(state[16]);
+        e.d_height = bp::extract<uint32_t>(state[17]);
+        e.d_angle_deg = bp::extract<float>(state[18]);
+        e.d_scale = bp::extract<float>(state[19]);
+        e.d_name = bp::extract<std::string>(state[20]);
+        e.d_uuid = bp::extract<std::string>(state[21]);
+        e.d_source = bp::extract<std::string>(state[22]);
+        e.d_qml_path = bp::extract<std::string>(state[23]);
+        e.d_effect_type = bp::extract<uint32_t>(state[24]);
+        e.d_is_left_mouse_clicked = bp::extract<bool>(state[25]);
+        e.d_is_right_mouse_clicked = bp::extract<bool>(state[26]);
+        e.d_is_middle_mouse_clicked = bp::extract<bool>(state[27]);
+        e.d_link_relations = bp::extract<std::vector<LinkCandidate>>(state[28]);
+        e.d_data_changed = bp::extract<bool>(state[29]);
+        e.mouse_wheel_angle_px = bp::extract<float>(state[30]);
+        e.mouse_wheel_angle_degrees = bp::extract<float>(state[31]);
+        e.d_with_border = bp::extract<bool>(state[32]);
     }
 
     static bool getstate_manages_dict()

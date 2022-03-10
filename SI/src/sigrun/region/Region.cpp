@@ -132,8 +132,6 @@ void Region::set_effect(const bp::object& effect, const bp::dict& kwargs)
 
     HANDLE_PYTHON_CALL(PY_ERROR, "Fatal Error. Plugin broken",
         d_effect = std::make_shared<bp::object>(effect.attr(effect.attr(SI_INTERNAL_NAME))(d_py_effect->contour(), d_py_effect->uuid(), kwargs));
-
-//        char* s = bp::extract<char*>(bp::str(d_effect->attr("__dict__")));
         d_py_effect = bp::extract<PySIEffect*>(*d_effect);
     )
 }
@@ -145,7 +143,6 @@ void Region::set_effect(const std::vector<glm::vec3>& contour, const bp::object&
 
     HANDLE_PYTHON_CALL(PY_ERROR, "Fatal Error. Plugin broken",
         d_effect = std::make_shared<bp::object>(effect.attr(effect.attr(SI_INTERNAL_NAME))(contour, uuid, kwargs));
-//        char* s = bp::extract<char*>(bp::str(d_effect->attr("__dict__")));
         d_py_effect = bp::extract<PySIEffect*>(*d_effect);
      )
 }
@@ -332,6 +329,14 @@ void Region::update()
 {
     d_is_transformed = false;
 
+    if(d_py_effect->d_recompute_mask)
+    {
+        uprm = std::make_unique<RegionMask>(Context::SIContext()->width(), Context::SIContext()->height(), d_py_effect->contour());
+        uprm->move(glm::vec2(d_last_x, d_last_y));
+
+        d_py_effect->d_recompute_mask = false;
+    }
+
     move_and_rotate();
 
     if(Context::SIContext())
@@ -364,9 +369,12 @@ void Region::process_canvas_specifics()
 
         if(!d_py_effect->regions_for_registration().empty())
         {
-            for(const auto& candidate: d_py_effect->regions_for_registration())
+            for(int i = 0; i < d_py_effect->regions_for_registration().size(); ++i)
             {
-                Context::SIContext()->register_new_region(d_py_effect->partial_region_contours()[candidate], candidate);
+                const auto& candidate = d_py_effect->regions_for_registration()[i];
+                bp::dict kwargs = bp::extract<bp::dict>(d_py_effect->regions_for_registration_kwargs()[i]);
+                kwargs["DRAWN"] = true;
+                Context::SIContext()->register_new_region(d_py_effect->partial_region_contours()[candidate], candidate, kwargs);
 
                 HANDLE_PYTHON_CALL(PY_ERROR, "Fatal Error while sketching! Cannot unassign current region drawing! (" + name() + " " + candidate + ")",
                     if(!d_py_effect->d_partial_regions.empty())
@@ -376,6 +384,7 @@ void Region::process_canvas_specifics()
 
             HANDLE_PYTHON_CALL(PY_ERROR, "Fatal Error while sketching! Unable to remove newly registered regions from the registration list! (" + name() + ")",
                 d_py_effect->regions_for_registration().clear();
+                d_py_effect->regions_for_registration_kwargs().attr("clear")();
             )
         }
     }

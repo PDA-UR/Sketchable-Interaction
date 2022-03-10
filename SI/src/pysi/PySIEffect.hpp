@@ -29,11 +29,14 @@ public:
     void __signal_deletion_by_uuid__(const std::string& uuid);
     void __assign_effect__(const std::string& sender, const std::string& effect_name, const std::string& effect_display_name, bp::dict& kwargs);
     void __emit_linking_action__(const std::string& sender, const std::string& linking_action, const bp::object& args);
+    void __set_cursor_stroke_width_by_cursorid__(const std::string& cursor_id, int width);
+    void __set_cursor_stroke_color_by_cursorid__(const std::string& cursor_id, const glm::vec4& color);
 
     void __create_region__(const std::vector<glm::vec3>& contour, const std::string& name, bool as_selector, bp::dict& kwargs);
     void __create_region__(const bp::list& contour, const std::string& name, bool as_selector, bp::dict& kwargs);
     void __create_region__(const bp::list& contour, int effect_type, bp::dict& kwargs);
     void __create_region__(const bp::object& contour, const bp::dict& qml);
+    void __create_region__(const bp::list &contour, bp::object &clazz, bp::dict &kwargs);
     bp::list __current_regions__();
     bp::list __excluded_plugins__();
     bp::list __conditional_variables__();
@@ -99,10 +102,15 @@ public:
     bool d_is_left_mouse_clicked = false;
     bool d_is_right_mouse_clicked = false;
     bool d_is_middle_mouse_clicked = false;
+    bool d_is_double_clicked = false;
 
     bool d_recompute_mask = false;
     bool d_with_border = false;
     bool d_visible = true;
+
+    bool d_evaluate_enveloped = false;
+    bool d_is_enveloped = false;
+    bp::list d_enveloped_by;
 
     float mouse_wheel_angle_degrees = 0.0;
     float mouse_wheel_angle_px = 0.0;
@@ -120,8 +128,9 @@ public:
     bp::dict __selected_effects_by_cursor_id__();
 
     std::vector<std::string> d_regions_marked_for_registration;
+    bp::list d_regions_marked_for_registration_kwargs;
     std::vector<std::string>& regions_for_registration();
-
+    bp::list& regions_for_registration_kwargs();
     std::vector<LinkCandidate> d_link_relations;
     std::vector<LinkCandidate>& link_relations();
 
@@ -159,7 +168,13 @@ public:
 
     void set_data(const QMap<QString, QVariant>& data);
     const QMap<QString, QVariant>& data();
+
+    bool evaluate_enveloped() const;
+    bool is_enveloped() const;
+
     bool d_data_changed;
+
+    void __notify__(const bp::object& msg, const int type);
 
 private:
     QMap<QString, QVariant> d_data;

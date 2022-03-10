@@ -12,7 +12,7 @@ MainWindow::MainWindow(uint32_t width, uint32_t height, uint32_t target_fps):
     d_width(width),
     d_height(height),
     d_is_running(true),
-    d_target_fps(target_fps),
+    d_target_fps(60),
     d_drawing_pen_color(Context::SIContext()->pen_color()),
     p_scene(new QGraphicsScene())
 {
@@ -58,7 +58,7 @@ void MainWindow::loop()
 
         if(frame_counter > 1.0)
         {
-//            Print::print(frames, d_target_fps);
+            Context::SIContext()->push_fps(frames, d_target_fps);
             frame_counter = 0.0;
             frames = 0;
         }
@@ -86,7 +86,6 @@ void MainWindow::__loop()
 {
     handle_region_representations();
     handle_partial_region_representations();
-    update();
 }
 
 void MainWindow::pause()
@@ -167,7 +166,16 @@ void MainWindow::handle_partial_region_representations()
 
         if(it == d_par_reg_reps.end())
         {
-            d_par_reg_reps.push_back(new PartialRegionRepresentation(source, path, d_drawing_pen_color));
+            PartialRegionRepresentation* part_reg;
+            if(d_cursor_stroke_data.find(source) != d_cursor_stroke_data.end())
+            {
+                part_reg = new PartialRegionRepresentation(source, path, std::get<0>(d_cursor_stroke_data[source]), std::get<1>(d_cursor_stroke_data[source]));
+                d_cursor_stroke_data.erase(source);
+            }
+            else
+                part_reg = new PartialRegionRepresentation(source, path);
+
+            d_par_reg_reps.push_back(part_reg);
             p_scene->addItem(d_par_reg_reps.back());
         }
         else
@@ -175,4 +183,20 @@ void MainWindow::handle_partial_region_representations()
             (*it)->update(path);
         }
     }
+}
+
+void MainWindow::set_cursor_stroke_width_by_cursor_id(const std::string &cursor_id, int stroke_width)
+{
+    if(d_cursor_stroke_data.find(cursor_id) != d_cursor_stroke_data.end())
+        d_cursor_stroke_data[cursor_id] = std::tuple<int, glm::vec4>(stroke_width, std::get<1>(d_cursor_stroke_data[cursor_id]));
+    else
+        d_cursor_stroke_data[cursor_id] = std::tuple<int, glm::vec4>(stroke_width, glm::vec4(72, 79, 81, 255));
+}
+
+void MainWindow::set_cursor_stroke_color_by_cursor_id(const std::string &cursor_id, const glm::vec4 &color)
+{
+    if(d_cursor_stroke_data.find(cursor_id) != d_cursor_stroke_data.end())
+        d_cursor_stroke_data[cursor_id] = std::tuple<int, glm::vec4>(std::get<0>(d_cursor_stroke_data[cursor_id]), color);
+    else
+        d_cursor_stroke_data[cursor_id] = std::tuple<int, glm::vec4>(4, color);
 }

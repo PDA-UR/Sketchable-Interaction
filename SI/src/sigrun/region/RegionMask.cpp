@@ -16,7 +16,7 @@
 if(d_num_called > NUM_DEFAULT_SCANLINES) \
 { \
     std::ofstream f; \
-    f.open("build/test" + std::to_string(d_num_called) + ".txt"); \
+    f.open("build/test" + std::to_string(d_num_called) + "_" + name + ".txt"); \
     for (int i = 0; i < d_canvas_height; ++i) \
     { \
         for (int k = 0; k < d_canvas_width; ++k) \

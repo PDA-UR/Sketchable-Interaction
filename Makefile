@@ -1,12 +1,17 @@
 build_all: build_debug build_release
 
+build_ros2_si_interface:
+	xterm -e "(cd ${CURDIR}/src/sirose/msg/ros2_si_interface;. ~/ros2_galactic/install/local_setup.bash; colcon build --packages-select ros2_si_interface)"
+	#. ~/ros2_galactic/install/local_setup.bash
+	#colcon build --packages-select ros2_si_interface
+
 build_debug:
-	#xterm -e "(cd ${CURDIR}/src/sirose/msg/ros2_si_interface;. ~/ros2_galactic/install/local_setup.bash; colcon build --packages-select ros2_si_interface)"
+	xterm -e "(cd ${CURDIR}/src/sirose/msg/ros2_si_interface;. ~/ros2_galactic/install/local_setup.bash; colcon build --packages-select ros2_si_interface)"
 	cmake -S .. -B ${CURDIR}/build/Debug -D CMAKE_BUILD_TYPE=Debug
 	cmake --build ${CURDIR}/build/Debug --target si_test_application -j 8
 
 debug: build_debug
-	xterm -hold -e "(cd ${CURDIR};. ~/ros2_galactic/install/local_setup.bash; . ${CURDIR}/src/sirose/msg/ros2_si_interface/install/local_setup.bash; ./build/Debug/si_test_application)"
+	xterm -hold -e "(cd ${CURDIR};. ~/ros2_galactic/install/local_setup.bash; . ${CURDIR}/src/sirose/msg/ros2_si_interface/install/local_setup.bash; export ROS_DOMAIN_ID=1; ./build/Debug/si_test_application)"
 
 build_release:
 	cmake -S .. -B ${CURDIR}/build/Release -D CMAKE_BUILD_TYPE=Release

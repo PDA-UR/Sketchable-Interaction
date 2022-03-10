@@ -7,6 +7,7 @@
 
 # Member 'geometry'
 # Member 'links'
+# Member 'color'
 import array  # noqa: E402, I100
 
 import rosidl_parser.definition  # noqa: E402, I100
@@ -50,7 +51,13 @@ class Metaclass_VTKSIObject(type):
         # the message class under "Data and other attributes defined here:"
         # as well as populate each message instance
         return {
+            'COLOR__DEFAULT': array.array('i', (0, 255, 0, )),
         }
+
+    @property
+    def COLOR__DEFAULT(cls):
+        """Return default value for message field 'color'."""
+        return array.array('i', (0, 255, 0, ))
 
 
 class VTKSIObject(metaclass=Metaclass_VTKSIObject):
@@ -69,6 +76,7 @@ class VTKSIObject(metaclass=Metaclass_VTKSIObject):
         '_links',
         '_tracker_dimension_x',
         '_tracker_dimension_y',
+        '_color',
     ]
 
     _fields_and_field_types = {
@@ -84,6 +92,7 @@ class VTKSIObject(metaclass=Metaclass_VTKSIObject):
         'links': 'sequence<int32>',
         'tracker_dimension_x': 'int32',
         'tracker_dimension_y': 'int32',
+        'color': 'sequence<int32>',
     }
 
     SLOT_TYPES = (
@@ -99,6 +108,7 @@ class VTKSIObject(metaclass=Metaclass_VTKSIObject):
         rosidl_parser.definition.UnboundedSequence(rosidl_parser.definition.BasicType('int32')),  # noqa: E501
         rosidl_parser.definition.BasicType('int32'),  # noqa: E501
         rosidl_parser.definition.BasicType('int32'),  # noqa: E501
+        rosidl_parser.definition.UnboundedSequence(rosidl_parser.definition.BasicType('int32')),  # noqa: E501
     )
 
     def __init__(self, **kwargs):
@@ -117,6 +127,8 @@ class VTKSIObject(metaclass=Metaclass_VTKSIObject):
         self.links = array.array('i', kwargs.get('links', []))
         self.tracker_dimension_x = kwargs.get('tracker_dimension_x', int())
         self.tracker_dimension_y = kwargs.get('tracker_dimension_y', int())
+        self.color = kwargs.get(
+            'color', VTKSIObject.COLOR__DEFAULT)
 
     def __repr__(self):
         typename = self.__class__.__module__.split('.')
@@ -170,6 +182,8 @@ class VTKSIObject(metaclass=Metaclass_VTKSIObject):
         if self.tracker_dimension_x != other.tracker_dimension_x:
             return False
         if self.tracker_dimension_y != other.tracker_dimension_y:
+            return False
+        if self.color != other.color:
             return False
         return True
 
@@ -369,3 +383,31 @@ class VTKSIObject(metaclass=Metaclass_VTKSIObject):
             assert value >= -2147483648 and value < 2147483648, \
                 "The 'tracker_dimension_y' field must be an integer in [-2147483648, 2147483647]"
         self._tracker_dimension_y = value
+
+    @property
+    def color(self):
+        """Message field 'color'."""
+        return self._color
+
+    @color.setter
+    def color(self, value):
+        if isinstance(value, array.array):
+            assert value.typecode == 'i', \
+                "The 'color' array.array() must have the type code of 'i'"
+            self._color = value
+            return
+        if __debug__:
+            from collections.abc import Sequence
+            from collections.abc import Set
+            from collections import UserList
+            from collections import UserString
+            assert \
+                ((isinstance(value, Sequence) or
+                  isinstance(value, Set) or
+                  isinstance(value, UserList)) and
+                 not isinstance(value, str) and
+                 not isinstance(value, UserString) and
+                 all(isinstance(v, int) for v in value) and
+                 all(val >= -2147483648 and val < 2147483648 for val in value)), \
+                "The 'color' field must be a set or sequence and each value of type 'int' and each integer in [-2147483648, 2147483647]"
+        self._color = array.array('i', value)

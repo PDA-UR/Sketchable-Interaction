@@ -1,7 +1,7 @@
 
 #include "PartialRegionRepresentation.hpp"
 
-PartialRegionRepresentation::PartialRegionRepresentation(const std::string& id, const std::vector<glm::vec3>& source_contour, int color):
+PartialRegionRepresentation::PartialRegionRepresentation(const std::string& id, const std::vector<glm::vec3>& source_contour, int stroke_width, const glm::vec4& color):
     d_id(id)
 {
     QPainterPath path;
@@ -13,17 +13,10 @@ PartialRegionRepresentation::PartialRegionRepresentation(const std::string& id, 
         path.lineTo(p.x, p.y);
     });
 
-    QColor c(72, 79, 81); // 177, 180, 181
-
-    if(color == SI_BLACK_DRAWING_COLOR)
-        c = QColor(72, 79, 81); // 177, 180, 181
-
-    if(color == SI_WHITE_DRAWING_COLOR)
-        c = QColor(255 - 72, 255 - 79, 255 - 81);
+    QColor c(color.r, color.g, color.b, color.a);
 
     QPen pen(c);
-
-    pen.setWidth(4);
+    pen.setWidth(stroke_width);
 
     setPen(pen);
     setPath(path);
