@@ -110,11 +110,17 @@ void Context::begin(const std::unordered_map<std::string, std::unique_ptr<bp::ob
         bp::import(SI_START_FILE).attr(SI_START_FUNCTION)();
     )
 
+    INFO("POST StartSIGRun.py");
+
     // sequence matters
     if(d_ros)
         d_ros->start(argc, argv);
 
+    INFO("POST ROS2 START");
+
     d_ire->start(s_width, s_height, 120);
+
+    INFO("POST RE START");
 
     d_app.exec();
     INFO("QT5 Application terminated!");
