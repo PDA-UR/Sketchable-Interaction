@@ -5,6 +5,7 @@
 
 #include <SI/SI.hpp>
 #include "Subscriber.hpp"
+#include "Publisher.hpp"
 #include <thread>
 
 class SIROS2Environment: public IPhysicalEnvironment, public SIObject
@@ -16,11 +17,12 @@ public:
     void start(int argc, char** argv) override;
     void stop() override;
 
+    void send(const std::string &msg) const override;
+
 private:
 
     std::shared_ptr<Subscriber> sub;
-
-    std::thread spin_thread;
+    std::shared_ptr<Publisher> pub;
 };
 
 

@@ -48,6 +48,9 @@ private:
 
     float d_last_angle = 0.0f;
 
+    int d_last_delta_x = 0;
+    int d_last_delta_y = 0;
+
     bool d_was_data_received = false;
     bool d_with_border = true;
     bool d_visible = true;

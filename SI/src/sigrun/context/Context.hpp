@@ -34,6 +34,10 @@ class Context: public SIObject
 { SIGRUN
 
 
+    void update_cursor_stroke_width_by_cursor_id(const std::string &cursor_id, int stroke_width);
+
+    void update_cursor_stroke_color_by_cursor_id(const std::string &cursor_id, const glm::vec4 &color);
+
 public:
     static Context* SIContext();
 
@@ -61,9 +65,9 @@ public:
     uint32_t width();
     uint32_t height();
 
-    void set_effect(const std::string& target_uuid, const std::string& effect_name, const std::string& effect_display_name, bp::dict& kwargs);
+    void set_effect(const std::string& target_uuid, const std::string& effect_name, bp::dict& kwargs);
 
-    void register_new_region(const std::vector<glm::vec3>& contour, const std::string& uuid);
+    void register_new_region(const std::vector<glm::vec3>& contour, const std::string& uuid, const bp::dict& kwargs);
     void register_new_region_via_name(const std::vector<glm::vec3>& contour, const std::string& name, bool as_selector, bp::dict& kwargs);
     void register_new_region_via_type(const std::vector<glm::vec3>& contour, int type, bp::dict& kwargs);
     void register_region_via_class_object(const std::vector<glm::vec3>& contour, bp::object& clazz, bp::dict& kwargs);
@@ -84,8 +88,6 @@ public:
 
     const std::vector<std::string>& conditional_variables() const;
 
-    void set_message(const std::string& msg);
-
     void exclude_plugins(const std::vector<std::string>& excluded_plugins);
 
     void set_conditional_variables(const std::vector<std::string>& conditionals);
@@ -96,6 +98,10 @@ public:
     const int pen_color() const;
 
     const std::unordered_map<std::string, bp::object>& selected_effects_by_cursor_id() const;
+
+    const IPhysicalEnvironment* physical_environment();
+
+    void push_fps(int actual, int target);
 
 private:
 
@@ -112,6 +118,8 @@ private:
     void perform_link_events();
     void perform_input_update();
     void perform_collision_update();
+
+    Region* fps_region;
 
     std::unordered_map<std::string, std::shared_ptr<ExternalObject>> deo;
 

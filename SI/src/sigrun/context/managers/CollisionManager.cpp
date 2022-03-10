@@ -6,6 +6,7 @@
 
 #if !defined(Q_MOC_RUN)
 #include <tbb/parallel_for.h>
+#include <tbb/concurrent_unordered_map.h>
 #endif
 
 namespace bp = boost::python;
@@ -24,42 +25,55 @@ void CollisionManager::collide(std::vector<std::shared_ptr<Region>> &regions)
 
 void CollisionManager::perform_collision_check(tbb::concurrent_vector<std::tuple<Region*, Region*, bool>> &out, const std::vector<std::shared_ptr<Region>>& in)
 {
-//    for(int i = 0; i < in.size() - 1; ++i)
-//    {
-//        for(int k = i + 1; k < in.size(); ++k)
-//        {
-//            if(Context::SIContext()->spatial_hash_grid()->has_shared_cell(in[i].get(), in[k].get()))
-//            {
-//                if (collides_with_aabb(in[i].get(), in[k].get()))
-//                {
-//                    if (collides_with_mask(in[i], in[k]))
-//                    {
-//                        out.emplace_back(in[i].get(), in[k].get(), has_capabilities_in_common(in[i], in[k]));
-//                        continue;
-//                    }
-//                }
-//            }
-//
-//            out.emplace_back(in[i].get(), in[k].get(), false);
-//        }
-//    }
+    tbb::concurrent_unordered_map<Region*, tbb::concurrent_vector<tbb::concurrent_vector<std::string>>> current_collisions;
+    tbb::concurrent_unordered_map<Region*, tbb::concurrent_vector<std::string>> enveloped;
 
     tbb::parallel_for(tbb::blocked_range<uint32_t>(0, in.size() - 1), [&](const tbb::blocked_range<uint32_t>& r)
     {
         for(auto i = r.begin(); i != r.end(); ++i)
         {
-            tbb::parallel_for(tbb::blocked_range<uint32_t>(i + 1, in.size()), [&](const tbb::blocked_range<uint32_t>& r2)
+            tbb::parallel_for(tbb::blocked_range<uint32_t>(i + 1, in.size()), [&](const tbb::blocked_range<uint32_t> &r2)
             {
-                for(auto k = r2.begin(); k != r2.end(); ++k)
+                for (auto k = r2.begin(); k != r2.end(); ++k)
                 {
-                    if(Context::SIContext() && Context::SIContext()->spatial_hash_grid()->has_shared_cell(in[i].get(), in[k].get()))
+                    if(in[i]->name() == SI_NAME_EFFECT_MOUSE_CURSOR || in[k]->name() == SI_NAME_EFFECT_MOUSE_CURSOR)
                     {
-                        if (collides_with_aabb(in[i].get(), in[k].get()))
+                        if (collides_with_mask(in[i], in[k]))
                         {
-                            if (collides_with_mask(in[i], in[k]))
+                            if (has_capabilities_in_common(in[i], in[k]))
                             {
-                                out.emplace_back(in[i].get(), in[k].get(), has_capabilities_in_common(in[i], in[k]));
+                                out.emplace_back(in[i].get(), in[k].get(), true);
                                 continue;
+                            }
+                            else
+                            {
+                                const auto& a = in[i].get();
+                                const auto& b = in[k].get();
+                                current_collisions[a].push_back(tbb::concurrent_vector<std::string> {b->uuid(), b->name()});
+                                current_collisions[b].push_back(tbb::concurrent_vector<std::string> {a->uuid(), a->name()});
+                            }
+                        }
+                    }
+                    else
+                    {
+                        if (has_capabilities_in_common(in[i], in[k]))
+                        {
+                            if (collides_with_aabb(in[i].get(), in[k].get()))
+                            {
+                                if (collides_with_mask(in[i], in[k]))
+                                {
+                                    out.emplace_back(in[i].get(), in[k].get(), true);
+
+                                    if(in[i]->effect()->evaluate_enveloped())
+                                        if (evaluate_enveloped(in[i], in[k]))
+                                            enveloped[in[i].get()].push_back(in[k]->uuid());
+
+                                    if(in[k]->effect()->evaluate_enveloped())
+                                        if(evaluate_enveloped(in[k], in[i]))
+                                            enveloped[in[k].get()].push_back(in[i]->uuid());
+
+                                    continue;
+                                }
                             }
                         }
                     }
@@ -70,7 +84,15 @@ void CollisionManager::perform_collision_check(tbb::concurrent_vector<std::tuple
         }
     });
 
-    std::unordered_map<Region*, std::vector<std::string>> current_collisions;
+    for(auto& [r, v]: enveloped)
+    {
+        bp::list l;
+
+        for(const std::string& s: v)
+            l.append(s);
+
+        r->raw_effect().attr("__enveloped_by__") = l;
+    }
 
     for(std::tuple<Region*, Region*, bool> tuple: out)
     {
@@ -79,13 +101,25 @@ void CollisionManager::perform_collision_check(tbb::concurrent_vector<std::tuple
             const auto& a = std::get<0>(tuple);
             const auto& b = std::get<1>(tuple);
 
-            current_collisions[a].push_back(b->uuid());
-            current_collisions[b].push_back(a->uuid());
+            current_collisions[a].push_back(tbb::concurrent_vector<std::string> {b->uuid(), b->name()});
+            current_collisions[b].push_back(tbb::concurrent_vector<std::string> {a->uuid(), a->name()});
         }
     }
 
+    std::vector<std::vector<std::string>> t;
+
     for(auto& [k, v]: current_collisions)
-        k->effect()->set_collisions(v);
+    {
+        for(auto& inner: v)
+        {
+            t.emplace_back();
+            for(auto& s: inner)
+                t[t.size() - 1].push_back(s);
+        }
+
+        k->effect()->set_collisions(t);
+        t.clear();
+    }
 }
 
 void CollisionManager::perform_collision_events(tbb::concurrent_vector<std::tuple<Region*, Region*, bool>> &in)
@@ -219,4 +253,19 @@ void CollisionManager::handle_event_enter(Region* a, Region* b)
 {
     a->on_enter(b->effect());
     b->on_enter(a->effect());
+}
+
+bool CollisionManager::evaluate_enveloped(const std::shared_ptr<Region> &a, const std::shared_ptr<Region> &b)
+{
+    bool is_enveloped = true;
+
+    for(const glm::vec3& p: a->contour())
+    {
+        is_enveloped &= (*b->mask())[glm::vec3(p.x + a->x(), p.y + a->y(), 1)];
+
+        if(!is_enveloped)
+            break;
+    }
+
+    return is_enveloped;
 }

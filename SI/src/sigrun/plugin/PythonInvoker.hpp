@@ -45,7 +45,8 @@ bool __si_evaluate_syntax_error__(const std::string& error, const std::string& t
         Print::print("TYPE ERROR");\
         ERROR(error + std::string(additional_msg));\
         }else if(__si_evaluate_syntax_error__(error, "ZeroDivisionError")){\
-        Print::print("ZERO DIVISION ERROR");\
+        Print::print("ZERO DIVISION ERROR");            \
+        ERROR(error + std::string(additional_msg));\
         } else {\
         ERROR(error + std::string(additional_msg));\
         }}\

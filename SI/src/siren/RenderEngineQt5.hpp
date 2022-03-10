@@ -23,6 +23,9 @@ public:
     void disable_anti_aliasing() override;
     void enable_anti_aliasing(uint32_t samplng_factor) override;
 
+    void set_cursor_stroke_width_by_cursor_id(const std::string &cursor_id, int stroke_width) override;
+    void set_cursor_stroke_color_by_cursor_id(const std::string &cursor_id, const glm::vec4 &color) override;
+
 private:
     MainWindow* d_window;
 

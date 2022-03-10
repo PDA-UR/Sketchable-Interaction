@@ -11,6 +11,7 @@ int main(int argc, char** argv)
     SIROS2Environment ros;
 
     SIGRun().exec(argc, argv, &re, &ros);
+//    SIGRun().exec(argc, argv, &re, nullptr);
 
     return 0;
 }

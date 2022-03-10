@@ -22,6 +22,7 @@ extern "C"
 #include "rosidl_runtime_c/string.h"
 // Member 'geometry'
 // Member 'links'
+// Member 'color'
 #include "rosidl_runtime_c/primitives_sequence.h"
 
 // Struct defined in msg/VTKSIObject in the package ros2_si_interface.
@@ -39,6 +40,7 @@ typedef struct ros2_si_interface__msg__VTKSIObject
   rosidl_runtime_c__int32__Sequence links;
   int32_t tracker_dimension_x;
   int32_t tracker_dimension_y;
+  rosidl_runtime_c__int32__Sequence color;
 } ros2_si_interface__msg__VTKSIObject;
 
 // Struct for a sequence of ros2_si_interface__msg__VTKSIObject.

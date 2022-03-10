@@ -29,6 +29,9 @@ module ros2_si_interface {
       int32 tracker_dimension_x;
 
       int32 tracker_dimension_y;
+
+      @default (value="(0, 255, 0)")
+      sequence<int32> color;
     };
   };
 };

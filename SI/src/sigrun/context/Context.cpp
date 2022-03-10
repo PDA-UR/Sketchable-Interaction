@@ -54,9 +54,6 @@ void Context::begin(const std::unordered_map<std::string, std::unique_ptr<bp::ob
     if (!ire)
         return;
 
-    if(!ros)
-        return;
-
     INFO("Creating Qt5 Application...");
     QApplication d_app(argc, argv);
     s_width = QApplication::primaryScreen()->geometry().width();
@@ -114,7 +111,9 @@ void Context::begin(const std::unordered_map<std::string, std::unique_ptr<bp::ob
     )
 
     // sequence matters
-    d_ros->start(argc, argv);
+    if(d_ros)
+        d_ros->start(argc, argv);
+
     d_ire->start(s_width, s_height, 120);
 
     d_app.exec();
@@ -231,8 +230,9 @@ uint32_t Context::height()
     return s_height;
 }
 
-void Context::set_effect(const std::string& target_uuid, const std::string& effect_name, const std::string& effect_display_name, bp::dict& kwargs)
+void Context::set_effect(const std::string& target_uuid, const std::string& effect_name, bp::dict& kwargs)
 {
+    std::string s = bp::extract<std::string>(bp::str(kwargs));
     auto it = std::find_if(uprm->regions().begin(),uprm->regions().end(),
     [&](auto &region)
     {
@@ -242,16 +242,10 @@ void Context::set_effect(const std::string& target_uuid, const std::string& effe
     if (!(it != uprm->regions().end()))
         return;
 
-    if (it->get()->type() == SI_TYPE_MOUSE_CURSOR || it->get()->name() == "__ Touch __")
-    {
+    if (it->get()->type() == SI_TYPE_MOUSE_CURSOR || it->get()->name() == "__ PainterTangible __")
         d_selected_effects_by_id[target_uuid] = d_available_plugins[effect_name];
-
-        set_message("Mouse Cursor set to " + effect_display_name);
-    }
     else
-    {
         it->get()->set_effect(d_available_plugins[effect_name], kwargs);
-    }
 }
 
 void Context::enable(uint32_t what)
@@ -301,18 +295,19 @@ void Context::register_new_region_from_object(const bp::object &object, const bp
     uprm->add_region(object, qml);
 }
 
-void Context::register_new_region(const std::vector<glm::vec3>& contour, const std::string& uuid)
+void Context::register_new_region(const std::vector<glm::vec3>& contour, const std::string& uuid, const bp::dict& kwargs)
 {
-    if(contour.size() > 10)
+    if(contour.size() > 5 && !kwargs.has_key("resampling"))
+        d_region_insertion_queue.emplace(contour, d_selected_effects_by_id[uuid], -1, kwargs);
+    else
     {
-        bp::dict kwargs;
-        kwargs["DRAWN"] = true;
         d_region_insertion_queue.emplace(contour, d_selected_effects_by_id[uuid], -1, kwargs);
     }
 }
 
 void Context::register_new_region_via_name(const std::vector<glm::vec3>& contour, const std::string& effect_name, bool as_selector, bp::dict& kwargs)
 {
+//    PythonGlobalInterpreterLockGuard g;
     int id = bp::extract<int>(d_plugins[effect_name].attr(d_plugins[effect_name].attr(SI_INTERNAL_NAME)).attr(SI_INTERNAL_REGION_TYPE));
 
     if(!as_selector)
@@ -324,7 +319,6 @@ void Context::register_new_region_via_name(const std::vector<glm::vec3>& contour
     HANDLE_PYTHON_CALL(PY_WARNING, "The plugin effect for which a selector effect is to be created does not have the attribute \'region_display_name\' as a static class member.",
         kwargs["is_selector"] = true;
         Region temp(std::vector<glm::vec3>{{0, 0, 1}, {0, 1, 1}, {1, 1, 1}, {1, 0, 1}}, d_plugins[effect_name], 0 , 0, kwargs);
-
         kwargs[SI_SELECTOR_TARGET_COLOR] = temp.color();
         kwargs[SI_SELECTOR_TARGET_TEXTURE] = temp.raw_effect().attr("texture_path");
         kwargs[SI_SELECTOR_TARGET_DISPLAY_NAME] = d_plugins[effect_name].attr(d_plugins[effect_name].attr(SI_INTERNAL_NAME)).attr(SI_INTERNAL_REGION_DISPLAY_NAME);
@@ -413,17 +407,6 @@ const bp::object& Context::plugin_by_name(const std::string& name)
 std::unordered_map<std::string, std::shared_ptr<ExternalObject>> &Context::external_objects()
 {
     return deo;
-}
-
-void Context::set_message(const std::string& msg)
-{
-    auto it = std::find_if(uprm->regions().begin(), uprm->regions().end(), [&](auto& region)
-    {
-        return region->type() == SI_TYPE_NOTIFICATION;
-    });
-
-    if(it != uprm->regions().end())
-        (*it)->raw_effect().attr("update_message")(msg);
 }
 
 void Context::perform_external_object_update()
@@ -642,4 +625,34 @@ const int Context::pen_color() const
 const std::unordered_map<std::string, bp::object> &Context::selected_effects_by_cursor_id() const
 {
     return d_selected_effects_by_id;
+}
+
+const IPhysicalEnvironment *Context::physical_environment()
+{
+    return d_ros;
+}
+
+void Context::update_cursor_stroke_width_by_cursor_id(const std::string &cursor_id, int stroke_width)
+{
+    d_ire->set_cursor_stroke_width_by_cursor_id(cursor_id, stroke_width);
+}
+
+void Context::update_cursor_stroke_color_by_cursor_id(const std::string &cursor_id, const glm::vec4 &color)
+{
+    d_ire->set_cursor_stroke_color_by_cursor_id(cursor_id, color);
+}
+
+void Context::push_fps(int actual, int target)
+{
+    if (!fps_region)
+    {
+        for (auto &r: uprm->regions())
+            if (r->name() == "__ FPS_Counter __")
+                fps_region = r.get();
+    }
+    else
+    {
+        PythonGlobalInterpreterLockGuard g;
+        fps_region->raw_effect().attr("__update_fps__")(actual, target);
+    }
 }

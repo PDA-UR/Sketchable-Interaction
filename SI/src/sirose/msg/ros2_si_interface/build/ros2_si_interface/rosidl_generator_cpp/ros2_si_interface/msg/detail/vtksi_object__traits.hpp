@@ -158,6 +158,26 @@ inline void to_yaml(
     value_to_yaml(msg.tracker_dimension_y, out);
     out << "\n";
   }
+
+  // member: color
+  {
+    if (indentation > 0) {
+      out << std::string(indentation, ' ');
+    }
+    if (msg.color.size() == 0) {
+      out << "color: []\n";
+    } else {
+      out << "color:\n";
+      for (auto item : msg.color) {
+        if (indentation > 0) {
+          out << std::string(indentation, ' ');
+        }
+        out << "- ";
+        value_to_yaml(item, out);
+        out << "\n";
+      }
+    }
+  }
 }  // NOLINT(readability/fn_size)
 
 inline std::string to_yaml(const ros2_si_interface::msg::VTKSIObject & msg)
