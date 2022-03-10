@@ -18,6 +18,7 @@ class InputManager: public QObject, public SIObject
 #define SI_LEFT_MOUSE_BUTTON 0
 #define SI_RIGHT_MOUSE_BUTTON 1
 #define SI_MIDDLE_MOUSE_BUTTON 2
+#define SI_DOUBLE_CLICK 3
 #define SI_KEY_A Qt::Key_A
 #define SI_KEY_B Qt::Key_B
 #define SI_KEY_C Qt::Key_C
@@ -91,6 +92,8 @@ public:
 
     const MouseWheelAngles mouse_wheel_angles();
 
+    const bool is_double_click();
+
 private:
     bool was_key_down(uint32_t key_id);
     bool was_mouse_down(uint32_t button_id);
@@ -105,7 +108,7 @@ private:
     glm::vec2 d_previous_mouse_coords;
 
     std::unordered_map<std::string, std::shared_ptr<ExternalObject>> deo;
-
+    bool d_is_double_click = false;
     float d_mouse_wheel_angle_in_px;
 };
 

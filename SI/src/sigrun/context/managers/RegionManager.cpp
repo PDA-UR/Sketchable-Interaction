@@ -19,13 +19,35 @@ void RegionManager::add_region(const std::vector<glm::vec3> &contour, const bp::
 
 void RegionManager::add_region(const bp::object &o, const bp::dict &qml)
 {
-    std::shared_ptr<Region> r = std::make_shared<Region>(o, qml);
-    d_regions.push_back(r);
+    d_regions.push_back(std::make_shared<Region>(o, qml));
 }
 
 std::vector<std::shared_ptr<Region>> &RegionManager::regions()
 {
     return d_regions;
+}
+
+void RegionManager::toggle_mouse_region_double_click(bool toggle)
+{
+    if(toggle == d_previous_double_click_toggle)
+        return;
+
+    d_previous_double_click_toggle = toggle;
+
+    auto it = std::find_if(d_regions.begin(), d_regions.end(), [&](auto& region)
+    {
+        return region->effect()->effect_type() == SI_TYPE_MOUSE_CURSOR;
+    });
+
+    if (!(it != d_regions.end()))
+        return;
+
+    it->get()->effect()->set_mouse_pressed_capability(SI_DOUBLE_CLICK, toggle);
+
+    HANDLE_PYTHON_CALL(PY_ERROR, "Cannot foward double click to plugin " + it->get()->name(),
+       it->get()->raw_effect().attr("double_clicked") = toggle;
+       it->get()->raw_effect().attr("on_double_click")(toggle);
+    )
 }
 
 void RegionManager::activate_mouse_region_button_down(uint32_t mouse_btn)
@@ -138,6 +160,11 @@ void RegionManager::update_mouse_inputs()
         activate_mouse_region_button_down(SI_MIDDLE_MOUSE_BUTTON);
     else
         deactivate_mouse_region_button_down(SI_MIDDLE_MOUSE_BUTTON);
+
+    if(Context::SIContext()->input_manager()->is_double_click())
+        toggle_mouse_region_double_click(true);
+    else
+        toggle_mouse_region_double_click(false);
 
     auto wheel_angles = Context::SIContext()->input_manager()->mouse_wheel_angles();
 

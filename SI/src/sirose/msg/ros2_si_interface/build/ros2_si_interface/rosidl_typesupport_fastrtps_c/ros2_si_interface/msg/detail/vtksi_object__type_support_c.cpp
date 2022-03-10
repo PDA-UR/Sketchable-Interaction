@@ -34,8 +34,8 @@ extern "C"
 {
 #endif
 
-#include "rosidl_runtime_c/primitives_sequence.h"  // geometry, links
-#include "rosidl_runtime_c/primitives_sequence_functions.h"  // geometry, links
+#include "rosidl_runtime_c/primitives_sequence.h"  // color, geometry, links
+#include "rosidl_runtime_c/primitives_sequence_functions.h"  // color, geometry, links
 #include "rosidl_runtime_c/string.h"  // plugin
 #include "rosidl_runtime_c/string_functions.h"  // plugin
 
@@ -126,6 +126,14 @@ static bool _VTKSIObject__cdr_serialize(
   // Field name: tracker_dimension_y
   {
     cdr << ros_message->tracker_dimension_y;
+  }
+
+  // Field name: color
+  {
+    size_t size = ros_message->color.size;
+    auto array_ptr = ros_message->color.data;
+    cdr << static_cast<uint32_t>(size);
+    cdr.serializeArray(array_ptr, size);
   }
 
   return true;
@@ -241,6 +249,22 @@ static bool _VTKSIObject__cdr_deserialize(
     cdr >> ros_message->tracker_dimension_y;
   }
 
+  // Field name: color
+  {
+    uint32_t cdrSize;
+    cdr >> cdrSize;
+    size_t size = static_cast<size_t>(cdrSize);
+    if (ros_message->color.data) {
+      rosidl_runtime_c__int32__Sequence__fini(&ros_message->color);
+    }
+    if (!rosidl_runtime_c__int32__Sequence__init(&ros_message->color, size)) {
+      fprintf(stderr, "failed to create array for field 'color'");
+      return false;
+    }
+    auto array_ptr = ros_message->color.data;
+    cdr.deserializeArray(array_ptr, size);
+  }
+
   return true;
 }  // NOLINT(readability/fn_size)
 
@@ -336,6 +360,17 @@ size_t get_serialized_size_ros2_si_interface__msg__VTKSIObject(
   {
     size_t item_size = sizeof(ros_message->tracker_dimension_y);
     current_alignment += item_size +
+      eprosima::fastcdr::Cdr::alignment(current_alignment, item_size);
+  }
+  // field.name color
+  {
+    size_t array_size = ros_message->color.size;
+    auto array_ptr = ros_message->color.data;
+    current_alignment += padding +
+      eprosima::fastcdr::Cdr::alignment(current_alignment, padding);
+    (void)array_ptr;
+    size_t item_size = sizeof(array_ptr[0]);
+    current_alignment += array_size * item_size +
       eprosima::fastcdr::Cdr::alignment(current_alignment, item_size);
   }
 
@@ -448,6 +483,16 @@ size_t max_serialized_size_ros2_si_interface__msg__VTKSIObject(
   // member: tracker_dimension_y
   {
     size_t array_size = 1;
+
+    current_alignment += array_size * sizeof(uint32_t) +
+      eprosima::fastcdr::Cdr::alignment(current_alignment, sizeof(uint32_t));
+  }
+  // member: color
+  {
+    size_t array_size = 0;
+    full_bounded = false;
+    current_alignment += padding +
+      eprosima::fastcdr::Cdr::alignment(current_alignment, padding);
 
     current_alignment += array_size * sizeof(uint32_t) +
       eprosima::fastcdr::Cdr::alignment(current_alignment, sizeof(uint32_t));

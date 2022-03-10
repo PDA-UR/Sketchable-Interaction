@@ -35,6 +35,23 @@ struct VTKSIObject_
   explicit VTKSIObject_(rosidl_runtime_cpp::MessageInitialization _init = rosidl_runtime_cpp::MessageInitialization::ALL)
   {
     if (rosidl_runtime_cpp::MessageInitialization::ALL == _init ||
+      rosidl_runtime_cpp::MessageInitialization::DEFAULTS_ONLY == _init)
+    {
+      this->color.resize(3);
+      this->color = {{0l, 255l, 0l}};
+    } else if (rosidl_runtime_cpp::MessageInitialization::ZERO == _init) {
+      this->id = 0ll;
+      this->plugin = "";
+      this->click = false;
+      this->drag = false;
+      this->x = 0.0f;
+      this->y = 0.0f;
+      this->alive = false;
+      this->touch = false;
+      this->tracker_dimension_x = 0l;
+      this->tracker_dimension_y = 0l;
+    }
+    if (rosidl_runtime_cpp::MessageInitialization::ALL == _init ||
       rosidl_runtime_cpp::MessageInitialization::ZERO == _init)
     {
       this->id = 0ll;
@@ -53,6 +70,23 @@ struct VTKSIObject_
   explicit VTKSIObject_(const ContainerAllocator & _alloc, rosidl_runtime_cpp::MessageInitialization _init = rosidl_runtime_cpp::MessageInitialization::ALL)
   : plugin(_alloc)
   {
+    if (rosidl_runtime_cpp::MessageInitialization::ALL == _init ||
+      rosidl_runtime_cpp::MessageInitialization::DEFAULTS_ONLY == _init)
+    {
+      this->color.resize(3);
+      this->color = {{0l, 255l, 0l}};
+    } else if (rosidl_runtime_cpp::MessageInitialization::ZERO == _init) {
+      this->id = 0ll;
+      this->plugin = "";
+      this->click = false;
+      this->drag = false;
+      this->x = 0.0f;
+      this->y = 0.0f;
+      this->alive = false;
+      this->touch = false;
+      this->tracker_dimension_x = 0l;
+      this->tracker_dimension_y = 0l;
+    }
     if (rosidl_runtime_cpp::MessageInitialization::ALL == _init ||
       rosidl_runtime_cpp::MessageInitialization::ZERO == _init)
     {
@@ -106,6 +140,9 @@ struct VTKSIObject_
   using _tracker_dimension_y_type =
     int32_t;
   _tracker_dimension_y_type tracker_dimension_y;
+  using _color_type =
+    std::vector<int32_t, typename std::allocator_traits<ContainerAllocator>::template rebind_alloc<int32_t>>;
+  _color_type color;
 
   // setters for named parameter idiom
   Type & set__id(
@@ -178,6 +215,12 @@ struct VTKSIObject_
     const int32_t & _arg)
   {
     this->tracker_dimension_y = _arg;
+    return *this;
+  }
+  Type & set__color(
+    const std::vector<int32_t, typename std::allocator_traits<ContainerAllocator>::template rebind_alloc<int32_t>> & _arg)
+  {
+    this->color = _arg;
     return *this;
   }
 
@@ -257,6 +300,9 @@ struct VTKSIObject_
       return false;
     }
     if (this->tracker_dimension_y != other.tracker_dimension_y) {
+      return false;
+    }
+    if (this->color != other.color) {
       return false;
     }
     return true;

@@ -45,7 +45,7 @@ public:
 
     const std::string& qml_path() const;
 
-    void move();
+    void move_and_rotate();
 
     const glm::mat3x3& transform() const;
 
@@ -70,6 +70,9 @@ public:
     const uint32_t width() const;
     const uint32_t height() const;
 
+    const uint32_t visualization_width() const;
+    const uint32_t visualization_height() const;
+
     uint8_t handle_collision_event(const std::string& function_name, PySIEffect* colliding_effect);
 
     void update();
@@ -87,11 +90,16 @@ public:
     std::vector<int>& grid_nodes();
     glm::ivec4& grid_bounds();
 
+    float angle();
+
 private:
     bool d_is_new = true;
 
     void process_canvas_specifics();
     void process_linking_relationships();
+
+    void rotate(const glm::vec2& center);
+    void move(const glm::vec2& center, int x, int y);
 
     PySIEffect* d_py_effect;
     std::shared_ptr<bp::object> d_effect;
@@ -109,6 +117,7 @@ private:
     int32_t d_last_y;
     int32_t d_last_delta_x;
     int32_t d_last_delta_y;
+    float d_last_angle;
 };
 
 

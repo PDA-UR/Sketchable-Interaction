@@ -14,6 +14,7 @@
 #include "rosidl_runtime_c/string_functions.h"
 // Member `geometry`
 // Member `links`
+// Member `color`
 #include "rosidl_runtime_c/primitives_sequence_functions.h"
 
 bool
@@ -46,7 +47,19 @@ ros2_si_interface__msg__VTKSIObject__init(ros2_si_interface__msg__VTKSIObject * 
   }
   // tracker_dimension_x
   // tracker_dimension_y
+  // color
+  {
+    bool success = rosidl_runtime_c__int32__Sequence__init(&msg->color, 3);
+    if (!success) {
+      goto abort_init_0;
+    }
+  }
+  msg->color.data[0] = 0l;
+  msg->color.data[1] = 255l;
+  msg->color.data[2] = 0l;
   return true;
+abort_init_0:
+  return false;
 }
 
 void
@@ -70,6 +83,8 @@ ros2_si_interface__msg__VTKSIObject__fini(ros2_si_interface__msg__VTKSIObject * 
   rosidl_runtime_c__int32__Sequence__fini(&msg->links);
   // tracker_dimension_x
   // tracker_dimension_y
+  // color
+  rosidl_runtime_c__int32__Sequence__fini(&msg->color);
 }
 
 ros2_si_interface__msg__VTKSIObject *

@@ -60,6 +60,10 @@ cdr_serialize(
   cdr << ros_message.tracker_dimension_x;
   // Member: tracker_dimension_y
   cdr << ros_message.tracker_dimension_y;
+  // Member: color
+  {
+    cdr << ros_message.color;
+  }
   return true;
 }
 
@@ -124,6 +128,11 @@ cdr_deserialize(
 
   // Member: tracker_dimension_y
   cdr >> ros_message.tracker_dimension_y;
+
+  // Member: color
+  {
+    cdr >> ros_message.color;
+  }
 
   return true;
 }
@@ -217,6 +226,16 @@ get_serialized_size(
   {
     size_t item_size = sizeof(ros_message.tracker_dimension_y);
     current_alignment += item_size +
+      eprosima::fastcdr::Cdr::alignment(current_alignment, item_size);
+  }
+  // Member: color
+  {
+    size_t array_size = ros_message.color.size();
+
+    current_alignment += padding +
+      eprosima::fastcdr::Cdr::alignment(current_alignment, padding);
+    size_t item_size = sizeof(ros_message.color[0]);
+    current_alignment += array_size * item_size +
       eprosima::fastcdr::Cdr::alignment(current_alignment, item_size);
   }
 
@@ -335,6 +354,17 @@ max_serialized_size_VTKSIObject(
   // Member: tracker_dimension_y
   {
     size_t array_size = 1;
+
+    current_alignment += array_size * sizeof(uint32_t) +
+      eprosima::fastcdr::Cdr::alignment(current_alignment, sizeof(uint32_t));
+  }
+
+  // Member: color
+  {
+    size_t array_size = 0;
+    full_bounded = false;
+    current_alignment += padding +
+      eprosima::fastcdr::Cdr::alignment(current_alignment, padding);
 
     current_alignment += array_size * sizeof(uint32_t) +
       eprosima::fastcdr::Cdr::alignment(current_alignment, sizeof(uint32_t));

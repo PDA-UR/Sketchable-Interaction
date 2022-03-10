@@ -79,6 +79,11 @@ bool InputManager::is_mouse_down(uint32_t button_id)
     return d_button_map.find(button_id) != d_button_map.end() ? d_button_map[button_id] : false;
 }
 
+const bool InputManager::is_double_click()
+{
+    return d_button_map.find(SI_DOUBLE_CLICK) != d_button_map.end() ? d_button_map[SI_DOUBLE_CLICK] : false && !(d_previous_button_map.find(SI_DOUBLE_CLICK) != d_previous_button_map.end() ? d_previous_button_map[SI_DOUBLE_CLICK] : false);
+}
+
 bool InputManager::is_mouse_pressed(uint32_t button_id)
 {
     return is_mouse_down(button_id) && !was_mouse_down(button_id);
@@ -106,6 +111,8 @@ const glm::vec2 &InputManager::previous_mouse_coords() const
 
 bool InputManager::eventFilter(QObject *watched, QEvent *event)
 {
+    d_is_double_click = false;
+
     if(event->type() == QEvent::KeyPress)
     {
         QKeyEvent *key_event = (QKeyEvent*)event;
@@ -156,6 +163,11 @@ bool InputManager::eventFilter(QObject *watched, QEvent *event)
         return true;
     }
 
+    if(event->type() == QEvent::MouseButtonDblClick)
+        press_mouse_button(SI_DOUBLE_CLICK);
+    else
+        release_mouse_button(SI_DOUBLE_CLICK);
+
     if(event->type() == QEvent::MouseButtonPress)
     {
         QMouseEvent* mouse_event = (QMouseEvent*) event;
@@ -195,6 +207,7 @@ bool InputManager::eventFilter(QObject *watched, QEvent *event)
                 break;
         }
     }
+
 
     if(event->type() == QEvent::Wheel)
     {

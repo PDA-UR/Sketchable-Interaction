@@ -20,16 +20,32 @@ namespace msg
 namespace builder
 {
 
+class Init_VTKSIObject_color
+{
+public:
+  explicit Init_VTKSIObject_color(::ros2_si_interface::msg::VTKSIObject & msg)
+  : msg_(msg)
+  {}
+  ::ros2_si_interface::msg::VTKSIObject color(::ros2_si_interface::msg::VTKSIObject::_color_type arg)
+  {
+    msg_.color = std::move(arg);
+    return std::move(msg_);
+  }
+
+private:
+  ::ros2_si_interface::msg::VTKSIObject msg_;
+};
+
 class Init_VTKSIObject_tracker_dimension_y
 {
 public:
   explicit Init_VTKSIObject_tracker_dimension_y(::ros2_si_interface::msg::VTKSIObject & msg)
   : msg_(msg)
   {}
-  ::ros2_si_interface::msg::VTKSIObject tracker_dimension_y(::ros2_si_interface::msg::VTKSIObject::_tracker_dimension_y_type arg)
+  Init_VTKSIObject_color tracker_dimension_y(::ros2_si_interface::msg::VTKSIObject::_tracker_dimension_y_type arg)
   {
     msg_.tracker_dimension_y = std::move(arg);
-    return std::move(msg_);
+    return Init_VTKSIObject_color(msg_);
   }
 
 private:

@@ -20,7 +20,8 @@ Region::Region(const std::vector<glm::vec3> &contour, const bp::object& effect, 
     d_last_x(0),
     d_last_y(0),
     d_last_delta_x(0),
-    d_last_delta_y(0)
+    d_last_delta_y(0),
+    d_last_angle(0)
 {
     set_effect(contour, effect, std::string(_UUID_), kwargs);
 
@@ -74,27 +75,54 @@ Region::Region(const bp::object &o, const bp::dict &qml, uint32_t width, uint32_
 
 Region::~Region() = default;
 
-void Region::move()
+void Region::move_and_rotate()
 {
-    const int32_t& x = d_py_effect->x();
-    const int32_t& y = d_py_effect->y();
+    int32_t x = d_py_effect->x();
+    int32_t y = d_py_effect->y();
 
-    if (x == d_last_x && y == d_last_y)
+    d_last_angle = d_py_effect->angle_degrees();
+
+    if (x == d_last_x && y == d_last_y && d_last_angle == 0)
         return;
 
-    glm::vec2 center(d_last_x + (d_py_effect->aabb()[0].x + (d_py_effect->aabb()[3].x - d_py_effect->aabb()[0].x)) / 2, d_last_y + (d_py_effect->aabb()[0].y + (d_py_effect->aabb()[1].y - d_py_effect->aabb()[0].y)) / 2);
+    glm::vec2 center(d_py_effect->aabb()[0].x + (d_py_effect->aabb()[3].x - d_py_effect->aabb()[0].x) / 2, d_py_effect->aabb()[0].y + (d_py_effect->aabb()[1].y - d_py_effect->aabb()[0].y) / 2);
 
-    uprt->update(glm::vec2(x, y), 0, 1, center);
+    rotate(center);
 
+    center = glm::vec2(d_py_effect->aabb()[0].x + (d_py_effect->aabb()[3].x - d_py_effect->aabb()[0].x) / 2, d_py_effect->aabb()[0].y + (d_py_effect->aabb()[1].y - d_py_effect->aabb()[0].y) / 2);
+    uprt->update(glm::vec2(x, y), d_last_angle, 1, center);
+
+    move(center, x, y);
+
+    d_is_transformed = true;
+}
+
+void Region::rotate(const glm::vec2 &center)
+{
+    if(d_last_angle != 0)
+    {
+        uprt->update(glm::vec2(0, 0), d_last_angle, 1, center);
+
+        std::vector<glm::vec3> new_contour(contour().size());
+
+        for(int i = 0; i < contour().size(); ++i)
+            new_contour[i] = (*uprt) * contour()[i];
+
+        raw_effect().attr("shape") = new_contour;
+
+        uprm = std::make_unique<RegionMask>(Context::SIContext()->width(), Context::SIContext()->height(), d_py_effect->contour());
+        uprm->move(glm::vec2(d_last_x, d_last_y));
+    }
+}
+
+void Region::move(const glm::vec2 &center, int x, int y)
+{
     d_last_delta_x = x - d_last_x;
     d_last_delta_y = y - d_last_y;
-
     d_last_x = x;
     d_last_y = y;
 
     uprm->move(glm::vec2(d_last_delta_x, d_last_delta_y));
-
-    d_is_transformed = true;
 }
 
 void Region::set_effect(const bp::object& effect, const bp::dict& kwargs)
@@ -104,8 +132,6 @@ void Region::set_effect(const bp::object& effect, const bp::dict& kwargs)
 
     HANDLE_PYTHON_CALL(PY_ERROR, "Fatal Error. Plugin broken",
         d_effect = std::make_shared<bp::object>(effect.attr(effect.attr(SI_INTERNAL_NAME))(d_py_effect->contour(), d_py_effect->uuid(), kwargs));
-
-//        char* s = bp::extract<char*>(bp::str(d_effect->attr("__dict__")));
         d_py_effect = bp::extract<PySIEffect*>(*d_effect);
     )
 }
@@ -117,7 +143,6 @@ void Region::set_effect(const std::vector<glm::vec3>& contour, const bp::object&
 
     HANDLE_PYTHON_CALL(PY_ERROR, "Fatal Error. Plugin broken",
         d_effect = std::make_shared<bp::object>(effect.attr(effect.attr(SI_INTERNAL_NAME))(contour, uuid, kwargs));
-//        char* s = bp::extract<char*>(bp::str(d_effect->attr("__dict__")));
         d_py_effect = bp::extract<PySIEffect*>(*d_effect);
      )
 }
@@ -280,6 +305,16 @@ const uint32_t Region::height() const
     return d_py_effect->height();
 }
 
+const uint32_t Region::visualization_width() const
+{
+    return d_py_effect->visualization_width();
+}
+
+const uint32_t Region::visualization_height() const
+{
+    return d_py_effect->visualization_height();
+}
+
 const int32_t Region::last_delta_x() const
 {
     return d_last_delta_x;
@@ -299,12 +334,10 @@ void Region::update()
         uprm = std::make_unique<RegionMask>(Context::SIContext()->width(), Context::SIContext()->height(), d_py_effect->contour());
         uprm->move(glm::vec2(d_last_x, d_last_y));
 
-        HANDLE_PYTHON_CALL(PY_ERROR, "Fatal Error. Region Collision broken (" + name() + ")",
-            d_py_effect->d_recompute_mask = false;
-        )
+        d_py_effect->d_recompute_mask = false;
     }
 
-    move();
+    move_and_rotate();
 
     if(Context::SIContext())
         Context::SIContext()->spatial_hash_grid()->update_region(this);
@@ -323,6 +356,11 @@ int32_t Region::y()
     return d_last_y;
 }
 
+float Region::angle()
+{
+    return d_last_angle;
+}
+
 void Region::process_canvas_specifics()
 {
     if(d_py_effect->effect_type() == SI_TYPE_CANVAS)
@@ -331,9 +369,12 @@ void Region::process_canvas_specifics()
 
         if(!d_py_effect->regions_for_registration().empty())
         {
-            for(const auto& candidate: d_py_effect->regions_for_registration())
+            for(int i = 0; i < d_py_effect->regions_for_registration().size(); ++i)
             {
-                Context::SIContext()->register_new_region(d_py_effect->partial_region_contours()[candidate], candidate);
+                const auto& candidate = d_py_effect->regions_for_registration()[i];
+                bp::dict kwargs = bp::extract<bp::dict>(d_py_effect->regions_for_registration_kwargs()[i]);
+                kwargs["DRAWN"] = true;
+                Context::SIContext()->register_new_region(d_py_effect->partial_region_contours()[candidate], candidate, kwargs);
 
                 HANDLE_PYTHON_CALL(PY_ERROR, "Fatal Error while sketching! Cannot unassign current region drawing! (" + name() + " " + candidate + ")",
                     if(!d_py_effect->d_partial_regions.empty())
@@ -343,6 +384,7 @@ void Region::process_canvas_specifics()
 
             HANDLE_PYTHON_CALL(PY_ERROR, "Fatal Error while sketching! Unable to remove newly registered regions from the registration list! (" + name() + ")",
                 d_py_effect->regions_for_registration().clear();
+                d_py_effect->regions_for_registration_kwargs().attr("clear")();
             )
         }
     }

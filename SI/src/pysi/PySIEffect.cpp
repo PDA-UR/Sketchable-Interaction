@@ -12,6 +12,7 @@
 #include <QList>
 #include <QtGui>
 #include <pysi/pickling/PickleSuits.hpp>
+#include <glm/gtx/string_cast.hpp>
 
 namespace bp = boost::python;
 
@@ -25,8 +26,16 @@ PySIEffect::PySIEffect(const std::vector<glm::vec3>& contour, const std::string&
 
     std::vector<glm::vec3> temp;
 
-    Recognizer r;
-    r.recognize(temp, contour);
+    if(kwargs.has_key("__name__") and kwargs["__name__"] == "__ Painter __")
+    {
+        temp = contour;
+    }
+    else
+    {
+        Recognizer r;
+        r.recognize(temp, contour);
+    }
+
 
     int32_t x_min = INT32_MAX;
     int32_t x_max = INT32_MIN;
@@ -48,7 +57,14 @@ PySIEffect::PySIEffect(const std::vector<glm::vec3>& contour, const std::string&
         tlc, blc, brc, trc
     };
 
-    RegionResampler::resample(d_contour, temp);
+    if(kwargs.has_key("__name__") and kwargs["__name__"] == "__ Painter __")
+    {
+        d_contour = temp;
+    }
+    else
+    {
+        RegionResampler::resample(d_contour, temp);
+    }
 }
 
 void PySIEffect::set_data(const QMap<QString, QVariant> &data)
@@ -79,6 +95,12 @@ bp::object PySIEffect::__data__(const std::string& key, const uint32_t type)
             return bp::object(d_data[QString(key.c_str())].value<QString>().toStdString());
         case SI_DATA_TYPE_BOOL:
             return bp::object(d_data[QString(key.c_str())].value<bool>());
+        case SI_DATA_TYPE_DICT:
+        {
+            Print::print("SI_DATA_TYPE_DICT CONVERSION UNIMPLEMENTED");
+            bp::dict d;
+            return d;
+        }
     }
 
     return bp::object();
@@ -217,6 +239,8 @@ void PySIEffect::set_mouse_pressed_capability(uint32_t btn, bool active)
         case SI_MIDDLE_MOUSE_BUTTON: // middle mouse button
             d_is_middle_mouse_clicked = active;
             break;
+        case SI_DOUBLE_CLICK:
+            d_is_double_clicked = active;
         default:
             break;
     }
@@ -225,6 +249,11 @@ void PySIEffect::set_mouse_pressed_capability(uint32_t btn, bool active)
 std::vector<std::string>& PySIEffect::regions_for_registration()
 {
     return d_regions_marked_for_registration;
+}
+
+bp::list& PySIEffect::regions_for_registration_kwargs()
+{
+    return d_regions_marked_for_registration_kwargs;
 }
 
 const std::string& PySIEffect::uuid() const
@@ -247,6 +276,16 @@ const int32_t PySIEffect::height() const
     return d_height;
 }
 
+const int32_t PySIEffect::visualization_width() const
+{
+    return d_visualization_width;
+}
+
+const int32_t PySIEffect::visualization_height() const
+{
+    return d_visualization_height;
+}
+
 const float PySIEffect::scale() const
 {
     return d_scale;
@@ -265,6 +304,15 @@ std::vector<LinkCandidate>& PySIEffect::link_relations()
 std::vector<glm::vec3> &PySIEffect::contour()
 {
     return d_contour;
+}
+
+void PySIEffect::set_aabb(const std::vector<glm::vec3> &aabb)
+{
+    d_aabb.clear();
+    d_aabb.resize(4);
+
+    for(int i = 0; i < aabb.size(); i++)
+        d_aabb[i] = aabb[i];
 }
 
 std::vector<glm::vec3> &PySIEffect::aabb()
@@ -394,6 +442,11 @@ std::vector<glm::vec3> PySIEffect::get_shape()
     return d_contour;
 }
 
+const std::vector<glm::vec3>& PySIEffect::original_shape()
+{
+    return d_original_contour;
+}
+
 void PySIEffect::set_shape(const std::vector<glm::vec3>& shape)
 {
     if (shape.empty() || d_name.empty())
@@ -402,7 +455,7 @@ void PySIEffect::set_shape(const std::vector<glm::vec3>& shape)
     d_contour.clear();
     std::vector<glm::vec3> temp, smoothed;
 
-    if(d_name != "__ ConveyorBelt __")
+    if(d_name != "__ ConveyorBelt __" && d_name != "__ Painter __")
     {
         Recognizer r;
         r.recognize(temp, shape);
@@ -412,17 +465,23 @@ void PySIEffect::set_shape(const std::vector<glm::vec3>& shape)
         temp = shape;
     }
 
-    int32_t x_min = INT32_MAX;
-    int32_t x_max = INT32_MIN;
-    int32_t y_min = INT32_MAX;
-    int32_t y_max = INT32_MIN;
+    d_original_contour.clear();
+    d_original_contour.resize(temp.size());
 
-    for(const auto& v: temp)
+    for(int i = 0; i < temp.size(); ++i)
+        d_original_contour[i] = temp[i];
+
+    int x_min = INT32_MAX;
+    int x_max = INT32_MIN;
+    int y_min = INT32_MAX;
+    int y_max = INT32_MIN;
+
+    for(const auto& v: d_original_contour)
     {
-        x_max = v.x > x_max ? v.x : x_max;
-        y_max = v.y > y_max ? v.y : y_max;
-        x_min = v.x < x_min ? v.x : x_min;
-        y_min = v.y < y_min ? v.y : y_min;
+        x_max = v.x > x_max ? std::round(v.x) : x_max;
+        y_max = v.y > y_max ? std::round(v.y) : y_max;
+        x_min = v.x < x_min ? std::round(v.x) : x_min;
+        y_min = v.y < y_min ? std::round(v.y) : y_min;
     }
 
     glm::vec3 tlc(x_min, y_min, 1), blc(x_min, y_max, 1), brc(x_max, y_max, 1), trc(x_max, y_min, 1);
@@ -432,16 +491,25 @@ void PySIEffect::set_shape(const std::vector<glm::vec3>& shape)
         tlc, blc, brc, trc
     };
 
-    RegionResampler::resample(d_contour, temp);
+    if (d_name != "__ Painter __" && temp.size() != SI_CONTOUR_STEPCOUNT)
+    {
+        RegionResampler::resample(d_contour, temp);
+    }
+    else
+    {
+        d_contour = temp;
+    }
 
     d_recompute_mask = true;
 }
 
+// by name
 void PySIEffect::__create_region__(const std::vector<glm::vec3>& contour, const std::string& name, bool as_selector, bp::dict& kwargs)
 {
     Context::SIContext()->register_new_region_via_name(contour, name, as_selector, kwargs);
 }
 
+// by name
 void PySIEffect::__create_region__(const bp::list& contour, const std::string& name, bool as_selector, bp::dict& kwargs)
 {
     std::vector<glm::vec3> _contour;
@@ -461,6 +529,7 @@ void PySIEffect::__create_region__(const bp::list& contour, const std::string& n
         __create_region__(_contour, name, as_selector, kwargs);
 }
 
+// by type
 void PySIEffect::__create_region__(const bp::list& contour, int effect_type, bp::dict& kwargs)
 {
     std::vector<glm::vec3> _contour;
@@ -480,9 +549,27 @@ void PySIEffect::__create_region__(const bp::list& contour, int effect_type, bp:
         Context::SIContext()->register_new_region_via_type(_contour, effect_type, kwargs);
 }
 
+// by object
 void PySIEffect::__create_region__(const bp::object &object, const bp::dict &qml)
 {
     Context::SIContext()->register_new_region_from_object(object, qml);
+}
+
+// by class
+void PySIEffect::__create_region__(const bp::list &contour, bp::object &clazz, bp::dict &kwargs)
+{
+    std::vector<glm::vec3> _contour;
+    _contour.reserve(bp::len(contour));
+
+    for(uint32_t i = 0; i < bp::len(contour); ++i)
+    {
+        float x = bp::extract<float>(contour[i][0]);
+        float y = bp::extract<float>(contour[i][1]);
+
+        _contour.emplace_back(x, y, 1);
+    }
+
+    Context::SIContext()->register_region_via_class_object(_contour, clazz, kwargs);
 }
 
 bp::list PySIEffect::__current_regions__()
@@ -515,7 +602,7 @@ bp::tuple PySIEffect::__context_dimensions__()
 
 void PySIEffect::__assign_effect__(const std::string& sender, const std::string& effect_name, const std::string& effect_display_name, bp::dict& kwargs)
 {
-    Context::SIContext()->set_effect(sender, effect_name, effect_display_name, kwargs);
+    Context::SIContext()->set_effect(sender, effect_name, kwargs);
 }
 
 bp::dict PySIEffect::__qml_data_keys_and_types__()
@@ -640,15 +727,25 @@ std::vector<std::vector<std::vector<glm::vec3>>> &PySIEffect::drawing_additions(
     return d_drawing_additions;
 }
 
-std::vector<std::string> PySIEffect::get_collisions()
+std::vector<std::vector<std::string>> PySIEffect::get_collisions()
 {
     return d_collisions;
 }
 
-void PySIEffect::set_collisions(const std::vector<std::string> &collisions)
+void PySIEffect::set_collisions(const std::vector<std::vector<std::string>> &collisions)
 {
     d_collisions.clear();
     d_collisions = collisions;
+}
+
+bool PySIEffect::evaluate_enveloped() const
+{
+    return d_evaluate_enveloped;
+}
+
+bool PySIEffect::is_enveloped() const
+{
+    return d_is_enveloped;
 }
 
 bp::dict PySIEffect::__selected_effects_by_cursor_id__ ()
@@ -660,4 +757,26 @@ bp::dict PySIEffect::__selected_effects_by_cursor_id__ ()
         ret[k] = v.attr(v.attr(SI_INTERNAL_NAME)).attr("regionname");
 
     return ret;
+}
+
+void PySIEffect::__notify__(const bp::object &msg, const int type)
+{
+    if(Context::SIContext()->physical_environment())
+    {
+        if(type == SI_DATA_TYPE_STRING)
+        {
+            const std::string message = bp::extract<std::string>(msg);
+            Context::SIContext()->physical_environment()->send(message);
+        }
+    }
+}
+
+void PySIEffect::__set_cursor_stroke_width_by_cursorid__(const std::string &cursor_id, int width)
+{
+    Context::SIContext()->update_cursor_stroke_width_by_cursor_id(cursor_id, width);
+}
+
+void PySIEffect::__set_cursor_stroke_color_by_cursorid__(const std::string &cursor_id, const glm::vec4& color)
+{
+    Context::SIContext()->update_cursor_stroke_color_by_cursor_id(cursor_id, color);
 }

@@ -1,28 +1,20 @@
 
 from libPySI import PySI
-from plugins.__loaded_plugins__.standard_environment_library.notification import SimpleNotification
 from plugins.__loaded_plugins__.standard_environment_library.canvas import Canvas
-from plugins.__loaded_plugins__.standard_environment_library.filesystem import Directory
 from plugins.__loaded_plugins__.standard_environment_library.palette import Palette
 from plugins.__loaded_plugins__.standard_environment_library.cursor import Cursor
 from plugins.__loaded_plugins__.standard_environment_library.deletion import Deletion
 from plugins.__loaded_plugins__.standard_environment_library.slider import SliderBase
 from plugins.__loaded_plugins__.standard_environment_library.slider import SliderTargetDummy
-from plugins.__loaded_plugins__.standard_environment_library.tag import Tag
-from plugins.__loaded_plugins__.standard_environment_library.presentation import Presentation
-from plugins.__loaded_plugins__.standard_environment_library.preview import Preview
-from plugins.__loaded_plugins__.standard_environment_library.lasso import Lasso
-from plugins.__loaded_plugins__.standard_environment_library.plot import Plot
-from plugins.__loaded_plugins__.standard_environment_library.image_editor import ImageEditor
-from plugins.__loaded_plugins__.standard_environment_library.video import Video
-from plugins.__loaded_plugins__.standard_environment_library.filesystem import OpenEntry
-from plugins.__loaded_plugins__.standard_environment_library.terminal import Terminal
 from plugins.__loaded_plugins__.standard_environment_library.unredo import Undo, Redo
-from plugins.__loaded_plugins__.standard_environment_library.automation import ConveyorBelt, ConveyorBeltMerger, ConveyorBeltSplitter
 from plugins.standard_environment_library.tangible.camera.ScanCameraAreaDetection import ScanCameraAreaDetection
 from plugins.standard_environment_library.tangible.camera.TableArea import TableArea
 from plugins.standard_environment_library.tangible.document.tools.Color import Color
-from plugins.standard_environment_library.tangible.document.draw.Stroke import Stroke
+from plugins.standard_environment_library.plot.Plot import Plot
+from plugins.standard_environment_library.image_editor.ImageEditor import ImageEditor
+from plugins.standard_environment_library.presentation.Presentation import Presentation
+from plugins.standard_environment_library.lasso.Lasso import Lasso
+from plugins.standard_environment_library.video.Video import Video
 
 import math
 
@@ -42,16 +34,6 @@ def add_mouse_cursor(kwargs):
 
     PySI.Startup.create_region_by_name(mouse_shape, Cursor.Cursor.regionname, kwargs)
 
-def add_simple_notification():
-    x = PySI.Startup.context_dimensions()[0] / 2 - SimpleNotification.SimpleNotification.region_width / 2
-
-    simple_notification_shape = [[x, 75],
-                                 [x, 75 + SimpleNotification.SimpleNotification.region_height],
-                                 [x + SimpleNotification.SimpleNotification.region_width, 75 + SimpleNotification.SimpleNotification.region_height],
-                                 [x + SimpleNotification.SimpleNotification.region_width, 75]]
-
-    PySI.Startup.create_region_by_name(simple_notification_shape, SimpleNotification.SimpleNotification.regionname, {})
-
 def add_palette():
     palette_shape = [[PySI.Startup.context_dimensions()[0] - 400, 75],
                      [PySI.Startup.context_dimensions()[0] - 400, 475],
@@ -60,31 +42,21 @@ def add_palette():
 
     PySI.Startup.create_region_by_name(palette_shape, Palette.Palette.regionname, {})
 
-def add_start_directory():
-    directory_path = "/home/juergen/Desktop/"
-
-    directory_shape = [[75, 75],
-                       [75, 75 + Directory.Directory.region_height],
-                       [75 + Directory.Directory.region_width, 75 + Directory.Directory.region_height],
-                       [75 + Directory.Directory.region_width, 75]]
-
-    kwargs = {"cwd": directory_path, "parent": ""}
-    PySI.Startup.create_region_by_name(directory_shape, Directory.Directory.regionname, kwargs)
-
 def add_unredo():
-    w, h = PySI.Startup.context_dimensions()[0], PySI.Startup.context_dimensions()[1]
-    redo_shape = [[w - 100, h - 100],
-                  [w - 100, h - 5],
-                  [w - 5, h - 5],
-                  [w - 5, h - 100]]
-
-    undo_shape = [[w - 100 - 5 - 95, h - 100],
-                  [w - 100 - 5 - 95, h - 5],
-                  [w - 100 - 5, h - 5],
-                  [w - 100 - 5, h - 100]]
-
-    PySI.Startup.create_region_by_name(undo_shape, Undo.Undo.regionname, {})
-    PySI.Startup.create_region_by_name(redo_shape, Redo.Redo.regionname, {})
+    pass
+    # w, h = PySI.Startup.context_dimensions()[0], PySI.Startup.context_dimensions()[1]
+    # redo_shape = [[w - 100, h - 100],
+    #               [w - 100, h - 5],
+    #               [w - 5, h - 5],
+    #               [w - 5, h - 100]]
+    #
+    # undo_shape = [[w - 100 - 5 - 95, h - 100],
+    #               [w - 100 - 5 - 95, h - 5],
+    #               [w - 100 - 5, h - 5],
+    #               [w - 100 - 5, h - 100]]
+    #
+    # PySI.Startup.create_region_by_name(undo_shape, Undo.Undo.regionname, {})
+    # PySI.Startup.create_region_by_name(redo_shape, Redo.Redo.regionname, {})
 
 ## Author: RW
 def add_many_regions(num = 100, area_width= 1600, area_height=800):
@@ -146,15 +118,13 @@ def start_application():
 
     add_canvas(rgba)
     add_mouse_cursor({"draw": "RMB"})
-    add_simple_notification()
     add_palette()
-    add_start_directory()
     add_unredo()
     # add_annotation_color()
 
 def on_start():
-    # PySI.Startup.disable(PySI.Configuration.SI_CRASH_DUMP)
     PySI.Startup.enable(PySI.Configuration.SI_ANTI_ALIASING_8x)
+    # PySI.Startup.enable(PySI.Configuration.SI_CRASH_DUMP)
 
     PySI.Startup.logger_log(True)
     PySI.Startup.logger_set_log_output(PySI.Logger.SI_LOG_SHOW_ALL)
@@ -165,27 +135,12 @@ def on_start():
     PySI.Startup.set_pen_color(PySI.Configuration.PEN_CLOLOR_BLACK)
     # PySI.Startup.set_pen_color(PySI.Configuration.PEN_CLOLOR_WHITE)
 
-    # PySI.Startup.set_tangible_ip_address_and_port("132.199.128.250", 3333)
-    # PySI.Startup.set_tangible_ip_address_and_port("10.61.3.117", 3333)
-    # PySI.Startup.set_tangible_ip_address_and_port("127.0.0.1", 3333)
-    PySI.Startup.set_tangible_ip_address_and_port("0.0.0.0", 3333)
-
     PySI.Startup.exclude_plugins([
-        # SimpleNotification.SimpleNotification.regionname,
-        # ConveyorBelt.ConveyorBelt.regionname,
-        # ConveyorBeltSplitter.ConveyorBeltSplitter.regionname,
-        # ConveyorBeltMerger.ConveyorBeltMerger.regionname,
-        # Tag.Tag.regionname,
-        # Plot.Plot.regionname,
-        # Presentation.Presentation.regionname,
-        # Lasso.Lasso.regionname,
-        # Preview.Preview.regionname,
-        # ImageEditor.ImageEditor.regionname,
-        # OpenEntry.OpenEntry.regionname,
-        # Terminal.Terminal.regionname,
-        # Undo.Undo.regionname,
-        # Redo.Redo.regionname,
-        # Video.Video.regionname,
+        Plot.regionname,
+        Presentation.regionname,
+        Lasso.regionname,
+        ImageEditor.regionname,
+        Video.regionname
     ])
 
     CHOICE = APPLICATION

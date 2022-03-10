@@ -43,7 +43,7 @@ private:
     friend class RegionManager;
     friend class SIGRunCollisionManagerTest;
 
-protected:
+    bool evaluate_enveloped(const std::shared_ptr<Region> &a, const std::shared_ptr<Region> &b);
 };
 
 

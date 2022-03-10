@@ -329,6 +329,57 @@ public:
     }
 };
 
+class VectorExposureStringVector
+{
+public:
+    static boost::shared_ptr<std::vector<std::vector<std::string>>> init(const bp::list& list=bp::list())
+    {
+        auto self = boost::make_shared<std::vector<std::vector<std::string>>>();
+        self->reserve(bp::len(list));
+
+        for(uint32_t i = 0; i < bp::len(list); ++i)
+        {
+            const std::vector<std::string>& s = bp::extract<std::vector<std::string>>(list[i]);
+            self->emplace_back(s);
+        }
+
+        return self;
+    }
+
+    inline static void add(std::vector<std::vector<std::string>>& self, const std::vector<std::string>& s)
+    {
+        self.push_back(s);
+    }
+
+    inline static void set(std::vector<std::vector<std::string>>& self, uint32_t index, const std::vector<std::string>& s)
+    {
+        if(index < 0)
+            index += self.size();
+
+        if(index >= 0 && index < self.size())
+            self[index] = s;
+    }
+
+    static const std::string repr(std::vector<std::vector<std::string>>& self)
+    {
+        std::string ret = "[";
+
+        for (int i = 0; i < self.size(); ++i)
+        {
+            ret += "[";
+
+            for(int k = 0; k < self[i].size(); ++k)
+                ret += self[i][k] + ", ";
+
+            ret += "], ";
+        }
+
+        ret += "]";
+
+        return ret;
+    }
+};
+
 /**
  * \class VectorExposureLinkRelation
  * \brief Special wrapper class for VectorExposure handling vectors of LinkRelation

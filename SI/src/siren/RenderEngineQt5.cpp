@@ -3,6 +3,7 @@
 
 #include <QDesktopWidget>
 #include <QScreen>
+#include <debug/Print.hpp>
 
 RenderEngineQT5::RenderEngineQT5() = default;
 
@@ -48,7 +49,18 @@ void RenderEngineQT5::disable_anti_aliasing()
 
 void RenderEngineQT5::enable_anti_aliasing(uint32_t samplng_factor)
 {
+    samplng_factor = 2;
     QSurfaceFormat format;
     format.setSamples(samplng_factor);
     QSurfaceFormat::setDefaultFormat(format);
+}
+
+void RenderEngineQT5::set_cursor_stroke_width_by_cursor_id(const std::string &cursor_id, int stroke_width)
+{
+    d_window->set_cursor_stroke_width_by_cursor_id(cursor_id, stroke_width);
+}
+
+void RenderEngineQT5::set_cursor_stroke_color_by_cursor_id(const std::string &cursor_id, const glm::vec4 &color)
+{
+    d_window->set_cursor_stroke_color_by_cursor_id(cursor_id, color);
 }
