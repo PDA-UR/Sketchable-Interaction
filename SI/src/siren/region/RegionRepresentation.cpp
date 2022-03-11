@@ -47,7 +47,7 @@ RegionRepresentation::RegionRepresentation(QQmlContext* c, const std::shared_ptr
     setBrush(QBrush(d_color));
     setPen(QPen(d_color));
     setZValue(-1);
-    setFillRule(Qt::FillRule::WindingFill);
+    setFillRule(Qt::WindingFill);
 }
 
 RegionRepresentation::~RegionRepresentation()
@@ -101,7 +101,7 @@ void RegionRepresentation::perform_transform_update(const std::shared_ptr<Region
             d_view->move(d_initial_offset.x, d_initial_offset.y);
     }
 
-//    prepareGeometryChange();
+    prepareGeometryChange();
 }
 
 void RegionRepresentation::perform_data_update(const std::shared_ptr<Region> &region)
@@ -181,11 +181,11 @@ void RegionRepresentation::paint(QPainter *painter, const QStyleOptionGraphicsIt
 {
     if(!d_visible)
         return;
-
-    int area = polygon().boundingRect().width() * polygon().boundingRect().height();
-
-    if(area < 100)
-        return;
+//
+//    int area = polygon().boundingRect().width() * polygon().boundingRect().height();
+//
+//    if(area < 100)
+//        return;
 
     QGraphicsPolygonItem::paint(painter, option, widget);
 
