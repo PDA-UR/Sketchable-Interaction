@@ -4,17 +4,9 @@ from plugins.__loaded_plugins__.standard_environment_library.canvas import Canva
 from plugins.__loaded_plugins__.standard_environment_library.palette import Palette
 from plugins.__loaded_plugins__.standard_environment_library.cursor import Cursor
 from plugins.__loaded_plugins__.standard_environment_library.deletion import Deletion
-from plugins.__loaded_plugins__.standard_environment_library.slider import SliderBase
-from plugins.__loaded_plugins__.standard_environment_library.slider import SliderTargetDummy
-from plugins.__loaded_plugins__.standard_environment_library.unredo import Undo, Redo
 from plugins.standard_environment_library.tangible.camera.ScanCameraAreaDetection import ScanCameraAreaDetection
 from plugins.standard_environment_library.tangible.camera.TableArea import TableArea
 from plugins.standard_environment_library.tangible.document.tools.Color import Color
-from plugins.standard_environment_library.plot.Plot import Plot
-from plugins.standard_environment_library.image_editor.ImageEditor import ImageEditor
-from plugins.standard_environment_library.presentation.Presentation import Presentation
-from plugins.standard_environment_library.lasso.Lasso import Lasso
-from plugins.standard_environment_library.video.Video import Video
 
 import math
 
@@ -113,8 +105,8 @@ BENCHMARK = 8
 TABLE_AREA_CALIBRATION = 16
 
 def start_application():
-    rgba = {}
-    # rgba = {"rgba": (0, 0, 0, 255)}
+    # rgba = {}
+    rgba = {"rgba": (0, 0, 0, 255)}
 
     add_canvas(rgba)
     add_mouse_cursor({"draw": "RMB"})
@@ -130,17 +122,12 @@ def on_start():
     PySI.Startup.logger_set_log_output(PySI.Logger.SI_LOG_SHOW_ALL)
     PySI.Startup.logger_quench_messages_from_class("linkingmanager")
     PySI.Startup.logger_quench_messages_from_class("recognizer")
-    # PySI.Startup.logger_quench_messages_from_class("mainwindow")
+    PySI.Startup.logger_quench_messages_from_class("mainwindow")
 
     PySI.Startup.set_pen_color(PySI.Configuration.PEN_CLOLOR_BLACK)
     # PySI.Startup.set_pen_color(PySI.Configuration.PEN_CLOLOR_WHITE)
 
     PySI.Startup.exclude_plugins([
-        Plot.regionname,
-        Presentation.regionname,
-        Lasso.regionname,
-        ImageEditor.regionname,
-        Video.regionname
     ])
 
     CHOICE = APPLICATION

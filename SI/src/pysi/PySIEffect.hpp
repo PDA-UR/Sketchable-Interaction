@@ -37,6 +37,7 @@ public:
     void __create_region__(const bp::list& contour, int effect_type, bp::dict& kwargs);
     void __create_region__(const bp::object& contour, const bp::dict& qml);
     void __create_region__(const bp::list &contour, bp::object &clazz, bp::dict &kwargs);
+    void __current_tangible_selection__(const std::string& effect_to_assign, const std::string& effect_display_name, const std::string& effect_texture, bp::dict& kwargs);
     bp::list __current_regions__();
     bp::list __excluded_plugins__();
     bp::list __conditional_variables__();

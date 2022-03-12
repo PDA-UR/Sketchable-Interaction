@@ -79,6 +79,16 @@ inline void to_yaml(
     out << "\n";
   }
 
+  // member: dblclick
+  {
+    if (indentation > 0) {
+      out << std::string(indentation, ' ');
+    }
+    out << "dblclick: ";
+    value_to_yaml(msg.dblclick, out);
+    out << "\n";
+  }
+
   // member: x
   {
     if (indentation > 0) {

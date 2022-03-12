@@ -3,7 +3,12 @@
 #include <sigrun/context/Context.hpp>
 #include "TangibleManager.hpp"
 
-TangibleManager::TangibleManager() = default;
+TangibleManager::TangibleManager():
+    d_assigned_pen_effect(""),
+    d_assigned_pen_effect_display_name(""),
+    d_assigned_pen_effect_texture_path("")
+{}
+
 TangibleManager::~TangibleManager() = default;
 
 void TangibleManager::receive(const TangibleObjectMessage* p_message)
@@ -41,6 +46,7 @@ void TangibleManager::add_tangible(const TangibleObjectMessage *p_message)
     kwargs["original_contour"] = p_message->shape();
     kwargs["click"] = p_message->is_click();
     kwargs["drag"] = p_message->is_drag();
+    kwargs["dbl_click"] = p_message->is_dbl_click();
     kwargs["x"] = p_message->x() / p_message->tracker_dimension_x() * Context::SIContext()->width();
     kwargs["y"] = p_message->y()/ p_message->tracker_dimension_y() * Context::SIContext()->height();
     kwargs["alive"] = p_message->is_alive();
@@ -48,6 +54,10 @@ void TangibleManager::add_tangible(const TangibleObjectMessage *p_message)
     kwargs["color"] = p_message->color();
     kwargs["tx"] = p_message->tracker_dimension_x();
     kwargs["ty"] = p_message->tracker_dimension_y();
+    kwargs["assigned_effect"] = d_assigned_pen_effect;
+    kwargs["assigned_effect_display_name"] = d_assigned_pen_effect_display_name;
+    kwargs["assigned_effect_texture_path"] = d_assigned_pen_effect_texture_path;
+    kwargs["assigned_effect_kwargs"] = d_assigned_pen_effect_kwargs;
 
     Context::SIContext()->register_new_region_via_name(contour, p_message->plugin_identifier(), false, kwargs);
 }
@@ -89,6 +99,7 @@ void TangibleManager::update_tangible(const TangibleObjectMessage* p_message)
     kwargs["original_contour"] = p_message->shape();
     kwargs["click"] = p_message->is_click();
     kwargs["drag"] = p_message->is_drag();
+    kwargs["dbl_click"] = p_message->is_dbl_click();
     kwargs["x"] = p_message->x() / p_message->tracker_dimension_x() * Context::SIContext()->width();
     kwargs["y"] = p_message->y()/ p_message->tracker_dimension_y() * Context::SIContext()->height();
     kwargs["alive"] = p_message->is_alive();
@@ -96,7 +107,13 @@ void TangibleManager::update_tangible(const TangibleObjectMessage* p_message)
     kwargs["color"] = p_message->color();
     kwargs["tx"] = p_message->tracker_dimension_x();
     kwargs["ty"] = p_message->tracker_dimension_y();
+    kwargs["assigned_effect"] = d_assigned_pen_effect;
+    kwargs["assigned_effect_display_name"] = d_assigned_pen_effect_display_name;
+    kwargs["assigned_effect_texture_path"] = d_assigned_pen_effect_texture_path;
+    kwargs["assigned_effect_kwargs"] = d_assigned_pen_effect_kwargs;
+
     std::shared_ptr<Region> r = associated_region(p_message->id());
+
     if(r)
         r->raw_effect().attr("__update__")(kwargs);
 
@@ -142,4 +159,12 @@ void TangibleManager::remove(int id)
 const std::vector<int> &TangibleManager::tangible_ids()
 {
     return d_tangible_ids;
+}
+
+void TangibleManager::set_current_pen_selection(const std::string &effect_to_assign, const std::string &effect_display_name, const std::string &effect_texture_path, bp::dict &kwargs)
+{
+    d_assigned_pen_effect = effect_to_assign;
+    d_assigned_pen_effect_display_name = effect_display_name;
+    d_assigned_pen_effect_texture_path = effect_texture_path;
+    d_assigned_pen_effect_kwargs = kwargs;
 }

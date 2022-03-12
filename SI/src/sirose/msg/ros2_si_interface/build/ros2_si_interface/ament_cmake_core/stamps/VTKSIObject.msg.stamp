@@ -3,6 +3,7 @@ string plugin
 float32[] geometry
 bool click
 bool drag
+bool dblclick
 float32 x
 float32 y
 bool alive

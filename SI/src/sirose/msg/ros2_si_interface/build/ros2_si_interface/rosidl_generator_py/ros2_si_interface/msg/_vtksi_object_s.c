@@ -160,6 +160,15 @@ bool ros2_si_interface__msg__vtksi_object__convert_from_py(PyObject * _pymsg, vo
     ros_message->drag = (Py_True == field);
     Py_DECREF(field);
   }
+  {  // dblclick
+    PyObject * field = PyObject_GetAttrString(_pymsg, "dblclick");
+    if (!field) {
+      return false;
+    }
+    assert(PyBool_Check(field));
+    ros_message->dblclick = (Py_True == field);
+    Py_DECREF(field);
+  }
   {  // x
     PyObject * field = PyObject_GetAttrString(_pymsg, "x");
     if (!field) {
@@ -461,6 +470,17 @@ PyObject * ros2_si_interface__msg__vtksi_object__convert_to_py(void * raw_ros_me
     field = PyBool_FromLong(ros_message->drag ? 1 : 0);
     {
       int rc = PyObject_SetAttrString(_pymessage, "drag", field);
+      Py_DECREF(field);
+      if (rc) {
+        return NULL;
+      }
+    }
+  }
+  {  // dblclick
+    PyObject * field = NULL;
+    field = PyBool_FromLong(ros_message->dblclick ? 1 : 0);
+    {
+      int rc = PyObject_SetAttrString(_pymessage, "dblclick", field);
       Py_DECREF(field);
       if (rc) {
         return NULL;

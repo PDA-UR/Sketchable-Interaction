@@ -44,6 +44,8 @@ cdr_serialize(
   cdr << (ros_message.click ? true : false);
   // Member: drag
   cdr << (ros_message.drag ? true : false);
+  // Member: dblclick
+  cdr << (ros_message.dblclick ? true : false);
   // Member: x
   cdr << ros_message.x;
   // Member: y
@@ -96,6 +98,13 @@ cdr_deserialize(
     uint8_t tmp;
     cdr >> tmp;
     ros_message.drag = tmp ? true : false;
+  }
+
+  // Member: dblclick
+  {
+    uint8_t tmp;
+    cdr >> tmp;
+    ros_message.dblclick = tmp ? true : false;
   }
 
   // Member: x
@@ -179,6 +188,12 @@ get_serialized_size(
   // Member: drag
   {
     size_t item_size = sizeof(ros_message.drag);
+    current_alignment += item_size +
+      eprosima::fastcdr::Cdr::alignment(current_alignment, item_size);
+  }
+  // Member: dblclick
+  {
+    size_t item_size = sizeof(ros_message.dblclick);
     current_alignment += item_size +
       eprosima::fastcdr::Cdr::alignment(current_alignment, item_size);
   }
@@ -296,6 +311,13 @@ max_serialized_size_VTKSIObject(
   }
 
   // Member: drag
+  {
+    size_t array_size = 1;
+
+    current_alignment += array_size * sizeof(uint8_t);
+  }
+
+  // Member: dblclick
   {
     size_t array_size = 1;
 

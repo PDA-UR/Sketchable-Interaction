@@ -43,11 +43,11 @@ RegionRepresentation::RegionRepresentation(QQmlContext* c, const std::shared_ptr
     for(auto& p: region->contour())
         poly << QPointF(p.x, p.y);
 
+    setFillRule(Qt::WindingFill);
     setPolygon(poly);
     setBrush(QBrush(d_color));
     setPen(QPen(d_color));
     setZValue(-1);
-    setFillRule(Qt::WindingFill);
 }
 
 RegionRepresentation::~RegionRepresentation()
@@ -91,6 +91,8 @@ void RegionRepresentation::perform_transform_update(const std::shared_ptr<Region
             .translate(region->last_delta_x(), region->last_delta_y())
             .map(polygon()));
 
+        prepareGeometryChange();
+
         d_last_delta_x = region->x();
         d_last_delta_y = region->y();
 
@@ -100,8 +102,6 @@ void RegionRepresentation::perform_transform_update(const std::shared_ptr<Region
         if(!d_qml_path.empty())
             d_view->move(d_initial_offset.x, d_initial_offset.y);
     }
-
-    prepareGeometryChange();
 }
 
 void RegionRepresentation::perform_data_update(const std::shared_ptr<Region> &region)
@@ -140,6 +140,8 @@ void RegionRepresentation::perform_data_update(const std::shared_ptr<Region> &re
            .translate(region->x(), region->y())
            .map(poly));
 
+        prepareGeometryChange();
+
         if(!d_qml_path.empty())
         {
             if(x != this->boundingRect().x() && y != this->boundingRect().y())
@@ -159,7 +161,6 @@ void RegionRepresentation::perform_data_update(const std::shared_ptr<Region> &re
 
         d_was_data_received = false;
     }
-    prepareGeometryChange();
 }
 
 QColor& RegionRepresentation::color()
@@ -181,11 +182,6 @@ void RegionRepresentation::paint(QPainter *painter, const QStyleOptionGraphicsIt
 {
     if(!d_visible)
         return;
-//
-//    int area = polygon().boundingRect().width() * polygon().boundingRect().height();
-//
-//    if(area < 100)
-//        return;
 
     QGraphicsPolygonItem::paint(painter, option, widget);
 
