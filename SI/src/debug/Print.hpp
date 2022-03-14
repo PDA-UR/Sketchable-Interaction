@@ -221,6 +221,12 @@ public:
         return s;
     }
 
+    inline static std::string _print(const bp::tuple t)
+    {
+        const std::string& s = bp::extract<std::string>(bp::str(t));
+        return s;
+    }
+
     template<class... Args>
     static void print(Args &&... args)
     {

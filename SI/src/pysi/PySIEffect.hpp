@@ -38,9 +38,12 @@ public:
     void __create_region__(const bp::object& contour, const bp::dict& qml);
     void __create_region__(const bp::list &contour, bp::object &clazz, bp::dict &kwargs);
     void __current_tangible_selection__(const std::string& effect_to_assign, const std::string& effect_display_name, const std::string& effect_texture, bp::dict& kwargs);
+    void __add_multiple_regions__(const bp::list& contours, const std::string& effect_name, bp::dict& kwargs);
     bp::list __current_regions__();
     bp::list __excluded_plugins__();
     bp::list __conditional_variables__();
+
+    void __move_hard__(float x, float y);
 
     void __set_drawing_additions__(const bp::list& drawing_additions);
     bp::list __drawing_additions__();

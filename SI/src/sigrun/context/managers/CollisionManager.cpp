@@ -32,7 +32,7 @@ void CollisionManager::perform_collision_check(std::vector<std::tuple<Region*, R
     {
         for(int k = i + 1; k < in.size(); ++k)
         {
-            if(in[i]->name() == SI_NAME_EFFECT_MOUSE_CURSOR || in[k]->name() == SI_NAME_EFFECT_MOUSE_CURSOR)
+            if(in[i]->name() == SI_NAME_EFFECT_MOUSE_CURSOR || in[k]->name() == SI_NAME_EFFECT_MOUSE_CURSOR || in[i]->name() == "__ Pen __" || in[k]->name() == "__ Pen __")
             {
                 if (collides_with_mask(in[i], in[k]))
                 {

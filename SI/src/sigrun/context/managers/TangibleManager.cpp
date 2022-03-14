@@ -6,7 +6,8 @@
 TangibleManager::TangibleManager():
     d_assigned_pen_effect(""),
     d_assigned_pen_effect_display_name(""),
-    d_assigned_pen_effect_texture_path("")
+    d_assigned_pen_effect_texture_path(""),
+    d_last_time(clock())
 {}
 
 TangibleManager::~TangibleManager() = default;
@@ -24,8 +25,6 @@ void TangibleManager::receive(const TangibleObjectMessage* p_message)
 
 void TangibleManager::add_tangible(const TangibleObjectMessage *p_message)
 {
-    PythonGlobalInterpreterLockGuard g;
-
     if(!(MESSAGE_VALID(p_message)))
         return;
 
@@ -86,8 +85,6 @@ void TangibleManager::add_links_to_kwargs(bp::dict &kwargs, const std::vector<in
 
 void TangibleManager::update_tangible(const TangibleObjectMessage* p_message)
 {
-    PythonGlobalInterpreterLockGuard g;
-
     if(!(MESSAGE_VALID(p_message)))
         return;
 
@@ -123,8 +120,6 @@ void TangibleManager::update_tangible(const TangibleObjectMessage* p_message)
 
 std::shared_ptr<Region> TangibleManager::associated_region(int id)
 {
-    PythonGlobalInterpreterLockGuard g;
-
     auto& regions = Context::SIContext()->region_manager()->regions();
 
     for(auto& region: regions)
@@ -145,8 +140,6 @@ std::shared_ptr<Region> TangibleManager::associated_region(int id)
 
 void TangibleManager::remove(int id)
 {
-    PythonGlobalInterpreterLockGuard g;
-
     d_tangible_ids.erase(std::remove_if(d_tangible_ids.begin(), d_tangible_ids.end(), [&](int other)
     {
         if(other == id)

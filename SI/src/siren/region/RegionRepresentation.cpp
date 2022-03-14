@@ -25,15 +25,15 @@ RegionRepresentation::RegionRepresentation(QQmlContext* c, const std::shared_ptr
     {
         d_view = new QQuickWidget(parent);
         d_view->setSource(QUrl::fromLocalFile(d_qml_path.c_str()));
+        d_view->rootContext()->setContextProperty("REGION", this);
 
         // leave that here, otherwise after ~600 items no further views are shown
-        d_view->show();
-
-        d_view->rootContext()->setContextProperty("REGION", this);
+        d_view->setAttribute(Qt::WA_NoSystemBackground);
         d_view->setGeometry(d_initial_offset.x, d_initial_offset.y, region->visualization_width(), region->visualization_height());
         d_view->setAttribute(Qt::WA_AlwaysStackOnTop);
         d_view->setAttribute(Qt::WA_NoSystemBackground);
         d_view->setClearColor(Qt::transparent);
+        d_view->show();
 
         if(region->effect()->has_data_changed())
             QMetaObject::invokeMethod(reinterpret_cast<QObject *>(d_view->rootObject()), "updateData", QGenericReturnArgument(), Q_ARG(QVariant, region->data()));

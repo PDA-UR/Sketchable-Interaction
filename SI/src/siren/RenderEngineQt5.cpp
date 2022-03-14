@@ -52,6 +52,8 @@ void RenderEngineQT5::enable_anti_aliasing(uint32_t samplng_factor)
     samplng_factor = 2;
     QSurfaceFormat format;
     format.setSamples(samplng_factor);
+    format.setSwapInterval(0);
+
     QSurfaceFormat::setDefaultFormat(format);
 }
 

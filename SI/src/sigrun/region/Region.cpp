@@ -226,7 +226,32 @@ void Region::LINK_SLOT(const std::string& uuid_event, const std::string& uuid_se
         for(auto& [k, v]: d_py_effect->attr_link_recv()[source_cap])
         {
             if(uuid_sender.empty())
-                v(*args);
+            {
+                if(source_cap == "__SI_position__")
+                {
+                    auto& regions = Context::SIContext()->region_manager()->regions();
+
+                    auto it = std::find_if(regions.begin(), regions.end(), [&](auto &region)
+                    {
+                       return region->name() == SI_NAME_EFFECT_MOUSE_CURSOR;
+                    });
+
+                    if(it != regions.end())
+                    {
+                        float abs_x = bp::extract<float>(args[2]);
+                        float abs_y = bp::extract<float>(args[3]);
+                        it->get()->raw_effect().attr("last_x") = it->get()->d_py_effect->d_x;
+                        it->get()->raw_effect().attr("last_y") = it->get()->d_py_effect->d_y;
+                        it->get()->raw_effect().attr("x") = abs_x;
+                        it->get()->raw_effect().attr("x") = abs_y;
+                        it->get()->d_py_effect->d_x = abs_x;
+                        it->get()->d_py_effect->d_y = abs_y;
+                        it->get()->move_and_rotate();
+                    }
+                }
+
+//                v(*args);
+            }
             else
             {
                 if(Context::SIContext()->linking_manager()->is_linked(uuid_sender, source_cap, uuid(), k, ILink::UD))
@@ -236,7 +261,31 @@ void Region::LINK_SLOT(const std::string& uuid_event, const std::string& uuid_se
                     else
                     {
                         if (bp::extract<bp::tuple>(args).check())
+                        {
+//                           if(source_cap == "__SI_position__")
+//                           {
+//                               auto& regions = Context::SIContext()->region_manager()->regions();
+//
+//                               auto it = std::find_if(regions.begin(), regions.end(), [&](auto &region)
+//                               {
+//                                   return region->name() == "__ Pen __";
+//                               });
+//
+//                               if(it != regions.end())
+//                               {
+//                                   float abs_x = bp::extract<float>(args[2]);
+//                                   float abs_y = bp::extract<float>(args[3]);
+//                                   it->get()->raw_effect().attr("last_x") = it->get()->d_py_effect->d_x;
+//                                   it->get()->raw_effect().attr("last_y") = it->get()->d_py_effect->d_y;
+//                                   it->get()->raw_effect().attr("x") = abs_x;
+//                                   it->get()->raw_effect().attr("x") = abs_y;
+//                                   it->get()->d_py_effect->d_x = abs_x;
+//                                   it->get()->d_py_effect->d_y = abs_y;
+//                                   it->get()->move_and_rotate();
+//                               }
+//                           }
                             v(*args);
+                        }
                         else
                         {
                             if(!bp::extract<bp::dict>(args).check())
@@ -336,14 +385,13 @@ void Region::update()
 
         d_py_effect->d_recompute_mask = false;
     }
+    process_canvas_specifics();
+    process_linking_relationships();
 
     move_and_rotate();
 
     if(Context::SIContext())
         Context::SIContext()->spatial_hash_grid()->update_region(this);
-
-    process_canvas_specifics();
-    process_linking_relationships();
 }
 
 int32_t Region::x()

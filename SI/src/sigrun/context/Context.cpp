@@ -29,7 +29,7 @@ Context* Context::self = nullptr;
 Context::~Context()
 {
     INFO("Destroying Context...");
-    upjs.release();
+//    upjs.release();
     p_py_garbage_collector = nullptr;
     INFO("Destroyed Context");
 }
@@ -198,26 +198,14 @@ void Context::set_main_window()
 
 void Context::update()
 {
+    perform_input_update();
+    d_ros->update();
+    perform_region_insertion();
+    perform_collision_update();
+    perform_link_events();
+
     perform_external_object_update();
     perform_external_application_registration();
-    perform_region_insertion();
-
-    upjs->execute([&]
-    {
-        perform_input_update();
-    });
-
-    upjs->execute([&]
-    {
-        perform_link_events();
-    });
-
-    upjs->execute([&]
-    {
-        perform_collision_update();
-    });
-
-    upjs->wait();
 }
 
 uint32_t Context::width()
@@ -307,7 +295,6 @@ void Context::register_new_region(const std::vector<glm::vec3>& contour, const s
 
 void Context::register_new_region_via_name(const std::vector<glm::vec3>& contour, const std::string& effect_name, bool as_selector, bp::dict& kwargs)
 {
-//    PythonGlobalInterpreterLockGuard g;
     int id = bp::extract<int>(d_plugins[effect_name].attr(d_plugins[effect_name].attr(SI_INTERNAL_NAME)).attr(SI_INTERNAL_REGION_TYPE));
 
     if(!as_selector)
@@ -436,8 +423,8 @@ void Context::perform_mouse_update(std::unordered_map<std::string, std::shared_p
     auto& px = upim->previous_mouse_coords().x;
     auto& py = upim->previous_mouse_coords().y;
 
-    bp::tuple args = bp::make_tuple(px, py, x, y);
 
+    bp::tuple args = bp::make_tuple(px, py, x, y);
     Q_EMIT it->second->LINK_SIGNAL(_UUID_, "", SI_CAPABILITY_LINK_POSITION, args);
 }
 
@@ -652,7 +639,6 @@ void Context::push_fps(int actual, int target)
     }
     else
     {
-        PythonGlobalInterpreterLockGuard g;
         fps_region->raw_effect().attr("__update_fps__")(actual, target);
     }
 }
