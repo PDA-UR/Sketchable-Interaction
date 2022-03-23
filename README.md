@@ -14,12 +14,13 @@
 In this section, the build process is described which is used to create the current Release of SI.
 ### Downloading and Building the Dependencies
 #### Misc. Dependencies
-The dependencies for all components of SI (SIGRun, SIREn, PySI, SIEGen, SITools, SIPlugGen) are:
+The dependencies for all components of SI (SIGRun, SIREn, PySI, SIROSe, SIEGen, SITools, SIPlugGen) are:
   * Qt5
   * QML
+  * ROS2
   * libglm
   * uuid
-  * python3.9-dev (replace x with your desired version)
+  * python3.x-dev (replace x with your desired version)
   * libtbb-dev
   
 The recommended way of installing the dependencies except for Boost is:
@@ -57,11 +58,12 @@ Using other versions should work, therefore the commands then need adjustments a
 ### Compiling SI
 * Download SI and extract the zip file
 * Open your terminal and navigate to the Sketchable-Interaction folder
+* Source your ROS2 installation
+* Source the SIROSe extension: source SI/src/sirose/msg/ros2_si_interface/install/setup.bash
 * Run the commands:
   * cmake .
   * cmake --build . --target all -j 8
 
 ## Running SI
 * Open your Terminal and navigate to the Sketchable-Interaction Folder
-* Run the command:
-  * si.sh
+* Run the command si.sh or run the command si_test_application
