@@ -436,7 +436,7 @@ void Context::perform_mouse_update(std::unordered_map<std::string, std::shared_p
     auto& px = upim->previous_mouse_coords().x;
     auto& py = upim->previous_mouse_coords().y;
 
-    bp::tuple args = bp::make_tuple(px, py, x, y);
+    bp::tuple args = bp::make_tuple(x - px, y - py, x, y);
 
     Q_EMIT it->second->LINK_SIGNAL(_UUID_, "", SI_CAPABILITY_LINK_POSITION, args);
 }
