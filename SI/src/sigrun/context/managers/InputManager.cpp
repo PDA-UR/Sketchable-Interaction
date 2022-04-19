@@ -162,7 +162,6 @@ bool InputManager::eventFilter(QObject *watched, QEvent *event)
 
         d_mouse_coords.x = x;
         d_mouse_coords.y = y;
-
         return true;
     }
 

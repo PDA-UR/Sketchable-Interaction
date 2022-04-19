@@ -4,6 +4,9 @@
 PartialRegionRepresentation::PartialRegionRepresentation(const std::string& id, const std::vector<glm::vec3>& source_contour, int stroke_width, const glm::vec4& color):
     d_id(id)
 {
+    if(source_contour.empty())
+        return;
+
     QPainterPath path;
 
     path.moveTo(source_contour[0].x, source_contour[0].y);
@@ -30,6 +33,9 @@ PartialRegionRepresentation::~PartialRegionRepresentation()
 
 void PartialRegionRepresentation::update(const std::vector<glm::vec3>& path)
 {
+    if(path.empty())
+        return;
+
     QPainterPath qpath;
 
     qpath.moveTo(path[0].x, path[0].y);

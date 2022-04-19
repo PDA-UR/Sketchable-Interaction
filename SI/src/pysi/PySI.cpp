@@ -85,6 +85,9 @@ BOOST_PYTHON_MODULE(libPySI)
                 .def("__set_cursor_stroke_color_by_cursorid__", &PySIEffect::__set_cursor_stroke_color_by_cursorid__)
                 // used for sending stuff back over network
                 .def("__notify__", &PySIEffect::__notify__)
+                .def("__current_tangible_selection__", &PySIEffect::__current_tangible_selection__)
+                .def("__add_multiple_regions__", &PySIEffect::__add_multiple_regions__)
+                .def("__move_hard__", &PySIEffect::__move_hard__)
 
                 .add_property("current_collisions", &PySIEffect::get_collisions, &PySIEffect::set_collisions)
                 .add_property("shape", &PySIEffect::get_shape, &PySIEffect::set_shape)

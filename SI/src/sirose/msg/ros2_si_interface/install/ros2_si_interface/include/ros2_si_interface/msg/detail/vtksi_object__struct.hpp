@@ -44,6 +44,7 @@ struct VTKSIObject_
       this->plugin = "";
       this->click = false;
       this->drag = false;
+      this->dblclick = false;
       this->x = 0.0f;
       this->y = 0.0f;
       this->alive = false;
@@ -58,6 +59,7 @@ struct VTKSIObject_
       this->plugin = "";
       this->click = false;
       this->drag = false;
+      this->dblclick = false;
       this->x = 0.0f;
       this->y = 0.0f;
       this->alive = false;
@@ -80,6 +82,7 @@ struct VTKSIObject_
       this->plugin = "";
       this->click = false;
       this->drag = false;
+      this->dblclick = false;
       this->x = 0.0f;
       this->y = 0.0f;
       this->alive = false;
@@ -94,6 +97,7 @@ struct VTKSIObject_
       this->plugin = "";
       this->click = false;
       this->drag = false;
+      this->dblclick = false;
       this->x = 0.0f;
       this->y = 0.0f;
       this->alive = false;
@@ -119,6 +123,9 @@ struct VTKSIObject_
   using _drag_type =
     bool;
   _drag_type drag;
+  using _dblclick_type =
+    bool;
+  _dblclick_type dblclick;
   using _x_type =
     float;
   _x_type x;
@@ -173,6 +180,12 @@ struct VTKSIObject_
     const bool & _arg)
   {
     this->drag = _arg;
+    return *this;
+  }
+  Type & set__dblclick(
+    const bool & _arg)
+  {
+    this->dblclick = _arg;
     return *this;
   }
   Type & set__x(
@@ -279,6 +292,9 @@ struct VTKSIObject_
       return false;
     }
     if (this->drag != other.drag) {
+      return false;
+    }
+    if (this->dblclick != other.dblclick) {
       return false;
     }
     if (this->x != other.x) {

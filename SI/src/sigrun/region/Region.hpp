@@ -89,6 +89,10 @@ public:
 
     std::vector<int>& grid_nodes();
     glm::ivec4& grid_bounds();
+    int32_t d_last_delta_x;
+    int32_t d_last_delta_y;
+    int32_t d_last_x;
+    int32_t d_last_y;
 
     float angle();
 
@@ -113,10 +117,6 @@ private:
     std::unique_ptr<RegionTransform> uprt;
     bool d_is_transformed;
 
-    int32_t d_last_x;
-    int32_t d_last_y;
-    int32_t d_last_delta_x;
-    int32_t d_last_delta_y;
     float d_last_angle;
 };
 

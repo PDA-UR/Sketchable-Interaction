@@ -22,6 +22,8 @@ MainWindow::MainWindow(uint32_t width, uint32_t height, uint32_t target_fps):
 
     this->setInteractive(false);
 
+
+
     d_engine = new QQmlEngine();
     d_engine->setObjectOwnership(d_engine, QQmlEngine::CppOwnership);
 
@@ -32,6 +34,8 @@ MainWindow::MainWindow(uint32_t width, uint32_t height, uint32_t target_fps):
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
+
+    setViewport(new QOpenGLWidget);
     setScene(p_scene);
     setRenderHint(QPainter::Antialiasing);
 }
@@ -72,8 +76,8 @@ void MainWindow::loop()
 
         if(render)
         {
-            __loop();
             Context::SIContext()->update();
+            __loop();
             frames++;
         }
     }
@@ -102,6 +106,24 @@ void MainWindow::handle_region_representations()
 {
     auto& regions = Context::SIContext()->region_manager()->regions();
 
+    for(auto& reg: regions)
+    {
+        auto it = std::find_if(d_reg_reps.begin(), d_reg_reps.end(), [&](RegionRepresentation* rep)
+        {
+            return reg->uuid() == rep->uuid();
+        });
+
+        if(it == d_reg_reps.end())
+        {
+            d_reg_reps.push_back(new RegionRepresentation(d_qmlcontext, reg, this));
+            p_scene->addItem(d_reg_reps.back());
+        }
+        else
+        {
+            (*it)->update(reg);
+        }
+    }
+
     d_reg_reps.erase(std::remove_if(d_reg_reps.begin(), d_reg_reps.end(), [&](RegionRepresentation* rep)
     {
         auto it = std::find_if(regions.begin(), regions.end(), [&](auto& reg)
@@ -120,23 +142,7 @@ void MainWindow::handle_region_representations()
 
     }), d_reg_reps.end());
 
-    for(auto& reg: regions)
-    {
-        auto it = std::find_if(d_reg_reps.begin(), d_reg_reps.end(), [&](RegionRepresentation* rep)
-        {
-            return reg->uuid() == rep->uuid();
-        });
 
-        if(it == d_reg_reps.end())
-        {
-            d_reg_reps.push_back(new RegionRepresentation(d_qmlcontext, reg, this));
-            p_scene->addItem(d_reg_reps.back());
-        }
-        else
-        {
-            (*it)->update(reg);
-        }
-    }
 }
 
 void MainWindow::handle_partial_region_representations()

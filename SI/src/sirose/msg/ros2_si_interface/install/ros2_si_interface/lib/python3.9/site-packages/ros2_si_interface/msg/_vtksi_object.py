@@ -69,6 +69,7 @@ class VTKSIObject(metaclass=Metaclass_VTKSIObject):
         '_geometry',
         '_click',
         '_drag',
+        '_dblclick',
         '_x',
         '_y',
         '_alive',
@@ -85,6 +86,7 @@ class VTKSIObject(metaclass=Metaclass_VTKSIObject):
         'geometry': 'sequence<float>',
         'click': 'boolean',
         'drag': 'boolean',
+        'dblclick': 'boolean',
         'x': 'float',
         'y': 'float',
         'alive': 'boolean',
@@ -99,6 +101,7 @@ class VTKSIObject(metaclass=Metaclass_VTKSIObject):
         rosidl_parser.definition.BasicType('int64'),  # noqa: E501
         rosidl_parser.definition.UnboundedString(),  # noqa: E501
         rosidl_parser.definition.UnboundedSequence(rosidl_parser.definition.BasicType('float')),  # noqa: E501
+        rosidl_parser.definition.BasicType('boolean'),  # noqa: E501
         rosidl_parser.definition.BasicType('boolean'),  # noqa: E501
         rosidl_parser.definition.BasicType('boolean'),  # noqa: E501
         rosidl_parser.definition.BasicType('float'),  # noqa: E501
@@ -120,6 +123,7 @@ class VTKSIObject(metaclass=Metaclass_VTKSIObject):
         self.geometry = array.array('f', kwargs.get('geometry', []))
         self.click = kwargs.get('click', bool())
         self.drag = kwargs.get('drag', bool())
+        self.dblclick = kwargs.get('dblclick', bool())
         self.x = kwargs.get('x', float())
         self.y = kwargs.get('y', float())
         self.alive = kwargs.get('alive', bool())
@@ -168,6 +172,8 @@ class VTKSIObject(metaclass=Metaclass_VTKSIObject):
         if self.click != other.click:
             return False
         if self.drag != other.drag:
+            return False
+        if self.dblclick != other.dblclick:
             return False
         if self.x != other.x:
             return False
@@ -273,6 +279,19 @@ class VTKSIObject(metaclass=Metaclass_VTKSIObject):
                 isinstance(value, bool), \
                 "The 'drag' field must be of type 'bool'"
         self._drag = value
+
+    @property
+    def dblclick(self):
+        """Message field 'dblclick'."""
+        return self._dblclick
+
+    @dblclick.setter
+    def dblclick(self, value):
+        if __debug__:
+            assert \
+                isinstance(value, bool), \
+                "The 'dblclick' field must be of type 'bool'"
+        self._dblclick = value
 
     @property
     def x(self):

@@ -36,6 +36,7 @@ ros2_si_interface__msg__VTKSIObject__init(ros2_si_interface__msg__VTKSIObject * 
   }
   // click
   // drag
+  // dblclick
   // x
   // y
   // alive
@@ -75,6 +76,7 @@ ros2_si_interface__msg__VTKSIObject__fini(ros2_si_interface__msg__VTKSIObject * 
   rosidl_runtime_c__float__Sequence__fini(&msg->geometry);
   // click
   // drag
+  // dblclick
   // x
   // y
   // alive

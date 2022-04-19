@@ -16,73 +16,70 @@ CollisionManager::~CollisionManager() = default;
 
 void CollisionManager::collide(std::vector<std::shared_ptr<Region>> &regions)
 {
-    tbb::concurrent_vector<std::tuple<Region*, Region*, bool>> collisions;
+    std::vector<std::tuple<Region*, Region*, bool>> collisions;
 
     perform_collision_check(collisions, regions);
     perform_collision_events(collisions);
     remove_dead_collision_events();
 }
 
-void CollisionManager::perform_collision_check(tbb::concurrent_vector<std::tuple<Region*, Region*, bool>> &out, const std::vector<std::shared_ptr<Region>>& in)
+void CollisionManager::perform_collision_check(std::vector<std::tuple<Region*, Region*, bool>> &out, const std::vector<std::shared_ptr<Region>>& in)
 {
-    tbb::concurrent_unordered_map<Region*, tbb::concurrent_vector<tbb::concurrent_vector<std::string>>> current_collisions;
-    tbb::concurrent_unordered_map<Region*, tbb::concurrent_vector<std::string>> enveloped;
+    std::unordered_map<Region*, std::vector<std::vector<std::string>>> current_collisions;
+    std::unordered_map<Region*, std::vector<std::string>> enveloped;
 
-    tbb::parallel_for(tbb::blocked_range<uint32_t>(0, in.size() - 1), [&](const tbb::blocked_range<uint32_t>& r)
+    for(int i = 0; i < in.size() - 1; ++i)
     {
-        for(auto i = r.begin(); i != r.end(); ++i)
+        for(int k = i + 1; k < in.size(); ++k)
         {
-            tbb::parallel_for(tbb::blocked_range<uint32_t>(i + 1, in.size()), [&](const tbb::blocked_range<uint32_t> &r2)
+            if(in[i]->name() == SI_NAME_EFFECT_MOUSE_CURSOR || in[k]->name() == SI_NAME_EFFECT_MOUSE_CURSOR || in[i]->name() == "__ Pen __" || in[k]->name() == "__ Pen __")
             {
-                for (auto k = r2.begin(); k != r2.end(); ++k)
+                if (collides_with_mask(in[i], in[k]))
                 {
-                    if(in[i]->name() == SI_NAME_EFFECT_MOUSE_CURSOR || in[k]->name() == SI_NAME_EFFECT_MOUSE_CURSOR)
+                    if (has_capabilities_in_common(in[i], in[k]))
                     {
-                        if (collides_with_mask(in[i], in[k]))
-                        {
-                            if (has_capabilities_in_common(in[i], in[k]))
-                            {
-                                out.emplace_back(in[i].get(), in[k].get(), true);
-                                continue;
-                            }
-                            else
-                            {
-                                const auto& a = in[i].get();
-                                const auto& b = in[k].get();
-                                current_collisions[a].push_back(tbb::concurrent_vector<std::string> {b->uuid(), b->name()});
-                                current_collisions[b].push_back(tbb::concurrent_vector<std::string> {a->uuid(), a->name()});
-                            }
-                        }
+                        out.emplace_back(in[i].get(), in[k].get(), true);
+                        continue;
                     }
                     else
                     {
-                        if (has_capabilities_in_common(in[i], in[k]))
+                        const auto& a = in[i].get();
+                        const auto& b = in[k].get();
+                        current_collisions[a].push_back(std::vector<std::string> {b->uuid(), b->name()});
+                        current_collisions[b].push_back(std::vector<std::string> {a->uuid(), a->name()});
+                    }
+                }
+            }
+            else
+            {
+                if (has_capabilities_in_common(in[i], in[k]))
+                {
+                    if (collides_with_aabb(in[i].get(), in[k].get()))
+                    {
+                        if (collides_with_mask(in[i], in[k]))
                         {
-                            if (collides_with_aabb(in[i].get(), in[k].get()))
-                            {
-                                if (collides_with_mask(in[i], in[k]))
-                                {
-                                    out.emplace_back(in[i].get(), in[k].get(), true);
+                            out.emplace_back(in[i].get(), in[k].get(), true);
 
-                                    if(in[i]->effect()->evaluate_enveloped())
-                                        if (evaluate_enveloped(in[i], in[k]))
-                                            enveloped[in[i].get()].push_back(in[k]->uuid());
+                            enveloped[in[i].get()].clear();
+                            enveloped[in[k].get()].clear();
 
-                                    if(in[k]->effect()->evaluate_enveloped())
-                                        if(evaluate_enveloped(in[k], in[i]))
-                                            enveloped[in[k].get()].push_back(in[i]->uuid());
+                            if(in[i]->effect()->evaluate_enveloped())
+                                if (evaluate_enveloped(in[i], in[k]))
+                                    enveloped[in[i].get()].push_back(in[k]->uuid());
 
-                                    continue;
-                                }
-                            }
+                            if(in[k]->effect()->evaluate_enveloped())
+                                if(evaluate_enveloped(in[k], in[i]))
+                                    enveloped[in[k].get()].push_back(in[i]->uuid());
+
+                            continue;
                         }
                     }
-
-                    out.emplace_back(in[i].get(), in[k].get(), false);
                 }
-            });
+            }
+
+            out.emplace_back(in[i].get(), in[k].get(), false);
         }
-    });
+    }
 
     for(auto& [r, v]: enveloped)
     {
@@ -101,8 +98,8 @@ void CollisionManager::perform_collision_check(tbb::concurrent_vector<std::tuple
             const auto& a = std::get<0>(tuple);
             const auto& b = std::get<1>(tuple);
 
-            current_collisions[a].push_back(tbb::concurrent_vector<std::string> {b->uuid(), b->name()});
-            current_collisions[b].push_back(tbb::concurrent_vector<std::string> {a->uuid(), a->name()});
+            current_collisions[a].push_back(std::vector<std::string> {b->uuid(), b->name()});
+            current_collisions[b].push_back(std::vector<std::string> {a->uuid(), a->name()});
         }
     }
 
@@ -122,7 +119,7 @@ void CollisionManager::perform_collision_check(tbb::concurrent_vector<std::tuple
     }
 }
 
-void CollisionManager::perform_collision_events(tbb::concurrent_vector<std::tuple<Region*, Region*, bool>> &in)
+void CollisionManager::perform_collision_events(std::vector<std::tuple<Region*, Region*, bool>> &in)
 {
     for(auto elemit = in.rbegin(); elemit != in.rend(); ++elemit)
     {

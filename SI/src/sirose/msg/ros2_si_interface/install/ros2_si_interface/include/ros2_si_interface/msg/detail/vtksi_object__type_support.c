@@ -39,7 +39,7 @@ void VTKSIObject__rosidl_typesupport_introspection_c__VTKSIObject_fini_function(
   ros2_si_interface__msg__VTKSIObject__fini(message_memory);
 }
 
-static rosidl_typesupport_introspection_c__MessageMember VTKSIObject__rosidl_typesupport_introspection_c__VTKSIObject_message_member_array[13] = {
+static rosidl_typesupport_introspection_c__MessageMember VTKSIObject__rosidl_typesupport_introspection_c__VTKSIObject_message_member_array[14] = {
   {
     "id",  // name
     rosidl_typesupport_introspection_c__ROS_TYPE_INT64,  // type
@@ -109,6 +109,21 @@ static rosidl_typesupport_introspection_c__MessageMember VTKSIObject__rosidl_typ
     0,  // array size
     false,  // is upper bound
     offsetof(ros2_si_interface__msg__VTKSIObject, drag),  // bytes offset in struct
+    NULL,  // default value
+    NULL,  // size() function pointer
+    NULL,  // get_const(index) function pointer
+    NULL,  // get(index) function pointer
+    NULL  // resize(index) function pointer
+  },
+  {
+    "dblclick",  // name
+    rosidl_typesupport_introspection_c__ROS_TYPE_BOOLEAN,  // type
+    0,  // upper bound of string
+    NULL,  // members of sub message
+    false,  // is array
+    0,  // array size
+    false,  // is upper bound
+    offsetof(ros2_si_interface__msg__VTKSIObject, dblclick),  // bytes offset in struct
     NULL,  // default value
     NULL,  // size() function pointer
     NULL,  // get_const(index) function pointer
@@ -240,7 +255,7 @@ static rosidl_typesupport_introspection_c__MessageMember VTKSIObject__rosidl_typ
 static const rosidl_typesupport_introspection_c__MessageMembers VTKSIObject__rosidl_typesupport_introspection_c__VTKSIObject_message_members = {
   "ros2_si_interface__msg",  // message namespace
   "VTKSIObject",  // message name
-  13,  // number of fields
+  14,  // number of fields
   sizeof(ros2_si_interface__msg__VTKSIObject),
   VTKSIObject__rosidl_typesupport_introspection_c__VTKSIObject_message_member_array,  // message members
   VTKSIObject__rosidl_typesupport_introspection_c__VTKSIObject_init_function,  // function to initialize message memory (memory has to be allocated)

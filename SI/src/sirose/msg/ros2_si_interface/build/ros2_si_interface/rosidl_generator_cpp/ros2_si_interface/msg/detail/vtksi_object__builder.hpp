@@ -148,16 +148,32 @@ private:
   ::ros2_si_interface::msg::VTKSIObject msg_;
 };
 
+class Init_VTKSIObject_dblclick
+{
+public:
+  explicit Init_VTKSIObject_dblclick(::ros2_si_interface::msg::VTKSIObject & msg)
+  : msg_(msg)
+  {}
+  Init_VTKSIObject_x dblclick(::ros2_si_interface::msg::VTKSIObject::_dblclick_type arg)
+  {
+    msg_.dblclick = std::move(arg);
+    return Init_VTKSIObject_x(msg_);
+  }
+
+private:
+  ::ros2_si_interface::msg::VTKSIObject msg_;
+};
+
 class Init_VTKSIObject_drag
 {
 public:
   explicit Init_VTKSIObject_drag(::ros2_si_interface::msg::VTKSIObject & msg)
   : msg_(msg)
   {}
-  Init_VTKSIObject_x drag(::ros2_si_interface::msg::VTKSIObject::_drag_type arg)
+  Init_VTKSIObject_dblclick drag(::ros2_si_interface::msg::VTKSIObject::_drag_type arg)
   {
     msg_.drag = std::move(arg);
-    return Init_VTKSIObject_x(msg_);
+    return Init_VTKSIObject_dblclick(msg_);
   }
 
 private:
