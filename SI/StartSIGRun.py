@@ -4,6 +4,13 @@ from plugins.__loaded_plugins__.standard_environment_library.canvas import Canva
 from plugins.__loaded_plugins__.standard_environment_library.palette import Palette
 from plugins.__loaded_plugins__.standard_environment_library.cursor import Cursor
 from plugins.__loaded_plugins__.standard_environment_library.deletion import Deletion
+from plugins.__loaded_plugins__.standard_environment_library.slider import SliderBase
+from plugins.__loaded_plugins__.standard_environment_library.slider import SliderTargetDummy
+from plugins.standard_environment_library.plot.Plot import Plot
+from plugins.standard_environment_library.presentation.Presentation import Presentation
+from plugins.standard_environment_library.lasso.Lasso import Lasso
+from plugins.standard_environment_library.video.Video import Video
+from plugins.standard_environment_library.terminal.Terminal import Terminal
 from plugins.standard_environment_library.tangible.camera.ScanCameraAreaDetection import ScanCameraAreaDetection
 from plugins.standard_environment_library.tangible.camera.TableArea import TableArea
 from plugins.standard_environment_library.tangible.document.tools.Color import Color
@@ -98,6 +105,15 @@ def add_annotation_color():
     shape = [[x, y], [x, y + th], [x + tw, y + th], [x + tw, y]]
     PySI.Startup.create_region_by_name(shape, Color.regionname, {"color": PySI.Color(100, 100, 20, 255)})
 
+def add_terminal():
+    x = 10
+    y = 10
+    w = 300
+    h = 200
+    shape = [[x, y], [x, y + h], [x + w, y + h], [x + w, y]]
+    PySI.Startup.create_region_by_name(shape, Terminal.regionname, {})
+
+
 APPLICATION = 1
 COLOR_PICKER = 2
 CAMERA_CALIBRATION = 4
@@ -112,6 +128,7 @@ def start_application():
     add_mouse_cursor({"draw": "RMB"})
     add_palette()
     add_unredo()
+    add_terminal()
     # add_annotation_color()
 
 def on_start():
@@ -127,8 +144,7 @@ def on_start():
     PySI.Startup.set_pen_color(PySI.Configuration.PEN_CLOLOR_BLACK)
     # PySI.Startup.set_pen_color(PySI.Configuration.PEN_CLOLOR_WHITE)
 
-    PySI.Startup.exclude_plugins([
-    ])
+    PySI.Startup.exclude_plugins([])
 
     CHOICE = APPLICATION
 

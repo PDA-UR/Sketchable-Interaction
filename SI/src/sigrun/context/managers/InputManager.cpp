@@ -154,8 +154,11 @@ bool InputManager::eventFilter(QObject *watched, QEvent *event)
     {
         QMouseEvent* mouse_event = (QMouseEvent*) event;
 
-        uint32_t x = mouse_event->x();
-        uint32_t y = mouse_event->y();
+        uint32_t x = mouse_event->globalX() - Context::SIContext()->width();
+        uint32_t y = mouse_event->globalY();
+
+        d_previous_mouse_coords.x = d_mouse_coords.x;
+        d_previous_mouse_coords.y = d_mouse_coords.y;
 
         d_mouse_coords.x = x;
         d_mouse_coords.y = y;
