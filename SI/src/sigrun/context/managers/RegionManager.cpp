@@ -144,6 +144,31 @@ std::unordered_map<std::string, std::vector<glm::vec3>> &RegionManager::partial_
     return d_partial_regions;
 }
 
+void RegionManager::update_key_inputs()
+{
+    auto it = std::find_if(d_regions.begin(), d_regions.end(), [&](auto& region)
+    {
+        return region->effect()->effect_type() == SI_TYPE_MOUSE_CURSOR;
+    });
+
+    if (!(it != d_regions.end()))
+        return;
+
+    bool lctrl = Context::SIContext()->input_manager()->is_key_down(SI_KEY_CTRL_L);
+    bool rctrl = Context::SIContext()->input_manager()->is_key_down(SI_KEY_CTRL_R);
+
+    if(lctrl || rctrl)
+    {
+        it->get()->raw_effect().attr("ctrl_pressed") = true;
+        it->get()->raw_effect().attr("on_ctrl_pressed")(true);
+    }
+    else
+    {
+        it->get()->raw_effect().attr("ctrl_pressed") = false;
+        it->get()->raw_effect().attr("on_ctrl_pressed")(false);
+    }
+}
+
 void RegionManager::update_mouse_inputs()
 {
     if(Context::SIContext()->input_manager()->is_mouse_down(SI_LEFT_MOUSE_BUTTON))
@@ -219,6 +244,7 @@ void RegionManager::update_regions()
 
 void RegionManager::update()
 {
+    update_key_inputs();
     update_mouse_inputs();
     update_region_deletions();
     update_regions();

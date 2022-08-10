@@ -1,7 +1,15 @@
 
 from libPySI import PySI
+
+from plugins.standard_environment_library.email.Inbox import Inbox
+from plugins.standard_environment_library.email.SendEmail import SendEmail
+from plugins.standard_environment_library.image_editor.ImageEditor import ImageEditor
+from plugins.standard_environment_library.paint_test.Painter import Painter
+from plugins.standard_environment_library.paint_test.PainterStrokeSize import PainterStrokeSize
+from plugins.standard_environment_library.tangible.popup3.ObjectScan import ObjectScan
+from plugins.standard_environment_library.tangible.popup3.TangibleScan import TangibleScan
 from plugins.__loaded_plugins__.standard_environment_library.canvas import Canvas
-from plugins.__loaded_plugins__.standard_environment_library.palette import Palette
+# from plugins.__loaded_plugins__.standard_environment_library.palette import Palette
 from plugins.__loaded_plugins__.standard_environment_library.cursor import Cursor
 from plugins.__loaded_plugins__.standard_environment_library.deletion import Deletion
 from plugins.__loaded_plugins__.standard_environment_library.slider import SliderBase
@@ -11,9 +19,8 @@ from plugins.standard_environment_library.presentation.Presentation import Prese
 from plugins.standard_environment_library.lasso.Lasso import Lasso
 from plugins.standard_environment_library.video.Video import Video
 from plugins.standard_environment_library.terminal.Terminal import Terminal
-from plugins.standard_environment_library.tangible.camera.ScanCameraAreaDetection import ScanCameraAreaDetection
-from plugins.standard_environment_library.tangible.camera.TableArea import TableArea
-from plugins.standard_environment_library.tangible.document.tools.Color import Color
+
+from plugins.study.fsm.logging.FSMLogging import FSMLogging
 
 import math
 
@@ -26,10 +33,11 @@ def add_canvas(kwargs={}):
     PySI.Startup.create_region_by_name(canvas_shape, Canvas.Canvas.regionname, kwargs)
 
 def add_mouse_cursor(kwargs):
-    mouse_shape = [[0, 0],
-                   [0, Cursor.Cursor.region_height],
-                   [Cursor.Cursor.region_width, Cursor.Cursor.region_height],
-                   [Cursor.Cursor.region_width, 0]]
+    x, y = -Cursor.Cursor.region_width / 2, -Cursor.Cursor.region_height / 2
+    mouse_shape = [[x, y],
+                   [x, y + Cursor.Cursor.region_height],
+                   [x + Cursor.Cursor.region_width, y + Cursor.Cursor.region_height],
+                   [x + Cursor.Cursor.region_width, y]]
 
     PySI.Startup.create_region_by_name(mouse_shape, Cursor.Cursor.regionname, kwargs)
 
@@ -120,16 +128,25 @@ CAMERA_CALIBRATION = 4
 BENCHMARK = 8
 TABLE_AREA_CALIBRATION = 16
 
+def add_study_setup(kwargs):
+    x = 10
+    y = 10
+    w = 300
+    h = 200
+    shape = [[x, y], [x, y + h], [x + w, y + h], [x + w, y]]
+    PySI.Startup.create_region_by_name(shape, FSMLogging.regionname, kwargs)
+
 def start_application():
-    # rgba = {}
-    rgba = {"rgba": (0, 0, 0, 255)}
+    rgba = {}
+    # rgba = {"rgba": (0, 0, 0, 255)}
 
     add_canvas(rgba)
     add_mouse_cursor({"draw": "RMB"})
-    add_palette()
+    # add_palette()
     add_unredo()
-    add_terminal()
-    # add_annotation_color()
+    # add_terminal()
+    kwargs = {"participant": "1", "task": "5", "repetition": "1"}
+    add_study_setup(kwargs)
 
 def on_start():
     PySI.Startup.enable(PySI.Configuration.SI_ANTI_ALIASING_8x)
@@ -144,7 +161,17 @@ def on_start():
     PySI.Startup.set_pen_color(PySI.Configuration.PEN_CLOLOR_BLACK)
     # PySI.Startup.set_pen_color(PySI.Configuration.PEN_CLOLOR_WHITE)
 
-    PySI.Startup.exclude_plugins([])
+    PySI.Startup.exclude_plugins([Plot.regionname,
+                                  Video.regionname,
+                                  Presentation.regionname,
+                                  Painter.regionname,
+                                  PainterStrokeSize.regionname,
+                                  ImageEditor.regionname,
+                                  Inbox.regionname,
+                                  SendEmail.regionname,
+                                  ObjectScan.regionname,
+                                  TangibleScan.regionname,
+                                  Terminal.regionname])
 
     CHOICE = APPLICATION
 

@@ -29,7 +29,7 @@ Context* Context::self = nullptr;
 Context::~Context()
 {
     INFO("Destroying Context...");
-//    upjs.release();
+    upjs.release();
     p_py_garbage_collector = nullptr;
     INFO("Destroyed Context");
 }
@@ -199,10 +199,13 @@ void Context::set_main_window()
 void Context::update()
 {
     perform_input_update();
-    d_ros->update();
+    uprm->update();
+
+//    d_ros->update();
     perform_region_insertion();
-    perform_collision_update();
     perform_link_events();
+    perform_collision_update();
+//    perform_link_events();
 
     perform_external_object_update();
     perform_external_application_registration();
@@ -570,7 +573,7 @@ void Context::perform_input_update()
 void Context::perform_collision_update()
 {
     uprcm->collide(uprm->regions());
-    uprm->update();
+//    uprm->update();
 }
 
 void Context::exclude_plugins(const std::vector<std::string>& excluded_plugins)

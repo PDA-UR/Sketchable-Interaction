@@ -34,6 +34,7 @@ private:
     std::vector<std::shared_ptr<Region>> d_regions;
     std::unordered_map<std::string, std::vector<glm::vec3>> d_partial_regions;
 
+    void update_key_inputs();
     void update_mouse_inputs();
     void update_regions();
     void update_region_deletions();
