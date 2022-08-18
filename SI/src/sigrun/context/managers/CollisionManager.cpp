@@ -60,9 +60,6 @@ void CollisionManager::perform_collision_check(std::vector<std::tuple<Region*, R
                         {
                             out.emplace_back(in[i].get(), in[k].get(), true);
 
-                            enveloped[in[i].get()].clear();
-                            enveloped[in[k].get()].clear();
-
                             if(in[i]->effect()->evaluate_enveloped())
                                 if (evaluate_enveloped(in[i], in[k]))
                                     enveloped[in[i].get()].push_back(in[k]->uuid());
@@ -86,7 +83,7 @@ void CollisionManager::perform_collision_check(std::vector<std::tuple<Region*, R
         bp::list l;
 
         for(const std::string& s: v)
-            l.append(s);
+            l.append(bp::str(s));
 
         r->raw_effect().attr("__enveloped_by__") = l;
     }
@@ -254,15 +251,9 @@ void CollisionManager::handle_event_enter(Region* a, Region* b)
 
 bool CollisionManager::evaluate_enveloped(const std::shared_ptr<Region> &a, const std::shared_ptr<Region> &b)
 {
-    bool is_enveloped = true;
-
     for(const glm::vec3& p: a->contour())
-    {
-        is_enveloped &= (*b->mask())[glm::vec3(p.x + a->x(), p.y + a->y(), 1)];
+        if(!(*b->mask())[glm::vec3(p.x + a->x(), p.y + a->y(), 1)])
+            return false;
 
-        if(!is_enveloped)
-            break;
-    }
-
-    return is_enveloped;
+    return true;
 }
