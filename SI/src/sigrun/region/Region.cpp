@@ -90,8 +90,8 @@ void Region::move_and_rotate()
     rotate(center);
 
     center = glm::vec2(d_py_effect->aabb()[0].x + (d_py_effect->aabb()[3].x - d_py_effect->aabb()[0].x) / 2, d_py_effect->aabb()[0].y + (d_py_effect->aabb()[1].y - d_py_effect->aabb()[0].y) / 2);
-    uprt->update(glm::vec2(x, y), d_last_angle, 1, center);
 
+    uprt->update(glm::vec2(x, y), d_last_angle, 1, center);
     move(center, x, y);
 
     d_is_transformed = true;
@@ -247,6 +247,7 @@ void Region::LINK_SLOT(const std::string& uuid_event, const std::string& uuid_se
                         it->get()->d_py_effect->d_x = abs_x;
                         it->get()->d_py_effect->d_y = abs_y;
                         it->get()->move_and_rotate();
+                        it->get()->raw_effect().attr("set_position_from_position")(abs_x - it->get()->d_py_effect->d_x, abs_y - it->get()->d_py_effect->d_y, abs_x, abs_y);
                     }
                 }
 

@@ -9,6 +9,7 @@ from plugins.standard_environment_library.paint_test.PainterStrokeSize import Pa
 from plugins.standard_environment_library.tangible.popup3.ObjectScan import ObjectScan
 from plugins.standard_environment_library.tangible.popup3.TangibleScan import TangibleScan
 from plugins.__loaded_plugins__.standard_environment_library.canvas import Canvas
+from plugins.__loaded_plugins__.standard_environment_library.canvas import Tooltip
 # from plugins.__loaded_plugins__.standard_environment_library.palette import Palette
 from plugins.__loaded_plugins__.standard_environment_library.cursor import Cursor
 from plugins.__loaded_plugins__.standard_environment_library.deletion import Deletion
@@ -30,7 +31,10 @@ def add_canvas(kwargs={}):
                     [PySI.Startup.context_dimensions()[0], PySI.Startup.context_dimensions()[1]],
                     [PySI.Startup.context_dimensions()[0], 0]]
 
+    tooltip_shape = [[10, 10], [10, 65], [260, 65], [260, 10]]
+
     PySI.Startup.create_region_by_name(canvas_shape, Canvas.Canvas.regionname, kwargs)
+    PySI.Startup.create_region_by_name(tooltip_shape, Tooltip.Tooltip.regionname, kwargs)
 
 def add_mouse_cursor(kwargs):
     x, y = -Cursor.Cursor.region_width / 2, -Cursor.Cursor.region_height / 2
@@ -145,8 +149,8 @@ def start_application():
     # add_palette()
     add_unredo()
     # add_terminal()
-    kwargs = {"participant": "1", "task": "5", "repetition": "1"}
-    add_study_setup(kwargs)
+    kwargs = {"participant": "1", "task": "2", "repetition": "1"}
+    # add_study_setup(kwargs)
 
 def on_start():
     PySI.Startup.enable(PySI.Configuration.SI_ANTI_ALIASING_8x)

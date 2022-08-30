@@ -511,6 +511,39 @@ void PySIEffect::set_shape(const std::vector<glm::vec3>& shape)
         tlc, blc, brc, trc
     };
 
+    float aabb_x = d_aabb[0].x;
+    float aabb_y = d_aabb[0].y;
+    float aabb_w = d_aabb[3].x - d_aabb[0].x;
+    float aabb_h = d_aabb[1].y - d_aabb[0].y;
+
+    float move_x = 0, move_y = 0;
+
+    if(aabb_x < 0)
+    {
+        move_x = -aabb_x;
+    }
+
+    if(aabb_y < 0)
+    {
+        move_y = -aabb_y;
+    }
+
+    if(aabb_x + aabb_w > Context::SIContext()->width())
+    {
+        move_x = (aabb_w + aabb_x) - Context::SIContext()->width();
+    }
+
+    if(aabb_y + aabb_h > Context::SIContext()->height())
+    {
+        move_y = (aabb_h + aabb_y) - Context::SIContext()->height();
+    }
+
+    for (int i = 0; i < temp.size(); ++i)
+    {
+        temp[i].x += move_x;
+        temp[i].y += move_y;
+    }
+
     if (d_name != "__ Painter __" && temp.size() != SI_CONTOUR_STEPCOUNT)
     {
         RegionResampler::resample(d_contour, temp);
