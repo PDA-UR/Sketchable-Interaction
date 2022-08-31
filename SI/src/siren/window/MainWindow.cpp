@@ -23,7 +23,7 @@ MainWindow::MainWindow(uint32_t width, uint32_t height, uint32_t target_fps):
     this->setInteractive(false);
 
     d_engine = new QQmlEngine();
-    d_engine->setObjectOwnership(d_engine, QQmlEngine::JavaScriptOwnership);
+    d_engine->setObjectOwnership(d_engine, QQmlEngine::CppOwnership);
 
     d_qmlcontext = new QQmlContext(d_engine);
 
@@ -32,9 +32,9 @@ MainWindow::MainWindow(uint32_t width, uint32_t height, uint32_t target_fps):
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
-    setViewport(new QOpenGLWidget);
+//    setViewport(new QOpenGLWidget);
     setScene(p_scene);
-    setRenderHint(QPainter::Antialiasing);
+//    setRenderHint(QPainter::Antialiasing);
 }
 
 void MainWindow::loop()

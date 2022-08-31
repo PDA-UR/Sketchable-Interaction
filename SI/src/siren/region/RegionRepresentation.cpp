@@ -91,8 +91,6 @@ void RegionRepresentation::perform_transform_update(const std::shared_ptr<Region
             .translate(region->last_delta_x(), region->last_delta_y())
             .map(polygon()));
 
-        prepareGeometryChange();
-
         d_last_delta_x = region->x();
         d_last_delta_y = region->y();
 
@@ -139,8 +137,6 @@ void RegionRepresentation::perform_data_update(const std::shared_ptr<Region> &re
            .translate(-poly.boundingRect().x() - (poly.boundingRect().width() / 2), -poly.boundingRect().y() - (poly.boundingRect().height() / 2))
            .translate(region->x(), region->y())
            .map(poly));
-
-        prepareGeometryChange();
 
         if(!d_qml_path.empty())
         {
