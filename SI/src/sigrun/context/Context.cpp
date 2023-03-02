@@ -643,19 +643,6 @@ void Context::perform_link_events()
         }
 
         d_link_emission_queue.pop();
-
-//        auto it = std::find_if(uprm->regions().begin(), uprm->regions().end(), [&](auto& region)
-//        {
-//            return region->uuid() == std::get<1>(link_tuple);
-//        });
-//
-//        if(it != uprm->regions().end())
-//        {
-//            (*it)->register_link_event({std::get<0>(link_tuple), std::get<2>(link_tuple)});
-//            Q_EMIT (*it)->LINK_SIGNAL(std::get<0>(link_tuple), (*it)->uuid(), std::get<2>(link_tuple), std::get<3>(link_tuple));
-//        }
-//
-//        d_link_emission_queue.pop();
     }
 }
 
