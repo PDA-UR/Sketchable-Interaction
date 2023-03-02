@@ -13,7 +13,7 @@
 
 namespace bp = boost::python;
 
-Region::Region(const std::vector<glm::vec3> &contour, const bp::object& effect, uint32_t mask_width, uint32_t mask_height, const bp::dict& kwargs):
+Region::Region(const std::vector<glm::vec3> &contour, const bp::object& effect, uint32_t mask_width, uint32_t mask_height, bp::dict kwargs):
     uprt(std::make_unique<RegionTransform>()),
     d_is_transformed(false),
     d_link_events(50),
@@ -33,8 +33,8 @@ Region::Region(const std::vector<glm::vec3> &contour, const bp::object& effect, 
 
     uprm = std::make_unique<RegionMask>(mask_width, mask_height, d_py_effect->contour());
 
-    if(Context::SIContext() && Context::SIContext()->spatial_hash_grid())
-        Context::SIContext()->spatial_hash_grid()->register_region(this);
+//    if(Context::SIContext() && Context::SIContext()->spatial_hash_grid())
+//        Context::SIContext()->spatial_hash_grid()->register_region(this);
 }
 
 Region::Region(const bp::object &o, const bp::dict &qml, uint32_t width, uint32_t height):
@@ -69,8 +69,8 @@ Region::Region(const bp::object &o, const bp::dict &qml, uint32_t width, uint32_
 
     uprm = std::make_unique<RegionMask>(width, height, d_py_effect->contour());
 
-    if(Context::SIContext() && Context::SIContext()->spatial_hash_grid())
-        Context::SIContext()->spatial_hash_grid()->register_region(this);
+//    if(Context::SIContext() && Context::SIContext()->spatial_hash_grid())
+//        Context::SIContext()->spatial_hash_grid()->register_region(this);
 }
 
 Region::~Region() = default;
@@ -125,23 +125,28 @@ void Region::move(const glm::vec2 &center, int x, int y)
     uprm->move(glm::vec2(d_last_delta_x, d_last_delta_y));
 }
 
-void Region::set_effect(const bp::object& effect, const bp::dict& kwargs)
+void Region::set_effect(const bp::object& effect, bp::dict& kwargs)
 {
     if (effect.is_none())
         return;
 
     HANDLE_PYTHON_CALL(PY_ERROR, "Fatal Error. Plugin broken",
-        d_effect = std::make_shared<bp::object>(effect.attr(effect.attr(SI_INTERNAL_NAME))(d_py_effect->contour(), d_py_effect->uuid(), kwargs));
-        d_py_effect = bp::extract<PySIEffect*>(*d_effect);
+       bool resampling_enabled = bp::extract<bool>(effect.attr(effect.attr(SI_INTERNAL_NAME)).attr("resampling_enabled"));
+       kwargs["resampling_enabled"] = resampling_enabled;
+       d_effect = std::make_shared<bp::object>(effect.attr(effect.attr(SI_INTERNAL_NAME))(d_py_effect->contour(), d_py_effect->uuid(), kwargs));
+       d_py_effect = bp::extract<PySIEffect*>(*d_effect);
     )
 }
 
-void Region::set_effect(const std::vector<glm::vec3>& contour, const bp::object& effect, const std::string& uuid, const bp::dict& kwargs)
+void Region::set_effect(const std::vector<glm::vec3>& contour, const bp::object& effect, const std::string& uuid, bp::dict& kwargs)
 {
     if (effect.is_none())
         return;
 
     HANDLE_PYTHON_CALL(PY_ERROR, "Fatal Error. Plugin broken",
+        bool resampling_enabled = bp::extract<bool>(effect.attr(effect.attr(SI_INTERNAL_NAME)).attr("resampling_enabled"));
+        kwargs["resampling_enabled"] = resampling_enabled;
+
         d_effect = std::make_shared<bp::object>(effect.attr(effect.attr(SI_INTERNAL_NAME))(contour, uuid, kwargs));
         d_py_effect = bp::extract<PySIEffect*>(*d_effect);
      )
@@ -231,24 +236,43 @@ void Region::LINK_SLOT(const std::string& uuid_event, const std::string& uuid_se
                 {
                     auto& regions = Context::SIContext()->region_manager()->regions();
 
-                    auto it = std::find_if(regions.begin(), regions.end(), [&](auto &region)
+                    for(auto& r: regions)
                     {
-                       return region->name() == SI_NAME_EFFECT_MOUSE_CURSOR;
-                    });
+                        if(r->name() == SI_NAME_EFFECT_MOUSE_CURSOR)
+                        {
+                            float abs_x = bp::extract<float>(args[2]);
+                            float abs_y = bp::extract<float>(args[3]);
+                            r->raw_effect().attr("last_x") = r->d_py_effect->d_x;
+                            r->raw_effect().attr("last_y") = r->d_py_effect->d_y;
+                            r->raw_effect().attr("x") = abs_x;
+                            r->raw_effect().attr("x") = abs_y;
+                            r->d_py_effect->d_x = abs_x;
+                            r->d_py_effect->d_y = abs_y;
+                            r->move_and_rotate();
+                            r->raw_effect().attr("set_position_from_position")(abs_x - r->d_py_effect->d_x, abs_y - r->d_py_effect->d_y, abs_x, abs_y);
 
-                    if(it != regions.end())
-                    {
-                        float abs_x = bp::extract<float>(args[2]);
-                        float abs_y = bp::extract<float>(args[3]);
-                        it->get()->raw_effect().attr("last_x") = it->get()->d_py_effect->d_x;
-                        it->get()->raw_effect().attr("last_y") = it->get()->d_py_effect->d_y;
-                        it->get()->raw_effect().attr("x") = abs_x;
-                        it->get()->raw_effect().attr("x") = abs_y;
-                        it->get()->d_py_effect->d_x = abs_x;
-                        it->get()->d_py_effect->d_y = abs_y;
-                        it->get()->move_and_rotate();
-                        it->get()->raw_effect().attr("set_position_from_position")(abs_x - it->get()->d_py_effect->d_x, abs_y - it->get()->d_py_effect->d_y, abs_x, abs_y);
+                            break;
+                        }
                     }
+
+//                    auto it = std::find_if(regions.begin(), regions.end(), [&](auto &region)
+//                    {
+//                       return region->name() == SI_NAME_EFFECT_MOUSE_CURSOR;
+//                    });
+//
+//                    if(it != regions.end())
+//                    {
+//                        float abs_x = bp::extract<float>(args[2]);
+//                        float abs_y = bp::extract<float>(args[3]);
+//                        it->get()->raw_effect().attr("last_x") = it->get()->d_py_effect->d_x;
+//                        it->get()->raw_effect().attr("last_y") = it->get()->d_py_effect->d_y;
+//                        it->get()->raw_effect().attr("x") = abs_x;
+//                        it->get()->raw_effect().attr("x") = abs_y;
+//                        it->get()->d_py_effect->d_x = abs_x;
+//                        it->get()->d_py_effect->d_y = abs_y;
+//                        it->get()->move_and_rotate();
+//                        it->get()->raw_effect().attr("set_position_from_position")(abs_x - it->get()->d_py_effect->d_x, abs_y - it->get()->d_py_effect->d_y, abs_x, abs_y);
+//                    }
                 }
 
 //                v(*args);
@@ -391,8 +415,8 @@ void Region::update()
 
     move_and_rotate();
 
-    if(Context::SIContext())
-        Context::SIContext()->spatial_hash_grid()->update_region(this);
+//    if(Context::SIContext())
+//        Context::SIContext()->spatial_hash_grid()->update_region(this);
 }
 
 int32_t Region::x()
@@ -466,13 +490,22 @@ void Region::set_data(const QMap<QString, QVariant>& data)
 {
     const auto &regions = Context::SIContext()->region_manager()->regions();
 
-    auto it = std::find_if(regions.begin(), regions.end(), [&](const auto &r)
+    for(auto& r: regions)
     {
-        return r->uuid() == data["uuid"].toString().toStdString();
-    });
+        if(r->uuid() == data["uuid"].toString().toStdString())
+        {
+            r->effect()->set_data(data);
+            break;
+        }
+    }
 
-    if (it != regions.end())
-        it->get()->effect()->set_data(data);
+//    auto it = std::find_if(regions.begin(), regions.end(), [&](const auto &r)
+//    {
+//        return r->uuid() == data["uuid"].toString().toStdString();
+//    });
+//
+//    if (it != regions.end())
+//        it->get()->effect()->set_data(data);
 }
 
 void Region::set_is_new(bool toggle)

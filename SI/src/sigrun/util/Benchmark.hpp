@@ -57,17 +57,18 @@ public:
 
     ~ScopedBenchmarkTimer()
     {
-        stop();
+//        stop();
     }
 
-private:
-    void stop()
+public:
+    long stop()
     {
-        auto end = std::chrono::time_point_cast<std::chrono::microseconds>(std::chrono::high_resolution_clock::now()).time_since_epoch().count();
-        auto start = std::chrono::time_point_cast<std::chrono::microseconds>(d_start_point).time_since_epoch().count();
+        auto end = std::chrono::time_point_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now()).time_since_epoch().count();
+        auto start = std::chrono::time_point_cast<std::chrono::milliseconds>(d_start_point).time_since_epoch().count();
         auto duration = end - start;
 
-        WARN("Duration: " + std::to_string(duration * 0.001) + " ms");
+        WARN("Duration: " + std::to_string(duration) + " ms");
+        return duration;
     }
 
     std::chrono::time_point<std::chrono::high_resolution_clock> d_start_point;

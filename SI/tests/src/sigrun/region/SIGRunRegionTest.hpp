@@ -4,9 +4,24 @@
 #define SITEST_SIGRUNREGIONTEST_HPP
 
 #include <gtest/gtest.h>
+#include <sigrun/Core.hpp>
 
 class SIGRunRegionTest: public ::testing::Test
 {
+public:
+    Context c;
+
+    virtual void SetUp()
+    {
+
+    }
+
+    virtual void TearDown()
+    {
+
+    }
+
+private:
 
 };
 

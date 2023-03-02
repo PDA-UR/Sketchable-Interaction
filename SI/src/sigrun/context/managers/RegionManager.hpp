@@ -39,13 +39,13 @@ private:
     void update_regions();
     void update_region_deletions();
 
-    void activate_mouse_region_button_down(uint32_t mouse_btn);
-    void deactivate_mouse_region_button_down(uint32_t mouse_btn);
-    void toggle_mouse_region_double_click(bool toggle);
+    void activate_mouse_region_button_down(Region* cursor, uint32_t mouse_btn);
+    void deactivate_mouse_region_button_down(Region* cursor, uint32_t mouse_btn);
+    void toggle_mouse_region_double_click(Region* cursor, bool toggle);
+    void toggle_mouse_region_wheel_scrolled(Region* cursor, float angle_px, float angle_degrees);
 
     bool d_previous_double_click_toggle = false;
 
-    void toggle_mouse_region_wheel_scrolled(float angle_px, float angle_degrees);
 
     friend class SIGRunRegionManagerTest;
 };

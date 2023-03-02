@@ -127,6 +127,8 @@ public:
     bool is_border_present();
     bool visible();
 
+    bool d_is_resampling_enabled = true;
+
     const bool has_data_changed() const;
 
     bp::dict __selected_effects_by_cursor_id__();

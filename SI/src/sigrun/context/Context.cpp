@@ -45,6 +45,9 @@ Context::Context()
     upeam = std::make_unique<ExternalApplicationManager>();
     upjs = std::make_unique<JobSystem<void, 512>>();
     uptm = std::make_unique<TangibleManager>();
+    logfile.open("menu_latency.csv", std::ios_base::app);
+    logfile << "time\n";
+
 
 //    p_py_garbage_collector = new bp::object(bp::import(SI_PYTHON_GARBAGE_COLLECTOR));
 }
@@ -223,20 +226,34 @@ uint32_t Context::height()
 
 void Context::set_effect(const std::string& target_uuid, const std::string& effect_name, bp::dict& kwargs)
 {
-    std::string s = bp::extract<std::string>(bp::str(kwargs));
-    auto it = std::find_if(uprm->regions().begin(),uprm->regions().end(),
-    [&](auto &region)
+
+    for(auto& region: uprm->regions())
     {
-        return region->uuid() == target_uuid;
-    });
+        if(region->uuid() == target_uuid)
+        {
+            if (region->type() == SI_TYPE_MOUSE_CURSOR || region->name() == "__ Pen __")
+            {
+                d_selected_effects_by_id[target_uuid] = d_available_plugins[effect_name];
+            }
+            else
+            {
+                region->set_effect(d_available_plugins[effect_name], kwargs);
+            }
+        }
+    }
 
-    if (!(it != uprm->regions().end()))
-        return;
-
-    if (it->get()->type() == SI_TYPE_MOUSE_CURSOR || it->get()->name() == "__ Pen __")
-        d_selected_effects_by_id[target_uuid] = d_available_plugins[effect_name];
-    else
-        it->get()->set_effect(d_available_plugins[effect_name], kwargs);
+//    auto it = std::find_if(uprm->regions().begin(), uprm->regions().end(), [&](auto &region)
+//    {
+//        return region->uuid() == target_uuid;
+//    });
+//
+//    if (!(it != uprm->regions().end()))
+//        return;
+//
+//    if (it->get()->type() == SI_TYPE_MOUSE_CURSOR || it->get()->name() == "__ Pen __")
+//        d_selected_effects_by_id[target_uuid] = d_available_plugins[effect_name];
+//    else
+//        it->get()->set_effect(d_available_plugins[effect_name], kwargs);
 }
 
 void Context::enable(uint32_t what)
@@ -320,29 +337,48 @@ void Context::register_new_region_via_name(const std::vector<glm::vec3>& contour
 
 void Context::register_new_region_via_type(const std::vector<glm::vec3>& contour, int id, bp::dict& kwargs)
 {
-    HANDLE_PYTHON_CALL(PY_ERROR, "Error. Could not add region!.",
-        auto effect = std::find_if(d_plugins.begin(), d_plugins.end(), [&id](auto& pair)
+    for(auto& pair: d_plugins)
+    {
+        if(pair.second.attr(pair.second.attr(SI_INTERNAL_NAME)).attr(SI_INTERNAL_REGION_TYPE) == id)
         {
-           return  pair.second.attr(pair.second.attr(SI_INTERNAL_NAME)).attr(SI_INTERNAL_REGION_TYPE) == id;
-        });
+            d_region_insertion_queue.emplace(contour, pair.second, id, kwargs);
+            break;
+        }
+    }
 
-        if(effect != d_plugins.end())
-            d_region_insertion_queue.emplace(contour, effect->second, id, kwargs);
-    )
+//    HANDLE_PYTHON_CALL(PY_ERROR, "Error. Could not add region!.",
+//        auto effect = std::find_if(d_plugins.begin(), d_plugins.end(), [&id](auto& pair)
+//        {
+//           return  pair.second.attr(pair.second.attr(SI_INTERNAL_NAME)).attr(SI_INTERNAL_REGION_TYPE) == id;
+//        });
+//
+//        if(effect != d_plugins.end())
+//            d_region_insertion_queue.emplace(contour, effect->second, id, kwargs);
+//    )
 }
 
 void Context::register_region_via_class_object(const std::vector<glm::vec3>& contour, bp::object& clazz, bp::dict& kwargs)
 {
-    auto effect = std::find_if(d_plugins.begin(), d_plugins.end(), [&clazz](auto& pair)
+    for(auto& pair: d_plugins)
     {
-        return pair.second.attr(SI_INTERNAL_NAME) == clazz.attr(SI_INTERNAL_NAME);
-    });
-
-    if(effect != d_plugins.end())
-    {
-        int id = bp::extract<int>(clazz.attr(clazz.attr(SI_INTERNAL_NAME)).attr(SI_INTERNAL_REGION_TYPE));
-        d_region_insertion_queue.emplace(contour, effect->second, id, kwargs);
+        if(pair.second.attr(SI_INTERNAL_NAME) == clazz.attr(SI_INTERNAL_NAME))
+        {
+            int id = bp::extract<int>(clazz.attr(clazz.attr(SI_INTERNAL_NAME)).attr(SI_INTERNAL_REGION_TYPE));
+            d_region_insertion_queue.emplace(contour, pair.second, id, kwargs);
+            break;
+        }
     }
+
+//    auto effect = std::find_if(d_plugins.begin(), d_plugins.end(), [&clazz](auto& pair)
+//    {
+//        return pair.second.attr(SI_INTERNAL_NAME) == clazz.attr(SI_INTERNAL_NAME);
+//    });
+//
+//    if(effect != d_plugins.end())
+//    {
+//        int id = bp::extract<int>(clazz.attr(clazz.attr(SI_INTERNAL_NAME)).attr(SI_INTERNAL_REGION_TYPE));
+//        d_region_insertion_queue.emplace(contour, effect->second, id, kwargs);
+//    }
 }
 
 void Context::register_link_event_emission(const std::string& event_uuid, const std::string& sender_uuid, const std::string& sender_attribute, const bp::object& args)
@@ -513,13 +549,57 @@ void Context::perform_external_application_registration()
 
 void Context::perform_region_insertion()
 {
-//    SI_BENCHMARK_SCOPE(
-        int32_t region_queue_size = d_region_insertion_queue.size();
+//    while(!d_region_insertion_queue.empty())
+//    {
+//        const auto& region_information_tuple = d_region_insertion_queue.front();
+//
+//        uprm->add_region(std::get<0>(region_information_tuple), std::get<1>(region_information_tuple), std::get<3>(region_information_tuple));
+//
+//        if(std::get<2>(region_information_tuple) == SI_TYPE_MOUSE_CURSOR)
+//        {
+//            deo[uprm->regions().back()->uuid()] = std::make_shared<ExternalObject>(ExternalObject::ExternalObjectType::MOUSE);
+//            uplm->add_link(deo[uprm->regions().back()->uuid()], uprm->regions().back(), SI_CAPABILITY_LINK_POSITION, SI_CAPABILITY_LINK_POSITION);
+//
+//            INFO("Plugin available for drawing");
+//        }
+//
+//        d_region_insertion_queue.pop();
+//    }
+//
+//    QApplication::processEvents(QEventLoop::ExcludeSocketNotifiers);
 
+    int32_t region_queue_size = d_region_insertion_queue.size();
+
+    if(region_queue_size > 0)
+    { // insert file writing here
+//        SI_BENCHMARK_SCOPE(
+                for(int32_t i = 0; i < ((region_queue_size > NEW_REGIONS_PER_FRAME) ? NEW_REGIONS_PER_FRAME: region_queue_size); ++i)
+                {
+                    const auto& region_information_tuple = d_region_insertion_queue.front();
+                    uprm->add_region(std::get<0>(region_information_tuple), std::get<1>(region_information_tuple), std::get<3>(region_information_tuple));
+
+                    if(std::get<2>(region_information_tuple) == SI_TYPE_MOUSE_CURSOR)
+                    {
+                        deo[uprm->regions().back()->uuid()] = std::make_shared<ExternalObject>(ExternalObject::ExternalObjectType::MOUSE);
+                        uplm->add_link(deo[uprm->regions().back()->uuid()], uprm->regions().back(), SI_CAPABILITY_LINK_POSITION, SI_CAPABILITY_LINK_POSITION);
+
+                        INFO("Plugin available for drawing");
+                    }
+
+                    d_region_insertion_queue.pop();
+                }
+
+                QApplication::processEvents(QEventLoop::ExcludeSocketNotifiers);
+//        )
+        long ms = std::chrono::time_point_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now()).time_since_epoch().count();
+        logfile << "end:" << ms << '\n';
+    }
+    else
+    {
+        logfile << "-\n";
         for(int32_t i = 0; i < ((region_queue_size > NEW_REGIONS_PER_FRAME) ? NEW_REGIONS_PER_FRAME: region_queue_size); ++i)
         {
             const auto& region_information_tuple = d_region_insertion_queue.front();
-
             uprm->add_region(std::get<0>(region_information_tuple), std::get<1>(region_information_tuple), std::get<3>(region_information_tuple));
 
             if(std::get<2>(region_information_tuple) == SI_TYPE_MOUSE_CURSOR)
@@ -533,10 +613,10 @@ void Context::perform_region_insertion()
             d_region_insertion_queue.pop();
         }
 
-        QApplication::processEvents();
-//    )
+        QApplication::processEvents(QEventLoop::ExcludeSocketNotifiers);
+    }
 
-    if(d_region_insertion_queue.empty())
+    if(d_region_insertion_queue.empty() && region_queue_size > 0)
     {
 //        SI_BENCHMARK_STOP;
 //        exit(0);
@@ -550,18 +630,32 @@ void Context::perform_link_events()
     for(int32_t i = 0; i < link_queue_size; ++i)
     {
         const auto& link_tuple = d_link_emission_queue.front();
-        auto it = std::find_if(uprm->regions().begin(), uprm->regions().end(), [&](auto& region)
-        {
-            return region->uuid() == std::get<1>(link_tuple);
-        });
+        bool found = false;
 
-        if(it != uprm->regions().end())
+        for(auto& region: uprm->regions())
         {
-            (*it)->register_link_event({std::get<0>(link_tuple), std::get<2>(link_tuple)});
-            Q_EMIT (*it)->LINK_SIGNAL(std::get<0>(link_tuple), (*it)->uuid(), std::get<2>(link_tuple), std::get<3>(link_tuple));
+            if(region->uuid() == std::get<1>(link_tuple))
+            {
+                region->register_link_event({std::get<0>(link_tuple), std::get<2>(link_tuple)});
+                Q_EMIT region->LINK_SIGNAL(std::get<0>(link_tuple), region->uuid(), std::get<2>(link_tuple), std::get<3>(link_tuple));
+                break;
+            }
         }
 
         d_link_emission_queue.pop();
+
+//        auto it = std::find_if(uprm->regions().begin(), uprm->regions().end(), [&](auto& region)
+//        {
+//            return region->uuid() == std::get<1>(link_tuple);
+//        });
+//
+//        if(it != uprm->regions().end())
+//        {
+//            (*it)->register_link_event({std::get<0>(link_tuple), std::get<2>(link_tuple)});
+//            Q_EMIT (*it)->LINK_SIGNAL(std::get<0>(link_tuple), (*it)->uuid(), std::get<2>(link_tuple), std::get<3>(link_tuple));
+//        }
+//
+//        d_link_emission_queue.pop();
     }
 }
 
@@ -573,7 +667,6 @@ void Context::perform_input_update()
 void Context::perform_collision_update()
 {
     uprcm->collide(uprm->regions());
-//    uprm->update();
 }
 
 void Context::exclude_plugins(const std::vector<std::string>& excluded_plugins)
@@ -644,4 +737,24 @@ void Context::push_fps(int actual, int target)
     {
         fps_region->raw_effect().attr("__update_fps__")(actual, target);
     }
+}
+
+void Context::set_file_system_root_folder(const std::string &path)
+{
+    d_file_system_root_folder = path;
+}
+
+void Context::set_file_system_desktop_folder(const std::string &path)
+{
+    d_file_system_desktop_folder = path;
+}
+
+std::string Context::file_system_root_folder()
+{
+    return d_file_system_root_folder;
+}
+
+std::string Context::file_system_desktop_folder()
+{
+    return d_file_system_desktop_folder;
 }

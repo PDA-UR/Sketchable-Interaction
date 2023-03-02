@@ -22,7 +22,7 @@ namespace bp = boost::python;
 class Region: public QObject, public SIObject
 { Q_OBJECT SIGRUN
 public:
-    Region(const std::vector<glm::vec3>& contour, const bp::object& effect, uint32_t width=0, uint32_t height=0, const bp::dict& kwargs=bp::dict());
+    Region(const std::vector<glm::vec3>& contour, const bp::object& effect, uint32_t width=0, uint32_t height=0, bp::dict kwargs=bp::dict());
     Region(const bp::object& o, const bp::dict& qml, uint32_t width=0, uint32_t height=0);
     ~Region();
 
@@ -30,8 +30,8 @@ public:
     void set_is_transformed(bool b);
     const std::string& uuid() const;
 
-    void set_effect(const bp::object& effect, const bp::dict& kwargs);
-    void set_effect(const std::vector<glm::vec3>& contour, const bp::object& effect, const std::string& uuid, const bp::dict& kwargs);
+    void set_effect(const bp::object& effect, bp::dict& kwargs);
+    void set_effect(const std::vector<glm::vec3>& contour, const bp::object& effect, const std::string& uuid, bp::dict& kwargs);
 
     void set_data(const QMap<QString, QVariant>& data);
 

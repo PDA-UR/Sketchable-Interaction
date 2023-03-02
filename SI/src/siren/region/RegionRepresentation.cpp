@@ -54,9 +54,17 @@ RegionRepresentation::~RegionRepresentation()
 {
     if(!d_qml_path.empty())
     {
+        d_view->rootContext()->destroyed();
+        d_view->close();
+        d_view->quickWindow()->destroy();
+        d_view->quickWindow()->deleteLater();
+        d_view->destroyed();
+        d_view->deleteLater();
         d_view->close();
         delete d_view;
     }
+
+    deleteLater();
 }
 
 const std::string& RegionRepresentation::uuid() const
@@ -151,6 +159,7 @@ void RegionRepresentation::perform_data_update(const std::shared_ptr<Region> &re
         }
     }
 
+
     if(d_was_data_received)
     {
         region->set_data(d_received_data);
@@ -192,16 +201,6 @@ void RegionRepresentation::paint(QPainter *painter, const QStyleOptionGraphicsIt
         pen.setWidth(d_border_width);
 
         painter->setPen(pen);
-        painter->drawPolygon(this->polygon());
-    }
-
-    if(d_type == SI_TYPE_DIRECTORY || d_type == SI_TYPE_IMAGE_FILE || d_type == SI_TYPE_TEXT_FILE)
-    {
-        pen = QPen(QColor(72, 79, 81));
-        pen.setWidth(1);
-        painter->setPen(pen);
-
-        painter->drawRect(this->polygon().boundingRect());
         painter->drawPolygon(this->polygon());
     }
 

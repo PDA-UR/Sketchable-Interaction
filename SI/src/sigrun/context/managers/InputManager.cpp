@@ -5,6 +5,9 @@
 #include <QWheelEvent>
 #include <QApplication>
 #include <execution>
+#include <QApplication>
+#include <QScreen>
+#include <QtDebug>
 
 #include "InputManager.hpp"
 #include <sigrun/context/Context.hpp>
@@ -153,8 +156,7 @@ bool InputManager::eventFilter(QObject *watched, QEvent *event)
     if(event->type() == QEvent::MouseMove)
     {
         QMouseEvent* mouse_event = (QMouseEvent*) event;
-
-        uint32_t x = mouse_event->globalX() - Context::SIContext()->width();
+        uint32_t x = mouse_event->globalX() - QApplication::primaryScreen()->geometry().x();
         uint32_t y = mouse_event->globalY();
 
         d_previous_mouse_coords.x = d_mouse_coords.x;
@@ -177,8 +179,12 @@ bool InputManager::eventFilter(QObject *watched, QEvent *event)
         switch (mouse_event->button())
         {
             case Qt::LeftButton:
+            {
+                long start = std::chrono::time_point_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now()).time_since_epoch().count();
+                Context::SIContext()->logfile << "start:" << start << '\n';
                 press_mouse_button(SI_LEFT_MOUSE_BUTTON);
-                break;
+            }
+            break;
 
             case Qt::MiddleButton:
                 press_mouse_button(SI_MIDDLE_MOUSE_BUTTON);

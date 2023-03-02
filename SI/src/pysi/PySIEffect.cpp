@@ -26,7 +26,7 @@ PySIEffect::PySIEffect(const std::vector<glm::vec3>& contour, const std::string&
 
     std::vector<glm::vec3> temp;
 
-    if(kwargs.has_key("__name__") and kwargs["__name__"] == "__ Painter __")
+    if((kwargs.has_key("__name__") && kwargs["__name__"] == "__ Painter __"))
     {
         temp = contour;
     }
@@ -520,12 +520,12 @@ void PySIEffect::set_shape(const std::vector<glm::vec3>& shape)
 
     if(aabb_x < 0)
     {
-        move_x = -aabb_x;
+        move_x = -(aabb_x);
     }
 
     if(aabb_y < 0)
     {
-        move_y = -aabb_y;
+        move_y = -(aabb_y);
     }
 
     if(aabb_x + aabb_w > Context::SIContext()->width())

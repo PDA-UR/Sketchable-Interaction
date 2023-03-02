@@ -6,15 +6,15 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
-set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -O2")
-set(CMAKE_CXX_FLAGS_RELEASE  "${CMAKE_CXX_FLAGS_RELEASE} -O2")
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -O3")
+set(CMAKE_CXX_FLAGS_RELEASE  "${CMAKE_CXX_FLAGS_RELEASE} -O3")
 
 set(BUILD_DOCS FALSE)
 
 #SIEngine
 include(SI/src/CMakeLists.txt)
 include(SI/src/siren/CMakeLists.txt)
-include(SI/src/sirose/CMakeLists.txt)
+#include(SI/src/sirose/CMakeLists.txt)
 
 #SItools
 include(SI/src/sitools/CMakeLists.txt)

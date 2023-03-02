@@ -131,6 +131,7 @@ BOOST_PYTHON_MODULE(libPySI)
                 .def_readwrite("mouse_wheel_angle_degrees", &PySIEffect::mouse_wheel_angle_degrees)
                 .def_readwrite("with_border", &PySIEffect::d_with_border)
                 .def_readwrite("visible", &PySIEffect::d_visible)
+                .def_readwrite("is_resampling_enabled", &PySIEffect::d_is_resampling_enabled)
                 .def_readwrite("evaluate_enveloped", &PySIEffect::d_evaluate_enveloped)
                 ;
 
@@ -239,6 +240,10 @@ BOOST_PYTHON_MODULE(libPySI)
                 .def("exclude_plugins", &PySIStartup::exclude_plugins).staticmethod("exclude_plugins")
                 .def("set_tangible_ip_address_and_port", &PySIStartup::set_tangible_ip_address_and_port).staticmethod("set_tangible_ip_address_and_port")
                 .def("set_pen_color", &PySIStartup::set_pen_color).staticmethod("set_pen_color")
+                .def("set_file_system_root_folder", &PySIStartup::set_file_system_root_folder).staticmethod("set_file_system_root_folder")
+                .def("file_system_root_folder", &PySIStartup::file_system_root_folder).staticmethod("file_system_root_folder")
+                .def("set_file_system_desktop_folder", &PySIStartup::set_file_system_desktop_folder).staticmethod("set_file_system_desktop_folder")
+                .def("file_system_desktop_folder", &PySIStartup::file_system_desktop_folder).staticmethod("file_system_desktop_folder")
 
                 .enable_pickling()
                 ;

@@ -50,6 +50,7 @@ protected:
 
     friend class SIGRun;
     friend class SIGRunTest;
+    friend class SIGRunRegionTest;
     friend class SIGRunCoreTest;
 
 protected:
