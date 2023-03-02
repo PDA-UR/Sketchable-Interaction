@@ -89,8 +89,8 @@ jobs:
       run: |
         if [[ "${{ github.event.head_commit.message }}" != *"[NO CI]"* ]]; then          
           #echo "deb http://cz.archive.ubuntu.com/ubuntu hirsute main universe" | sudo tee -a  /etc/apt/sources.list
-          #sudo apt update
-          #sudo apt install libtbb-dev
+          sudo apt update
+          sudo apt install libtbb-dev=2020.3-1
         fi  
         
     - name: Compile SI
