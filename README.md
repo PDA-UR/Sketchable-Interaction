@@ -17,11 +17,11 @@ In this section, the build process is described which is used to create the curr
 The dependencies for all components of SI (SIGRun, SIREn, PySI, SIROSe, SIEGen, SITools, SIPlugGen) are:
   * Qt5
   * QML
-  * ROS2
+  * (ROS2)
   * libglm
   * uuid
-  * python3.x-dev (replace x with your desired version)
-  * libtbb-dev
+  * python3.x-dev (replace x with your desired version; 3.9 recommended)
+  * libtbb-dev=libtbb-dev=2020.3-1
   
 The recommended way of installing the dependencies except for Boost is:
   * Open your terminal
@@ -38,8 +38,13 @@ The recommended way of installing the dependencies except for Boost is:
     * sudo apt install uuid-dev
   * Install your desired python3 version's dev library (e.g. 3.9)
     * sudo apt install python3.9-dev
-  * Install libtbb-dev
-    * sudo apt install libtbb-dev
+  * Install libtbb-dev 
+    * sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys <PUB_KEYS>
+    * sudo apt update
+    * echo "deb http://ftp.de.debian.org/debian bullseye main" | sudo tee -a  /etc/apt/sources.list
+    * sudo apt update
+    * sudo apt install libtbb2=2020.3-1
+    * sudo apt install libtbb-dev=2020.3-1
     
 #### Boost with components Python, System, Filesystem
 These dependencies are unfortunately a little more complex to install than simple **apt** calls.
