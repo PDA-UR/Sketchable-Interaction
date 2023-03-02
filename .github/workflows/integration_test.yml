@@ -89,7 +89,7 @@ jobs:
       run: |
         if [[ "${{ github.event.head_commit.message }}" != *"[NO CI]"* ]]; then    
           sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 648ACFD622F3D138 0E98404D386FA1D9 605C66F00D6C9793
-
+          sudo apt update
           echo "deb http://ftp.de.debian.org/debian bullseye main" | sudo tee -a  /etc/apt/sources.list
           sudo apt update
           sudo apt install libtbb-dev=2020.3-1
