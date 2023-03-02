@@ -117,10 +117,7 @@ jobs:
         #fi
         
       run: |
-        if [[ "${{ github.event.head_commit.message }}" != *"[NO CI]"* ]]; then
-          (cd /home/runner/work/Sketchable-Interaction/Sketchable-Interaction/SI/src/sirose/msg/ros2_si_interface; rm -rf build)
-          (cd /home/runner/work/Sketchable-Interaction/Sketchable-Interaction/SI/src/sirose/msg/ros2_si_interface;source /opt/ros/galactic/setup.bash; colcon build --packages-select ros2_si_interface)
-          
+        if [[ "${{ github.event.head_commit.message }}" != *"[NO CI]"* ]]; then          
           sed -i 's,find_package(Boost 1.69.0 COMPONENTS system python3.9 filesystem REQUIRED),find_package(Boost 1.69.0 EXACT REQUIRED COMPONENTS system python3.9 filesystem REQUIRED),g' /home/runner/work/Sketchable-Interaction/Sketchable-Interaction/SI/src/CMakeLists.txt
           sed -i 's,find_package(Boost 1.69.0 COMPONENTS system python3.9 REQUIRED),find_package(Boost 1.69.0 EXACT REQUIRED COMPONENTS system python3.9 filesystem REQUIRED),'g /home/runner/work/Sketchable-Interaction/Sketchable-Interaction/SI/tests/CMakeLists.txt
                  
