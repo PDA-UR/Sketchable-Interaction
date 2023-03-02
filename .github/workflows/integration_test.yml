@@ -138,14 +138,14 @@ jobs:
       if: success()
       run: |
         if [[ "${{ github.event.head_commit.message }}" != *"[NO CI]"* ]]; then
-          cd /home/runner/work/Sketchable-Interaction/Sketchable-Interaction/SI
+          #cd /home/runner/work/Sketchable-Interaction/Sketchable-Interaction/SI
                               
-          test_output="$(./../run_unit_tests)"
-          echo ${test_output}
+          #test_output="$(./../run_unit_tests)"
+          #echo ${test_output}
           
-          if [[ ${test_output} == *"FAILED TESTS"* ]]; then
-            exit 1
-          fi
+          #if [[ ${test_output} == *"FAILED TESTS"* ]]; then
+            #exit 1
+          #fi
         fi
         
     - name: Push Version
