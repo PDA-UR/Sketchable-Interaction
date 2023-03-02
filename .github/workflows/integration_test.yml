@@ -92,6 +92,7 @@ jobs:
           sudo apt update
           echo "deb http://ftp.de.debian.org/debian bullseye main" | sudo tee -a  /etc/apt/sources.list
           sudo apt update
+          sudo apt install libtbb2=2020.3-1
           sudo apt install libtbb-dev=2020.3-1
         fi  
         
