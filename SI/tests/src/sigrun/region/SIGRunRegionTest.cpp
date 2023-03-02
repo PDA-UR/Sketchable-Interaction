@@ -42,7 +42,7 @@ TEST_F(SIGRunRegionTest, aabb)
 
     std::vector<glm::vec3> contour {glm::vec3(100, 100, 1), glm::vec3(100, 600, 1), glm::vec3(600, 600, 1), glm::vec3(600, 100, 1)};
 
-    bp::import("sys").attr("path").attr("insert")(0, directory + "/tests/res/region");
+//    bp::import("sys").attr("path").attr("insert")(0, directory + "/tests/res/region");
 
     bp::object o = bp::import("Dummy3");
     o.attr(SI_INTERNAL_NAME) = "Dummy3";
@@ -61,7 +61,7 @@ TEST_F(SIGRunRegionTest, contour)
 
     std::vector<glm::vec3> contour {glm::vec3(100, 100, 1), glm::vec3(100, 600, 1), glm::vec3(600, 600, 1), glm::vec3(600, 100, 1)};
 
-    bp::import("sys").attr("path").attr("insert")(0, directory + "/tests/res/region");
+//    bp::import("sys").attr("path").attr("insert")(0, directory + "/tests/res/region");
 
     bp::object o = bp::import("Dummy3");
     o.attr(SI_INTERNAL_NAME) = "Dummy3";
@@ -78,7 +78,7 @@ TEST_F(SIGRunRegionTest, on_enter)
     getcwd(buf, FILENAME_MAX);
     std::string directory(buf);
 
-    bp::import("sys").attr("path").attr("insert")(0, directory + "/tests/res/region");
+//    bp::import("sys").attr("path").attr("insert")(0, directory + "/tests/res/region");
 
     bp::object o = bp::import("Dummy1");
     o.attr(SI_INTERNAL_NAME) = "Dummy1";
@@ -101,7 +101,7 @@ TEST_F(SIGRunRegionTest, on_continuous)
     getcwd(buf, FILENAME_MAX);
     std::string directory(buf);
 
-    bp::import("sys").attr("path").attr("insert")(0, directory + "/tests/res/region");
+//    bp::import("sys").attr("path").attr("insert")(0, directory + "/tests/res/region");
 
     bp::object o = bp::import("Dummy1");
     o.attr(SI_INTERNAL_NAME) = "Dummy1";
@@ -124,7 +124,7 @@ TEST_F(SIGRunRegionTest, on_leave)
     getcwd(buf, FILENAME_MAX);
     std::string directory(buf);
 
-    bp::import("sys").attr("path").attr("insert")(0, directory + "/tests/res/region");
+//    bp::import("sys").attr("path").attr("insert")(0, directory + "/tests/res/region");
 
     bp::object o = bp::import("Dummy1");
     o.attr(SI_INTERNAL_NAME) = "Dummy1";
