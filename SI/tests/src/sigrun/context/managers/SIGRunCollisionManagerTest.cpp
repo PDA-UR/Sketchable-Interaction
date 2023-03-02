@@ -17,7 +17,7 @@ TEST_F(SIGRunCollisionManagerTest, collide)
     getcwd(buf, FILENAME_MAX);
     std::string directory(buf);
 
-    bp::import("sys").attr("path").attr("insert")(0, directory + "/tests/res/region");
+//    bp::import("sys").attr("path").attr("insert")(0, directory + "/tests/res/region");
 
     bp::object o = bp::import("Dummy1");
     o.attr(SI_INTERNAL_NAME) = "Dummy1";
@@ -42,7 +42,7 @@ TEST_F(SIGRunCollisionManagerTest, has_capabilities_in_common)
     getcwd(buf, FILENAME_MAX);
     std::string directory(buf);
 
-    bp::import("sys").attr("path").attr("insert")(0, directory + "/tests/res/region");
+//    bp::import("sys").attr("path").attr("insert")(0, directory + "/tests/res/region");
 
     bp::object o = bp::import("Dummy1");
     o.attr(SI_INTERNAL_NAME) = "Dummy1";
@@ -68,7 +68,7 @@ TEST_F(SIGRunCollisionManagerTest, collides_with_aabb)
     getcwd(buf, FILENAME_MAX);
     std::string directory(buf);
 
-    bp::import("sys").attr("path").attr("insert")(0, directory + "/tests/res/region");
+//    bp::import("sys").attr("path").attr("insert")(0, directory + "/tests/res/region");
 
     bp::object o = bp::import("Dummy1");
     o.attr(SI_INTERNAL_NAME) = "Dummy1";
@@ -92,7 +92,7 @@ TEST_F(SIGRunCollisionManagerTest, cm_collides_with_mask)
     getcwd(buf, FILENAME_MAX);
     std::string directory(buf);
 
-    bp::import("sys").attr("path").attr("insert")(0, directory + "/tests/res/region");
+//    bp::import("sys").attr("path").attr("insert")(0, directory + "/tests/res/region");
 
     bp::object o = bp::import("Dummy1");
     o.attr(SI_INTERNAL_NAME) = "Dummy1";
@@ -120,7 +120,7 @@ TEST_F(SIGRunCollisionManagerTest, handle_event_continuous)
     getcwd(buf, FILENAME_MAX);
     std::string directory(buf);
 
-    bp::import("sys").attr("path").attr("insert")(0, directory + "/tests/res/region");
+//    bp::import("sys").attr("path").attr("insert")(0, directory + "/tests/res/region");
 
     bp::object o = bp::import("Dummy1");
     o.attr(SI_INTERNAL_NAME) = "Dummy1";
@@ -145,7 +145,7 @@ TEST_F(SIGRunCollisionManagerTest, handle_event_enter)
     getcwd(buf, FILENAME_MAX);
     std::string directory(buf);
 
-    bp::import("sys").attr("path").attr("insert")(0, directory + "/tests/res/region");
+//    bp::import("sys").attr("path").attr("insert")(0, directory + "/tests/res/region");
 
     bp::object o = bp::import("Dummy1");
     o.attr(SI_INTERNAL_NAME) = "Dummy1";
@@ -172,7 +172,7 @@ TEST_F(SIGRunCollisionManagerTest, handle_event_leave)
     getcwd(buf, FILENAME_MAX);
     std::string directory(buf);
 
-    bp::import("sys").attr("path").attr("insert")(0, directory + "/tests/res/region");
+//    bp::import("sys").attr("path").attr("insert")(0, directory + "/tests/res/region");
 
     bp::object o = bp::import("Dummy1");
     o.attr(SI_INTERNAL_NAME) = "Dummy1";
