@@ -11,6 +11,6 @@ set(SITestAppSrc
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/SI/include/)
 
 add_executable(si_test_application ${SITestAppSrc})
-target_link_libraries(si_test_application SIGeneralRuntime SIROS2Environment SIRenderEngine )
-add_dependencies(si_test_application SIGeneralRuntime SIROS2Environment)
+target_link_libraries(si_test_application SIGeneralRuntime SIRenderEngine)# SIROS2Environment  )
+add_dependencies(si_test_application SIGeneralRuntime ) # SIROS2Environment)
 

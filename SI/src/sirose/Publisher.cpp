@@ -5,7 +5,7 @@
 
 Publisher::Publisher():
     Node("Publisher"),
-    publisher_(this->create_publisher<std_msgs::msg::String>("topic2", 10))
+    publisher_(this->create_publisher<std_msgs::msg::String>("/scan_region", 10))
 {}
 
 void Publisher::publish(const std::string &message)

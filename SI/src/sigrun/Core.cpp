@@ -126,7 +126,7 @@ void Core::load_plugins(std::unordered_map<std::string, std::unique_ptr<bp::obje
         if (module_name != SI_PYTHON_STARTUP_FILE_NAME && module_name.substr(0, 2) != SI_DOUBLE_UNDERSCORE
             && module_name != "E" && module_name != SI_PYTHON_SIEFFECT_NAME)
         {
-            HANDLE_PYTHON_CALL(PY_ERROR, "Could not load plugin!",
+            HANDLE_PYTHON_CALL(PY_ERROR, "Could not load plugin " + module_name + "!",
                bp::object o = script.si_plugin(module_name, path);
                plugins[std::string(bp::extract<char *>(o.attr(o.attr(SI_INTERNAL_NAME)).attr(SI_INTERNAL_REGION_NAME)))] = std::make_unique<bp::object>(o);
             )

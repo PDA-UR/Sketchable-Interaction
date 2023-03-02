@@ -31,6 +31,12 @@ public:
     static void enable(int32_t flags);
     static void disable(int32_t flags);
 
+    static void set_file_system_root_folder(const std::string& path);
+    static void set_file_system_desktop_folder(const std::string& path);
+
+    static std::string file_system_root_folder();
+    static std::string file_system_desktop_folder();
+
     static void exclude_plugins(const bp::list& plugins);
 };
 

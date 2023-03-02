@@ -10,20 +10,12 @@ void SIROS2Environment::start(int argc, char** argv)
     rclcpp::init(argc, argv);
     sub = std::make_shared<Subscriber>();
     pub = std::make_shared<Publisher>();
+}
 
-    Print::print("START ROS2 Stuff");
-
-    std::thread{[this]()
-    {
-        Print::print("INIT SUBS SPIN");
-        rclcpp::spin(sub);
-    }}.detach();
-
-    std::thread{[this]()
-    {
-        Print::print("INIT PUB SPIN");
-        rclcpp::spin(pub);
-    }}.detach();
+void SIROS2Environment::update()
+{
+    rclcpp::spin_some(sub);
+    rclcpp::spin_some(pub);
 }
 
 void SIROS2Environment::stop()

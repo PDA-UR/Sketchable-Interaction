@@ -21,6 +21,7 @@ Scripting::Scripting()
         PyImport_AppendInittab((char *) "libPySI", &PyInit_libPySI);
 
         Py_Initialize();
+        PyEval_InitThreads();
 
         INFO("Started Python3 Interpreter with Version: " + std::string(PY_VERSION));
 

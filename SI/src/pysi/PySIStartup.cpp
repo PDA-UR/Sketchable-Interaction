@@ -125,3 +125,23 @@ void PySIStartup::set_pen_color(int color)
     if(color == SI_BLACK_DRAWING_COLOR || color == SI_WHITE_DRAWING_COLOR)
         Context::SIContext()->set_pen_color(color);
 }
+
+void PySIStartup::set_file_system_root_folder(const std::string &path)
+{
+    Context::SIContext()->set_file_system_root_folder(path);
+}
+
+void PySIStartup::set_file_system_desktop_folder(const std::string &path)
+{
+    Context::SIContext()->set_file_system_desktop_folder(path);
+}
+
+std::string PySIStartup::file_system_root_folder()
+{
+    return Context::SIContext()->file_system_root_folder();
+}
+
+std::string PySIStartup::file_system_desktop_folder()
+{
+    return Context::SIContext()->file_system_desktop_folder();
+}
