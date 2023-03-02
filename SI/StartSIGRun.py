@@ -1,20 +1,28 @@
 
 from libPySI import PySI
+
+from plugins.standard_environment_library.email.Inbox import Inbox
+from plugins.standard_environment_library.email.SendEmail import SendEmail
+from plugins.standard_environment_library.image_editor.ImageEditor import ImageEditor
+from plugins.standard_environment_library.tangible.popup3.ObjectScan import ObjectScan
+from plugins.standard_environment_library.tangible.popup3.TangibleScan import TangibleScan
 from plugins.__loaded_plugins__.standard_environment_library.canvas import Canvas
-from plugins.__loaded_plugins__.standard_environment_library.palette import Palette
+from plugins.__loaded_plugins__.standard_environment_library.canvas import Tooltip
+# from plugins.__loaded_plugins__.standard_environment_library.palette import Palette
 from plugins.__loaded_plugins__.standard_environment_library.cursor import Cursor
+from plugins.__loaded_plugins__.standard_environment_library.cursor import AdditionalCursor
 from plugins.__loaded_plugins__.standard_environment_library.deletion import Deletion
 from plugins.__loaded_plugins__.standard_environment_library.slider import SliderBase
 from plugins.__loaded_plugins__.standard_environment_library.slider import SliderTargetDummy
-from plugins.__loaded_plugins__.standard_environment_library.unredo import Undo, Redo
-from plugins.standard_environment_library.tangible.camera.ScanCameraAreaDetection import ScanCameraAreaDetection
-from plugins.standard_environment_library.tangible.camera.TableArea import TableArea
-from plugins.standard_environment_library.tangible.document.tools.Color import Color
 from plugins.standard_environment_library.plot.Plot import Plot
-from plugins.standard_environment_library.image_editor.ImageEditor import ImageEditor
 from plugins.standard_environment_library.presentation.Presentation import Presentation
 from plugins.standard_environment_library.lasso.Lasso import Lasso
 from plugins.standard_environment_library.video.Video import Video
+from plugins.standard_environment_library.terminal.Terminal import Terminal
+
+from plugins.study.fsm.logging.FSMLogging import FSMLogging
+from plugins.standard_environment_library.ball_contraption.Gravity import Gravity
+
 
 import math
 
@@ -24,15 +32,29 @@ def add_canvas(kwargs={}):
                     [PySI.Startup.context_dimensions()[0], PySI.Startup.context_dimensions()[1]],
                     [PySI.Startup.context_dimensions()[0], 0]]
 
+    tooltip_shape = [[10, 10], [10, 65], [260, 65], [260, 10]]
+
     PySI.Startup.create_region_by_name(canvas_shape, Canvas.Canvas.regionname, kwargs)
+    PySI.Startup.create_region_by_name(tooltip_shape, Tooltip.Tooltip.regionname, kwargs)
 
 def add_mouse_cursor(kwargs):
-    mouse_shape = [[0, 0],
-                   [0, Cursor.Cursor.region_height],
-                   [Cursor.Cursor.region_width, Cursor.Cursor.region_height],
-                   [Cursor.Cursor.region_width, 0]]
+    x, y = -Cursor.Cursor.region_width / 2, -Cursor.Cursor.region_height / 2
+    mouse_shape = [[x, y],
+                   [x, y + Cursor.Cursor.region_height],
+                   [x + Cursor.Cursor.region_width, y + Cursor.Cursor.region_height],
+                   [x + Cursor.Cursor.region_width, y]]
 
     PySI.Startup.create_region_by_name(mouse_shape, Cursor.Cursor.regionname, kwargs)
+
+def add_additional_mouse_cursor(kwargs):
+    # x, y = -AdditionalCursor.AdditionalCursor.region_width / 2, -AdditionalCursor.AdditionalCursor.region_height / 2
+    x, y = AdditionalCursor.AdditionalCursor.region_width / 2, AdditionalCursor.AdditionalCursor.region_height / 2
+    mouse_shape = [[x, y],
+                   [x, y + AdditionalCursor.AdditionalCursor.region_height],
+                   [x + AdditionalCursor.AdditionalCursor.region_width, y + AdditionalCursor.AdditionalCursor.region_height],
+                   [x + AdditionalCursor.AdditionalCursor.region_width, y]]
+
+    PySI.Startup.create_region_by_name(mouse_shape, AdditionalCursor.AdditionalCursor.regionname, kwargs)
 
 def add_palette():
     palette_shape = [[PySI.Startup.context_dimensions()[0] - 400, 75],
@@ -106,21 +128,73 @@ def add_annotation_color():
     shape = [[x, y], [x, y + th], [x + tw, y + th], [x + tw, y]]
     PySI.Startup.create_region_by_name(shape, Color.regionname, {"color": PySI.Color(100, 100, 20, 255)})
 
+def add_terminal():
+    x = 10
+    y = 110
+    w = 300
+    h = 200
+    shape = [[x, y], [x, y + h], [x + w, y + h], [x + w, y]]
+    PySI.Startup.create_region_by_name(shape, Terminal.regionname, {})
+
+
 APPLICATION = 1
 COLOR_PICKER = 2
 CAMERA_CALIBRATION = 4
 BENCHMARK = 8
 TABLE_AREA_CALIBRATION = 16
 
+STUDY_FSM = 1
+STUDY_PDE = 2
+STUDY_EMS = 4
+
+STUDY_CHOICE = STUDY_PDE
+
+def add_study_setup_fs(kwargs):
+    x = 10
+    y = 10
+    w = 300
+    h = 200
+    shape = [[x, y], [x, y + h], [x + w, y + h], [x + w, y]]
+    PySI.Startup.create_region_by_name(shape, FSMLogging.regionname, kwargs)
+
+def add_study_setup_pd():
+    pass
+    # w, h = PySI.Startup.context_dimensions()
+    # w, h = w - 2, h - 2
+    # x, y = 1, 1
+
+    # shape = [[x, y], [x, y + h], [x + w, y + h], [x + w, y]]
+
+    # add_additional_mouse_cursor({})
+
+    # PySI.Startup.create_region_by_name(shape, Gravity.regionname, {})
+
+def add_study_setup_em():
+    pass
+
 def start_application():
     rgba = {}
     # rgba = {"rgba": (0, 0, 0, 255)}
 
+    # change to your preferred path for your file system
+    PySI.Startup.set_file_system_root_folder("/home/juergen/Desktop/si_test/test")
+    PySI.Startup.set_file_system_desktop_folder("/home/juergen/Desktop/si_test/Desktop")
+
     add_canvas(rgba)
     add_mouse_cursor({"draw": "RMB"})
-    add_palette()
-    add_unredo()
-    # add_annotation_color()
+    # add_palette()
+    # add_unredo()
+    add_terminal()
+
+    if STUDY_FSM & STUDY_CHOICE:
+        kwargs = {"participant": "1", "task": "4", "repetition": "1"}
+        add_study_setup_fs(kwargs)
+
+    if STUDY_PDE & STUDY_CHOICE:
+        add_study_setup_pd()
+
+    if STUDY_EMS & STUDY_CHOICE:
+        add_study_setup_em()
 
 def on_start():
     PySI.Startup.enable(PySI.Configuration.SI_ANTI_ALIASING_8x)
@@ -130,18 +204,20 @@ def on_start():
     PySI.Startup.logger_set_log_output(PySI.Logger.SI_LOG_SHOW_ALL)
     PySI.Startup.logger_quench_messages_from_class("linkingmanager")
     PySI.Startup.logger_quench_messages_from_class("recognizer")
-    # PySI.Startup.logger_quench_messages_from_class("mainwindow")
+    PySI.Startup.logger_quench_messages_from_class("mainwindow")
 
     PySI.Startup.set_pen_color(PySI.Configuration.PEN_CLOLOR_BLACK)
     # PySI.Startup.set_pen_color(PySI.Configuration.PEN_CLOLOR_WHITE)
 
-    PySI.Startup.exclude_plugins([
-        Plot.regionname,
-        Presentation.regionname,
-        Lasso.regionname,
-        ImageEditor.regionname,
-        Video.regionname
-    ])
+    PySI.Startup.exclude_plugins([Plot.regionname,
+                                  Video.regionname,
+                                  Presentation.regionname,
+                                  ImageEditor.regionname,
+                                  Inbox.regionname,
+                                  SendEmail.regionname,
+                                  ObjectScan.regionname,
+                                  TangibleScan.regionname,
+                                  Terminal.regionname])
 
     CHOICE = APPLICATION
 

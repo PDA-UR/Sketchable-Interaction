@@ -26,7 +26,7 @@ PySIEffect::PySIEffect(const std::vector<glm::vec3>& contour, const std::string&
 
     std::vector<glm::vec3> temp;
 
-    if(kwargs.has_key("__name__") and kwargs["__name__"] == "__ Painter __")
+    if((kwargs.has_key("__name__") && kwargs["__name__"] == "__ Painter __"))
     {
         temp = contour;
     }
@@ -153,8 +153,28 @@ void PySIEffect::__destroy_embedded_file_standard_appliation_in_context__(const 
 
 void PySIEffect::__emit_linking_action__(const std::string& sender, const std::string& linking_action, const bp::object& args)
 {
+    bp::tuple t = bp::extract<bp::tuple>(args);
     Context::SIContext()->register_link_event_emission(_UUID_, sender, linking_action, args);
 }
+
+void PySIEffect::__move_hard__(float x, float y)
+{
+    d_x = x;
+    d_y = y;
+
+    auto& regions = Context::SIContext()->region_manager()->regions();
+
+    auto it = std::find_if(regions.begin(), regions.end(), [&](auto &region)
+    {
+        return region->uuid() == uuid();
+    });
+
+    if(it != regions.end())
+    {
+        it->get()->move_and_rotate();
+    }
+}
+
 
 const int32_t PySIEffect::x() const
 {
@@ -491,6 +511,39 @@ void PySIEffect::set_shape(const std::vector<glm::vec3>& shape)
         tlc, blc, brc, trc
     };
 
+    float aabb_x = d_aabb[0].x;
+    float aabb_y = d_aabb[0].y;
+    float aabb_w = d_aabb[3].x - d_aabb[0].x;
+    float aabb_h = d_aabb[1].y - d_aabb[0].y;
+
+    float move_x = 0, move_y = 0;
+
+    if(aabb_x < 0)
+    {
+        move_x = -(aabb_x);
+    }
+
+    if(aabb_y < 0)
+    {
+        move_y = -(aabb_y);
+    }
+
+    if(aabb_x + aabb_w > Context::SIContext()->width())
+    {
+        move_x = (aabb_w + aabb_x) - Context::SIContext()->width();
+    }
+
+    if(aabb_y + aabb_h > Context::SIContext()->height())
+    {
+        move_y = (aabb_h + aabb_y) - Context::SIContext()->height();
+    }
+
+    for (int i = 0; i < temp.size(); ++i)
+    {
+        temp[i].x += move_x;
+        temp[i].y += move_y;
+    }
+
     if (d_name != "__ Painter __" && temp.size() != SI_CONTOUR_STEPCOUNT)
     {
         RegionResampler::resample(d_contour, temp);
@@ -582,6 +635,16 @@ bp::list PySIEffect::__current_regions__()
         ret.append(r->raw_effect());
 
     return ret;
+}
+
+void PySIEffect::__add_multiple_regions__(const bp::list& contours, const std::string& effect_name, bp::dict& kwargs)
+{
+    for (int i = 0; i < bp::len(contours); i++)
+    {
+        const std::vector<glm::vec3>& contour = bp::extract<std::vector<glm::vec3>>(contours[i]);
+        Print::print(kwargs);
+        Context::SIContext()->register_new_region_via_name(contour, effect_name, false, kwargs);
+    }
 }
 
 void PySIEffect::__update_transform__(int32_t delta_x, int32_t delta_y)
@@ -779,4 +842,9 @@ void PySIEffect::__set_cursor_stroke_width_by_cursorid__(const std::string &curs
 void PySIEffect::__set_cursor_stroke_color_by_cursorid__(const std::string &cursor_id, const glm::vec4& color)
 {
     Context::SIContext()->update_cursor_stroke_color_by_cursor_id(cursor_id, color);
+}
+
+void PySIEffect::__current_tangible_selection__(const std::string &effect_to_assign, const std::string &effect_display_name, const std::string &effect_texture, bp::dict &kwargs)
+{
+    Context::SIContext()->tangible_manager()->set_current_pen_selection(effect_to_assign, effect_display_name, effect_texture, kwargs);
 }

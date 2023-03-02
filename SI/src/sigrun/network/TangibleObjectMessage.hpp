@@ -8,9 +8,9 @@
 class TangibleObjectMessage: public SIObject
 { SIGRUN
 public:
-    TangibleObjectMessage(int32_t id, const std::vector<glm::vec3>& shape, const std::string& plugin_identifier, float x,
-                          float y, const glm::vec4& color, bool is_click, bool is_drag, bool is_touch, bool is_alive, const std::vector<int>& links,
-                          int tracker_dimension_x, int tracker_dimension_y);
+    TangibleObjectMessage(int32_t id, const std::vector<glm::vec3> &shape, const std::string &plugin_identifier,
+                          float x, float y, const glm::vec4& color, bool is_click, bool is_drag, bool is_dbl_click, bool is_touch, bool is_alive,
+                          const std::vector<int>& links, int tracker_dimension_x, int tracker_dimension_y);
     ~TangibleObjectMessage();
 
     void send();
@@ -23,6 +23,7 @@ public:
     const glm::vec4& color() const;
     const bool is_click() const;
     const bool is_drag() const;
+    const bool is_dbl_click() const;
     const bool is_touch() const;
     const bool is_alive() const;
     const std::vector<int>& links() const;
@@ -40,6 +41,7 @@ private:
     float d_y;
     bool d_is_click;
     bool d_is_drag;
+    bool d_is_dbl_click;
     bool d_is_touch;
     bool d_is_alive;
     std::vector<int> d_links;

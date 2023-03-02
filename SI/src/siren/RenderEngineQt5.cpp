@@ -16,8 +16,6 @@ RenderEngineQT5::~RenderEngineQT5()
 
 void RenderEngineQT5::start(uint32_t width, uint32_t height, uint32_t target_fps)
 {
-    Print::print("START SIREN");
-
     d_window = new MainWindow(width, height, target_fps);
     d_window->setGeometry(QApplication::primaryScreen()->availableGeometry());
 
@@ -54,6 +52,8 @@ void RenderEngineQT5::enable_anti_aliasing(uint32_t samplng_factor)
     samplng_factor = 2;
     QSurfaceFormat format;
     format.setSamples(samplng_factor);
+    format.setSwapInterval(0);
+
     QSurfaceFormat::setDefaultFormat(format);
 }
 

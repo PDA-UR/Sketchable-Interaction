@@ -16,6 +16,8 @@ module ros2_si_interface {
 
       boolean drag;
 
+      boolean dblclick;
+
       float x;
 
       float y;

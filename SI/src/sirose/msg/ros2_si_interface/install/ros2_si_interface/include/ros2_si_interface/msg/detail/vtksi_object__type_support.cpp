@@ -118,7 +118,7 @@ void resize_function__VTKSIObject__color(void * untyped_member, size_t size)
   member->resize(size);
 }
 
-static const ::rosidl_typesupport_introspection_cpp::MessageMember VTKSIObject_message_member_array[13] = {
+static const ::rosidl_typesupport_introspection_cpp::MessageMember VTKSIObject_message_member_array[14] = {
   {
     "id",  // name
     ::rosidl_typesupport_introspection_cpp::ROS_TYPE_INT64,  // type
@@ -188,6 +188,21 @@ static const ::rosidl_typesupport_introspection_cpp::MessageMember VTKSIObject_m
     0,  // array size
     false,  // is upper bound
     offsetof(ros2_si_interface::msg::VTKSIObject, drag),  // bytes offset in struct
+    nullptr,  // default value
+    nullptr,  // size() function pointer
+    nullptr,  // get_const(index) function pointer
+    nullptr,  // get(index) function pointer
+    nullptr  // resize(index) function pointer
+  },
+  {
+    "dblclick",  // name
+    ::rosidl_typesupport_introspection_cpp::ROS_TYPE_BOOLEAN,  // type
+    0,  // upper bound of string
+    nullptr,  // members of sub message
+    false,  // is array
+    0,  // array size
+    false,  // is upper bound
+    offsetof(ros2_si_interface::msg::VTKSIObject, dblclick),  // bytes offset in struct
     nullptr,  // default value
     nullptr,  // size() function pointer
     nullptr,  // get_const(index) function pointer
@@ -319,7 +334,7 @@ static const ::rosidl_typesupport_introspection_cpp::MessageMember VTKSIObject_m
 static const ::rosidl_typesupport_introspection_cpp::MessageMembers VTKSIObject_message_members = {
   "ros2_si_interface::msg",  // message namespace
   "VTKSIObject",  // message name
-  13,  // number of fields
+  14,  // number of fields
   sizeof(ros2_si_interface::msg::VTKSIObject),
   VTKSIObject_message_member_array,  // message members
   VTKSIObject_init_function,  // function to initialize message memory (memory has to be allocated)

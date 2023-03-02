@@ -32,6 +32,7 @@ MainWindow::MainWindow(uint32_t width, uint32_t height, uint32_t target_fps):
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
+    setViewport(new QOpenGLWidget);
     setScene(p_scene);
     setRenderHint(QPainter::Antialiasing);
 }
@@ -70,12 +71,12 @@ void MainWindow::loop()
             unprocessed_time -= 1.0 / d_target_fps;
         }
 
-        if(render)
-        {
+//        if(render)
+//        {
             __loop();
             Context::SIContext()->update();
             frames++;
-        }
+//        }
     }
 
     close();
@@ -102,86 +103,183 @@ void MainWindow::handle_region_representations()
 {
     auto& regions = Context::SIContext()->region_manager()->regions();
 
-    d_reg_reps.erase(std::remove_if(d_reg_reps.begin(), d_reg_reps.end(), [&](RegionRepresentation* rep)
-    {
-        auto it = std::find_if(regions.begin(), regions.end(), [&](auto& reg)
-        {
-            return reg->uuid() == rep->uuid();
-        });
-
-        if (it != regions.end())
-            return false;
-
-        p_scene->removeItem(rep);
-
-        delete rep;
-        rep = nullptr;
-        return true;
-
-    }), d_reg_reps.end());
-
     for(auto& reg: regions)
     {
-        auto it = std::find_if(d_reg_reps.begin(), d_reg_reps.end(), [&](RegionRepresentation* rep)
-        {
-            return reg->uuid() == rep->uuid();
-        });
+        bool found = false;
 
-        if(it == d_reg_reps.end())
+        for(RegionRepresentation* rep: d_reg_reps)
+        {
+            if(reg->uuid() == rep->uuid())
+            {
+                rep->update(reg);
+                found = true;
+                break;
+            }
+        }
+
+        if(!found)
         {
             d_reg_reps.push_back(new RegionRepresentation(d_qmlcontext, reg, this));
             p_scene->addItem(d_reg_reps.back());
+            d_reg_reps.back()->update(reg);
         }
-        else
+
+
+//        auto it = std::find_if(d_reg_reps.begin(), d_reg_reps.end(), [&](RegionRepresentation* rep)
+//        {
+//            return reg->uuid() == rep->uuid();
+//        });
+//
+//        if(it == d_reg_reps.end())
+//        {
+//            d_reg_reps.push_back(new RegionRepresentation(d_qmlcontext, reg, this));
+//            p_scene->addItem(d_reg_reps.back());
+//            d_reg_reps.back()->update(reg);
+//        }
+//        else
+//        {
+//            (*it)->update(reg);
+//        }
+    }
+
+    for(int i = d_reg_reps.size() - 1; i >= 0; --i)
+    {
+        bool found = false;
+
+        for(auto& reg: regions)
         {
-            (*it)->update(reg);
+            if(d_reg_reps[i]->uuid() == reg->uuid())
+            {
+                found = true;
+                break;
+            }
+        }
+
+        if(!found)
+        {
+            p_scene->removeItem(d_reg_reps[i]);
+
+            delete d_reg_reps[i];
+            d_reg_reps[i] = nullptr;
+
+            d_reg_reps.erase(d_reg_reps.begin() + i);
         }
     }
+
+//    d_reg_reps.erase(std::remove_if(d_reg_reps.begin(), d_reg_reps.end(), [&](RegionRepresentation* rep)
+//    {
+//        auto it = std::find_if(regions.begin(), regions.end(), [&](auto& reg)
+//        {
+//            return reg->uuid() == rep->uuid();
+//        });
+//
+//        if (it != regions.end())
+//            return false;
+//
+//        p_scene->removeItem(rep);
+//
+//        delete rep;
+//        rep = nullptr;
+//        return true;
+//
+//    }), d_reg_reps.end());
 }
 
 void MainWindow::handle_partial_region_representations()
 {
-    d_par_reg_reps.erase(std::remove_if(d_par_reg_reps.begin(), d_par_reg_reps.end(), [&](PartialRegionRepresentation* prep)
+    for (int i = d_par_reg_reps.size() - 1; i >= 0; --i)
     {
+        bool found = false;
+
         for(auto& [k, v]: Context::SIContext()->region_manager()->partial_regions())
-            if(k == prep->id())
-                return false;
+        {
+            if(k == d_par_reg_reps[i]->id())
+            {
+                found = true;
+                break;
+            }
+        }
 
-        p_scene->removeItem(prep);
-        delete prep;
-        prep = nullptr;
+        if(!found)
+        {
+            p_scene->removeItem(d_par_reg_reps[i]);
+            delete d_par_reg_reps[i];
+            d_par_reg_reps[i] = nullptr;
+            d_par_reg_reps.erase(d_par_reg_reps.begin() + i);
+        }
+    }
 
-        return true;
-    }), d_par_reg_reps.end());
+//    d_par_reg_reps.erase(std::remove_if(d_par_reg_reps.begin(), d_par_reg_reps.end(), [&](PartialRegionRepresentation* prep)
+//    {
+//        for(auto& [k, v]: Context::SIContext()->region_manager()->partial_regions())
+//            if(k == prep->id())
+//                return false;
+//
+//        p_scene->removeItem(prep);
+//        delete prep;
+//        prep = nullptr;
+//
+//        return true;
+//    }), d_par_reg_reps.end());
 
     for(auto& [k, v]: Context::SIContext()->region_manager()->partial_regions())
     {
-        const auto& source = k;
-        const auto& path = v;
+        bool found = false;
 
-        auto it = std::find_if(d_par_reg_reps.begin(), d_par_reg_reps.end(), [&](PartialRegionRepresentation* prep)
+        for(PartialRegionRepresentation* prep: d_par_reg_reps)
         {
-            return source == prep->id();
-        });
+            if(k == prep->id())
+            {
+                prep->update(v);
+                found = true;
+                break;
+            }
+        }
 
-        if(it == d_par_reg_reps.end())
+        if(!found)
         {
             PartialRegionRepresentation* part_reg;
-            if(d_cursor_stroke_data.find(source) != d_cursor_stroke_data.end())
+
+            if(d_cursor_stroke_data.find(k) != d_cursor_stroke_data.end())
             {
-                part_reg = new PartialRegionRepresentation(source, path, std::get<0>(d_cursor_stroke_data[source]), std::get<1>(d_cursor_stroke_data[source]));
-                d_cursor_stroke_data.erase(source);
+                part_reg = new PartialRegionRepresentation(k, v, std::get<0>(d_cursor_stroke_data[k]), std::get<1>(d_cursor_stroke_data[k]));
+                d_cursor_stroke_data.erase(k);
             }
             else
-                part_reg = new PartialRegionRepresentation(source, path);
+                part_reg = new PartialRegionRepresentation(k, v);
 
             d_par_reg_reps.push_back(part_reg);
             p_scene->addItem(d_par_reg_reps.back());
+            d_par_reg_reps.back()->update(v);
         }
-        else
-        {
-            (*it)->update(path);
-        }
+
+//        const auto& source = k;
+//        const auto& path = v;
+//
+//        auto it = std::find_if(d_par_reg_reps.begin(), d_par_reg_reps.end(), [&](PartialRegionRepresentation* prep)
+//        {
+//            return source == prep->id();
+//        });
+//
+//        if(it == d_par_reg_reps.end())
+//        {
+//            PartialRegionRepresentation* part_reg;
+//            if(d_cursor_stroke_data.find(source) != d_cursor_stroke_data.end())
+//            {
+//                part_reg = new PartialRegionRepresentation(source, path, std::get<0>(d_cursor_stroke_data[source]), std::get<1>(d_cursor_stroke_data[source]));
+//                d_cursor_stroke_data.erase(source);
+//            }
+//            else
+//                part_reg = new PartialRegionRepresentation(source, path);
+//
+//            d_par_reg_reps.push_back(part_reg);
+//            p_scene->addItem(d_par_reg_reps.back());
+//            d_par_reg_reps.back()->update(path);
+//        }
+//        else
+//        {
+//            (*it)->update(path);
+//        }
     }
 }
 

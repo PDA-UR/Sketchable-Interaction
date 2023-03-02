@@ -33,6 +33,7 @@ typedef struct ros2_si_interface__msg__VTKSIObject
   rosidl_runtime_c__float__Sequence geometry;
   bool click;
   bool drag;
+  bool dblclick;
   float x;
   float y;
   bool alive;

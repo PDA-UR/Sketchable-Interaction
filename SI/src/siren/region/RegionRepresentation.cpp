@@ -25,15 +25,15 @@ RegionRepresentation::RegionRepresentation(QQmlContext* c, const std::shared_ptr
     {
         d_view = new QQuickWidget(parent);
         d_view->setSource(QUrl::fromLocalFile(d_qml_path.c_str()));
+        d_view->rootContext()->setContextProperty("REGION", this);
 
         // leave that here, otherwise after ~600 items no further views are shown
-        d_view->show();
-
-        d_view->rootContext()->setContextProperty("REGION", this);
+        d_view->setAttribute(Qt::WA_NoSystemBackground);
         d_view->setGeometry(d_initial_offset.x, d_initial_offset.y, region->visualization_width(), region->visualization_height());
         d_view->setAttribute(Qt::WA_AlwaysStackOnTop);
         d_view->setAttribute(Qt::WA_NoSystemBackground);
         d_view->setClearColor(Qt::transparent);
+        d_view->show();
 
         if(region->effect()->has_data_changed())
             QMetaObject::invokeMethod(reinterpret_cast<QObject *>(d_view->rootObject()), "updateData", QGenericReturnArgument(), Q_ARG(QVariant, region->data()));
@@ -43,20 +43,28 @@ RegionRepresentation::RegionRepresentation(QQmlContext* c, const std::shared_ptr
     for(auto& p: region->contour())
         poly << QPointF(p.x, p.y);
 
+    setFillRule(Qt::WindingFill);
     setPolygon(poly);
     setBrush(QBrush(d_color));
     setPen(QPen(d_color));
     setZValue(-1);
-    setFillRule(Qt::WindingFill);
 }
 
 RegionRepresentation::~RegionRepresentation()
 {
     if(!d_qml_path.empty())
     {
+        d_view->rootContext()->destroyed();
+        d_view->close();
+        d_view->quickWindow()->destroy();
+        d_view->quickWindow()->deleteLater();
+        d_view->destroyed();
+        d_view->deleteLater();
         d_view->close();
         delete d_view;
     }
+
+    deleteLater();
 }
 
 const std::string& RegionRepresentation::uuid() const
@@ -100,8 +108,6 @@ void RegionRepresentation::perform_transform_update(const std::shared_ptr<Region
         if(!d_qml_path.empty())
             d_view->move(d_initial_offset.x, d_initial_offset.y);
     }
-
-    prepareGeometryChange();
 }
 
 void RegionRepresentation::perform_data_update(const std::shared_ptr<Region> &region)
@@ -153,13 +159,13 @@ void RegionRepresentation::perform_data_update(const std::shared_ptr<Region> &re
         }
     }
 
+
     if(d_was_data_received)
     {
         region->set_data(d_received_data);
 
         d_was_data_received = false;
     }
-    prepareGeometryChange();
 }
 
 QColor& RegionRepresentation::color()
@@ -181,11 +187,6 @@ void RegionRepresentation::paint(QPainter *painter, const QStyleOptionGraphicsIt
 {
     if(!d_visible)
         return;
-//
-//    int area = polygon().boundingRect().width() * polygon().boundingRect().height();
-//
-//    if(area < 100)
-//        return;
 
     QGraphicsPolygonItem::paint(painter, option, widget);
 
@@ -200,16 +201,6 @@ void RegionRepresentation::paint(QPainter *painter, const QStyleOptionGraphicsIt
         pen.setWidth(d_border_width);
 
         painter->setPen(pen);
-        painter->drawPolygon(this->polygon());
-    }
-
-    if(d_type == SI_TYPE_DIRECTORY || d_type == SI_TYPE_IMAGE_FILE || d_type == SI_TYPE_TEXT_FILE)
-    {
-        pen = QPen(QColor(72, 79, 81));
-        pen.setWidth(1);
-        painter->setPen(pen);
-
-        painter->drawRect(this->polygon().boundingRect());
         painter->drawPolygon(this->polygon());
     }
 

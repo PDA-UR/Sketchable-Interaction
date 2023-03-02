@@ -103,6 +103,12 @@ public:
 
     void push_fps(int actual, int target);
 
+    void set_file_system_root_folder(const std::string &path);
+    void set_file_system_desktop_folder(const std::string &path);
+    std::string file_system_root_folder();
+    std::string file_system_desktop_folder();
+    std::ofstream logfile;
+
 private:
 
     static Context* self;
@@ -148,6 +154,9 @@ private:
     int d_tangible_port = 0;
     int d_pen_color = 0;
 
+    std::string d_file_system_root_folder = "";
+    std::string d_file_system_desktop_folder = "";
+
     uint32_t s_width = 0;
     uint32_t s_height = 0;
 
@@ -158,6 +167,7 @@ private:
     friend class Core;
     friend class SIGRunCollisionManagerTest;
     friend class SIGRunLinkingManagerTest;
+    friend class SIGRunRegionTest;
     friend class PySIPySIEffectTest;
     friend class PySIPySIEffectTest;
     friend class SIGRunLinkTest;

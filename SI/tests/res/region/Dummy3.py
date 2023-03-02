@@ -12,5 +12,3 @@ class Dummy3(SIEffect):
         super().__init__(shape, uuid, "", Dummy3.regiontype, Dummy3.regionname, kwargs)
         self.source = "libStdSI"
         self.qml_path = ""
-
-        print("WTF")

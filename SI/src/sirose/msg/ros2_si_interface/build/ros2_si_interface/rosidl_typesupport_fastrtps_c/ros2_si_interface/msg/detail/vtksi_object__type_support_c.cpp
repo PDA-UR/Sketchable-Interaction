@@ -90,6 +90,11 @@ static bool _VTKSIObject__cdr_serialize(
     cdr << (ros_message->drag ? true : false);
   }
 
+  // Field name: dblclick
+  {
+    cdr << (ros_message->dblclick ? true : false);
+  }
+
   // Field name: x
   {
     cdr << ros_message->x;
@@ -197,6 +202,13 @@ static bool _VTKSIObject__cdr_deserialize(
     uint8_t tmp;
     cdr >> tmp;
     ros_message->drag = tmp ? true : false;
+  }
+
+  // Field name: dblclick
+  {
+    uint8_t tmp;
+    cdr >> tmp;
+    ros_message->dblclick = tmp ? true : false;
   }
 
   // Field name: x
@@ -312,6 +324,12 @@ size_t get_serialized_size_ros2_si_interface__msg__VTKSIObject(
   // field.name drag
   {
     size_t item_size = sizeof(ros_message->drag);
+    current_alignment += item_size +
+      eprosima::fastcdr::Cdr::alignment(current_alignment, item_size);
+  }
+  // field.name dblclick
+  {
+    size_t item_size = sizeof(ros_message->dblclick);
     current_alignment += item_size +
       eprosima::fastcdr::Cdr::alignment(current_alignment, item_size);
   }
@@ -432,6 +450,12 @@ size_t max_serialized_size_ros2_si_interface__msg__VTKSIObject(
     current_alignment += array_size * sizeof(uint8_t);
   }
   // member: drag
+  {
+    size_t array_size = 1;
+
+    current_alignment += array_size * sizeof(uint8_t);
+  }
+  // member: dblclick
   {
     size_t array_size = 1;
 
