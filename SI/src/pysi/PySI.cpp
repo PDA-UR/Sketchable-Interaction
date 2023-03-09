@@ -83,6 +83,7 @@ BOOST_PYTHON_MODULE(libPySI)
                 .def("__selected_effects_by_cursor_id__", &PySIEffect::__selected_effects_by_cursor_id__)
                 .def("__set_cursor_stroke_width_by_cursorid__", &PySIEffect::__set_cursor_stroke_width_by_cursorid__)
                 .def("__set_cursor_stroke_color_by_cursorid__", &PySIEffect::__set_cursor_stroke_color_by_cursorid__)
+                .def("__on_destroy__", &PySIEffect::__on_destroy__)
 
                 // used for sending stuff back over network
                 .def("__notify__", &PySIEffect::__notify__)

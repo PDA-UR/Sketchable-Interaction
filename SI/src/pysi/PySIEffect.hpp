@@ -31,6 +31,7 @@ public:
     void __emit_linking_action__(const std::string& sender, const std::string& linking_action, const bp::object& args);
     void __set_cursor_stroke_width_by_cursorid__(const std::string& cursor_id, int width);
     void __set_cursor_stroke_color_by_cursorid__(const std::string& cursor_id, const glm::vec4& color);
+    void __on_destroy__();
 
     void __create_region__(const std::vector<glm::vec3>& contour, const std::string& name, bool as_selector, bp::dict& kwargs);
     void __create_region__(const bp::list& contour, const std::string& name, bool as_selector, bp::dict& kwargs);

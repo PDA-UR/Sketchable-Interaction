@@ -31,6 +31,12 @@ Context::~Context()
     INFO("Destroying Context...");
     upjs.release();
     p_py_garbage_collector = nullptr;
+
+
+    for(auto& r: uprm->regions()) {
+        r->raw_effect().attr("__on_destroy__")();
+    }
+
     INFO("Destroyed Context");
 }
 

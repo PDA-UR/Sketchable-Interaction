@@ -8,20 +8,17 @@ from plugins.standard_environment_library.tangible.popup3.ObjectScan import Obje
 from plugins.standard_environment_library.tangible.popup3.TangibleScan import TangibleScan
 from plugins.__loaded_plugins__.standard_environment_library.canvas import Canvas
 from plugins.__loaded_plugins__.standard_environment_library.canvas import Tooltip
-# from plugins.__loaded_plugins__.standard_environment_library.palette import Palette
 from plugins.__loaded_plugins__.standard_environment_library.cursor import Cursor
-from plugins.__loaded_plugins__.standard_environment_library.cursor import AdditionalCursor
+from plugins.__loaded_plugins__.study.pde.basic.TrackingIntegration import TrackingIntegration
 from plugins.__loaded_plugins__.standard_environment_library.deletion import Deletion
 from plugins.__loaded_plugins__.standard_environment_library.slider import SliderBase
 from plugins.__loaded_plugins__.standard_environment_library.slider import SliderTargetDummy
 from plugins.standard_environment_library.plot.Plot import Plot
 from plugins.standard_environment_library.presentation.Presentation import Presentation
-from plugins.standard_environment_library.lasso.Lasso import Lasso
 from plugins.standard_environment_library.video.Video import Video
 from plugins.standard_environment_library.terminal.Terminal import Terminal
 
 from plugins.study.fsm.logging.FSMLogging import FSMLogging
-from plugins.standard_environment_library.ball_contraption.Gravity import Gravity
 
 
 import math
@@ -46,23 +43,21 @@ def add_mouse_cursor(kwargs):
 
     PySI.Startup.create_region_by_name(mouse_shape, Cursor.Cursor.regionname, kwargs)
 
-def add_additional_mouse_cursor(kwargs):
-    # x, y = -AdditionalCursor.AdditionalCursor.region_width / 2, -AdditionalCursor.AdditionalCursor.region_height / 2
-    x, y = AdditionalCursor.AdditionalCursor.region_width / 2, AdditionalCursor.AdditionalCursor.region_height / 2
-    mouse_shape = [[x, y],
-                   [x, y + AdditionalCursor.AdditionalCursor.region_height],
-                   [x + AdditionalCursor.AdditionalCursor.region_width, y + AdditionalCursor.AdditionalCursor.region_height],
-                   [x + AdditionalCursor.AdditionalCursor.region_width, y]]
+def add_tracking_integration(kwargs):
+    shape = [[1, 1],
+                   [1, 2],
+                   [2, 2],
+                   [2, 1]]
 
-    PySI.Startup.create_region_by_name(mouse_shape, AdditionalCursor.AdditionalCursor.regionname, kwargs)
+    PySI.Startup.create_region_by_name(shape, TrackingIntegration.regionname, kwargs)
 
-def add_palette():
-    palette_shape = [[PySI.Startup.context_dimensions()[0] - 400, 75],
-                     [PySI.Startup.context_dimensions()[0] - 400, 475],
-                     [PySI.Startup.context_dimensions()[0] - 100, 475],
-                     [PySI.Startup.context_dimensions()[0] - 100, 75]]
-
-    PySI.Startup.create_region_by_name(palette_shape, Palette.Palette.regionname, {})
+# def add_palette():
+#     palette_shape = [[PySI.Startup.context_dimensions()[0] - 400, 75],
+#                      [PySI.Startup.context_dimensions()[0] - 400, 475],
+#                      [PySI.Startup.context_dimensions()[0] - 100, 475],
+#                      [PySI.Startup.context_dimensions()[0] - 100, 75]]
+#
+#     PySI.Startup.create_region_by_name(palette_shape, Palette.Palette.regionname, {})
 
 def add_unredo():
     pass
@@ -112,21 +107,21 @@ def add_slider(shape, c):
 def add_slider_target(shape):
     PySI.Startup.create_region_by_name(shape, SliderTargetDummy.SliderTargetDummy.regionname, {})
 
-def add_camera_calibration():
-    shape = [[0, 0],
-             [0, PySI.Startup.context_dimensions()[1]],
-             [PySI.Startup.context_dimensions()[0], PySI.Startup.context_dimensions()[1]],
-             [PySI.Startup.context_dimensions()[0], 0]]
-
-    PySI.Startup.create_region_by_name(shape, ScanCameraAreaDetection.regionname, {})
-
-def add_annotation_color():
-    w, h = PySI.Startup.context_dimensions()[0], PySI.Startup.context_dimensions()[1]
-    tw, th = 100, 100
-    x = w // 2 - tw // 2
-    y = 200
-    shape = [[x, y], [x, y + th], [x + tw, y + th], [x + tw, y]]
-    PySI.Startup.create_region_by_name(shape, Color.regionname, {"color": PySI.Color(100, 100, 20, 255)})
+# def add_camera_calibration():
+#     shape = [[0, 0],
+#              [0, PySI.Startup.context_dimensions()[1]],
+#              [PySI.Startup.context_dimensions()[0], PySI.Startup.context_dimensions()[1]],
+#              [PySI.Startup.context_dimensions()[0], 0]]
+#
+#     PySI.Startup.create_region_by_name(shape, ScanCameraAreaDetection.regionname, {})
+#
+# def add_annotation_color():
+#     w, h = PySI.Startup.context_dimensions()[0], PySI.Startup.context_dimensions()[1]
+#     tw, th = 100, 100
+#     x = w // 2 - tw // 2
+#     y = 200
+#     shape = [[x, y], [x, y + th], [x + tw, y + th], [x + tw, y]]
+#     PySI.Startup.create_region_by_name(shape, Color.regionname, {"color": PySI.Color(100, 100, 20, 255)})
 
 def add_terminal():
     x = 10
@@ -157,17 +152,8 @@ def add_study_setup_fs(kwargs):
     shape = [[x, y], [x, y + h], [x + w, y + h], [x + w, y]]
     PySI.Startup.create_region_by_name(shape, FSMLogging.regionname, kwargs)
 
-def add_study_setup_pd():
-    pass
-    # w, h = PySI.Startup.context_dimensions()
-    # w, h = w - 2, h - 2
-    # x, y = 1, 1
-
-    # shape = [[x, y], [x, y + h], [x + w, y + h], [x + w, y]]
-
-    # add_additional_mouse_cursor({})
-
-    # PySI.Startup.create_region_by_name(shape, Gravity.regionname, {})
+def add_study_setup_pd(kwargs):
+    add_tracking_integration(kwargs)
 
 def add_study_setup_em():
     pass
@@ -191,7 +177,8 @@ def start_application():
         add_study_setup_fs(kwargs)
 
     if STUDY_PDE & STUDY_CHOICE:
-        add_study_setup_pd()
+        kwargs = {"group": "1", "port": 5000}
+        add_study_setup_pd(kwargs)
 
     if STUDY_EMS & STUDY_CHOICE:
         add_study_setup_em()
