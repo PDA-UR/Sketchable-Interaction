@@ -35,7 +35,6 @@ class Context: public SIObject
 
 
     void update_cursor_stroke_width_by_cursor_id(const std::string &cursor_id, int stroke_width);
-
     void update_cursor_stroke_color_by_cursor_id(const std::string &cursor_id, const glm::vec4 &color);
 
 public:
@@ -102,6 +101,9 @@ public:
     const IPhysicalEnvironment* physical_environment();
 
     void push_fps(int actual, int target);
+
+    void click_mouse(float x, float y);
+    void dbl_click_mouse(float x, float y);
 
     void set_file_system_root_folder(const std::string &path);
     void set_file_system_desktop_folder(const std::string &path);

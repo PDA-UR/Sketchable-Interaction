@@ -19,6 +19,7 @@
 #include <sigrun/rendering/qml/items/VideoItem.hpp>
 #include <sigrun/util/Benchmark.hpp>
 #include <chrono>
+#include <QTest>
 
 #define NEW_REGIONS_PER_FRAME 50
 
@@ -750,4 +751,24 @@ std::string Context::file_system_root_folder()
 std::string Context::file_system_desktop_folder()
 {
     return d_file_system_desktop_folder;
+}
+
+void Context::click_mouse(float x, float y)
+{
+    x+= QApplication::primaryScreen()->geometry().x();
+    QWidget* target = QApplication::widgetAt(x, y);
+    QPoint p = target->mapFromGlobal(QPoint(x, y));
+
+    QTest::mouseClick(target, Qt::LeftButton, Qt::AltModifier | Qt::ControlModifier, p);
+    QApplication::processEvents();
+}
+
+void Context::dbl_click_mouse(float x, float y)
+{
+    x+= QApplication::primaryScreen()->geometry().x();
+    QWidget* target = QApplication::widgetAt(x, y);
+    QPoint p = target->mapFromGlobal(QPoint(x, y));
+
+    QTest::mouseDClick(target, Qt::LeftButton, Qt::AltModifier | Qt::ControlModifier, p);
+    QApplication::processEvents();
 }
