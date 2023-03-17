@@ -848,3 +848,14 @@ void PySIEffect::__current_tangible_selection__(const std::string &effect_to_ass
 {
     Context::SIContext()->tangible_manager()->set_current_pen_selection(effect_to_assign, effect_display_name, effect_texture, kwargs);
 }
+
+void PySIEffect::__on_destroy__() {
+}
+
+void PySIEffect::__click_mouse__(float x, float y) {
+    Context::SIContext()->click_mouse(x, y);
+}
+
+void PySIEffect::__dbl_click_mouse__(float x, float y) {
+    Context::SIContext()->dbl_click_mouse(x, y);
+}
