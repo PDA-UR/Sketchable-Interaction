@@ -199,6 +199,7 @@ target_link_libraries(SIGeneralRuntime
         Qt5::QuickWidgets
         Qt5::Quick
         Qt5::Core
+        Qt5::Test
         Qt5::Widgets
         Qt5::Qml
         Qt5::Gui

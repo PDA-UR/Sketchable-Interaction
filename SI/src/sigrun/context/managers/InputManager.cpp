@@ -180,9 +180,15 @@ bool InputManager::eventFilter(QObject *watched, QEvent *event)
         {
             case Qt::LeftButton:
             {
-                long start = std::chrono::time_point_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now()).time_since_epoch().count();
-                Context::SIContext()->logfile << "start:" << start << '\n';
-                press_mouse_button(SI_LEFT_MOUSE_BUTTON);
+                if(mouse_event->modifiers() & (Qt::AltModifier | Qt::ControlModifier))
+                {
+                }
+                else
+                {
+                    long start = std::chrono::time_point_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now()).time_since_epoch().count();
+                    Context::SIContext()->logfile << "start:" << start << '\n';
+                    press_mouse_button(SI_LEFT_MOUSE_BUTTON);
+                }
             }
             break;
 
