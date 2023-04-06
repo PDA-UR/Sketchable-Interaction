@@ -4,6 +4,7 @@
 
 #if !defined(Q_MOC_RUN)
 #include <tbb/parallel_for.h>
+#include <tbb/tbb.h>
 #endif
 
 #include <iostream>
@@ -274,25 +275,25 @@ void RegionMask::build_node_list(int *out, int *num_out, int y, const std::vecto
     }
 }
 
-// weird stuff: this sort works as intended
-// using std::sort does not - no clue why that is
 void RegionMask::sort(int in[256], int num_in)
 {
-    int swap;
-    for (int i = 0; i < num_in - 1;)
-    {
-        if (in[i] > in[i + 1])
-        {
-            swap = in[i];
-            in[i] = in[i + 1];
-            in[i + 1] = swap;
+    std::sort(in, in + num_in);
 
-            if (i)
-                i--;
-        }
-        else
-            i++;
-    }
+//    int swap;
+//    for (int i = 0; i < num_in - 1;)
+//    {
+//        if (in[i] > in[i + 1])
+//        {
+//            swap = in[i];
+//            in[i] = in[i + 1];
+//            in[i + 1] = swap;
+//
+//            if (i)
+//                i--;
+//        }
+//        else
+//            i++;
+//    }
 }
 
 void RegionMask::fill(int in[256], int num_in, int y)

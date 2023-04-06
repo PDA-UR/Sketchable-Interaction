@@ -233,12 +233,11 @@ uint32_t Context::height()
 
 void Context::set_effect(const std::string& target_uuid, const std::string& effect_name, bp::dict& kwargs)
 {
-
     for(auto& region: uprm->regions())
     {
         if(region->uuid() == target_uuid)
         {
-            if (region->type() == SI_TYPE_MOUSE_CURSOR || region->name() == "__ Pen __")
+            if (region->type() == SI_TYPE_MOUSE_CURSOR || region->name() == "__ Pen __" || region->name() == "__ Tip __")
             {
                 d_selected_effects_by_id[target_uuid] = d_available_plugins[effect_name];
             }
