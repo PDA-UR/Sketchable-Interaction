@@ -33,6 +33,7 @@ MainWindow::MainWindow(uint32_t width, uint32_t height, uint32_t target_fps):
     setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
     setViewport(new QOpenGLWidget);
+    setViewportUpdateMode(QGraphicsView::ViewportUpdateMode::MinimalViewportUpdate);
     setScene(p_scene);
     setRenderHint(QPainter::Antialiasing);
 }
@@ -64,19 +65,20 @@ void MainWindow::loop()
             frames = 0;
         }
 
-        while(unprocessed_time > 1.0 / d_target_fps)
-        {
-            render = true;
-            Time::set_time_delta(1.0 / d_target_fps);
-            unprocessed_time -= 1.0 / d_target_fps;
-        }
+//        while(unprocessed_time > 1.0 / d_target_fps)
+//        {
+//            render = true;
+//            Time::set_time_delta(1.0 / d_target_fps);
+//            unprocessed_time -= 1.0 / d_target_fps;
+//        }
 
 //        if(render)
 //        {
-            __loop();
-            Context::SIContext()->update();
-            frames++;
+        __loop();
+        Context::SIContext()->update();
+        frames++;
 //        }
+//        update();
     }
 
     close();

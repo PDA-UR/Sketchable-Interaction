@@ -3,161 +3,86 @@
 #include <sigrun/context/Context.hpp>
 #include "TangibleManager.hpp"
 
-TangibleManager::TangibleManager():
-    d_assigned_pen_effect(""),
-    d_assigned_pen_effect_display_name(""),
-    d_assigned_pen_effect_texture_path(""),
-    d_last_time(clock())
-{}
+#include <sys/socket.h>
+#include <sys/un.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+#include <pthread.h>
+#include <sys/stat.h>
+#include <unistd.h>
+#include <fcntl.h>
+#include <poll.h>
+
+// Code taken for testing from Andreas Schmid:
+https://github.com/vigitia/IRPenTracking/blob/frontend_multipointer_support/sdl_frontend/uds.cpp
+
+TangibleManager::TangibleManager()
+{
+    socklen_t addrlen;
+    ssize_t size;
+    struct sockaddr_un address;
+    const int y = 1;
+    if((server_socket=socket (AF_LOCAL, SOCK_STREAM, 0)) > 0)
+        printf ("created socket\n");
+    unlink(uds_path.c_str());
+    address.sun_family = AF_LOCAL;
+    strcpy(address.sun_path, uds_path.c_str());
+    if (bind ( server_socket,
+               (struct sockaddr *) &address,
+               sizeof (address)) != 0) {
+        printf( "port is not free!\n");
+    }
+    listen (server_socket, 5);
+    addrlen = sizeof (struct sockaddr_in);
+    while (1) {
+        client_socket = accept ( server_socket,
+                                 (struct sockaddr *) &address,
+                                 &addrlen );
+        if (client_socket > 0)
+        {
+            printf ("client connected\n");
+            break;
+        }
+    }
+
+    pthread_create(&uds_thread, nullptr, reinterpret_cast<void *(*)(void *)>(TangibleManager::run_helper), NULL);
+}
 
 TangibleManager::~TangibleManager() = default;
 
-void TangibleManager::receive(const TangibleObjectMessage* p_message)
+void *TangibleManager::handle_uds(void *args)
 {
-    if(std::find_if(d_tangible_ids.begin(), d_tangible_ids.end(), [&](int id)
+    while(1)
     {
-        return id == p_message->id();
-    }) == d_tangible_ids.end())
-        add_tangible(p_message);
-    else
-        update_tangible(p_message);
-}
+        // receive header message containing the length of the message
+        //char header[4];
+        //header[0] = 0;
+        //header[1] = 0;
+        //header[2] = 0;
+        //header[3] = 0;
 
-void TangibleManager::add_tangible(const TangibleObjectMessage *p_message)
-{
-    if(!(MESSAGE_VALID(p_message)))
-        return;
+        char* header = (char *) malloc(4 * sizeof(char));
+        int header_size = recv(client_socket, header, 4, MSG_WAITALL);
 
-    d_tangible_ids.push_back(p_message->id());
+        // create buffer with appropriate size
+        int buffer_length = (header[0] << 24) | (header[1] << 16) | (header[2] << 8) | header[3];
+        free(header);
+        char buffer[buffer_length + 1];
 
-    std::vector<glm::vec3> contour;
-    correct_shape(contour, p_message->shape(), p_message->tracker_dimensions());
-    const std::vector<glm::vec3>& original_contour = p_message->shape();
+        // receive actual message
+        int size = recv(client_socket, buffer, buffer_length, MSG_WAITALL);
 
-    bp::dict kwargs;
+        // add terminating character to avoid junk in the end
+        buffer[buffer_length] = '\0';
 
-    kwargs["id"] = p_message->id();
+        // hand over to message parser
 
-    if(p_message->has_links())
-        add_links_to_kwargs(kwargs, p_message->links());
-
-    kwargs["contour"] = contour;
-    kwargs["original_contour"] = p_message->shape();
-    kwargs["click"] = p_message->is_click();
-    kwargs["drag"] = p_message->is_drag();
-    kwargs["dbl_click"] = p_message->is_dbl_click();
-    kwargs["x"] = p_message->x() / p_message->tracker_dimension_x() * Context::SIContext()->width();
-    kwargs["y"] = p_message->y()/ p_message->tracker_dimension_y() * Context::SIContext()->height();
-    kwargs["alive"] = p_message->is_alive();
-    kwargs["touch"] = p_message->is_touch();
-    kwargs["color"] = p_message->color();
-    kwargs["tx"] = p_message->tracker_dimension_x();
-    kwargs["ty"] = p_message->tracker_dimension_y();
-    kwargs["assigned_effect"] = d_assigned_pen_effect;
-    kwargs["assigned_effect_display_name"] = d_assigned_pen_effect_display_name;
-    kwargs["assigned_effect_texture_path"] = d_assigned_pen_effect_texture_path;
-    kwargs["assigned_effect_kwargs"] = d_assigned_pen_effect_kwargs;
-
-    Context::SIContext()->register_new_region_via_name(contour, p_message->plugin_identifier(), false, kwargs);
-}
-
-void TangibleManager::correct_shape(std::vector<glm::vec3> &out, const std::vector<glm::vec3> &in, const glm::vec2& tracker_dimensions)
-{
-    out.resize(in.size());
-
-    for(int i = 0; i < in.size(); ++i)
-    {
-        const glm::vec3& p = in[i];
-
-        out[i].x = p.x / tracker_dimensions.x * Context::SIContext()->width();
-        out[i].y = p.y / tracker_dimensions.y * Context::SIContext()->height();
-    }
-}
-
-void TangibleManager::add_links_to_kwargs(bp::dict &kwargs, const std::vector<int> &links)
-{
-    bp::list l;
-    for(int link: links)
-        l.append(link);
-
-    kwargs["links"] = l;
-}
-
-void TangibleManager::update_tangible(const TangibleObjectMessage* p_message)
-{
-    if(!(MESSAGE_VALID(p_message)))
-        return;
-
-    std::vector<glm::vec3> contour;
-    correct_shape(contour, p_message->shape(), p_message->tracker_dimensions());
-
-    bp::dict kwargs;
-    kwargs["contour"] = contour;
-    kwargs["original_contour"] = p_message->shape();
-    kwargs["click"] = p_message->is_click();
-    kwargs["drag"] = p_message->is_drag();
-    kwargs["dbl_click"] = p_message->is_dbl_click();
-    kwargs["x"] = p_message->x() / p_message->tracker_dimension_x() * Context::SIContext()->width();
-    kwargs["y"] = p_message->y()/ p_message->tracker_dimension_y() * Context::SIContext()->height();
-    kwargs["alive"] = p_message->is_alive();
-    kwargs["touch"] = p_message->is_touch();
-    kwargs["color"] = p_message->color();
-    kwargs["tx"] = p_message->tracker_dimension_x();
-    kwargs["ty"] = p_message->tracker_dimension_y();
-    kwargs["assigned_effect"] = d_assigned_pen_effect;
-    kwargs["assigned_effect_display_name"] = d_assigned_pen_effect_display_name;
-    kwargs["assigned_effect_texture_path"] = d_assigned_pen_effect_texture_path;
-    kwargs["assigned_effect_kwargs"] = d_assigned_pen_effect_kwargs;
-
-    std::shared_ptr<Region> r = associated_region(p_message->id());
-
-    if(r)
-        r->raw_effect().attr("__update__")(kwargs);
-
-    if(p_message && !p_message->is_alive())
-        remove(p_message->id());
-}
-
-std::shared_ptr<Region> TangibleManager::associated_region(int id)
-{
-    auto& regions = Context::SIContext()->region_manager()->regions();
-
-    for(auto& region: regions)
-    {
-        bool has_attr = PyObject_HasAttrString(region->raw_effect().ptr(), "object_id");
-
-        if (!has_attr)
-            continue;
-
-        int object_id = bp::extract<int>(region->raw_effect().attr("object_id"));
-
-        if(object_id == id)
-            return region;
+        // for debugging
+        //if(result != 1)
+        //{
+        //    cout << buffer << endl;
+        //}
     }
 
     return nullptr;
-}
-
-void TangibleManager::remove(int id)
-{
-    d_tangible_ids.erase(std::remove_if(d_tangible_ids.begin(), d_tangible_ids.end(), [&](int other)
-    {
-        if(other == id)
-            return associated_region(id).get() != nullptr;
-
-        return false;
-    }), d_tangible_ids.end());
-}
-
-const std::vector<int> &TangibleManager::tangible_ids()
-{
-    return d_tangible_ids;
-}
-
-void TangibleManager::set_current_pen_selection(const std::string &effect_to_assign, const std::string &effect_display_name, const std::string &effect_texture_path, bp::dict &kwargs)
-{
-    d_assigned_pen_effect = effect_to_assign;
-    d_assigned_pen_effect_display_name = effect_display_name;
-    d_assigned_pen_effect_texture_path = effect_texture_path;
-    d_assigned_pen_effect_kwargs = kwargs;
 }

@@ -846,7 +846,6 @@ void PySIEffect::__set_cursor_stroke_color_by_cursorid__(const std::string &curs
 
 void PySIEffect::__current_tangible_selection__(const std::string &effect_to_assign, const std::string &effect_display_name, const std::string &effect_texture, bp::dict &kwargs)
 {
-    Context::SIContext()->tangible_manager()->set_current_pen_selection(effect_to_assign, effect_display_name, effect_texture, kwargs);
 }
 
 void PySIEffect::__on_destroy__() {

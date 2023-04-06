@@ -262,9 +262,10 @@ void RegionMask::scanlinefill(const std::vector<glm::vec3>& contour)
     });
 }
 
+
 void RegionMask::build_node_list(int *out, int *num_out, int y, const std::vector<glm::vec3> &in)
 {
-    int num_corners = in.size() - 2;
+    int num_corners = in.size() - 1; // subtract 1 for indexing
 
     for (int i = 0, k = num_corners - 1; i < num_corners; i++)
     {
@@ -278,22 +279,6 @@ void RegionMask::build_node_list(int *out, int *num_out, int y, const std::vecto
 void RegionMask::sort(int in[256], int num_in)
 {
     std::sort(in, in + num_in);
-
-//    int swap;
-//    for (int i = 0; i < num_in - 1;)
-//    {
-//        if (in[i] > in[i + 1])
-//        {
-//            swap = in[i];
-//            in[i] = in[i + 1];
-//            in[i + 1] = swap;
-//
-//            if (i)
-//                i--;
-//        }
-//        else
-//            i++;
-//    }
 }
 
 void RegionMask::fill(int in[256], int num_in, int y)
