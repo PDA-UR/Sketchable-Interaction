@@ -6,15 +6,11 @@
 #include <sys/socket.h>
 #include <sys/un.h>
 #include <netinet/in.h>
-#include <arpa/inet.h>
 #include <pthread.h>
-#include <sys/stat.h>
 #include <unistd.h>
-#include <fcntl.h>
-#include <poll.h>
 
 // Code taken for testing from Andreas Schmid:
-https://github.com/vigitia/IRPenTracking/blob/frontend_multipointer_support/sdl_frontend/uds.cpp
+//https://github.com/vigitia/IRPenTracking/blob/frontend_multipointer_support/sdl_frontend/uds.cpp
 
 TangibleManager::TangibleManager()
 {

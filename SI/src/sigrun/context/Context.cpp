@@ -51,7 +51,7 @@ Context::Context()
     uprcm = std::make_unique<CollisionManager>();
     upeam = std::make_unique<ExternalApplicationManager>();
     upjs = std::make_unique<JobSystem<void, 512>>();
-    uptm = std::make_unique<TangibleManager>();
+//    uptm = std::make_unique<TangibleManager>();
     logfile.open("menu_latency.csv", std::ios_base::app);
     logfile << "time\n";
 

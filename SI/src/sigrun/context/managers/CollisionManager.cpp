@@ -118,7 +118,7 @@ void CollisionManager::perform_collision_check(std::vector<std::tuple<Region*, R
 
 void CollisionManager::perform_collision_events(std::vector<std::tuple<Region*, Region*, bool>> &in)
 {
-    for(auto elemit = in.rbegin(); elemit != in.rend(); ++elemit)
+    for(std::tuple<Region*, Region*, bool>* elemit = in.data() + in.size() - 1; elemit >= in.data(); --elemit)
     {
         auto a = std::get<0>(*elemit);
         auto b = std::get<1>(*elemit);

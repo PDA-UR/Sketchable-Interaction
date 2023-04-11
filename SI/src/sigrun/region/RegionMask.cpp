@@ -251,6 +251,7 @@ void RegionMask::scanlinefill(const std::vector<glm::vec3>& contour)
 {
     tbb::parallel_for(tbb::blocked_range<uint32_t>(0, d_canvas_height), [&](const tbb::blocked_range<uint32_t>& r)
     {
+
         for (auto y = r.begin(); y != r.end(); y++)
         {
             int nodes = 0, nodeX[256];
