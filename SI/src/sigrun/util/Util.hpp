@@ -19,4 +19,15 @@
     __value; \
 })
 
+template <typename T>
+void fast_resize(std::vector<T>& dst, const std::vector<T>& src)
+{
+    dst.clear();
+    dst.reserve(src.size());
+
+    const T* it2 = src.data();
+    for(T* it = dst.data(); it < dst.data() + dst.capacity(); ++it, ++it2)
+        *it = *it2;
+}
+
 #endif //SITEST_UTIL_HPP

@@ -4,6 +4,7 @@
 
 #if !defined(Q_MOC_RUN)
 #include <tbb/parallel_for.h>
+#include <tbb/tbb.h>
 #endif
 
 #include <iostream>
@@ -250,6 +251,7 @@ void RegionMask::scanlinefill(const std::vector<glm::vec3>& contour)
 {
     tbb::parallel_for(tbb::blocked_range<uint32_t>(0, d_canvas_height), [&](const tbb::blocked_range<uint32_t>& r)
     {
+
         for (auto y = r.begin(); y != r.end(); y++)
         {
             int nodes = 0, nodeX[256];
@@ -261,9 +263,10 @@ void RegionMask::scanlinefill(const std::vector<glm::vec3>& contour)
     });
 }
 
+
 void RegionMask::build_node_list(int *out, int *num_out, int y, const std::vector<glm::vec3> &in)
 {
-    int num_corners = in.size() - 2;
+    int num_corners = in.size() - 1; // subtract 1 for indexing
 
     for (int i = 0, k = num_corners - 1; i < num_corners; i++)
     {
@@ -274,25 +277,9 @@ void RegionMask::build_node_list(int *out, int *num_out, int y, const std::vecto
     }
 }
 
-// weird stuff: this sort works as intended
-// using std::sort does not - no clue why that is
 void RegionMask::sort(int in[256], int num_in)
 {
-    int swap;
-    for (int i = 0; i < num_in - 1;)
-    {
-        if (in[i] > in[i + 1])
-        {
-            swap = in[i];
-            in[i] = in[i + 1];
-            in[i + 1] = swap;
-
-            if (i)
-                i--;
-        }
-        else
-            i++;
-    }
+    std::sort(in, in + num_in);
 }
 
 void RegionMask::fill(int in[256], int num_in, int y)

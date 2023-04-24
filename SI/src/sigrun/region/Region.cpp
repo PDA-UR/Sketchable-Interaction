@@ -254,28 +254,7 @@ void Region::LINK_SLOT(const std::string& uuid_event, const std::string& uuid_se
                             break;
                         }
                     }
-
-//                    auto it = std::find_if(regions.begin(), regions.end(), [&](auto &region)
-//                    {
-//                       return region->name() == SI_NAME_EFFECT_MOUSE_CURSOR;
-//                    });
-//
-//                    if(it != regions.end())
-//                    {
-//                        float abs_x = bp::extract<float>(args[2]);
-//                        float abs_y = bp::extract<float>(args[3]);
-//                        it->get()->raw_effect().attr("last_x") = it->get()->d_py_effect->d_x;
-//                        it->get()->raw_effect().attr("last_y") = it->get()->d_py_effect->d_y;
-//                        it->get()->raw_effect().attr("x") = abs_x;
-//                        it->get()->raw_effect().attr("x") = abs_y;
-//                        it->get()->d_py_effect->d_x = abs_x;
-//                        it->get()->d_py_effect->d_y = abs_y;
-//                        it->get()->move_and_rotate();
-//                        it->get()->raw_effect().attr("set_position_from_position")(abs_x - it->get()->d_py_effect->d_x, abs_y - it->get()->d_py_effect->d_y, abs_x, abs_y);
-//                    }
                 }
-
-//                v(*args);
             }
             else
             {
@@ -287,28 +266,6 @@ void Region::LINK_SLOT(const std::string& uuid_event, const std::string& uuid_se
                     {
                         if (bp::extract<bp::tuple>(args).check())
                         {
-//                           if(source_cap == "__SI_position__")
-//                           {
-//                               auto& regions = Context::SIContext()->region_manager()->regions();
-//
-//                               auto it = std::find_if(regions.begin(), regions.end(), [&](auto &region)
-//                               {
-//                                   return region->name() == "__ Pen __";
-//                               });
-//
-//                               if(it != regions.end())
-//                               {
-//                                   float abs_x = bp::extract<float>(args[2]);
-//                                   float abs_y = bp::extract<float>(args[3]);
-//                                   it->get()->raw_effect().attr("last_x") = it->get()->d_py_effect->d_x;
-//                                   it->get()->raw_effect().attr("last_y") = it->get()->d_py_effect->d_y;
-//                                   it->get()->raw_effect().attr("x") = abs_x;
-//                                   it->get()->raw_effect().attr("x") = abs_y;
-//                                   it->get()->d_py_effect->d_x = abs_x;
-//                                   it->get()->d_py_effect->d_y = abs_y;
-//                                   it->get()->move_and_rotate();
-//                               }
-//                           }
                             v(*args);
                         }
                         else

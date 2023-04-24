@@ -3,161 +3,148 @@
 #include <sigrun/context/Context.hpp>
 #include "TangibleManager.hpp"
 
+#include <sys/socket.h>
+#include <sys/un.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+#include <pthread.h>
+#include <sys/stat.h>
+#include <unistd.h>
+#include <fcntl.h>
+#include <poll.h>
+
+// Code taken for testing from Andreas Schmid:
+//https://github.com/vigitia/IRPenTracking/blob/frontend_multipointer_support/sdl_frontend/uds.cpp
+
 TangibleManager::TangibleManager():
-    d_assigned_pen_effect(""),
-    d_assigned_pen_effect_display_name(""),
-    d_assigned_pen_effect_texture_path(""),
-    d_last_time(clock())
-{}
+        d_is_started(false)
+{
+
+}
+
+void TangibleManager::start()
+{
+    for (int i = 0; i < 3; i++)
+    {
+        bp::dict kwargs;
+        kwargs["id"] = i;
+
+        float x = i * 18;
+        float y = 0;
+        float w = 18 / 8;
+        float h = 24 / 8;
+
+        std::vector<glm::vec3> contour = {glm::vec3(x, y, 1), glm::vec3(x, y + h, 1), glm::vec3(x + w, y + h, 1), glm::vec3(x + w, y, 1)};
+
+        Context::SIContext()->register_new_region_via_name(contour, "__ Tip __", false, kwargs);
+    }
+
+    d_is_started = true;
+
+    socklen_t addrlen;
+
+    ssize_t size;
+
+    struct sockaddr_un address;
+
+    const int y = 1;
+
+    if((server_socket = socket (AF_LOCAL, SOCK_STREAM, 0)) > 0)
+        Print::print("Socket created.");
+
+    unlink(uds_path.c_str());
+    address.sun_family = AF_LOCAL;
+
+    strcpy(address.sun_path, uds_path.c_str());
+
+    if (bind(server_socket, (struct sockaddr *) &address, sizeof (address)) != 0)
+        Print::print("Port is not free!");
+
+    listen(server_socket, 5);
+
+    addrlen = sizeof (struct sockaddr_in);
+
+    while(true) {
+        client_socket = accept (server_socket, (struct sockaddr *) &address, &addrlen);
+
+        if (client_socket > 0)
+        {
+            Print::print("Client connected!");
+            break;
+        }
+    }
+
+    pthread_create(&uds_thread, nullptr, reinterpret_cast<void *(*)(void *)>(TangibleManager::run_helper), this);
+}
 
 TangibleManager::~TangibleManager() = default;
 
-void TangibleManager::receive(const TangibleObjectMessage* p_message)
+void *TangibleManager::handle_uds(void *args)
 {
-    if(std::find_if(d_tangible_ids.begin(), d_tangible_ids.end(), [&](int id)
+    while(true)
     {
-        return id == p_message->id();
-    }) == d_tangible_ids.end())
-        add_tangible(p_message);
-    else
-        update_tangible(p_message);
-}
+        if (!red && !green && !blue)
+        {
+            PythonGlobalInterpreterLockGuard g;
 
-void TangibleManager::add_tangible(const TangibleObjectMessage *p_message)
-{
-    if(!(MESSAGE_VALID(p_message)))
-        return;
+            for(auto& r: Context::SIContext()->region_manager()->regions())
+            {
+                if (r->name() == "__ Tip __")
+                {
+                    HANDLE_PYTHON_CALL(PY_ERROR, "STH IS MAJORLY BROKEN!",
+                        PythonGlobalInterpreterLockGuard g;
+                        uint8_t id = bp::extract<int>(r->raw_effect().attr("id"));
 
-    d_tangible_ids.push_back(p_message->id());
+                        switch(id)
+                        {
+                            case 0: red = r; break;
+                            case 1: green = r; break;
+                            case 2: blue = r; break;
+                        }
+                    )
+                }
+            }
 
-    std::vector<glm::vec3> contour;
-    correct_shape(contour, p_message->shape(), p_message->tracker_dimensions());
-    const std::vector<glm::vec3>& original_contour = p_message->shape();
-
-    bp::dict kwargs;
-
-    kwargs["id"] = p_message->id();
-
-    if(p_message->has_links())
-        add_links_to_kwargs(kwargs, p_message->links());
-
-    kwargs["contour"] = contour;
-    kwargs["original_contour"] = p_message->shape();
-    kwargs["click"] = p_message->is_click();
-    kwargs["drag"] = p_message->is_drag();
-    kwargs["dbl_click"] = p_message->is_dbl_click();
-    kwargs["x"] = p_message->x() / p_message->tracker_dimension_x() * Context::SIContext()->width();
-    kwargs["y"] = p_message->y()/ p_message->tracker_dimension_y() * Context::SIContext()->height();
-    kwargs["alive"] = p_message->is_alive();
-    kwargs["touch"] = p_message->is_touch();
-    kwargs["color"] = p_message->color();
-    kwargs["tx"] = p_message->tracker_dimension_x();
-    kwargs["ty"] = p_message->tracker_dimension_y();
-    kwargs["assigned_effect"] = d_assigned_pen_effect;
-    kwargs["assigned_effect_display_name"] = d_assigned_pen_effect_display_name;
-    kwargs["assigned_effect_texture_path"] = d_assigned_pen_effect_texture_path;
-    kwargs["assigned_effect_kwargs"] = d_assigned_pen_effect_kwargs;
-
-    Context::SIContext()->register_new_region_via_name(contour, p_message->plugin_identifier(), false, kwargs);
-}
-
-void TangibleManager::correct_shape(std::vector<glm::vec3> &out, const std::vector<glm::vec3> &in, const glm::vec2& tracker_dimensions)
-{
-    out.resize(in.size());
-
-    for(int i = 0; i < in.size(); ++i)
-    {
-        const glm::vec3& p = in[i];
-
-        out[i].x = p.x / tracker_dimensions.x * Context::SIContext()->width();
-        out[i].y = p.y / tracker_dimensions.y * Context::SIContext()->height();
-    }
-}
-
-void TangibleManager::add_links_to_kwargs(bp::dict &kwargs, const std::vector<int> &links)
-{
-    bp::list l;
-    for(int link: links)
-        l.append(link);
-
-    kwargs["links"] = l;
-}
-
-void TangibleManager::update_tangible(const TangibleObjectMessage* p_message)
-{
-    if(!(MESSAGE_VALID(p_message)))
-        return;
-
-    std::vector<glm::vec3> contour;
-    correct_shape(contour, p_message->shape(), p_message->tracker_dimensions());
-
-    bp::dict kwargs;
-    kwargs["contour"] = contour;
-    kwargs["original_contour"] = p_message->shape();
-    kwargs["click"] = p_message->is_click();
-    kwargs["drag"] = p_message->is_drag();
-    kwargs["dbl_click"] = p_message->is_dbl_click();
-    kwargs["x"] = p_message->x() / p_message->tracker_dimension_x() * Context::SIContext()->width();
-    kwargs["y"] = p_message->y()/ p_message->tracker_dimension_y() * Context::SIContext()->height();
-    kwargs["alive"] = p_message->is_alive();
-    kwargs["touch"] = p_message->is_touch();
-    kwargs["color"] = p_message->color();
-    kwargs["tx"] = p_message->tracker_dimension_x();
-    kwargs["ty"] = p_message->tracker_dimension_y();
-    kwargs["assigned_effect"] = d_assigned_pen_effect;
-    kwargs["assigned_effect_display_name"] = d_assigned_pen_effect_display_name;
-    kwargs["assigned_effect_texture_path"] = d_assigned_pen_effect_texture_path;
-    kwargs["assigned_effect_kwargs"] = d_assigned_pen_effect_kwargs;
-
-    std::shared_ptr<Region> r = associated_region(p_message->id());
-
-    if(r)
-        r->raw_effect().attr("__update__")(kwargs);
-
-    if(p_message && !p_message->is_alive())
-        remove(p_message->id());
-}
-
-std::shared_ptr<Region> TangibleManager::associated_region(int id)
-{
-    auto& regions = Context::SIContext()->region_manager()->regions();
-
-    for(auto& region: regions)
-    {
-        bool has_attr = PyObject_HasAttrString(region->raw_effect().ptr(), "object_id");
-
-        if (!has_attr)
             continue;
+        }
 
-        int object_id = bp::extract<int>(region->raw_effect().attr("object_id"));
 
-        if(object_id == id)
-            return region;
+        char* header = (char *) malloc(4 * sizeof(char));
+        int header_size = recv(client_socket, header, 4, MSG_WAITALL);
+
+        // create buffer with appropriate size
+        int buffer_length = (header[0] << 24) | (header[1] << 16) | (header[2] << 8) | header[3];
+        free(header);
+        char buffer[buffer_length + 1];
+
+        int size = recv(client_socket, buffer, buffer_length, MSG_WAITALL);
+
+        buffer[buffer_length] = '\0';
+
+        int oid, x, y, state;
+        uint32_t r;
+        uint32_t g;
+        uint32_t b;
+
+        if(sscanf(buffer, "l %d %u %u %u %d %d %d ", &oid, &r, &g, &b, &x, &y, &state) == 7)
+        {
+            int id = r > 0 ? 0 : g > 0 ? 1 : b > 0 ? 2: -1;
+
+            if (id == -1)
+                continue;
+
+            if(id == 0)
+            {
+                PythonGlobalInterpreterLockGuard g;
+                red->raw_effect().attr("__update__")(oid, x, y, state);
+            }
+        }
     }
 
     return nullptr;
 }
 
-void TangibleManager::remove(int id)
+bool TangibleManager::is_started()
 {
-    d_tangible_ids.erase(std::remove_if(d_tangible_ids.begin(), d_tangible_ids.end(), [&](int other)
-    {
-        if(other == id)
-            return associated_region(id).get() != nullptr;
-
-        return false;
-    }), d_tangible_ids.end());
-}
-
-const std::vector<int> &TangibleManager::tangible_ids()
-{
-    return d_tangible_ids;
-}
-
-void TangibleManager::set_current_pen_selection(const std::string &effect_to_assign, const std::string &effect_display_name, const std::string &effect_texture_path, bp::dict &kwargs)
-{
-    d_assigned_pen_effect = effect_to_assign;
-    d_assigned_pen_effect_display_name = effect_display_name;
-    d_assigned_pen_effect_texture_path = effect_texture_path;
-    d_assigned_pen_effect_kwargs = kwargs;
+    return d_is_started;
 }

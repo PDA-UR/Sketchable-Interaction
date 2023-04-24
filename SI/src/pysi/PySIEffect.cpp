@@ -127,13 +127,14 @@ void PySIEffect::__signal_deletion_by_uuid__(const std::string& uuid)
 {
     const auto& regions = Context::SIContext()->region_manager()->regions();
 
-    std::find_if(regions.begin(), regions.end(), [&uuid](auto& r)
+    for(const std::shared_ptr<Region>* region = regions.data(); region < regions.data() + regions.size(); ++region)
     {
-       if(uuid == r->uuid())
-           r->effect()->d_flagged_for_deletion = true;
-
-       return uuid == r->uuid();
-    });
+        if(uuid == (*region)->uuid())
+        {
+            (*region)->effect()->d_flagged_for_deletion = true;
+            return;
+        }
+    }
 }
 
 bool PySIEffect::is_flagged_for_deletion()
@@ -162,16 +163,15 @@ void PySIEffect::__move_hard__(float x, float y)
     d_x = x;
     d_y = y;
 
-    auto& regions = Context::SIContext()->region_manager()->regions();
+    const auto& regions = Context::SIContext()->region_manager()->regions();
 
-    auto it = std::find_if(regions.begin(), regions.end(), [&](auto &region)
+    for(const std::shared_ptr<Region>* region = regions.data(); region < regions.data() + regions.size(); ++region)
     {
-        return region->uuid() == uuid();
-    });
-
-    if(it != regions.end())
-    {
-        it->get()->move_and_rotate();
+        if(uuid() == (*region)->uuid())
+        {
+            region->get()->move_and_rotate();
+            return;
+        }
     }
 }
 
@@ -330,8 +330,7 @@ void PySIEffect::set_aabb(const std::vector<glm::vec3> &aabb)
 {
     d_aabb.clear();
     d_aabb.resize(4);
-
-    for(int i = 0; i < aabb.size(); i++)
+    for(int i = 0; i < aabb.size(); ++i)
         d_aabb[i] = aabb[i];
 }
 
@@ -846,7 +845,6 @@ void PySIEffect::__set_cursor_stroke_color_by_cursorid__(const std::string &curs
 
 void PySIEffect::__current_tangible_selection__(const std::string &effect_to_assign, const std::string &effect_display_name, const std::string &effect_texture, bp::dict &kwargs)
 {
-    Context::SIContext()->tangible_manager()->set_current_pen_selection(effect_to_assign, effect_display_name, effect_texture, kwargs);
 }
 
 void PySIEffect::__on_destroy__() {

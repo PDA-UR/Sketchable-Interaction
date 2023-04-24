@@ -26,7 +26,6 @@ TangibleObjectMessage::TangibleObjectMessage(int32_t id, const std::vector<glm::
 
 void TangibleObjectMessage::send()
 {
-    Context::SIContext()->tangible_manager()->receive(this);
 }
 
 const int TangibleObjectMessage::id() const
