@@ -12,6 +12,7 @@
 
 ## Building SI yourself (currently only available on Linux (Ubuntu/Debian))
 In this section, the build process is described which is used to create the current Release of SI.
+
 ### Downloading and Building the Dependencies
 #### Misc. Dependencies
 The dependencies for all components of SI (SIGRun, SIREn, PySI, SIROSe, SIEGen, SITools, SIPlugGen) are:
