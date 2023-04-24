@@ -1,6 +1,0 @@
-{
-  "package_name": "ros2_si_interface",
-  "non_idl_tuples": [
-    "/home/juergen/1_dev/projects/Sketchable-Interaction/SI/src/sirose/msg/ros2_si_interface:msg/VTKSIObject.msg"
-  ]
-}
