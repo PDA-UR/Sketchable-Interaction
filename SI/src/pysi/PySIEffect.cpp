@@ -328,7 +328,10 @@ std::vector<glm::vec3> &PySIEffect::contour()
 
 void PySIEffect::set_aabb(const std::vector<glm::vec3> &aabb)
 {
-    fast_resize(d_aabb, aabb);
+    d_aabb.clear();
+    d_aabb.resize(4);
+    for(int i = 0; i < aabb.size(); ++i)
+        d_aabb[i] = aabb[i];
 }
 
 std::vector<glm::vec3> &PySIEffect::aabb()
@@ -481,7 +484,11 @@ void PySIEffect::set_shape(const std::vector<glm::vec3>& shape)
         temp = shape;
     }
 
-    fast_resize(d_original_contour, temp);
+    d_original_contour.clear();
+    d_original_contour.resize(temp.size());
+
+    for(int i = 0; i < temp.size(); ++i)
+        d_original_contour[i] = temp[i];
 
     int x_min = INT32_MAX;
     int x_max = INT32_MIN;

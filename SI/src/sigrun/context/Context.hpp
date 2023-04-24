@@ -133,7 +133,7 @@ private:
 
     std::queue<std::tuple<uint64_t, uint64_t, QString, std::string>> d_external_application_container_insertion_queue;
     std::queue<std::tuple<std::vector<glm::vec3>, bp::object, int32_t, bp::dict>> d_region_insertion_queue;
-    std::queue<std::tuple<std::string, std::string, std::string, bp::object>> d_link_emission_queue;
+//    std::queue<std::tuple<std::string, std::string, std::string, bp::object>> d_link_emission_queue;
 
     std::vector<std::string> d_excluded_plugins;
     std::vector<std::string> d_conditionals;

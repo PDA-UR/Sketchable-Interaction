@@ -18,12 +18,15 @@ public:
     TangibleManager();
     ~TangibleManager();
 
+    void start();
     void* handle_uds(void* args);
 
-private:
+    bool is_started();
 
-    int uds_fd = -1;    // path to uds for remotely controlled delay times
-    std::string uds_path = "/home/juergen/Desktop/socket_test.s";
+private:
+    bool d_is_started;
+    int uds_fd = -1;
+    std::string uds_path = "/home/vigitia/Desktop/IRPenTracking/uds_test";
     pthread_t uds_thread;
 
     int server_socket, client_socket;
@@ -32,6 +35,10 @@ private:
         TangibleManager* ptm = static_cast<TangibleManager*>(obj);
         return ptm->handle_uds(nullptr);
     }
+
+    std::shared_ptr<Region> red;
+    std::shared_ptr<Region> green;
+    std::shared_ptr<Region> blue;
 };
 
 

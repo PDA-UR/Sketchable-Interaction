@@ -33,9 +33,9 @@ MainWindow::MainWindow(uint32_t width, uint32_t height, uint32_t target_fps):
     setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
     setViewport(new QOpenGLWidget);
-    setViewportUpdateMode(QGraphicsView::ViewportUpdateMode::MinimalViewportUpdate);
+//    setViewportUpdateMode(QGraphicsView::ViewportUpdateMode::MinimalViewportUpdate);
     setScene(p_scene);
-    setRenderHint(QPainter::Antialiasing);
+//    setRenderHint(QPainter::Antialiasing);
 }
 
 void MainWindow::loop()

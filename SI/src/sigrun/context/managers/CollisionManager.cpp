@@ -34,6 +34,37 @@ void CollisionManager::perform_collision_check(std::vector<std::tuple<Region*, R
         {
             if(in[i]->name() == SI_NAME_EFFECT_MOUSE_CURSOR || in[k]->name() == SI_NAME_EFFECT_MOUSE_CURSOR || in[i]->name() == "__ Pen __" || in[k]->name() == "__ Pen __" || in[i]->name() == "__ Tip __" || in[k]->name() == "__ Tip __")
             {
+                bool is_continuous = false;
+
+                if(in[i]->last_delta_x() == in[k]->last_delta_x() && in[i]->last_delta_y() == in[k]->last_delta_y())
+                {
+                    for(auto& col: d_cols)
+                    {
+                        const std::string& a_uuid = std::get<0>(col);
+                        const std::string& b_uuid = std::get<1>(col);
+                        const bool found = std::get<2>(col);
+
+                        if((in[i]->uuid() == a_uuid && in[k]->uuid() == b_uuid) || (in[i]->uuid() == b_uuid && in[k]->uuid() == a_uuid) && found)
+                        {
+                            out.emplace_back(in[i].get(), in[k].get(), true);
+
+                            if(in[i]->effect()->evaluate_enveloped())
+                                if (evaluate_enveloped(in[i], in[k]))
+                                    enveloped[in[i].get()].push_back(in[k]->uuid());
+
+                            if(in[k]->effect()->evaluate_enveloped())
+                                if(evaluate_enveloped(in[k], in[i]))
+                                    enveloped[in[k].get()].push_back(in[i]->uuid());
+
+                            is_continuous = true;
+                            break;
+                        }
+                    }
+                }
+
+                if(is_continuous)
+                    continue;
+
                 if (collides_with_mask(in[i], in[k]))
                 {
                     if (has_capabilities_in_common(in[i], in[k]))
@@ -52,6 +83,37 @@ void CollisionManager::perform_collision_check(std::vector<std::tuple<Region*, R
             }
             else
             {
+                bool is_continuous = false;
+
+                if(in[i]->last_delta_x() == in[k]->last_delta_x() && in[i]->last_delta_y() == in[k]->last_delta_y())
+                {
+                    for(auto& col: d_cols)
+                    {
+                        const std::string& a_uuid = std::get<0>(col);
+                        const std::string& b_uuid = std::get<1>(col);
+                        const bool found = std::get<2>(col);
+
+                        if((in[i]->uuid() == a_uuid && in[k]->uuid() == b_uuid) || (in[i]->uuid() == b_uuid && in[k]->uuid() == a_uuid) && found)
+                        {
+                            out.emplace_back(in[i].get(), in[k].get(), true);
+
+                            if(in[i]->effect()->evaluate_enveloped())
+                                if (evaluate_enveloped(in[i], in[k]))
+                                    enveloped[in[i].get()].push_back(in[k]->uuid());
+
+                            if(in[k]->effect()->evaluate_enveloped())
+                                if(evaluate_enveloped(in[k], in[i]))
+                                    enveloped[in[k].get()].push_back(in[i]->uuid());
+
+                            is_continuous = true;
+                            break;
+                        }
+                    }
+                }
+
+                if(is_continuous)
+                    continue;
+
                 if (has_capabilities_in_common(in[i], in[k]))
                 {
                     if (collides_with_aabb(in[i].get(), in[k].get()))

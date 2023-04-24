@@ -34,6 +34,8 @@ public:
     bool is_linked(const std::string& eo_uuid, const std::string& ea, const std::string& rb_uuid, const std::string& ab);
 
     void emit_link_event(std::shared_ptr<Region> &a, const std::string &attr_a);
+    void register_link_event_emission(const std::string& event_uuid, const std::string& sender_uuid, const std::string& sender_attribute, const bp::object& args);
+    void perform_link_events();
 
     void remove_links_by_indices(std::vector<uint32_t>& indices);
 
@@ -46,6 +48,7 @@ public:
     void remove_all_partaking_linking_relations(const std::string& source);
 
 private:
+    std::queue<std::tuple<std::string, std::string, std::string, bp::object>> d_link_emission_queue;
     std::vector<std::shared_ptr<ILink>> d_links;
     std::unordered_map<std::string, std::vector<std::shared_ptr<ILink>>> d_links_in_ctx;
 
