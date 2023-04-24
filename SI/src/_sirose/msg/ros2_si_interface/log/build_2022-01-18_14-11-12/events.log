@@ -1,0 +1,47 @@
+[0.000000] (-) TimerEvent: {}
+[0.000142] (ros2_si_interface) JobQueued: {'identifier': 'ros2_si_interface', 'dependencies': OrderedDict()}
+[0.000621] (ros2_si_interface) JobStarted: {'identifier': 'ros2_si_interface'}
+[0.012707] (ros2_si_interface) JobProgress: {'identifier': 'ros2_si_interface', 'progress': 'cmake'}
+[0.012909] (ros2_si_interface) Command: {'cmd': ['/usr/local/bin/cmake', '/home/juergen/1_dev/projects/Sketchable-Interaction/SI/src/sirose/msg/ros2_si_interface', '-DCMAKE_INSTALL_PREFIX=/home/juergen/1_dev/projects/Sketchable-Interaction/SI/src/sirose/msg/ros2_si_interface/install/ros2_si_interface'], 'cwd': '/home/juergen/1_dev/projects/Sketchable-Interaction/SI/src/sirose/msg/ros2_si_interface/build/ros2_si_interface', 'env': OrderedDict([('QT_SCALE_FACTOR', '1'), ('LANGUAGE', 'en_GB:en'), ('USER', 'juergen'), ('XDG_SEAT', 'seat0'), ('SSH_AGENT_PID', '1679'), ('XDG_SESSION_TYPE', 'x11'), ('SHLVL', '1'), ('HOME', '/home/juergen'), ('OLDPWD', '/home/juergen/1_dev/projects/Sketchable-Interaction/SI'), ('DESKTOP_SESSION', 'lightdm-xsession'), ('PYTHONUNBUFFERED', '1'), ('GIO_LAUNCHED_DESKTOP_FILE', '/home/juergen/.local/share/applications/jetbrains-clion.desktop'), ('GTK_MODULES', 'gail:atk-bridge'), ('XDG_SEAT_PATH', '/org/freedesktop/DisplayManager/Seat0'), ('MAKEFLAGS', ''), ('DBUS_SESSION_BUS_ADDRESS', 'unix:path=/run/user/1000/bus'), ('GIO_LAUNCHED_DESKTOP_FILE_PID', '8566'), ('MAKE_TERMERR', '/dev/pts/2'), ('QT_QPA_PLATFORMTHEME', 'gtk2'), ('GTK_IM_MODULE', 'ibus'), ('LOGNAME', 'juergen'), ('WINDOWID', '109051936'), ('QT_AUTO_SCREEN_SCALE_FACTOR', '0'), ('_', '/usr/bin/colcon'), ('XTERM_SHELL', '/bin/bash'), ('XDG_SESSION_CLASS', 'user'), ('TERM', 'xterm'), ('GTK_OVERLAY_SCROLLING', '0'), ('XDG_SESSION_ID', '2'), ('PATH', '/usr/local/bin:/usr/bin:/bin:/usr/local/games:/usr/games'), ('SESSION_MANAGER', 'local/pc1021801070:@/tmp/.ICE-unix/1568,unix/pc1021801070:/tmp/.ICE-unix/1568'), ('XDG_SESSION_PATH', '/org/freedesktop/DisplayManager/Session0'), ('MAKELEVEL', '1'), ('XDG_RUNTIME_DIR', '/run/user/1000'), ('DISPLAY', ':0'), ('LANG', 'en_GB.UTF-8'), ('XDG_CURRENT_DESKTOP', 'MATE'), ('XMODIFIERS', '@im=ibus'), ('XDG_SESSION_DESKTOP', 'lightdm-xsession'), ('XAUTHORITY', '/home/juergen/.Xauthority'), ('SSH_AUTH_SOCK', '/run/user/1000/keyring/ssh'), ('XDG_GREETER_DATA_DIR', '/var/lib/lightdm/data/juergen'), ('SHELL', '/bin/bash'), ('QT_ACCESSIBILITY', '1'), ('MAKE_TERMOUT', '/dev/pts/1'), ('GDMSESSION', 'lightdm-xsession'), ('GPG_AGENT_INFO', '/run/user/1000/gnupg/S.gpg-agent:0:1'), ('QT_IM_MODULE', 'ibus'), ('XDG_VTNR', '7'), ('PWD', '/home/juergen/1_dev/projects/Sketchable-Interaction/SI/src/sirose/msg/ros2_si_interface/build/ros2_si_interface'), ('XTERM_LOCALE', 'en_GB.UTF-8'), ('CLUTTER_IM_MODULE', 'ibus'), ('XDG_DATA_DIRS', '/usr/share/mate:/usr/local/share/:/usr/share/'), ('XTERM_VERSION', 'XTerm(366)'), ('MATE_DESKTOP_SESSION_ID', 'this-is-deprecated'), ('MFLAGS', ''), ('COLCON', '1')]), 'shell': False}
+[0.084473] (ros2_si_interface) StdoutLine: {'line': b'-- The C compiler identification is GNU 10.2.1\n'}
+[0.099818] (-) TimerEvent: {}
+[0.168853] (ros2_si_interface) StdoutLine: {'line': b'-- The CXX compiler identification is GNU 10.2.1\n'}
+[0.187128] (ros2_si_interface) StdoutLine: {'line': b'-- Check for working C compiler: /usr/bin/cc\n'}
+[0.199911] (-) TimerEvent: {}
+[0.261602] (ros2_si_interface) StdoutLine: {'line': b'-- Check for working C compiler: /usr/bin/cc -- works\n'}
+[0.265079] (ros2_si_interface) StdoutLine: {'line': b'-- Detecting C compiler ABI info\n'}
+[0.300008] (-) TimerEvent: {}
+[0.335793] (ros2_si_interface) StdoutLine: {'line': b'-- Detecting C compiler ABI info - done\n'}
+[0.390383] (ros2_si_interface) StdoutLine: {'line': b'-- Detecting C compile features\n'}
+[0.391732] (ros2_si_interface) StdoutLine: {'line': b'-- Detecting C compile features - done\n'}
+[0.400103] (-) TimerEvent: {}
+[0.400917] (ros2_si_interface) StdoutLine: {'line': b'-- Check for working CXX compiler: /usr/bin/c++\n'}
+[0.469814] (ros2_si_interface) StdoutLine: {'line': b'-- Check for working CXX compiler: /usr/bin/c++ -- works\n'}
+[0.473000] (ros2_si_interface) StdoutLine: {'line': b'-- Detecting CXX compiler ABI info\n'}
+[0.500225] (-) TimerEvent: {}
+[0.539317] (ros2_si_interface) StdoutLine: {'line': b'-- Detecting CXX compiler ABI info - done\n'}
+[0.594021] (ros2_si_interface) StdoutLine: {'line': b'-- Detecting CXX compile features\n'}
+[0.595866] (ros2_si_interface) StdoutLine: {'line': b'-- Detecting CXX compile features - done\n'}
+[0.600322] (-) TimerEvent: {}
+[0.605482] (ros2_si_interface) StderrLine: {'line': b'CMake Error at CMakeLists.txt:9 (find_package):\n'}
+[0.605669] (ros2_si_interface) StderrLine: {'line': b'  By not providing "Findament_cmake.cmake" in CMAKE_MODULE_PATH this project\n'}
+[0.605744] (ros2_si_interface) StderrLine: {'line': b'  has asked CMake to find a package configuration file provided by\n'}
+[0.605826] (ros2_si_interface) StderrLine: {'line': b'  "ament_cmake", but CMake did not find one.\n'}
+[0.605889] (ros2_si_interface) StderrLine: {'line': b'\n'}
+[0.605949] (ros2_si_interface) StderrLine: {'line': b'  Could not find a package configuration file provided by "ament_cmake" with\n'}
+[0.606011] (ros2_si_interface) StderrLine: {'line': b'  any of the following names:\n'}
+[0.606080] (ros2_si_interface) StderrLine: {'line': b'\n'}
+[0.606258] (ros2_si_interface) StderrLine: {'line': b'    ament_cmakeConfig.cmake\n'}
+[0.606327] (ros2_si_interface) StderrLine: {'line': b'    ament_cmake-config.cmake\n'}
+[0.606391] (ros2_si_interface) StderrLine: {'line': b'\n'}
+[0.606452] (ros2_si_interface) StderrLine: {'line': b'  Add the installation prefix of "ament_cmake" to CMAKE_PREFIX_PATH or set\n'}
+[0.606512] (ros2_si_interface) StderrLine: {'line': b'  "ament_cmake_DIR" to a directory containing one of the above files.  If\n'}
+[0.606570] (ros2_si_interface) StderrLine: {'line': b'  "ament_cmake" provides a separate development package or SDK, be sure it\n'}
+[0.606629] (ros2_si_interface) StderrLine: {'line': b'  has been installed.\n'}
+[0.606688] (ros2_si_interface) StderrLine: {'line': b'\n'}
+[0.606746] (ros2_si_interface) StderrLine: {'line': b'\n'}
+[0.606803] (ros2_si_interface) StdoutLine: {'line': b'-- Configuring incomplete, errors occurred!\n'}
+[0.606867] (ros2_si_interface) StdoutLine: {'line': b'See also "/home/juergen/1_dev/projects/Sketchable-Interaction/SI/src/sirose/msg/ros2_si_interface/build/ros2_si_interface/CMakeFiles/CMakeOutput.log".\n'}
+[0.609383] (ros2_si_interface) CommandEnded: {'returncode': 1}
+[0.610182] (ros2_si_interface) JobEnded: {'identifier': 'ros2_si_interface', 'rc': 1}
+[0.620819] (-) EventReactorShutdown: {}

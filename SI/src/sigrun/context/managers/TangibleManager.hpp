@@ -15,36 +15,33 @@ class TangibleManager: public SIObject
 
 
 public:
-
     TangibleManager();
     ~TangibleManager();
 
-    void receive(const TangibleObjectMessage *p_message);
-    void receive(const bp::dict& data);
-    void remove(int id);
+    void start();
+    void* handle_uds(void* args);
 
-    const std::vector<int>& tangible_ids();
-    void set_current_pen_selection(const std::string &effect_to_assign, const std::string &effect_display_name, const std::string &effect_texture_path, bp::dict &kwargs);
+    bool is_started();
 
 private:
-    int d_update = 0;
-    void add_tangible(const TangibleObjectMessage *p_message);
-    void update_tangible(const TangibleObjectMessage *p_message);
+    bool d_is_started;
+    int uds_fd = -1;
+    std::string uds_path = "/home/vigitia/Desktop/IRPenTracking/uds_test";
+    pthread_t uds_thread;
 
-    void correct_shape(std::vector<glm::vec3>& out, const std::vector<glm::vec3>& in, const glm::vec2& tracker_dimensions);
-    void add_links_to_kwargs(bp::dict& kwargs, const std::vector<int>& links);
+    int server_socket, client_socket;
+    static void* run_helper(void* obj)
+    {
+        TangibleManager* ptm = static_cast<TangibleManager*>(obj);
+        return ptm->handle_uds(nullptr);
+    }
 
-    std::shared_ptr<Region> associated_region(int s_id);
-
-    std::queue<const TangibleObjectMessage*> d_msg_queue;
-
-    std::vector<int> d_tangible_ids;
-    std::clock_t  d_last_time, d_delta_time, d_overall_time = 0;
-    std::string d_assigned_pen_effect;
-    std::string d_assigned_pen_effect_display_name;
-    std::string d_assigned_pen_effect_texture_path;
-    bp::object d_assigned_pen_effect_kwargs;
+    std::shared_ptr<Region> red;
+    std::shared_ptr<Region> green;
+    std::shared_ptr<Region> blue;
 };
+
+
 
 
 #endif //SITEST_TANGIBLEMANAGER_HPP

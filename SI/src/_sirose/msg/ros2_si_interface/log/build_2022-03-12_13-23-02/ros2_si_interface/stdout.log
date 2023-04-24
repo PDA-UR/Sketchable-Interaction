@@ -1,0 +1,43 @@
+gmake[1]: Entering directory '/home/juergen/1_dev/projects/Sketchable-Interaction/SI/src/sirose/msg/ros2_si_interface/build/ros2_si_interface'
+gmake[2]: Entering directory '/home/juergen/1_dev/projects/Sketchable-Interaction/SI/src/sirose/msg/ros2_si_interface/build/ros2_si_interface'
+gmake[3]: Entering directory '/home/juergen/1_dev/projects/Sketchable-Interaction/SI/src/sirose/msg/ros2_si_interface/build/ros2_si_interface'
+gmake[3]: Entering directory '/home/juergen/1_dev/projects/Sketchable-Interaction/SI/src/sirose/msg/ros2_si_interface/build/ros2_si_interface'
+gmake[3]: Leaving directory '/home/juergen/1_dev/projects/Sketchable-Interaction/SI/src/sirose/msg/ros2_si_interface/build/ros2_si_interface'
+gmake[3]: Leaving directory '/home/juergen/1_dev/projects/Sketchable-Interaction/SI/src/sirose/msg/ros2_si_interface/build/ros2_si_interface'
+[  3%] Built target ros2_si_interface__cpp
+[ 12%] Built target ros2_si_interface__rosidl_generator_c
+gmake[3]: Entering directory '/home/juergen/1_dev/projects/Sketchable-Interaction/SI/src/sirose/msg/ros2_si_interface/build/ros2_si_interface'
+gmake[3]: Entering directory '/home/juergen/1_dev/projects/Sketchable-Interaction/SI/src/sirose/msg/ros2_si_interface/build/ros2_si_interface'
+gmake[3]: Leaving directory '/home/juergen/1_dev/projects/Sketchable-Interaction/SI/src/sirose/msg/ros2_si_interface/build/ros2_si_interface'
+gmake[3]: Leaving directory '/home/juergen/1_dev/projects/Sketchable-Interaction/SI/src/sirose/msg/ros2_si_interface/build/ros2_si_interface'
+[ 22%] Built target ros2_si_interface__rosidl_typesupport_cpp
+[ 32%] Built target ros2_si_interface__rosidl_typesupport_fastrtps_cpp
+gmake[3]: Entering directory '/home/juergen/1_dev/projects/Sketchable-Interaction/SI/src/sirose/msg/ros2_si_interface/build/ros2_si_interface'
+gmake[3]: Entering directory '/home/juergen/1_dev/projects/Sketchable-Interaction/SI/src/sirose/msg/ros2_si_interface/build/ros2_si_interface'
+gmake[3]: Leaving directory '/home/juergen/1_dev/projects/Sketchable-Interaction/SI/src/sirose/msg/ros2_si_interface/build/ros2_si_interface'
+gmake[3]: Leaving directory '/home/juergen/1_dev/projects/Sketchable-Interaction/SI/src/sirose/msg/ros2_si_interface/build/ros2_si_interface'
+[ 41%] Built target ros2_si_interface__rosidl_typesupport_c
+gmake[3]: Entering directory '/home/juergen/1_dev/projects/Sketchable-Interaction/SI/src/sirose/msg/ros2_si_interface/build/ros2_si_interface'
+[ 51%] Built target ros2_si_interface__rosidl_typesupport_introspection_c
+gmake[3]: Entering directory '/home/juergen/1_dev/projects/Sketchable-Interaction/SI/src/sirose/msg/ros2_si_interface/build/ros2_si_interface'
+gmake[3]: Leaving directory '/home/juergen/1_dev/projects/Sketchable-Interaction/SI/src/sirose/msg/ros2_si_interface/build/ros2_si_interface'
+gmake[3]: Leaving directory '/home/juergen/1_dev/projects/Sketchable-Interaction/SI/src/sirose/msg/ros2_si_interface/build/ros2_si_interface'
+[ 70%] Built target ros2_si_interface__rosidl_typesupport_fastrtps_c
+[ 70%] Built target ros2_si_interface__rosidl_typesupport_introspection_cpp
+gmake[3]: Entering directory '/home/juergen/1_dev/projects/Sketchable-Interaction/SI/src/sirose/msg/ros2_si_interface/build/ros2_si_interface'
+gmake[3]: Leaving directory '/home/juergen/1_dev/projects/Sketchable-Interaction/SI/src/sirose/msg/ros2_si_interface/build/ros2_si_interface'
+[ 70%] Built target ros2_si_interface
+gmake[3]: Entering directory '/home/juergen/1_dev/projects/Sketchable-Interaction/SI/src/sirose/msg/ros2_si_interface/build/ros2_si_interface'
+gmake[3]: Leaving directory '/home/juergen/1_dev/projects/Sketchable-Interaction/SI/src/sirose/msg/ros2_si_interface/build/ros2_si_interface'
+[ 74%] Built target ros2_si_interface__py
+gmake[3]: Entering directory '/home/juergen/1_dev/projects/Sketchable-Interaction/SI/src/sirose/msg/ros2_si_interface/build/ros2_si_interface'
+gmake[3]: Leaving directory '/home/juergen/1_dev/projects/Sketchable-Interaction/SI/src/sirose/msg/ros2_si_interface/build/ros2_si_interface'
+[ 80%] Built target ros2_si_interface__python
+gmake[3]: Entering directory '/home/juergen/1_dev/projects/Sketchable-Interaction/SI/src/sirose/msg/ros2_si_interface/build/ros2_si_interface'
+gmake[3]: Leaving directory '/home/juergen/1_dev/projects/Sketchable-Interaction/SI/src/sirose/msg/ros2_si_interface/build/ros2_si_interface'
+[ 87%] Built target ros2_si_interface__rosidl_typesupport_c__pyext
+gmake[3]: Entering directory '/home/juergen/1_dev/projects/Sketchable-Interaction/SI/src/sirose/msg/ros2_si_interface/build/ros2_si_interface'
+gmake[3]: Leaving directory '/home/juergen/1_dev/projects/Sketchable-Interaction/SI/src/sirose/msg/ros2_si_interface/build/ros2_si_interface'
+[ 93%] Built target ros2_si_interface__rosidl_typesupport_introspection_c__pyext
+gmake[3]: Entering directory '/home/juergen/1_dev/projects/Sketchable-Interaction/SI/src/sirose/msg/ros2_si_interface/build/ros2_si_interface'
+gmake[3]: Leaving directory '/home/juergen/1_dev/projects/Sketchable-Interaction/SI/src/sirose/msg/ros2_si_interface/build/ros2_si_interface'

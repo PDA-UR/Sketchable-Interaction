@@ -140,9 +140,9 @@ void RegionRepresentation::perform_data_update(const std::shared_ptr<Region> &re
         float y = this->boundingRect().y();
 
         setPolygon(QTransform()
-           .translate(poly.boundingRect().x() + (poly.boundingRect().width() / 2), poly.boundingRect().y() + (poly.boundingRect().height() / 2))
-           .rotate(-region->angle())
-           .translate(-poly.boundingRect().x() - (poly.boundingRect().width() / 2), -poly.boundingRect().y() - (poly.boundingRect().height() / 2))
+//           .translate(poly.boundingRect().x() + (poly.boundingRect().width() / 2), poly.boundingRect().y() + (poly.boundingRect().height() / 2))
+//           .rotate(-region->angle())
+//           .translate(-poly.boundingRect().x() - (poly.boundingRect().width() / 2), -poly.boundingRect().y() - (poly.boundingRect().height() / 2))
            .translate(region->x(), region->y())
            .map(poly));
 

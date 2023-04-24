@@ -49,7 +49,7 @@ def add_tracking_integration(kwargs):
                    [2, 2],
                    [2, 1]]
 
-    PySI.Startup.create_region_by_name(shape, TrackingIntegration.regionname, kwargs)
+    #PySI.Startup.create_region_by_name(shape, TrackingIntegration.regionname, kwargs)
 
 # def add_palette():
 #     palette_shape = [[PySI.Startup.context_dimensions()[0] - 400, 75],
