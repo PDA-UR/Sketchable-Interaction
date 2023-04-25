@@ -13,10 +13,10 @@ namespace sfs = std::filesystem;
 
 
 /**
-\brief constructor of Core class
-\details
-    Constructor which registers instance as an SIObject.
-    Specify, which Logging capabilities are desired.
+* @brief constructor of Core class
+* @details
+*    Constructor which registers instance as an SIObject.
+*    Specify, which Logging capabilities are desired.
 */
 Core::Core() = default;
 
@@ -35,9 +35,15 @@ Core::~Core()
 }
 
 /**
-\brief entry point of core SIGRun initialization
-\details
-    Entry point of SIGRun's core which performs Plugin loading and initializes the SI Context.
+ * @brief entry point of core SIGRun initialization
+ * @details
+ *    Entry point of SIGRun's core which performs Plugin loading and initializes the SI Context.
+ * @param[in] argv
+ * @param[in] argc
+ * @param[in] ire
+ * @param[in] ros
+ *
+ * @return void
 */
 void Core::start(char** argv, int argc, IRenderEngine* ire, IPhysicalEnvironment* ros)
 {
