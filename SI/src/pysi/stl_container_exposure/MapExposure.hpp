@@ -16,8 +16,8 @@
 namespace bp = boost::python;
 
 /**
- * \class MapExposure
- * \brief MapExposure class providing the interface for exposing STL maps to the python3 bindings (PySI) in a pythonic way
+ * @class MapExposure
+ * @brief MapExposure class providing the interface for exposing STL maps to the python3 bindings (PySI) in a pythonic way
  * @tparam T the STL map to be exposed
  */
 template<typename T>
@@ -103,9 +103,20 @@ public:
     }
 };
 
+/**
+ * @class MapExposurePartialContour
+ * @brief MapExposurePartialContour class providing the interface for exposing a STL map to the python3 bindings (PySI) in a pythonic way which provides the functionality to add partial contours, i.e. regions which are in the process of being drawn, based on the uuid of the used cursor.
+ */
 class MapExposurePartialContour
 {
 public:
+    /**
+     * @brief the constructor of the MapExposurePartialContour
+     *
+     * @param[in] dict the python dictionary which contains cursor uuids as keys and partial contours as values.
+     *
+     * @return a boost::shared_ptr<std::unordered_map<std::string, std::vector<glm::vec3>>> which stores the data of the given dictionary dict
+     */
     static boost::shared_ptr<std::unordered_map<std::string, std::vector<glm::vec3>>> init(const bp::dict& dict=bp::dict())
     {
         auto self = boost::make_shared<std::unordered_map<std::string, std::vector<glm::vec3>>>();
@@ -120,11 +131,25 @@ public:
         return self;
     }
 
+    /**
+     * @brief a member function which adds a new key value pair to the given MapExposurePartialContour self
+     *
+     * @param[in, out] self a map to which a new key/value pair is to be added
+     * @param[in] key a std::string which contains the uuid of a cursor used for drawing a region
+     * @param[in] points a std::vector<glm::vec3> which contains the points of the partial contour which is drawn
+     */
     inline static void set(std::unordered_map<std::string, std::vector<glm::vec3>>& self, const std::string& key, const std::vector<glm::vec3>& points)
     {
         self[key] = points;
     }
 
+    /**
+     * @brief a member function which returns a string which contains the data of the map in readable way which can also be used from python
+     *
+     * @param[in] self the map to be represented by a string
+     *
+     * @return the string containing the representation of the map
+     */
     static std::string repr(std::unordered_map<std::string, std::vector<glm::vec3>>& self)
     {
         return std::transform_reduce(self.begin(), self.end(), std::string("{"), [](const std::string& a, const std::string& b)
@@ -141,13 +166,22 @@ public:
             }) + "]";
         }) + "}";
     }
-
-private:
 };
 
+/**
+ * @class MapExposureString2Function
+ * @brief MapExposureString2Function class providing the interface for exposing a STL map to the python3 bindings (PySI) in a pythonic way which provides the functionality to add a region event capaility as key and the event function as value.
+ */
 class MapExposureString2Function
 {
 public:
+    /**
+     * @brief the constructor of the MapExposureString2Function
+     *
+     * @param[in] dict the python dictionary which contains capabilities as keys and event functions as values.
+     *
+     * @return a boost::shared_ptr<std::unordered_map<std::string, bp::object>> which stores the data of the given dictionary dict
+     */
     static boost::shared_ptr<std::unordered_map<std::string, bp::object>> init(const bp::dict& dict=bp::dict())
     {
         auto self = boost::make_shared<std::unordered_map<std::string, bp::object>>();
@@ -163,11 +197,25 @@ public:
         return self;
     }
 
+    /**
+     * @brief a member function which adds a new key value pair to the given MapExposureString2Function self
+     *
+     * @param[in, out] self a map to which a new key/value pair is to be added
+     * @param[in] key a std::string which contains the capability of an event
+     * @param[in] function a boost::python::object which contains the function of an event
+     */
     inline static void set(std::unordered_map<std::string, bp::object>& self, const std::string& key, const bp::object& function)
     {
         self[key] = function;
     }
 
+    /**
+     * @brief a member function which returns a string which contains the data of the map in readable way which can also be used from python
+     *
+     * @param[in] self the map to be represented by a string
+     *
+     * @return the string containing the representation of the map
+     */
     static std::string repr(std::unordered_map<std::string, bp::object>& self)
     {
         return std::transform_reduce(self.begin(), self.end(), std::string("{"), [&](const std::string& a, const std::string& b)
@@ -188,9 +236,20 @@ public:
 private:
 };
 
+/**
+ * @class MapExposureString2_String2FunctionMap_Map
+ * @brief MapExposureString2_String2FunctionMap_Map class providing the interface for exposing a STL map to the python3 bindings (PySI) in a pythonic way which provides the functionality of a map which uses capabilities as keys to other maps which use event keywords, such as on_enter, on_continous, and on_leave for collision events, or another capbility for linking events as keys to the event function.
+ */
 class MapExposureString2_String2FunctionMap_Map
 {
 public:
+    /**
+     * @brief the constructor of the MapExposureString2_String2FunctionMap_Map
+     *
+     * @param[in] dict the python dictionary which contains capabilities as keys and and an inner map as value which contains the event keywords or capabilities as keys and the event function as values.
+     *
+     * @return a boost::shared_ptr<std::unordered_map<std::string, std::unordered_map<std::string, bp::object>>> which stores the data of the given dictionary dict
+     */
     static boost::shared_ptr<std::unordered_map<std::string, std::unordered_map<std::string, bp::object>>> init(const bp::dict& dict=bp::dict())
     {
         auto self = boost::make_shared<std::unordered_map<std::string, std::unordered_map<std::string, bp::object>>>();
@@ -214,6 +273,13 @@ public:
         return self;
     }
 
+    /**
+     * @brief a member function which adds a new key value pair to the given MapExposureString2Function self
+     *
+     * @param[in, out] self a map to which a new key/value pair is to be added
+     * @param[in] key a std::string which contains the capability of an event
+     * @param[in] dict a boost::python::dict which contains the key/value pairs of event keywords or capabilities and event functions.
+     */
     inline static void set(std::unordered_map<std::string, std::unordered_map<std::string, bp::object>>& self, const std::string& key, const bp::dict& dict)
     {
         const bp::list keys = bp::extract<bp::list>(dict.keys());
@@ -227,6 +293,13 @@ public:
         }
     }
 
+    /**
+     * @brief a member function which returns a string which contains the data of the map self in readable way which can also be used from python
+     *
+     * @param[in] self the map to be represented by a string
+     *
+     * @return the string containing the representation of the map
+     */
     static std::string repr(std::unordered_map<std::string, std::unordered_map<std::string, bp::object>>& self)
     {
         return std::transform_reduce(self.begin(), self.end(), std::string("{"), [&](const std::string& a, const std::string& b)
@@ -253,6 +326,25 @@ public:
 private:
 };
 
+/**
+ * @brief a function which returns a boost::python::class_ which is called from module definition in PySI to expose the required map types to plugins using the template functions of class MapExposure<T>
+ *
+ * @tparam MapExposureType the type of the required exposure class: MapExposurePartialContour, MapExposureString2Function, MapExposureString2_String2FunctionMap_Map
+ * @tparam MapType the type of the of the required map: std::unordered_map<std::string, std::vector<glm::vec3>>, std::unordered_map<std::string, bp::object>, std::unordered_map<std::string, std::unordered_map<std::string, bp::object>>,
+ * @tparam PickleSuite the suite used for pickling: PartialContourPickleSuite, String2FunctionMapPickleSuite, String2String2FunctionMapMapPickleSuite,
+ *
+ * @param[in] name the name of the class which is used in python: PartialContour, String2FunctionMap, String2String2FunctionMapMap
+ *
+ * @return a boost::python::class_ which provides the class for use in python when called in a module definition
+ *
+ * @see MapExposure
+ * @see MapExposurePartialContour
+ * @see MapExposureString2Function
+ * @see MapExposureString2_String2FunctionMap_Map
+ * @see PartialContourPickleSuite
+ * @see String2FunctionMapPickleSuite
+ * @see String2String2FunctionMapMapPickleSuite
+ */
 template <typename MapExposureType, typename MapType, typename PickleSuite>
 bp::class_<MapType> create_map(const char* name)
 {
