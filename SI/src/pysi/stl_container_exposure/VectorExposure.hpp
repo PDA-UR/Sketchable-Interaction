@@ -16,8 +16,9 @@
 namespace bp = boost::python;
 
 /**
- * \class VectorExposure
- * \brief VectorExposure class providing the interface for exposing STL vectors to the python3 bindings (PySI) in a pythonic way
+ * @class VectorExposure
+ * @brief VectorExposure class providing the interface for exposing STL vectors to the python3 bindings (PySI) in a pythonic way
+ *
  * @tparam T the STL vector to be exposed
  */
 template <typename T>
@@ -31,13 +32,13 @@ public:
     typedef typename T::value_type V;
 
     /**
-     * \brief returns a reference to a value of type V at index i contained in STL vector T
-     * \details
+     * @brief returns a reference to a value of type V at index i contained in STL vector T
+     * @details
      *      Returns a reference to a value of type V at index i contained in STL vector T.
      *      Also allows pythonic accsess to values via negative indices
      *
-     * @param self the STL vector of type T with values of type V
-     * @param index the index of the value to be returned by reference
+     * @param[in] self the STL vector of type T with values of type V
+     * @param[in] index the index of the value to be returned by reference
      *
      * @return a reference to the value in self at the given index
      */
@@ -50,10 +51,10 @@ public:
     }
 
     /**
-     * \brief enables pythonic slicing of exposed STL vector T with values of type V
+     * @brief enables pythonic slicing of exposed STL vector T with values of type V
 
-     * @param self the STL vector of type T and values of type V to be sliced
-     * @param i the slicing parameters
+     * @param[in] self the STL vector of type T and values of type V to be sliced
+     * @param[in] i the slicing parameters
      *
      * @return a deep copy to a STL vector of type T containing the elements of self which remained after slicing
      */
@@ -72,11 +73,11 @@ public:
     }
 
     /**
-     * \brief sets the value at the given index of self to the given value
+     * @brief sets the value at the given index of self to the given value
      *
-     * @param self the vector of type T with values of type V which value at given index is to be changed
-     * @param index the index of the value to be changed
-     * @param value the new value to be set at the given index in self
+     * @param[in, out] self the vector of type T with values of type V which value at given index is to be changed
+     * @param[in] index the index of the value to be changed
+     * @param[in] value the new value to be set at the given index in self
      */
     inline static void set(T& self, uint32_t index, V const& value)
     {
@@ -88,10 +89,10 @@ public:
     }
 
     /**
-     * \brief removes the value at the given index, therefore reducing the vectors size by one
+     * @brief removes the value at the given index, therefore reducing the vectors size by one
      *
-     * @param self the STL vector of type T with values of type V to have a value deleted
-     * @param index the index of the value to be deleted in self
+     * @param[in, out] self the STL vector of type T with values of type V to have a value deleted
+     * @param[in] index the index of the value to be deleted in self
      */
     inline static void del(T& self, uint32_t index)
     {
@@ -103,10 +104,10 @@ public:
     }
 
     /**
-     * \brief add a value of type V to the back of a STL vector of type T
+     * @brief add a value of type V to the back of a STL vector of type T
      *
-     * @param self the STL vector to receive the value
-     * @param value the value to be pushed to the back of self
+     * @param[in, out] self the STL vector to receive the value
+     * @param[in] value the value to be pushed to the back of self
      */
     inline static void add(T& self, V const& value)
     {
@@ -114,10 +115,10 @@ public:
     }
 
     /**
-     * \brief check if a STL vector of type T with values of type V contains a value of type V
+     * @brief check if a STL vector of type T with values of type V contains a value of type V
      *
-     * @param self the STL vector to be checked whether it contains the given value
-     * @param value the value to be checked whether it is contained in self
+     * @param[in] self the STL vector to be checked whether it contains the given value
+     * @param[in] value the value to be checked whether it is contained in self
      *
      * @return true if self contains the value and false else
      */
@@ -127,11 +128,11 @@ public:
     }
 
     /**
-     * \brief returns the index of a value of type in the STL vector of type T with values of type V
-     * \details
+     * @brief returns the index of a value of type in the STL vector of type T with values of type V
+     * @details
      *      Return the index of a value in the STL vector or -1 if the value is not present in the vector
-     * @param self the target vector
-     * @param value the value which index is to be returned
+     * @param[in] self the target vector
+     * @param[in] value the value which index is to be returned
      *
      * @return the index of the value in self or -1 if the value is not contained by self
      */
@@ -148,17 +149,17 @@ public:
 };
 
 /**
- * \class VectorExposureVec3
- * \brief Special wrapper class for VectorExposure handling vectors of glm::vec3
+ * @class VectorExposureVec3
+ * @brief Special wrapper class for VectorExposure handling vectors of glm::vec3
  */
 class VectorExposureVec3
 {
 public:
 
     /**
-     * \brief exposed constructor to create a vector of glm::vec3 based on a python list
+     * @brief exposed constructor to create a vector of glm::vec3 based on a python list
      *
-     * @param list a list containing either further lists of three floats each representing coordinates.
+     * @param[in] list a list containing either further lists of three floats each representing coordinates.
      *             Or containing three floats representing one point.
      *
      * @return a reference to a new std::vector<glm::vec3> exposed to python containing the values of list
@@ -182,10 +183,10 @@ public:
     }
 
     /**
-     * \brief adds a new point to the given vector
+     * @brief adds a new point to the given vector
      *
-     * @param self a vector of points to receive a new point
-     * @param list a python list containing a points coordinates to be added to self
+     * @param[in, out] self a vector of points to receive a new point
+     * @param list[in] a python list containing a points coordinates to be added to self
      */
     inline static void add(std::vector<glm::vec3>& self, const bp::list& list)
     {
@@ -199,11 +200,11 @@ public:
     }
 
     /**
-    * \brief sets the value at the given index of self to the given value
+    * @brief sets the value at the given index of self to the given value
     *
-    * @param self the vector which value at given index is to be changed
-    * @param index the index of the value to be changed
-    * @param list the list containing point coordinates to be applied to the point at the given index
+    * @param[in, out] self the vector which value at given index is to be changed
+    * @param[in] index the index of the value to be changed
+    * @param[in] list the list containing point coordinates to be applied to the point at the given index
     */
     inline static void set(std::vector<glm::vec3>& self, uint32_t index, const bp::list& list)
     {
@@ -220,9 +221,9 @@ public:
     }
 
     /**
-     * \brief returns the vectors representation as a string (__repr__ in python)
+     * @brief returns the vectors representation as a string (__repr__ in python)
      *
-     * @param self the vector which data is to be presented in a readable way
+     * @param[in] self the vector which data is to be presented in a readable way
      *
      * @return the std::string containing the vector's representation
      */
@@ -258,17 +259,17 @@ private:
 };
 
 /**
- * \class VectorExposureString
- * \brief Special wrapper class for VectorExposure handling vectors of std::string
+ * @class VectorExposureString
+ * @brief Special wrapper class for VectorExposure handling vectors of std::string
  */
 class VectorExposureString
 {
 public:
 
     /**
-     * \brief exposed constructor to create a vector of std::string based on a python list
+     * @brief exposed constructor to create a vector of std::string based on a python list
      *
-     * @param list a list containing strings.
+     * @param[in] list a list containing strings.
      *
      * @return a reference to a new std::vector<std::string> exposed to python containing the values of list
      */
@@ -287,10 +288,10 @@ public:
     }
 
     /**
-     * \brief adds a new std::string to the given vector
+     * @brief adds a new std::string to the given vector
      *
-     * @param self a vector of points to receive a new point
-     * @param s a std::string to be added to self
+     * @param[in, out] self a vector of strings to receive a new string
+     * @param[in] s a std::string to be added to self
      */
     inline static void add(std::vector<std::string>& self, const std::string& s)
     {
@@ -298,11 +299,11 @@ public:
     }
 
     /**
-    * \brief sets the value at the given index of self to the given value
+    * @brief sets the value at the given index of self to the given value
     *
-    * @param self the vector which value at given index is to be changed
-    * @param index the index of the value in self to be changed
-    * @param s the std::string to be applied at the given index
+    * @param[in, out] self the vector which value at given index is to be changed
+    * @param[in] index the index of the value in self to be changed
+    * @param[in] s the std::string to be applied at the given index
     */
     inline static void set(std::vector<std::string>& self, uint32_t index, const std::string& s)
     {
@@ -314,9 +315,9 @@ public:
     }
 
     /**
-     * \brief returns the vectors representation as a string (__repr__ in python)
+     * @brief returns the vectors representation as a string (__repr__ in python)
      *
-     * @param self the vector which data is to be presented in a readable way
+     * @param[in] self the vector which data is to be presented in a readable way
      *
      * @return the std::string containing the vector's representation
      */
@@ -329,9 +330,20 @@ public:
     }
 };
 
+/**
+ * @class VectorExposureStringVector
+ * @brief Special wrapper class for VectorExposureStringVector handling vectors of vectors of std::string
+ */
 class VectorExposureStringVector
 {
 public:
+    /**
+     * @brief exposed constructor to create a vector of vectors of std::string based on a python list
+     *
+     * @param[in] list a list of lists containing strings.
+     *
+     * @return a reference to a new std::vector<std::vector<std::string>> exposed to python containing the values of list
+     */
     static boost::shared_ptr<std::vector<std::vector<std::string>>> init(const bp::list& list=bp::list())
     {
         auto self = boost::make_shared<std::vector<std::vector<std::string>>>();
@@ -346,11 +358,24 @@ public:
         return self;
     }
 
+    /**
+     * @brief adds a new std::vector<std::string> to the given vector
+     *
+     * @param[in, out] self a vector of vectors of strings to receive a new vector of strings
+     * @param[in] s a std::vector<std::string> to be added to self
+     */
     inline static void add(std::vector<std::vector<std::string>>& self, const std::vector<std::string>& s)
     {
         self.push_back(s);
     }
 
+    /**
+    * @brief sets the value at the given index of self to the given value
+    *
+    * @param[in, out] self the vector which value at given index is to be changed
+    * @param[in] index the index of the value in self to be changed
+    * @param[in] s the std::vector<std::string> to be applied at the given index
+    */
     inline static void set(std::vector<std::vector<std::string>>& self, uint32_t index, const std::vector<std::string>& s)
     {
         if(index < 0)
@@ -360,6 +385,13 @@ public:
             self[index] = s;
     }
 
+    /**
+     * @brief returns the vectors representation as a string (__repr__ in python)
+     *
+     * @param[in] self the vector which data is to be presented in a readable way
+     *
+     * @return the std::string containing the vector's representation
+     */
     static const std::string repr(std::vector<std::vector<std::string>>& self)
     {
         std::string ret = "[";
@@ -381,17 +413,17 @@ public:
 };
 
 /**
- * \class VectorExposureLinkRelation
- * \brief Special wrapper class for VectorExposure handling vectors of LinkRelation
+ * @class VectorExposureLinkRelation
+ * @brief Special wrapper class for VectorExposure handling vectors of LinkRelation
  */
 class VectorExposureLinkRelation
 {
 public:
 
     /**
-     * \brief exposed constructor to create a vector of LinkRelation based on a python list
+     * @brief exposed constructor to create a vector of LinkRelation based on a python list
      *
-     * @param list a list containing instances of LinkRelation or one LinkRelation in form of four strings.
+     * @param[in] list a list containing instances of LinkRelation or one LinkRelation in form of four strings.
      *
      * @return a reference to a new std::vector<LinkRelation>> exposed to python containing the values of list
      *
@@ -414,10 +446,10 @@ public:
     }
 
     /**
-     * \brief adds a new LinkRelation to the given vector
+     * @brief adds a new LinkRelation to the given vector
      *
-     * @param self a vector of LinkRelation to receive a new LinkRelation
-     * @param list a python list containing LinkRelation to be added to self
+     * @param[in, out] self a vector of LinkRelation to receive a new LinkRelation
+     * @param[in] list a python list containing LinkRelation to be added to self
      */
     inline static void add(std::vector<LinkCandidate>& self, const bp::list& list)
     {
@@ -433,11 +465,11 @@ public:
     }
 
     /**
-    * \brief sets the value at the given index of self to the given value
+    * @brief sets the value at the given index of self to the given value
     *
-    * @param self the vector which value at given index is to be changed
-    * @param index the index of the value to be changed
-    * @param list the list containing LinkRelation to be applied at the given index
+    * @param[in, out] self the vector which value at given index is to be changed
+    * @param[in] index the index of the value to be changed
+    * @param[in] list the list containing LinkRelation to be applied at the given index
     */
     inline static void set(std::vector<LinkCandidate>& self, uint32_t index, const bp::list& list)
     {
@@ -459,9 +491,9 @@ public:
     }
 
     /**
-     * \brief returns the vectors representation as a string (__repr__ in python)
+     * @brief returns the vectors representation as a string (__repr__ in python)
      *
-     * @param self the vector which data is to be presented in a readable way
+     * @param[in] self the vector which data is to be presented in a readable way
      *
      * @return the std::string containing the vector's representation
      */
