@@ -55,7 +55,7 @@ Scripting::Scripting()
                               "        return wrapped_func\n" +
                               "    return wrap\n\n" +
                               "builtins.print = si_print(\".TEST.TXT\")(builtins.print)\n"
-                ).c_str(), d_globals);
+        ).c_str(), d_globals);
     )
 }
 
