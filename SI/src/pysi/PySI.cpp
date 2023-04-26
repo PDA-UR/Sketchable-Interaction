@@ -13,6 +13,9 @@ BOOST_PYTHON_MODULE(libPySI)
     { // scope opened for everything which shall be part of effect_scope
         bp::scope effect_scope = bp::class_<PySIEffect>("PySI",bp::init<const std::vector<glm::vec3> &, const std::string &, const std::string &, const bp::dict &>());
 
+        /**
+         *
+         */
         bp::class_<glm::vec2>("Point2", bp::init<float, float>())
                 .def_pickle(Point2PickleSuit())
 
