@@ -1,10 +1,18 @@
 var searchData=
 [
-  ['delete',['delete',['../class_s_i_effect_1_1_s_i_effect.html#aa084de085519c8020fd7b703dea3b56e',1,'SIEffect::SIEffect']]],
-  ['delta_5fx',['delta_x',['../class_s_i_effect_1_1_s_i_effect.html#a8e54415927113fd4fd1f67aa7ffd8d32',1,'SIEffect::SIEffect']]],
-  ['delta_5fy',['delta_y',['../class_s_i_effect_1_1_s_i_effect.html#ac13c0d02325c0f92a95e466bba390f20',1,'SIEffect::SIEffect']]],
-  ['disable_5feffect',['disable_effect',['../class_s_i_effect_1_1_s_i_effect.html#afd50a7d43ddd3b6f670cf4e211480a7d',1,'SIEffect::SIEffect']]],
-  ['disable_5flink_5femission',['disable_link_emission',['../class_s_i_effect_1_1_s_i_effect.html#a756567115aca008f16794a7475ffa8ed',1,'SIEffect::SIEffect']]],
-  ['disable_5flink_5freception',['disable_link_reception',['../class_s_i_effect_1_1_s_i_effect.html#a29f5ed10461a80a9c56e04f5a0eba100',1,'SIEffect::SIEffect']]],
-  ['display_5ffolder_5fcontents_5fpage',['display_folder_contents_page',['../class_s_i_effect_1_1_s_i_effect.html#ad0ab9a2a2275cd53cd40e690d3a6673c',1,'SIEffect::SIEffect']]]
+  ['cancel_5fregion_5fdrawing',['cancel_region_drawing',['../class_s_i_effect_1_1_s_i_effect.html#abc8949e9f296710db449e7a5681d03ba',1,'SIEffect::SIEffect']]],
+  ['cap_5femit',['cap_emit',['../class_s_i_effect_1_1_s_i_effect.html#a8d15d37145856456eb78a70f48022aae',1,'SIEffect::SIEffect']]],
+  ['cap_5flink_5femit',['cap_link_emit',['../class_s_i_effect_1_1_s_i_effect.html#ab932eaeceea62714ed6d37008d11742f',1,'SIEffect::SIEffect']]],
+  ['cap_5flink_5frecv',['cap_link_recv',['../class_s_i_effect_1_1_s_i_effect.html#ae9ed9c9cac3d60fb7428378ac48fc34a',1,'SIEffect::SIEffect']]],
+  ['cap_5frecv',['cap_recv',['../class_s_i_effect_1_1_s_i_effect.html#a6f26bf39597e195946c59305ada155f1',1,'SIEffect::SIEffect']]],
+  ['close_5fstandard_5fapplication',['close_standard_application',['../class_s_i_effect_1_1_s_i_effect.html#a30d05de48206fa729d7499bd55475b03',1,'SIEffect::SIEffect']]],
+  ['color',['color',['../class_s_i_effect_1_1_s_i_effect.html#a3c7a8d5675a3bdc5f66bdbf00a289eda',1,'SIEffect::SIEffect']]],
+  ['conditional_5fvariables',['conditional_variables',['../class_s_i_effect_1_1_s_i_effect.html#af95ba0b50669b4466465156d8ec789d4',1,'SIEffect::SIEffect']]],
+  ['context_5fdimensions',['context_dimensions',['../class_s_i_effect_1_1_s_i_effect.html#ac98d9b897ef1bcdbcd04985617a3358d',1,'SIEffect::SIEffect']]],
+  ['context_5fheight',['context_height',['../class_s_i_effect_1_1_s_i_effect.html#a7d8d03bba81cb33de0b05eb5eb9c1a73',1,'SIEffect::SIEffect']]],
+  ['create_5flink',['create_link',['../class_s_i_effect_1_1_s_i_effect.html#a0ce65a8ebbb756a1a6891574dfae2c99',1,'SIEffect::SIEffect']]],
+  ['create_5fregion_5fvia_5fclass',['create_region_via_class',['../class_s_i_effect_1_1_s_i_effect.html#ac0680b64d9d3f2ef79bb40272d830efc',1,'SIEffect::SIEffect']]],
+  ['create_5fregion_5fvia_5fid',['create_region_via_id',['../class_s_i_effect_1_1_s_i_effect.html#a4ac92cece11d0dbe31298e47bac12f59',1,'SIEffect::SIEffect']]],
+  ['create_5fregion_5fvia_5fname',['create_region_via_name',['../class_s_i_effect_1_1_s_i_effect.html#a011d164edcecf4d05259f30ac2857433',1,'SIEffect::SIEffect']]],
+  ['current_5fregions',['current_regions',['../class_s_i_effect_1_1_s_i_effect.html#a12802cfba5a98324a482e1688db003d1',1,'SIEffect::SIEffect']]]
 ];

@@ -1,0 +1,52 @@
+<map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
+<area shape="rect" id="node1" title=" " alt="" coords="17,5,151,32"/>
+<area shape="rect" id="node2" href="$class_tangible_listener.html" title=" " alt="" coords="254,5,370,32"/>
+<area shape="rect" id="node3" title=" " alt="" coords="15,56,153,83"/>
+<area shape="rect" id="node4" href="$class_partial_region_representation.html" title=" " alt="" coords="218,56,406,83"/>
+<area shape="rect" id="node5" title=" " alt="" coords="5,107,163,133"/>
+<area shape="rect" id="node6" href="$class_region_representation.html" title=" " alt="" coords="237,107,387,133"/>
+<area shape="rect" id="node7" title=" " alt="" coords="27,461,141,488"/>
+<area shape="rect" id="node8" href="$class_main_window.html" title=" " alt="" coords="263,461,361,488"/>
+<area shape="rect" id="node9" title=" " alt="" coords="49,259,119,285"/>
+<area shape="rect" id="node10" href="$class_external_object.html" title=" " alt="" coords="258,259,366,285"/>
+<area shape="rect" id="node11" href="$class_input_manager.html" title=" " alt="" coords="261,309,363,336"/>
+<area shape="rect" id="node12" href="$class_i_render_engine.html" title=" " alt="" coords="258,157,366,184"/>
+<area shape="rect" id="node14" href="$class_linking_manager.html" title=" " alt="" coords="255,360,369,387"/>
+<area shape="rect" id="node15" href="$class_region.html" title=" " alt="" coords="281,411,343,437"/>
+<area shape="rect" id="node16" href="$class_video_item.html" title=" " alt="" coords="271,208,353,235"/>
+<area shape="rect" id="node13" href="$class_render_engine_q_t5.html" title=" " alt="" coords="461,857,591,884"/>
+<area shape="rect" id="node17" href="$class_s_i_object.html" title="A meta class from which other classes are derived from to register them as SIObject meta types." alt="" coords="47,1111,121,1137"/>
+<area shape="rect" id="node18" href="$class_collision_manager.html" title=" " alt="" coords="251,1608,373,1635"/>
+<area shape="rect" id="node19" href="$class_context.html" title=" " alt="" coords="278,1659,346,1685"/>
+<area shape="rect" id="node20" href="$class_core.html" title="namespace shortening for python object integration" alt="" coords="287,1709,337,1736"/>
+<area shape="rect" id="node21" href="$class_external_application_manager.html" title=" " alt="" coords="220,1760,404,1787"/>
+<area shape="rect" id="node22" href="$class_i_link.html" title=" " alt="" coords="287,1811,337,1837"/>
+<area shape="rect" id="node25" href="$class_job.html" title=" " alt="" coords="291,1861,333,1888"/>
+<area shape="rect" id="node26" href="$class_job_system.html" title=" " alt="" coords="221,1913,403,1954"/>
+<area shape="rect" id="node27" href="$class_link_candidate.html" title=" " alt="" coords="259,1979,365,2005"/>
+<area shape="rect" id="node28" href="$class_non_scoped_benchmark_timer.html" title=" " alt="" coords="217,2029,407,2056"/>
+<area shape="rect" id="node29" href="$class_plugin_collector.html" title=" " alt="" coords="257,2080,367,2107"/>
+<area shape="rect" id="node30" href="$class_py_s_i_effect.html" title=" " alt="" coords="269,2131,355,2157"/>
+<area shape="rect" id="node31" href="$class_py_s_i_startup.html" title=" " alt="" coords="265,512,359,539"/>
+<area shape="rect" id="node32" href="$class_python_global_interpreter_lock_guard.html" title=" " alt="" coords="219,563,405,605"/>
+<area shape="rect" id="node33" href="$class_recognizer.html" title=" " alt="" coords="268,629,356,656"/>
+<area shape="rect" id="node34" href="$class_region_manager.html" title=" " alt="" coords="255,680,369,707"/>
+<area shape="rect" id="node35" href="$class_region_mask.html" title="RegionMask class which stores a bit array used for true collision testing." alt="" coords="265,731,359,757"/>
+<area shape="rect" id="node36" href="$class_region_transform.html" title="RegionTransform class storing the relative translation, rotation and scale of a contour." alt="" coords="251,781,373,808"/>
+<area shape="rect" id="node37" href="$class_scoped_benchmark_timer.html" title=" " alt="" coords="229,832,395,859"/>
+<area shape="rect" id="node38" href="$class_scripting.html" title=" " alt="" coords="275,883,349,909"/>
+<area shape="rect" id="node39" href="$class_s_i_g_run.html" title="SIGRun class serving as entry point of an SI environment." alt="" coords="277,933,347,960"/>
+<area shape="rect" id="node40" href="$class_s_i_t_u_i_o_bounds.html" title=" " alt="" coords="257,984,367,1011"/>
+<area shape="rect" id="node41" href="$class_s_i_t_u_i_o_link_association.html" title=" " alt="" coords="233,1035,391,1061"/>
+<area shape="rect" id="node42" href="$class_s_i_t_u_i_o_object.html" title=" " alt="" coords="259,1085,365,1112"/>
+<area shape="rect" id="node43" href="$class_s_i_t_u_i_o_outer_contour_geometry.html" title=" " alt="" coords="211,1136,413,1163"/>
+<area shape="rect" id="node44" href="$class_s_i_t_u_i_o_pointer.html" title=" " alt="" coords="258,1187,366,1213"/>
+<area shape="rect" id="node45" href="$class_s_i_t_u_i_o_symbol.html" title=" " alt="" coords="257,1237,367,1264"/>
+<area shape="rect" id="node46" href="$class_s_i_t_u_i_o_token.html" title=" " alt="" coords="261,1288,363,1315"/>
+<area shape="rect" id="node47" href="$class_spatial_hash_grid.html" title=" " alt="" coords="253,1339,371,1365"/>
+<area shape="rect" id="node48" href="$class_tangible_manager.html" title=" " alt="" coords="252,1389,372,1416"/>
+<area shape="rect" id="node49" href="$class_tangible_object_message.html" title=" " alt="" coords="231,1440,393,1467"/>
+<area shape="rect" id="node50" href="$class_thread_safe_ring_buffer.html" title=" " alt="" coords="237,1491,387,1533"/>
+<area shape="rect" id="node23" href="$class_bidirectional_link.html" title=" " alt="" coords="467,1785,585,1812"/>
+<area shape="rect" id="node24" href="$class_unidirectional_link.html" title=" " alt="" coords="463,1836,589,1863"/>
+</map>
