@@ -4,5 +4,6 @@ var searchData=
   ['enable_5feffect',['enable_effect',['../class_s_i_effect_1_1_s_i_effect.html#a201ea18422bc699f35acaa4a99383301',1,'SIEffect::SIEffect']]],
   ['enable_5flink_5femission',['enable_link_emission',['../class_s_i_effect_1_1_s_i_effect.html#a34e7cf72f84cb17790cff191dc6f48f0',1,'SIEffect::SIEffect']]],
   ['enable_5flink_5freception',['enable_link_reception',['../class_s_i_effect_1_1_s_i_effect.html#a0a35e1c930ff0f032343c78f01ea59bd',1,'SIEffect::SIEffect']]],
+  ['enveloped_5fby',['enveloped_by',['../class_s_i_effect_1_1_s_i_effect.html#a90988e44190a63df9027c6f701bfd5ae',1,'SIEffect::SIEffect']]],
   ['excluded_5fplugins',['excluded_plugins',['../class_s_i_effect_1_1_s_i_effect.html#aad7e362b2327efb682a652d7f6b08d69',1,'SIEffect::SIEffect']]]
 ];

@@ -1,0 +1,5 @@
+<map id="LinkingManager" name="LinkingManager">
+<area shape="rect" id="node1" title=" " alt="" coords="32,80,145,107"/>
+<area shape="rect" id="node2" title=" " alt="" coords="5,5,76,32"/>
+<area shape="rect" id="node3" href="$class_s_i_object.html" title="A meta class from which other classes are derived from to register them as SIObject meta types." alt="" coords="100,5,173,32"/>
+</map>

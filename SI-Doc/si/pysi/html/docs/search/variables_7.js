@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['name',['name',['../class_s_i_effect_1_1_s_i_effect.html#a03b54584370bf0c5c27f851060a247cc',1,'SIEffect::SIEffect']]],
-  ['no_5fresampling',['NO_RESAMPLING',['../class_s_i_effect_1_1_s_i_effect.html#a8d2bf6d9dea90847c548bd6bd8eea3a1',1,'SIEffect::SIEffect']]]
+  ['mouse_5fx',['mouse_x',['../class_s_i_effect_1_1_s_i_effect.html#a353e448dfb3b5b3a9591a09ebc804e7f',1,'SIEffect::SIEffect']]],
+  ['mouse_5fy',['mouse_y',['../class_s_i_effect_1_1_s_i_effect.html#a8f474ca3d6d5b8ca0c2ff83a96a01412',1,'SIEffect::SIEffect']]]
 ];

@@ -1,6 +1,4 @@
 var searchData=
 [
-  ['e_2ecpp',['E.cpp',['../_e_8cpp.html',1,'']]],
-  ['externalapplicationmanager_2ecpp',['ExternalApplicationManager.cpp',['../_external_application_manager_8cpp.html',1,'']]],
-  ['externalobject_2ecpp',['ExternalObject.cpp',['../_external_object_8cpp.html',1,'']]]
+  ['del',['del',['../class_vector_exposure.html#a5a2ab021e4dbca5a408edef4df928cc6',1,'VectorExposure']]]
 ];
