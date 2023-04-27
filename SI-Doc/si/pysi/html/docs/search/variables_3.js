@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['height',['height',['../class_s_i_effect_1_1_s_i_effect.html#a2d24e59da79b2fba7f97e14d9e5d319b',1,'SIEffect::SIEffect']]]
+  ['emission',['EMISSION',['../class_s_i_effect_1_1_s_i_effect.html#abb6858be2f83f69218113bca9be65b6c',1,'SIEffect::SIEffect']]]
 ];

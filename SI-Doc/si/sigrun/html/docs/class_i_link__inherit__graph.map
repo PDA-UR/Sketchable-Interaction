@@ -1,0 +1,6 @@
+<map id="ILink" name="ILink">
+<area shape="rect" id="node1" title=" " alt="" coords="111,80,161,107"/>
+<area shape="rect" id="node3" href="$class_bidirectional_link.html" title=" " alt="" coords="5,155,123,181"/>
+<area shape="rect" id="node4" href="$class_unidirectional_link.html" title=" " alt="" coords="147,155,272,181"/>
+<area shape="rect" id="node2" href="$class_s_i_object.html" title="A meta class from which other classes are derived from to register them as SIObject meta types." alt="" coords="99,5,173,32"/>
+</map>

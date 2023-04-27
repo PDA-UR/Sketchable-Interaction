@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['is_5funder_5fuser_5fcontrol',['is_under_user_control',['../class_s_i_effect_1_1_s_i_effect.html#a78ea2af33f06fc75caee86db7363a1c6',1,'SIEffect::SIEffect']]]
+  ['height',['height',['../class_s_i_effect_1_1_s_i_effect.html#a2d24e59da79b2fba7f97e14d9e5d319b',1,'SIEffect::SIEffect']]]
 ];
