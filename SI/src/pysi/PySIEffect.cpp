@@ -547,14 +547,14 @@ void PySIEffect::set_shape(const std::vector<glm::vec3>& shape)
         temp[i].y += move_y;
     }
 
-//    if (d_name != "__ Painter __" && temp.size() != SI_CONTOUR_STEPCOUNT)
-//    {
+    if (temp.size() != SI_CONTOUR_STEPCOUNT)
+    {
         RegionResampler::resample(d_contour, temp);
-//    }
-//    else
-//    {
-//        d_contour = temp;
-//    }
+    }
+    else
+    {
+        d_contour = temp;
+    }
 
     d_recompute_mask = true;
 }

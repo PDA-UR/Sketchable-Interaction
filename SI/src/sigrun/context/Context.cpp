@@ -318,11 +318,18 @@ void Context::register_new_region_via_name(const std::vector<glm::vec3>& contour
 
     HANDLE_PYTHON_CALL(PY_WARNING, "The plugin effect for which a selector effect is to be created does not have the attribute \'region_display_name\' as a static class member.",
         kwargs["is_selector"] = true;
-        Region temp(std::vector<glm::vec3>{{0, 0, 1}, {0, 1, 1}, {1, 1, 1}, {1, 0, 1}}, d_plugins[effect_name], 0 , 0, kwargs);
-        kwargs[SI_SELECTOR_TARGET_COLOR] = temp.color();
-        kwargs[SI_SELECTOR_TARGET_TEXTURE] = temp.raw_effect().attr("texture_path");
+        bp::object o = d_plugins[effect_name].attr(d_plugins[effect_name].attr(SI_INTERNAL_NAME))(contour, "", kwargs);
+
+        kwargs[SI_SELECTOR_TARGET_COLOR] = o.attr("color");
+        kwargs[SI_SELECTOR_TARGET_TEXTURE] = o.attr("texture_path");
         kwargs[SI_SELECTOR_TARGET_DISPLAY_NAME] = d_plugins[effect_name].attr(d_plugins[effect_name].attr(SI_INTERNAL_NAME)).attr(SI_INTERNAL_REGION_DISPLAY_NAME);
         kwargs[SI_SELECTOR_TARGET_NAME] = effect_name;
+
+//        Region temp(std::vector<glm::vec3>{{0, 0, 1}, {0, 1, 1}, {1, 1, 1}, {1, 0, 1}}, d_plugins[effect_name], 0 , 0, kwargs);
+//        kwargs[SI_SELECTOR_TARGET_COLOR] = temp.color();
+//        kwargs[SI_SELECTOR_TARGET_TEXTURE] = temp.raw_effect().attr("texture_path");
+//        kwargs[SI_SELECTOR_TARGET_DISPLAY_NAME] = d_plugins[effect_name].attr(d_plugins[effect_name].attr(SI_INTERNAL_NAME)).attr(SI_INTERNAL_REGION_DISPLAY_NAME);
+//        kwargs[SI_SELECTOR_TARGET_NAME] = effect_name;
 
         d_region_insertion_queue.emplace(contour, d_plugins[SI_NAME_EFFECT_SELECTOR], id, kwargs);
     )
