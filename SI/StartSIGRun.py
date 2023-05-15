@@ -15,7 +15,7 @@ from plugins.__loaded_plugins__.standard_environment_library.slider import Slide
 from plugins.__loaded_plugins__.standard_environment_library.slider import SliderTargetDummy
 from plugins.standard_environment_library.plot.Plot import Plot
 from plugins.standard_environment_library.presentation.Presentation import Presentation
-from plugins.standard_environment_library.video.Video import Video
+# from plugins.standard_environment_library.video.Video import Video
 from plugins.standard_environment_library.terminal.Terminal import Terminal
 
 from plugins.study.fsm.logging.FSMLogging import FSMLogging
@@ -197,7 +197,7 @@ def on_start():
     # PySI.Startup.set_pen_color(PySI.Configuration.PEN_CLOLOR_WHITE)
 
     PySI.Startup.exclude_plugins([Plot.regionname,
-                                  Video.regionname,
+                                  # Video.regionname,
                                   Presentation.regionname,
                                   ImageEditor.regionname,
                                   Inbox.regionname,

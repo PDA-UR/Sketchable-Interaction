@@ -264,8 +264,9 @@ Recognizer::Recognizer()
     d_templates.emplace_back("Circle", perfect_circle);
 }
 
-float Recognizer::recognize(std::vector<glm::vec3> &out, const std::vector<glm::vec3> &in)
+std::string Recognizer::recognize(std::vector<glm::vec3> &out, const std::vector<glm::vec3> &in, float accuracy)
 {
+    std::string ret = "";
     std::vector<glm::vec3> points;
     auto bb = $1Helper::bounding_box(in);
 
@@ -290,7 +291,7 @@ float Recognizer::recognize(std::vector<glm::vec3> &out, const std::vector<glm::
 
     Result r(temp_name, 1.0 - ((float) b / (float) $1_HALF_DIAGONAL));
 
-    if(r.score() > 0.95f)
+    if(r.score() > accuracy)
     {
         if(r.name() == "Triangle")
         {
@@ -326,13 +327,15 @@ float Recognizer::recognize(std::vector<glm::vec3> &out, const std::vector<glm::
             for(int i = 0; i < 360; ++i)
                 out.emplace_back(radius * std::cos(i * M_PI / 180) + cx, radius * std::sin(i * M_PI / 180) + cy, 1);
         }
+
+        ret = r.name();
     }
     else
     {
         out = in;
     }
 
-    return r.score();
+    return ret;
 }
 
 const std::vector<Template>& Recognizer::templates() const

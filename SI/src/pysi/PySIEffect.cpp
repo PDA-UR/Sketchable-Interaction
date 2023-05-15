@@ -26,14 +26,14 @@ PySIEffect::PySIEffect(const std::vector<glm::vec3>& contour, const std::string&
 
     std::vector<glm::vec3> temp;
 
+    Recognizer r;
     if((kwargs.has_key("__name__") && kwargs["__name__"] == "__ Painter __"))
     {
-        temp = contour;
+        d_shape_recognition = r.recognize(temp, contour, 0.85);
     }
     else
     {
-        Recognizer r;
-        r.recognize(temp, contour);
+        d_shape_recognition = r.recognize(temp, contour);
     }
 
 
@@ -57,14 +57,14 @@ PySIEffect::PySIEffect(const std::vector<glm::vec3>& contour, const std::string&
         tlc, blc, brc, trc
     };
 
-    if(kwargs.has_key("__name__") and kwargs["__name__"] == "__ Painter __")
-    {
-        d_contour = temp;
-    }
-    else
-    {
+//    if(kwargs.has_key("__name__") and kwargs["__name__"] == "__ Painter __")
+//    {
+//        d_contour = temp;
+//    }
+//    else
+//    {
         RegionResampler::resample(d_contour, temp);
-    }
+//    }
 }
 
 void PySIEffect::set_data(const QMap<QString, QVariant> &data)
@@ -474,10 +474,14 @@ void PySIEffect::set_shape(const std::vector<glm::vec3>& shape)
     d_contour.clear();
     std::vector<glm::vec3> temp, smoothed;
 
-    if(d_name != "__ ConveyorBelt __" && d_name != "__ Painter __")
+
+    if(d_name != "__ ConveyorBelt __")
     {
         Recognizer r;
-        r.recognize(temp, shape);
+        if(d_name != "__ Painter __")
+            d_shape_recognition = r.recognize(temp, shape);
+        else
+            d_shape_recognition = r.recognize(temp, shape, 0.85f);
     }
     else
     {
@@ -543,14 +547,14 @@ void PySIEffect::set_shape(const std::vector<glm::vec3>& shape)
         temp[i].y += move_y;
     }
 
-    if (d_name != "__ Painter __" && temp.size() != SI_CONTOUR_STEPCOUNT)
-    {
+//    if (d_name != "__ Painter __" && temp.size() != SI_CONTOUR_STEPCOUNT)
+//    {
         RegionResampler::resample(d_contour, temp);
-    }
-    else
-    {
-        d_contour = temp;
-    }
+//    }
+//    else
+//    {
+//        d_contour = temp;
+//    }
 
     d_recompute_mask = true;
 }
