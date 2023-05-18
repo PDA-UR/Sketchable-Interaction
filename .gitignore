@@ -309,3 +309,5 @@ SI/install/
 /cmake-build-debug/
 
 SI/menu_latency1000.csv
+
+SI/menu_latency.csv
