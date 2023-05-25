@@ -101,6 +101,8 @@ public:
     std::string d_qml_path = "";
     std::string d_source = "";
 
+    std::string d_shape_recognition = "";
+
     const std::string& name() const;
     const std::string& qml_path() const;
     const std::string& source() const;

@@ -306,3 +306,8 @@ SI/log/
 SI/src/sirose/msg/ros2_si_interface/log/
 
 SI/install/
+/cmake-build-debug/
+
+SI/menu_latency1000.csv
+
+SI/menu_latency.csv
