@@ -139,6 +139,7 @@ BOOST_PYTHON_MODULE(libPySI)
                 .def_readwrite("visible", &PySIEffect::d_visible)
                 .def_readwrite("is_resampling_enabled", &PySIEffect::d_is_resampling_enabled)
                 .def_readwrite("evaluate_enveloped", &PySIEffect::d_evaluate_enveloped)
+                .def_readwrite("shape_recognition", &PySIEffect::d_shape_recognition)
                 ;
 
         bp::enum_<uint32_t>("DataType")

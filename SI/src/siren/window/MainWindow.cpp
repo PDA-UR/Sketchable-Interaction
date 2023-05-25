@@ -74,8 +74,8 @@ void MainWindow::loop()
 
 //        if(render)
 //        {
-        __loop();
         Context::SIContext()->update();
+        __loop();
         frames++;
 //        }
 //        update();

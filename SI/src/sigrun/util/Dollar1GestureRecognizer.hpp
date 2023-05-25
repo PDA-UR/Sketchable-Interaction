@@ -75,7 +75,7 @@ class Recognizer: public SIObject
 public:
     Recognizer();
 
-    float recognize(std::vector<glm::vec3>& out, const std::vector<glm::vec3>& in);
+    std::string recognize(std::vector<glm::vec3>& out, const std::vector<glm::vec3>& in, float accuracy=0.95f);
     const std::vector<Template>& templates() const;
 
 private:
