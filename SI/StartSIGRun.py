@@ -49,7 +49,7 @@ def add_tracking_integration(kwargs):
                    [2, 2],
                    [2, 1]]
 
-    #PySI.Startup.create_region_by_name(shape, TrackingIntegration.regionname, kwargs)
+    PySI.Startup.create_region_by_name(shape, TrackingIntegration.regionname, kwargs)
 
 # def add_palette():
 #     palette_shape = [[PySI.Startup.context_dimensions()[0] - 400, 75],
@@ -170,14 +170,15 @@ def start_application():
     add_mouse_cursor({"draw": "RMB"})
     # add_palette()
     # add_unredo()
-    add_terminal()
+    # add_terminal()
 
     if STUDY_FSM & STUDY_CHOICE:
         kwargs = {"participant": "1", "task": "4", "repetition": "1"}
         add_study_setup_fs(kwargs)
 
     if STUDY_PDE & STUDY_CHOICE:
-        kwargs = {"group": "1", "port": 5000}
+        kwargs = {"group": "1", "task": "1"}
+        kwargs["port"] = 5000
         add_study_setup_pd(kwargs)
 
     if STUDY_EMS & STUDY_CHOICE:
