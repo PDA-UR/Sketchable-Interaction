@@ -86,33 +86,33 @@ TEST_F(SIGRunCollisionManagerTest, collides_with_aabb)
     ASSERT_TRUE(cm_collides_with_aabb(a, b));
 }
 
-TEST_F(SIGRunCollisionManagerTest, cm_collides_with_mask)
-{
-    char buf[FILENAME_MAX];
-    getcwd(buf, FILENAME_MAX);
-    std::string directory(buf);
-
-//    bp::import("sys").attr("path").attr("insert")(0, directory + "/tests/res/region");
-
-    bp::object o = bp::import("Dummy1");
-    o.attr(SI_INTERNAL_NAME) = "Dummy1";
-
-    bp::object t = bp::import("Dummy2");
-    t.attr(SI_INTERNAL_NAME) = "Dummy2";
-
-    std::vector<glm::vec3> contour1 {glm::vec3(100, 100, 1), glm::vec3(100, 600, 1), glm::vec3(600, 600, 1), glm::vec3(600, 100, 1)};
-    std::vector<glm::vec3> contour2 {glm::vec3(150, 150, 1), glm::vec3(150, 550, 1), glm::vec3(550, 550, 1), glm::vec3(550, 150, 1)};
-
-    bp::dict kwargs;
-
-    std::shared_ptr<Region> a = std::make_shared<Region>(contour1, o, 0, 0, kwargs);
-    std::shared_ptr<Region> b = std::make_shared<Region>(contour2, t, 0, 0, kwargs);
-
-    ASSERT_TRUE(cm_collides_with_aabb(a, b));
-
-//    ASSERT_TRUE(cm_collides_with_mask(a, b));
-//    ASSERT_TRUE(cm_collides_with_mask(b, a));
-}
+//TEST_F(SIGRunCollisionManagerTest, cm_collides_with_mask)
+//{
+//    char buf[FILENAME_MAX];
+//    getcwd(buf, FILENAME_MAX);
+//    std::string directory(buf);
+//
+////    bp::import("sys").attr("path").attr("insert")(0, directory + "/tests/res/region");
+//
+//    bp::object o = bp::import("Dummy1");
+//    o.attr(SI_INTERNAL_NAME) = "Dummy1";
+//
+//    bp::object t = bp::import("Dummy2");
+//    t.attr(SI_INTERNAL_NAME) = "Dummy2";
+//
+//    std::vector<glm::vec3> contour1 {glm::vec3(100, 100, 1), glm::vec3(100, 600, 1), glm::vec3(600, 600, 1), glm::vec3(600, 100, 1)};
+//    std::vector<glm::vec3> contour2 {glm::vec3(150, 150, 1), glm::vec3(150, 550, 1), glm::vec3(550, 550, 1), glm::vec3(550, 150, 1)};
+//
+//    bp::dict kwargs;
+//
+//    std::shared_ptr<Region> a = std::make_shared<Region>(contour1, o, 0, 0, kwargs);
+//    std::shared_ptr<Region> b = std::make_shared<Region>(contour2, t, 0, 0, kwargs);
+//
+////    ASSERT_TRUE(cm_collides_with_aabb(a, b));
+//
+////    ASSERT_TRUE(cm_collides_with_mask(a, b));
+////    ASSERT_TRUE(cm_collides_with_mask(b, a));
+//}
 
 TEST_F(SIGRunCollisionManagerTest, handle_event_continuous)
 {

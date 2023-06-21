@@ -311,3 +311,4 @@ SI/install/
 SI/menu_latency1000.csv
 
 SI/menu_latency.csv
+/cmake-build-debug-coverage/
