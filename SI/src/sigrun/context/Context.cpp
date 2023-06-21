@@ -52,8 +52,8 @@ Context::Context()
     upeam = std::make_unique<ExternalApplicationManager>();
     upjs = std::make_unique<JobSystem<void, 512>>();
 //    uptm = std::make_unique<TangibleManager>();
-    logfile.open("menu_latency.csv", std::ios_base::app);
-    logfile << "time\n";
+//    logfile.open("menu_latency.csv", std::ios_base::app);
+//    logfile << "time\n";
 
 
 //    p_py_garbage_collector = new bp::object(bp::import(SI_PYTHON_GARBAGE_COLLECTOR));
@@ -570,12 +570,12 @@ void Context::perform_region_insertion()
 
                 QApplication::processEvents(QEventLoop::ExcludeSocketNotifiers);
 //        )
-        long ms = std::chrono::time_point_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now()).time_since_epoch().count();
-        logfile << "end:" << ms << '\n';
+//        long ms = std::chrono::time_point_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now()).time_since_epoch().count();
+//        logfile << "end:" << ms << '\n';
     }
     else
     {
-        logfile << "-\n";
+//        logfile << "-\n";
         for(int32_t i = 0; i < ((region_queue_size > NEW_REGIONS_PER_FRAME) ? NEW_REGIONS_PER_FRAME: region_queue_size); ++i)
         {
             const auto& region_information_tuple = d_region_insertion_queue.front();
