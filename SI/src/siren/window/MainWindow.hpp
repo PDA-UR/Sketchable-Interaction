@@ -14,7 +14,7 @@
 #include <QPainter>
 #include <QGraphicsView>
 #include <QGraphicsScene>
-#include <QOpenGLWidget>
+#include <QtOpenGLWidgets/QOpenGLWidget>
 #include <QQmlContext>
 #include "../region/RegionRepresentation.hpp"
 #include "../region/PartialRegionRepresentation.hpp"

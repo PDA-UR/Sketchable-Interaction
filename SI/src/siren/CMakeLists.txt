@@ -33,7 +33,7 @@ target_precompile_headers(SIRenderEngine
         <QObject>
         <QQmlEngine>
         <QQmlContext>
-        <QDesktopWidget>
+#        <QDesktopWidget>
         <QScreen>
         <QPaintEvent>
         <QPainter>
@@ -41,5 +41,5 @@ target_precompile_headers(SIRenderEngine
         )
 
 set_target_properties(SIRenderEngine PROPERTIES AUTOMOC TRUE)
-target_link_libraries(SIRenderEngine SIGeneralRuntime Qt5::QuickWidgets Qt5::Quick Qt5::Core Qt5::Widgets Qt5::Qml -ltbb)
+target_link_libraries(SIRenderEngine SIGeneralRuntime Qt6::QuickWidgets Qt6::Quick Qt6::Core Qt6::Widgets Qt6::Qml -ltbb)
 add_dependencies(SIRenderEngine PySI SIGeneralRuntime)

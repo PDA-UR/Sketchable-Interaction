@@ -1,7 +1,7 @@
 
 #include "RenderEngineQt5.hpp"
 
-#include <QDesktopWidget>
+//#include <QDesktopWidget>
 #include <QScreen>
 #include <debug/Print.hpp>
 

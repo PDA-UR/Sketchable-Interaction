@@ -93,28 +93,28 @@ QString ExternalApplicationManager::generate_wmctrl_command_output(const QString
 
 void ExternalApplicationManager::process_wmctrl_command_output(const QString &input, const std::string& file_region_uuid, const std::string& file_path)
 {
-    if(!input.isEmpty())
-    {
-        const auto& vec = input.split(' ', QString::SkipEmptyParts).toVector().toStdVector();
-
-        QString window_name = QString(std::transform_reduce(vec.begin() + 4, vec.end(), std::string(""), [](const std::string& a, const std::string& b)
-        {
-            return a + " " + b;
-        }, [](auto& qstr)
-        {
-            return qstr.toStdString();
-        }).c_str());
-
-        uint64_t winid = HEX_STRING_TO_UINT64(vec[0].toStdString());
-        uint64_t _pid = std::stoul(vec[2].toStdString());
-
-        if(winid)
-            register_new_application_container(file_region_uuid, winid, _pid, window_name);
-        else
-            ERROR("Unable to find winid of default app of " + file_path);
-    }
-    else
-        ERROR("Timeout for finding winid of default app of " + file_path);
+//    if(!input.isEmpty())
+//    {
+//        const auto& vec = input.split(' ', Qt::SkipEmptyParts).toList().toStdVector();
+//
+//        QString window_name = QString(std::transform_reduce(vec.begin() + 4, vec.end(), std::string(""), [](const std::string& a, const std::string& b)
+//        {
+//            return a + " " + b;
+//        }, [](auto& qstr)
+//        {
+//            return qstr.toStdString();
+//        }).c_str());
+//
+//        uint64_t winid = HEX_STRING_TO_UINT64(vec[0].toStdString());
+//        uint64_t _pid = std::stoul(vec[2].toStdString());
+//
+//        if(winid)
+//            register_new_application_container(file_region_uuid, winid, _pid, window_name);
+//        else
+//            ERROR("Unable to find winid of default app of " + file_path);
+//    }
+//    else
+//        ERROR("Timeout for finding winid of default app of " + file_path);
 }
 
 void ExternalApplicationManager::register_new_application_container(const std::string &file_region_uuid, uint64_t winid, uint64_t pid, const QString& window_name)

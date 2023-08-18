@@ -398,26 +398,26 @@ void PySIEffect::__set_data__(const std::string &key, const bp::object &value, c
 
         case SI_DATA_TYPE_VIDEO:
         {
-            if (value.is_none())
-                break;
-
-            d_data_changed = true;
-
-            int img_width = bp::extract<int>(kwargs["width"]);
-            int img_height = bp::extract<int>(kwargs["height"]);
-
-            const bp::list &bytes = bp::list(value);
-
-            int len = bp::len(bytes);
-            uint8_t buf[len];
-
-            for (int i = 0; i < len; ++i)
-                buf[i] = (uint8_t) bp::extract<int>(value[i]);
-
-            QImage img(img_width, img_height, QImage::Format::Format_RGB888);
-            img.fromData(buf, len);
-
-            d_data[QString(key.c_str())] = img.convertToFormat(QVideoFrame::imageFormatFromPixelFormat(QVideoFrame::Format_RGB32));
+//            if (value.is_none())
+//                break;
+//
+//            d_data_changed = true;
+//
+//            int img_width = bp::extract<int>(kwargs["width"]);
+//            int img_height = bp::extract<int>(kwargs["height"]);
+//
+//            const bp::list &bytes = bp::list(value);
+//
+//            int len = bp::len(bytes);
+//            uint8_t buf[len];
+//
+//            for (int i = 0; i < len; ++i)
+//                buf[i] = (uint8_t) bp::extract<int>(value[i]);
+//
+//            QImage img(img_width, img_height, QImage::Format::Format_RGB888);
+//            img.fromData(buf, len);
+//
+//            d_data[QString(key.c_str())] = img.convertToFormat(QVideoFrame::imageFormatFromPixelFormat(QVideoFrame::Format_RGB32));
             break;
         }
 

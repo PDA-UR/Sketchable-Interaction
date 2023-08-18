@@ -16,7 +16,7 @@
 #include <sigrun/plugin/PythonGlobalInterpreterLockGuard.hpp>
 #include <sigrun/log/CrashDump.hpp>
 #include <sigrun/rendering/qml/items/PlotItem.hpp>
-#include <sigrun/rendering/qml/items/VideoItem.hpp>
+//#include <sigrun/rendering/qml/items/VideoItem.hpp>
 #include <sigrun/util/Benchmark.hpp>
 #include <chrono>
 #include <QTest>
@@ -75,7 +75,7 @@ void Context::begin(const std::unordered_map<std::string, std::unique_ptr<bp::ob
     d_app.installEventFilter(upim.get());
 
     qmlRegisterType<PlotItem>("siqml", 1, 0, "PlotItem");
-    qmlRegisterType<VideoItem>("siqml", 1, 0, "VideoItem");
+//    qmlRegisterType<VideoItem>("siqml", 1, 0, "VideoItem");
 
     d_ire = ire;
     d_ros = ros;

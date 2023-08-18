@@ -14,8 +14,8 @@ include_directories(${Boost_INCLUDE_DIRS})
 include_directories(${PYTHON_INCLUDE_DIRS})
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/SI/src)
 
-find_package(Qt5Widgets REQUIRED)
-find_package(Qt5Test REQUIRED)
+find_package(Qt6Widgets REQUIRED)
+find_package(Qt6Test REQUIRED)
 
 # SI GTEST UNIT TEST RUNNER
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src
@@ -99,5 +99,5 @@ target_precompile_headers(run_unit_tests
 
 set_target_properties(run_unit_tests PROPERTIES AUTOMOC TRUE)
 
-target_link_libraries(run_unit_tests Qt5::Widgets Qt5::Test ${PYTHON_LIBRARIES} ${Boost_LIBRARIES} gtest gtest_main gmock gmock_main pthread -ltbb -ldl -lutil SIGeneralRuntime)
+target_link_libraries(run_unit_tests Qt6::Widgets Qt6::Test ${PYTHON_LIBRARIES} ${Boost_LIBRARIES} gtest gtest_main gmock gmock_main pthread -ltbb -ldl -lutil SIGeneralRuntime)
 add_dependencies(run_unit_tests PySI SIGeneralRuntime)

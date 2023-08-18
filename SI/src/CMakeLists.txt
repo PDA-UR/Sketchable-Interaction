@@ -22,11 +22,17 @@ include_directories(${PYTHON_INCLUDE_DIRS})
 set(THREADS_PREFER_PTHREAD_FLAG ON) # linux only
 find_package(Threads REQUIRED) # linux only
 
-FIND_PACKAGE(Qt5Widgets REQUIRED)
-FIND_PACKAGE(Qt5Qml REQUIRED)
-FIND_PACKAGE(Qt5QuickWidgets REQUIRED)
-FIND_PACKAGE(Qt5Quick REQUIRED)
-FIND_PACKAGE(Qt5Multimedia REQUIRED)
+FIND_PACKAGE(Qt6Widgets REQUIRED)
+FIND_PACKAGE(Qt6Qml REQUIRED)
+FIND_PACKAGE(Qt6QuickWidgets REQUIRED)
+FIND_PACKAGE(Qt6Quick REQUIRED)
+FIND_PACKAGE(Qt6Multimedia REQUIRED)
+find_package(Qt6Test REQUIRED)
+find_package(Qt6Core5Compat REQUIRED)
+find_package(Qt6OpenGLWidgets REQUIRED)
+find_package(Qt6Quick REQUIRED)
+find_package(Qt6QuickControls2 REQUIRED)
+find_package(Qt6QmlWorkerScript REQUIRED)
 
 OPTION(DEFINE_TEST "ENABLE TEST MODE" OFF)
 
@@ -44,8 +50,8 @@ add_library(PySI MODULE ${PySISrc})
 target_link_libraries(PySI
         ${PYTHON_LIBRARIES}
         ${Boost_LIBRARIES}
-        Qt5::Widgets
-        Qt5::Multimedia
+        Qt6::Widgets
+        Qt6::Multimedia
         -ltbb)
 
 target_precompile_headers(PySI
@@ -114,8 +120,8 @@ set(SIGRunSRC
         SI/src/sigrun/network/TangibleObjectMessage.hpp
         SI/src/sigrun/rendering/qml/items/PlotItem.cpp
         SI/src/sigrun/rendering/qml/items/PlotItem.hpp
-        SI/src/sigrun/rendering/qml/items/VideoItem.cpp
-        SI/src/sigrun/rendering/qml/items/VideoItem.hpp
+#        SI/src/sigrun/rendering/qml/items/VideoItem.cpp
+#        SI/src/sigrun/rendering/qml/items/VideoItem.hpp
         SI/src/sigrun/context/managers/LinkingManager.cpp
         SI/src/sigrun/context/managers/LinkingManager.hpp
         SI/src/sigrun/context/managers/helpers/linking/Link.cpp
@@ -192,18 +198,22 @@ target_precompile_headers(SIGeneralRuntime
         )
 
 set_target_properties(SIGeneralRuntime PROPERTIES AUTOMOC TRUE)
+
 target_link_libraries(SIGeneralRuntime
         -luuid
         ${PYTHON_LIBRARIES}
         ${Boost_LIBRARIES}
-        Qt5::QuickWidgets
-        Qt5::Quick
-        Qt5::Core
-        Qt5::Test
-        Qt5::Widgets
-        Qt5::Qml
-        Qt5::Gui
-        Qt5::Multimedia
+        Qt6::QuickWidgets
+        Qt6::Core5Compat
+        Qt6::Quick
+        Qt6::QuickControls2
+        Qt6::Core
+        Qt6::Test
+        Qt6::Widgets
+        Qt6::Qml
+        Qt6::Gui
+        Qt6::Multimedia
+        Qt6::QmlWorkerScript
         -ltbb
         -ldl
         -lbacktrace)
