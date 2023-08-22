@@ -3,7 +3,6 @@
 #include "MainWindow.hpp"
 #include <QDebug>
 #include <algorithm>
-#include <Qt>
 #include <siren/timing/Timing.hpp>
 #include <debug/Print.hpp>
 
@@ -20,6 +19,9 @@ MainWindow::MainWindow(uint32_t width, uint32_t height, uint32_t target_fps):
 
     Context::SIContext()->set_main_window();
 
+//    setWindowFlags(Qt::WindowStaysOnTopHint | Qt::FramelessWindowHint);
+//    setWindowState(Qt::WindowMaximized);
+
     this->setInteractive(false);
 
     d_engine = new QQmlEngine();
@@ -32,8 +34,8 @@ MainWindow::MainWindow(uint32_t width, uint32_t height, uint32_t target_fps):
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
-//    setViewport(new QOpenGLWidget);
-    setViewportUpdateMode(QGraphicsView::ViewportUpdateMode::MinimalViewportUpdate);
+    setViewport(new QOpenGLWidget);
+//    setViewportUpdateMode(QGraphicsView::ViewportUpdateMode::MinimalViewportUpdate);
     setScene(p_scene);
 //    setRenderHint(QPainter::Antialiasing);
 }

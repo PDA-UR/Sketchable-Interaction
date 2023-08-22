@@ -34,6 +34,8 @@ public:
     static void set_file_system_root_folder(const std::string& path);
     static void set_file_system_desktop_folder(const std::string& path);
 
+    static void set_event_devices(const bp::dict& event_devices);
+
     static std::string file_system_root_folder();
     static std::string file_system_desktop_folder();
 

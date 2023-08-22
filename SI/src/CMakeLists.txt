@@ -22,6 +22,8 @@ include_directories(${PYTHON_INCLUDE_DIRS})
 set(THREADS_PREFER_PTHREAD_FLAG ON) # linux only
 find_package(Threads REQUIRED) # linux only
 
+set(CMAKE_PREFIX_PATH "/usr/local/Qt6/lib/cmake")
+
 FIND_PACKAGE(Qt6Widgets REQUIRED)
 FIND_PACKAGE(Qt6Qml REQUIRED)
 FIND_PACKAGE(Qt6QuickWidgets REQUIRED)
@@ -120,6 +122,8 @@ set(SIGRunSRC
         SI/src/sigrun/network/TangibleObjectMessage.hpp
         SI/src/sigrun/rendering/qml/items/PlotItem.cpp
         SI/src/sigrun/rendering/qml/items/PlotItem.hpp
+        SI/src/sigrun/context/managers/MultiMouseKeyboardManager.cpp
+        SI/src/sigrun/context/managers/MultiMouseKeyboardManager.hpp
 #        SI/src/sigrun/rendering/qml/items/VideoItem.cpp
 #        SI/src/sigrun/rendering/qml/items/VideoItem.hpp
         SI/src/sigrun/context/managers/LinkingManager.cpp
@@ -152,6 +156,7 @@ set(SIGRunSRC
         SI/lib/pugixml-1.10/src/pugixml.hpp)
 
 ADD_DEFINITIONS(-DQT_NO_KEYWORDS)
+
 
 add_library(SIGeneralRuntime SHARED ${SIGRunSRC})
 
@@ -214,9 +219,11 @@ target_link_libraries(SIGeneralRuntime
         Qt6::Gui
         Qt6::Multimedia
         Qt6::QmlWorkerScript
+        Qt6::OpenGLWidgets
         -ltbb
         -ldl
-        -lbacktrace)
+        -lbacktrace
+        -linput)
 
 # SI plugin generator src
 set(SIGenSRC

@@ -80,15 +80,15 @@ public:
 
     void press_key(uint32_t key_id);
     void release_key(uint32_t key_id);
-    void press_mouse_button(uint32_t button_id);
-    void release_mouse_button(uint32_t button_id);
+    void press_mouse_button(uint32_t button_id, uint8_t mid);
+    void release_mouse_button(uint32_t button_id, uint8_t mid);
     bool is_key_down(uint32_t key_id);
     bool is_key_pressed(uint32_t key_id);
-    bool is_mouse_down(uint32_t button_id);
-    bool is_mouse_pressed(uint32_t button_id);
+    bool is_mouse_down(uint32_t button_id, uint8_t mid);
+    bool is_mouse_pressed(uint32_t button_id, uint8_t mid);
 
-    const glm::vec2& mouse_coords() const;
-    const glm::vec2& previous_mouse_coords() const;
+    glm::vec2& mouse_coords(uint8_t id);
+    glm::vec2& previous_mouse_coords(uint8_t id);
 
     const MouseWheelAngles mouse_wheel_angles();
 
@@ -96,16 +96,16 @@ public:
 
 private:
     bool was_key_down(uint32_t key_id);
-    bool was_mouse_down(uint32_t button_id);
+    bool was_mouse_down(uint32_t button_id, uint8_t mid);
 
     std::unordered_map<uint32_t, bool> d_key_map;
     std::unordered_map<uint32_t, bool> d_previous_key_map;
 
-    std::unordered_map<uint32_t, bool> d_button_map;
-    std::unordered_map<uint32_t, bool> d_previous_button_map;
+    std::unordered_map<uint8_t, std::unordered_map<uint32_t, bool>> d_button_map;
+    std::unordered_map<uint8_t, std::unordered_map<uint32_t, bool>> d_previous_button_map;
 
-    glm::vec2 d_mouse_coords;
-    glm::vec2 d_previous_mouse_coords;
+    std::unordered_map<uint8_t, glm::vec2> d_mouse_coords;
+    std::unordered_map<uint8_t, glm::vec2> d_previous_mouse_coords;
 
     std::unordered_map<std::string, std::shared_ptr<ExternalObject>> deo;
     bool d_is_double_click = false;

@@ -145,3 +145,9 @@ std::string PySIStartup::file_system_desktop_folder()
 {
     return Context::SIContext()->file_system_desktop_folder();
 }
+
+void PySIStartup::set_event_devices(const bp::dict& event_devices)
+{
+    Context::SIContext()->set_event_devices(event_devices);
+}
+

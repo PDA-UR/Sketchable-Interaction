@@ -173,6 +173,7 @@ BOOST_PYTHON_MODULE(libPySI)
                 .value("SI_PREVIEW", SI_TYPE_PREVIEW)
                 .value("SI_PALETTE", SI_TYPE_PALETTE)
                 .value("SI_SELECTOR", SI_TYPE_SELECTOR)
+                .value("SI_MULTI_MOUSE_CURSOR", SI_TYPE_MULTI_MOUSE_CURSOR)
 
                 .export_values()
                 ;
@@ -251,6 +252,7 @@ BOOST_PYTHON_MODULE(libPySI)
                 .def("file_system_root_folder", &PySIStartup::file_system_root_folder).staticmethod("file_system_root_folder")
                 .def("set_file_system_desktop_folder", &PySIStartup::set_file_system_desktop_folder).staticmethod("set_file_system_desktop_folder")
                 .def("file_system_desktop_folder", &PySIStartup::file_system_desktop_folder).staticmethod("file_system_desktop_folder")
+                .def("set_event_devices", &PySIStartup::set_event_devices).staticmethod("set_event_devices")
 
                 .enable_pickling()
                 ;

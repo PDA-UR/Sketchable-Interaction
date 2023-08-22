@@ -19,15 +19,21 @@ public:
         MOUSE = 0,
         FINGER = 1,
         TANGIBLE = 2,
-        APPLICATION = 3
+        APPLICATION = 3,
+        MULTIMOUSE = 4
     };
 
     union
     {
         struct
         {
-
+            uint8_t id;
         } mouse;
+
+        struct
+        {
+            uint8_t id;
+        } multimouse;
 
         struct
         {

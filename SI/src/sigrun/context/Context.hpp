@@ -14,6 +14,7 @@
 #include <sigrun/context/managers/TangibleManager.hpp>
 #include <sigrun/context/managers/CollisionManager.hpp>
 #include <sigrun/context/managers/LinkingManager.hpp>
+#include <sigrun/context/managers/MultiMouseKeyboardManager.hpp>
 #include <sigrun/context/managers/InputManager.hpp>
 #include <sigrun/context/managers/ExternalApplicationManager.hpp>
 #include <sigrun/rendering/IRenderEngine.hpp>
@@ -96,6 +97,8 @@ public:
 
     const int pen_color() const;
 
+    void set_event_devices(const bp::dict& event_devices);
+
     const std::unordered_map<std::string, bp::object>& selected_effects_by_cursor_id() const;
 
     const IPhysicalEnvironment* physical_environment();
@@ -119,11 +122,13 @@ private:
     bp::object* p_py_garbage_collector;
 
     void perform_external_object_update();
+    void perform_multi_mouse_update(std::unordered_map<std::string, std::shared_ptr<ExternalObject>>::iterator& it);
     void perform_mouse_update(std::unordered_map<std::string, std::shared_ptr<ExternalObject>>::iterator& it);
     void perform_external_application_update(std::unordered_map<std::string, std::shared_ptr<ExternalObject>>::iterator& it);
     void perform_external_application_registration();
     void perform_region_insertion();
     void perform_link_events();
+    void perform_external_input_update();
     void perform_input_update();
     void perform_collision_update();
 
@@ -151,6 +156,7 @@ private:
     std::unique_ptr<JobSystem<void, 512>> upjs;
     std::unique_ptr<TangibleManager> uptm;
     std::unique_ptr<SpatialHashGrid> upshg;
+    std::unique_ptr<MultiMouseKeyboardManager> upmmkm;
 
     std::string d_tangible_ip = "";
     int d_tangible_port = 0;

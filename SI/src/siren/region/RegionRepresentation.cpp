@@ -40,7 +40,10 @@ RegionRepresentation::RegionRepresentation(QQmlContext* c, const std::shared_ptr
 
 
         if(region->effect()->has_data_changed())
-            QMetaObject::invokeMethod(reinterpret_cast<QObject *>(d_view->rootObject()), "updateData", QGenericReturnArgument(), Q_ARG(QVariant, region->data()));
+        {
+//            QMetaObject::invokeMethod(reinterpret_cast<QObject *>(d_view->rootObject()), "updateData", QGenericReturnArgument(), Q_ARG(QVariant, region->data()));
+            QMetaObject::invokeMethod(reinterpret_cast<QObject *>(d_view->rootObject()), "updateData", Q_ARG(QVariant, region->data()));
+        }
     }
 
     QPolygonF poly;
@@ -159,7 +162,8 @@ void RegionRepresentation::perform_data_update(const std::shared_ptr<Region> &re
                 d_view->move(d_initial_offset.x, d_initial_offset.y);
             }
 
-            QMetaObject::invokeMethod(reinterpret_cast<QObject *>(d_view->rootObject()), "updateData", QGenericReturnArgument(), Q_ARG(QVariant, region->data()));
+//            QMetaObject::invokeMethod(reinterpret_cast<QObject *>(d_view->rootObject()), "updateData", QGenericReturnArgument(), Q_ARG(QVariant, region->data()));
+            QMetaObject::invokeMethod(reinterpret_cast<QObject *>(d_view->rootObject()), "updateData", Q_ARG(QVariant, region->data()));
         }
     }
 

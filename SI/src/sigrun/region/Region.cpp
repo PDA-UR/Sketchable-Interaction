@@ -240,8 +240,44 @@ void Region::LINK_SLOT(const std::string& uuid_event, const std::string& uuid_se
                     {
                         if(r->name() == SI_NAME_EFFECT_MOUSE_CURSOR)
                         {
+                            uint8_t mid = bp::extract<uint8_t>(r->raw_effect().attr("id"));
+                            uint8_t target_mid = bp::extract<uint8_t>(args[4]);
+
+                            if(mid == target_mid)
+                            {
+                                float abs_x = bp::extract<float>(args[2]);
+                                float abs_y = bp::extract<float>(args[3]);
+                                r->raw_effect().attr("last_x") = r->d_py_effect->d_x;
+                                r->raw_effect().attr("last_y") = r->d_py_effect->d_y;
+                                r->raw_effect().attr("x") = abs_x;
+                                r->raw_effect().attr("x") = abs_y;
+                                r->d_py_effect->d_x = abs_x;
+                                r->d_py_effect->d_y = abs_y;
+                                r->move_and_rotate();
+                                r->raw_effect().attr("set_position_from_position")(abs_x - r->d_py_effect->d_x, abs_y - r->d_py_effect->d_y, abs_x, abs_y);
+
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+            else if(uuid_sender == "MMOUSE")
+            {
+                auto& regions = Context::SIContext()->region_manager()->regions();
+
+                for(auto& r: regions)
+                {
+                    if(r->name() == "__ MMOUSE __")
+                    {
+                        uint8_t pen_id = bp::extract<uint8_t>(r->raw_effect().attr("id"));
+                        uint8_t target_pen_id = bp::extract<uint8_t>(args[4]);
+
+                        if(pen_id == target_pen_id)
+                        {
                             float abs_x = bp::extract<float>(args[2]);
                             float abs_y = bp::extract<float>(args[3]);
+
                             r->raw_effect().attr("last_x") = r->d_py_effect->d_x;
                             r->raw_effect().attr("last_y") = r->d_py_effect->d_y;
                             r->raw_effect().attr("x") = abs_x;
@@ -250,8 +286,6 @@ void Region::LINK_SLOT(const std::string& uuid_event, const std::string& uuid_se
                             r->d_py_effect->d_y = abs_y;
                             r->move_and_rotate();
                             r->raw_effect().attr("set_position_from_position")(abs_x - r->d_py_effect->d_x, abs_y - r->d_py_effect->d_y, abs_x, abs_y);
-
-                            break;
                         }
                     }
                 }

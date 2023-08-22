@@ -52,86 +52,148 @@ void RegionManager::toggle_mouse_region_double_click(Region* cursor, bool toggle
 
 void RegionManager::activate_mouse_region_button_down(Region* cursor, uint32_t mouse_btn)
 {
-    for(auto& region: d_regions)
+    cursor->effect()->set_mouse_pressed_capability(mouse_btn, true);
+
+    switch(mouse_btn)
     {
-        if(region->effect()->effect_type() == SI_TYPE_MOUSE_CURSOR && !region->effect()->has_mouse_pressed_capability(mouse_btn))
+        case SI_LEFT_MOUSE_BUTTON:
         {
-            region->effect()->set_mouse_pressed_capability(mouse_btn, true);
+            HANDLE_PYTHON_CALL(PY_ERROR, "Cannot foward left mouse click to plugin " + cursor->name(),
+                               cursor->raw_effect().attr("left_mouse_clicked") = true;
+                                       cursor->raw_effect().attr("on_left_mouse_click")(true);
+            )
+            break;
+        }
+        case SI_RIGHT_MOUSE_BUTTON:
+        {
+            HANDLE_PYTHON_CALL(PY_WARNING, "Cannot foward right mouse click to plugin " + cursor->name(),
+                               cursor->raw_effect().attr("right_mouse_clicked") = true;
+                                       cursor->raw_effect().attr("on_right_mouse_click")(true);
+            )
+            break;
+        }
 
-            switch(mouse_btn)
-            {
-                case SI_LEFT_MOUSE_BUTTON:
-                {
-                    HANDLE_PYTHON_CALL(PY_ERROR, "Cannot foward left mouse click to plugin " + region->name(),
-                                       region->raw_effect().attr("left_mouse_clicked") = true;
-                                               region->raw_effect().attr("on_left_mouse_click")(true);
-                    )
-                    break;
-                }
-                case SI_RIGHT_MOUSE_BUTTON:
-                {
-                    HANDLE_PYTHON_CALL(PY_WARNING, "Cannot foward right mouse click to plugin " + region->name(),
-                                       region->raw_effect().attr("right_mouse_clicked") = true;
-                                       region->raw_effect().attr("on_right_mouse_click")(true);
-                    )
-                    break;
-                }
-
-                case SI_MIDDLE_MOUSE_BUTTON:
-                {
-                    HANDLE_PYTHON_CALL(PY_WARNING, "Cannot foward middle mouse click to plugin " + region->name(),
-                                       region->raw_effect().attr("middle_mouse_clicked") = true;
-                                       region->raw_effect().attr("on_middle_mouse_click")(true);
-                    )
-                    break;
-                }
-            }
-
+        case SI_MIDDLE_MOUSE_BUTTON:
+        {
+            HANDLE_PYTHON_CALL(PY_WARNING, "Cannot foward middle mouse click to plugin " + cursor->name(),
+                               cursor->raw_effect().attr("middle_mouse_clicked") = true;
+                                       cursor->raw_effect().attr("on_middle_mouse_click")(true);
+            )
             break;
         }
     }
+
+//    for(auto& region: d_regions)
+//    {
+//        if(region->effect()->effect_type() == SI_TYPE_MOUSE_CURSOR && !region->effect()->has_mouse_pressed_capability(mouse_btn))
+//        {
+//            region->effect()->set_mouse_pressed_capability(mouse_btn, true);
+//
+//            switch(mouse_btn)
+//            {
+//                case SI_LEFT_MOUSE_BUTTON:
+//                {
+//                    HANDLE_PYTHON_CALL(PY_ERROR, "Cannot foward left mouse click to plugin " + region->name(),
+//                                       region->raw_effect().attr("left_mouse_clicked") = true;
+//                                               region->raw_effect().attr("on_left_mouse_click")(true);
+//                    )
+//                    break;
+//                }
+//                case SI_RIGHT_MOUSE_BUTTON:
+//                {
+//                    HANDLE_PYTHON_CALL(PY_WARNING, "Cannot foward right mouse click to plugin " + region->name(),
+//                                       region->raw_effect().attr("right_mouse_clicked") = true;
+//                                       region->raw_effect().attr("on_right_mouse_click")(true);
+//                    )
+//                    break;
+//                }
+//
+//                case SI_MIDDLE_MOUSE_BUTTON:
+//                {
+//                    HANDLE_PYTHON_CALL(PY_WARNING, "Cannot foward middle mouse click to plugin " + region->name(),
+//                                       region->raw_effect().attr("middle_mouse_clicked") = true;
+//                                       region->raw_effect().attr("on_middle_mouse_click")(true);
+//                    )
+//                    break;
+//                }
+//            }
+//
+//            break;
+//        }
+//    }
 }
 
 void RegionManager::deactivate_mouse_region_button_down(Region* cursor, uint32_t mouse_btn)
 {
-    for(auto& region: d_regions)
+    cursor->effect()->set_mouse_pressed_capability(mouse_btn, false);
+
+    switch(mouse_btn)
     {
-        if(region->effect()->effect_type() == SI_TYPE_MOUSE_CURSOR && region->effect()->has_mouse_pressed_capability(mouse_btn))
+        case SI_LEFT_MOUSE_BUTTON:
         {
-            region->effect()->set_mouse_pressed_capability(mouse_btn, false);
+            HANDLE_PYTHON_CALL(PY_WARNING, "Cannot foward left mouse release to plugin " + cursor->name(),
+                               cursor->raw_effect().attr("left_mouse_clicked") = false;
+                                       cursor->raw_effect().attr("on_left_mouse_click")(false);
+            )
+            break;
+        }
+        case SI_RIGHT_MOUSE_BUTTON:
+        {
+            HANDLE_PYTHON_CALL(PY_WARNING, "Cannot foward right mouse release to plugin " + cursor->name(),
+                               cursor->raw_effect().attr("right_mouse_clicked") = false;
+                                       cursor->raw_effect().attr("on_right_mouse_click")(false);
+            )
+            break;
+        }
 
-            switch(mouse_btn)
-            {
-                case SI_LEFT_MOUSE_BUTTON:
-                {
-                    HANDLE_PYTHON_CALL(PY_WARNING, "Cannot foward left mouse release to plugin " + region->name(),
-                                       region->raw_effect().attr("left_mouse_clicked") = false;
-                                       region->raw_effect().attr("on_left_mouse_click")(false);
-                    )
-                    break;
-                }
-                case SI_RIGHT_MOUSE_BUTTON:
-                {
-                    HANDLE_PYTHON_CALL(PY_WARNING, "Cannot foward right mouse release to plugin " + region->name(),
-                                       region->raw_effect().attr("right_mouse_clicked") = false;
-                                       region->raw_effect().attr("on_right_mouse_click")(false);
-                    )
-                    break;
-                }
-
-                case SI_MIDDLE_MOUSE_BUTTON:
-                {
-                    HANDLE_PYTHON_CALL(PY_WARNING, "Cannot foward middle mouse release to plugin " + region->name(),
-                                       region->raw_effect().attr("middle_mouse_clicked") = false;
-                                       region->raw_effect().attr("on_middle_mouse_click")(false);
-                    )
-                    break;
-                }
-            }
-
+        case SI_MIDDLE_MOUSE_BUTTON:
+        {
+            HANDLE_PYTHON_CALL(PY_WARNING, "Cannot foward middle mouse release to plugin " + cursor->name(),
+                               cursor->raw_effect().attr("middle_mouse_clicked") = false;
+                                       cursor->raw_effect().attr("on_middle_mouse_click")(false);
+            )
             break;
         }
     }
+
+//    for(auto& region: d_regions)
+//    {
+//        if(region->effect()->effect_type() == SI_TYPE_MOUSE_CURSOR && region->effect()->has_mouse_pressed_capability(mouse_btn))
+//        {
+//            region->effect()->set_mouse_pressed_capability(mouse_btn, false);
+//
+//            switch(mouse_btn)
+//            {
+//                case SI_LEFT_MOUSE_BUTTON:
+//                {
+//                    HANDLE_PYTHON_CALL(PY_WARNING, "Cannot foward left mouse release to plugin " + region->name(),
+//                                       region->raw_effect().attr("left_mouse_clicked") = false;
+//                                       region->raw_effect().attr("on_left_mouse_click")(false);
+//                    )
+//                    break;
+//                }
+//                case SI_RIGHT_MOUSE_BUTTON:
+//                {
+//                    HANDLE_PYTHON_CALL(PY_WARNING, "Cannot foward right mouse release to plugin " + region->name(),
+//                                       region->raw_effect().attr("right_mouse_clicked") = false;
+//                                       region->raw_effect().attr("on_right_mouse_click")(false);
+//                    )
+//                    break;
+//                }
+//
+//                case SI_MIDDLE_MOUSE_BUTTON:
+//                {
+//                    HANDLE_PYTHON_CALL(PY_WARNING, "Cannot foward middle mouse release to plugin " + region->name(),
+//                                       region->raw_effect().attr("middle_mouse_clicked") = false;
+//                                       region->raw_effect().attr("on_middle_mouse_click")(false);
+//                    )
+//                    break;
+//                }
+//            }
+//
+//            break;
+//        }
+//    }
 }
 
 void RegionManager::set_partial_regions(const std::unordered_map<std::string, std::vector<glm::vec3>>& partials)
@@ -171,42 +233,48 @@ void RegionManager::update_key_inputs()
 
 void RegionManager::update_mouse_inputs()
 {
-    Region *cursor;
-
     for (auto &region: d_regions)
     {
         if (region->effect()->effect_type() == SI_TYPE_MOUSE_CURSOR)
         {
-            cursor = region.get();
-            break;
+            uint8_t mid = bp::extract<uint8_t>(region->raw_effect().attr("id"));
+
+            if (Context::SIContext()->input_manager()->is_mouse_down(SI_LEFT_MOUSE_BUTTON, mid))
+            {
+                activate_mouse_region_button_down(region.get(), SI_LEFT_MOUSE_BUTTON);
+            }
+            else
+            {
+                deactivate_mouse_region_button_down(region.get(), SI_LEFT_MOUSE_BUTTON);
+            }
+
+            if (Context::SIContext()->input_manager()->is_mouse_down(SI_RIGHT_MOUSE_BUTTON, mid))
+            {
+                activate_mouse_region_button_down(region.get(), SI_RIGHT_MOUSE_BUTTON);
+            }
+            else
+            {
+                deactivate_mouse_region_button_down(region.get(), SI_RIGHT_MOUSE_BUTTON);
+            }
+
+            if (Context::SIContext()->input_manager()->is_mouse_down(SI_MIDDLE_MOUSE_BUTTON, mid))
+            {
+                activate_mouse_region_button_down(region.get(), SI_MIDDLE_MOUSE_BUTTON);
+            }
+            else
+            {
+                deactivate_mouse_region_button_down(region.get(), SI_MIDDLE_MOUSE_BUTTON);
+            }
+
+//                if (Context::SIContext()->input_manager()->is_double_click())
+//                    toggle_mouse_region_double_click(cursor, true);
+//                else
+//                    toggle_mouse_region_double_click(cursor, false);
+//
+//                auto wheel_angles = Context::SIContext()->input_manager()->mouse_wheel_angles();
+//
+//                toggle_mouse_region_wheel_scrolled(cursor, wheel_angles.px, wheel_angles.degrees);
         }
-    }
-
-    if (cursor)
-    {
-        if (Context::SIContext()->input_manager()->is_mouse_down(SI_LEFT_MOUSE_BUTTON))
-            activate_mouse_region_button_down(cursor, SI_LEFT_MOUSE_BUTTON);
-        else
-            deactivate_mouse_region_button_down(cursor, SI_LEFT_MOUSE_BUTTON);
-
-        if (Context::SIContext()->input_manager()->is_mouse_down(SI_RIGHT_MOUSE_BUTTON))
-            activate_mouse_region_button_down(cursor, SI_RIGHT_MOUSE_BUTTON);
-        else
-            deactivate_mouse_region_button_down(cursor, SI_RIGHT_MOUSE_BUTTON);
-
-        if (Context::SIContext()->input_manager()->is_mouse_down(SI_MIDDLE_MOUSE_BUTTON))
-            activate_mouse_region_button_down(cursor, SI_MIDDLE_MOUSE_BUTTON);
-        else
-            deactivate_mouse_region_button_down(cursor, SI_MIDDLE_MOUSE_BUTTON);
-
-        if (Context::SIContext()->input_manager()->is_double_click())
-            toggle_mouse_region_double_click(cursor, true);
-        else
-            toggle_mouse_region_double_click(cursor, false);
-
-        auto wheel_angles = Context::SIContext()->input_manager()->mouse_wheel_angles();
-
-        toggle_mouse_region_wheel_scrolled(cursor, wheel_angles.px, wheel_angles.degrees);
     }
 }
 

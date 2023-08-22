@@ -51,6 +51,7 @@ Context::Context()
     uprcm = std::make_unique<CollisionManager>();
     upeam = std::make_unique<ExternalApplicationManager>();
     upjs = std::make_unique<JobSystem<void, 512>>();
+    upmmkm = std::make_unique<MultiMouseKeyboardManager>();
 //    uptm = std::make_unique<TangibleManager>();
 //    logfile.open("menu_latency.csv", std::ios_base::app);
 //    logfile << "time\n";
@@ -68,13 +69,14 @@ void Context::begin(const std::unordered_map<std::string, std::unique_ptr<bp::ob
     QApplication d_app(argc, argv);
     s_width = QApplication::primaryScreen()->geometry().width();
     s_height = QApplication::primaryScreen()->geometry().height();
+
     INFO("Qt5 Application created!");
 
     upshg = std::make_unique<SpatialHashGrid>(s_width, s_height, 20, 20);
 
     d_app.installEventFilter(upim.get());
 
-    qmlRegisterType<PlotItem>("siqml", 1, 0, "PlotItem");
+//    qmlRegisterType<PlotItem>("siqml", 1, 0, "PlotItem");
 //    qmlRegisterType<VideoItem>("siqml", 1, 0, "VideoItem");
 
     d_ire = ire;
@@ -99,6 +101,7 @@ void Context::begin(const std::unordered_map<std::string, std::unique_ptr<bp::ob
                 case SI_TYPE_IMAGE_FILE:
                 case SI_TYPE_UNKNOWN_FILE:
                 case SI_TYPE_CURSOR:
+                case SI_TYPE_MULTI_MOUSE_CURSOR:
                 case SI_TYPE_ENTRY:
                 case SI_TYPE_CUSTOM_NON_DRAWABLE:
                     break;
@@ -137,6 +140,8 @@ void Context::end()
 
     if(d_ire)
         d_ire->stop();
+
+    upmmkm->stop();
 }
 
 RegionManager* Context::region_manager()
@@ -208,6 +213,7 @@ void Context::set_main_window()
 
 void Context::update()
 {
+//    perform_external_input_update();
     perform_input_update();
     uprm->update();
 
@@ -219,6 +225,16 @@ void Context::update()
 
     perform_external_object_update();
     perform_external_application_registration();
+
+    if(!upmmkm->is_started())
+    {
+        upmmkm->start();
+    }
+}
+
+void Context::perform_external_input_update()
+{
+
 }
 
 uint32_t Context::width()
@@ -424,6 +440,10 @@ void Context::perform_external_object_update()
                 perform_mouse_update(it);
                 break;
 
+            case ExternalObject::ExternalObjectType::MULTIMOUSE:
+                perform_multi_mouse_update(it);
+                break;
+
             case ExternalObject::ExternalObjectType::APPLICATION:
                 perform_external_application_update(it);
                 break;
@@ -433,15 +453,32 @@ void Context::perform_external_object_update()
     }
 }
 
+void Context::perform_multi_mouse_update(std::unordered_map<std::string, std::shared_ptr<ExternalObject>>::iterator& it)
+{
+    uint8_t mid = it->second->embedded_object.multimouse.id;
+
+    auto& x = upmmkm->mmouse_coords_by_id(mid).x;
+    auto& y = upmmkm->mmouse_coords_by_id(mid).y;
+
+    auto& px = upmmkm->previous_mmouse_coords_by_id(mid).x;
+    auto& py = upmmkm->previous_mmouse_coords_by_id(mid).y;
+
+    bp::tuple args = bp::make_tuple(x - px, y - py, x, y, mid);
+    Q_EMIT it->second->LINK_SIGNAL(_UUID_, "MMOUSE", SI_CAPABILITY_LINK_POSITION, args);
+}
+
 void Context::perform_mouse_update(std::unordered_map<std::string, std::shared_ptr<ExternalObject>>::iterator& it)
 {
-    auto& x = upim->mouse_coords().x;
-    auto& y = upim->mouse_coords().y;
+    uint8_t mid = it->second->embedded_object.mouse.id;
 
-    auto& px = upim->previous_mouse_coords().x;
-    auto& py = upim->previous_mouse_coords().y;
+    auto& x = upim->mouse_coords(mid).x;
+    auto& y = upim->mouse_coords(mid).y;
 
-    bp::tuple args = bp::make_tuple(x - px, y - py, x, y);
+    auto& px = upim->previous_mouse_coords(mid).x;
+    auto& py = upim->previous_mouse_coords(mid).y;
+
+    bp::tuple args = bp::make_tuple(x - px, y - py, x, y, mid);
+
     //bp::tuple args = bp::make_tuple(px, py, x, y);
     Q_EMIT it->second->LINK_SIGNAL(_UUID_, "", SI_CAPABILITY_LINK_POSITION, args);
 }
@@ -497,6 +534,7 @@ void Context::perform_external_application_registration()
 
         uint32_t x = window->x() - Context::SIContext()->main_window()->x();
         uint32_t y = window->y();
+
         uint32_t width = window->width();
         uint32_t height = window->height();
 
@@ -552,6 +590,8 @@ void Context::perform_region_insertion()
     if(region_queue_size > 0)
     { // insert file writing here
 //        SI_BENCHMARK_SCOPE(
+            Print::print(region_queue_size);
+
                 for(int32_t i = 0; i < ((region_queue_size > NEW_REGIONS_PER_FRAME) ? NEW_REGIONS_PER_FRAME: region_queue_size); ++i)
                 {
                     const auto& region_information_tuple = d_region_insertion_queue.front();
@@ -560,10 +600,26 @@ void Context::perform_region_insertion()
                     if(std::get<2>(region_information_tuple) == SI_TYPE_MOUSE_CURSOR)
                     {
                         deo[uprm->regions().back()->uuid()] = std::make_shared<ExternalObject>(ExternalObject::ExternalObjectType::MOUSE);
+                        int id = bp::extract<int>(uprm->regions().back()->raw_effect().attr("id"));
+                        deo[uprm->regions().back()->uuid()]->embedded_object.mouse.id = id;
+
                         uplm->add_link(deo[uprm->regions().back()->uuid()], uprm->regions().back(), SI_CAPABILITY_LINK_POSITION, SI_CAPABILITY_LINK_POSITION);
 
                         INFO("Plugin available for drawing");
                     }
+
+//                    if(std::get<2>(region_information_tuple) == SI_TYPE_MULTI_MOUSE_CURSOR)
+//                    {
+//                        deo[uprm->regions().back()->uuid()] = std::make_shared<ExternalObject>(ExternalObject::ExternalObjectType::MULTIMOUSE);
+//
+//                        int id = bp::extract<int>(uprm->regions().back()->raw_effect().attr("id"));
+//                        deo[uprm->regions().back()->uuid()]->embedded_object.multimouse.id = id;
+//
+//                        uplm->add_link(deo[uprm->regions().back()->uuid()], uprm->regions().back(), SI_CAPABILITY_LINK_POSITION, SI_CAPABILITY_LINK_POSITION);
+//
+//                        std::string msg = std::string("") + "MultiMouse " + std::to_string(id) + std::string(" (") +  (id == 0 ? std::string("red)") : id == 1 ? "green)" : "blue)") + " available for drawing!";
+//                        INFO(msg);
+//                    }
 
                     d_region_insertion_queue.pop();
                 }
@@ -573,27 +629,27 @@ void Context::perform_region_insertion()
 //        long ms = std::chrono::time_point_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now()).time_since_epoch().count();
 //        logfile << "end:" << ms << '\n';
     }
-    else
-    {
-//        logfile << "-\n";
-        for(int32_t i = 0; i < ((region_queue_size > NEW_REGIONS_PER_FRAME) ? NEW_REGIONS_PER_FRAME: region_queue_size); ++i)
-        {
-            const auto& region_information_tuple = d_region_insertion_queue.front();
-            uprm->add_region(std::get<0>(region_information_tuple), std::get<1>(region_information_tuple), std::get<3>(region_information_tuple));
-
-            if(std::get<2>(region_information_tuple) == SI_TYPE_MOUSE_CURSOR)
-            {
-                deo[uprm->regions().back()->uuid()] = std::make_shared<ExternalObject>(ExternalObject::ExternalObjectType::MOUSE);
-                uplm->add_link(deo[uprm->regions().back()->uuid()], uprm->regions().back(), SI_CAPABILITY_LINK_POSITION, SI_CAPABILITY_LINK_POSITION);
-
-                INFO("Plugin available for drawing");
-            }
-
-            d_region_insertion_queue.pop();
-        }
-
+//    else
+//    {
+////        logfile << "-\n";
+//        for(int32_t i = 0; i < ((region_queue_size > NEW_REGIONS_PER_FRAME) ? NEW_REGIONS_PER_FRAME: region_queue_size); ++i)
+//        {
+//            const auto& region_information_tuple = d_region_insertion_queue.front();
+//            uprm->add_region(std::get<0>(region_information_tuple), std::get<1>(region_information_tuple), std::get<3>(region_information_tuple));
+//
+//            if(std::get<2>(region_information_tuple) == SI_TYPE_MOUSE_CURSOR)
+//            {
+//                deo[uprm->regions().back()->uuid()] = std::make_shared<ExternalObject>(ExternalObject::ExternalObjectType::MOUSE);
+//                uplm->add_link(deo[uprm->regions().back()->uuid()], uprm->regions().back(), SI_CAPABILITY_LINK_POSITION, SI_CAPABILITY_LINK_POSITION);
+//
+//                INFO("Plugin available for drawing");
+//            }
+//
+//            d_region_insertion_queue.pop();
+//        }
+//
         QApplication::processEvents(QEventLoop::ExcludeSocketNotifiers);
-    }
+//    }
 
 //    if(d_region_insertion_queue.empty() && region_queue_size > 0)
 //    {
@@ -725,4 +781,24 @@ void Context::dbl_click_mouse(float x, float y)
 
     QTest::mouseDClick(target, Qt::LeftButton, Qt::AltModifier | Qt::ControlModifier, p);
     QApplication::processEvents(QEventLoop::ExcludeSocketNotifiers);
+}
+
+void Context::set_event_devices(const bp::dict& event_devices)
+{
+    std::unordered_map<std::string, std::vector<uint8_t>> ed;
+
+    for(int i = 0; i < bp::len(event_devices.keys()); ++i)
+    {
+        std::string key = bp::extract<std::string>(event_devices.keys()[i]);
+
+        const bp::list& value = bp::extract<bp::list>(event_devices[event_devices.keys()[i]]);
+
+        uint8_t event = bp::extract<uint8_t>(value[0]);
+        uint8_t id = bp::extract<uint8_t>(value[1]);
+
+        ed[key].push_back(event);
+        ed[key].push_back(id);
+    }
+
+    upmmkm->set_event_devices(ed);
 }

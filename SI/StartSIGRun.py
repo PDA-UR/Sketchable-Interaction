@@ -1,3 +1,4 @@
+import glob
 
 from libPySI import PySI
 
@@ -167,7 +168,7 @@ def start_application():
     PySI.Startup.set_file_system_desktop_folder("/home/juergen/Desktop/si_test/Desktop")
 
     add_canvas(rgba)
-    add_mouse_cursor({"draw": "RMB"})
+    # add_mouse_cursor({"draw": "RMB"})
     # add_palette()
     # add_unredo()
     # add_terminal()
@@ -177,8 +178,28 @@ def start_application():
         add_study_setup_fs(kwargs)
 
     if STUDY_PDE & STUDY_CHOICE:
+        device_names = ["Logitech Gaming Mouse G402", "USB OPTICAL MOUSE"]
+        device_id = [0, 1]
+        event_devices = {}
+
+
         kwargs = {"group": "1", "task": "1"}
         kwargs["port"] = 5000
+
+        import evdev
+        import re
+
+        files = glob.glob("/dev/input/event*")
+
+        devices = [(re.search("(\d+)$", evdev.InputDevice(file).path).group(0), str(evdev.InputDevice(file).name)) for file in files]
+
+        for i in range(len(device_names)):
+            for event, name in devices:
+                if device_names[i].strip() == name.strip():
+                    event_devices[name.strip()] = [int(event), device_id[i]]
+
+        PySI.Startup.set_event_devices(event_devices)
+
         add_study_setup_pd(kwargs)
 
     if STUDY_EMS & STUDY_CHOICE:
