@@ -55,12 +55,18 @@ void MultiMouseKeyboardManager::start()
         for(auto& [name, ev_id]: d_event_devices)
         {
             uint8_t id = ev_id[1];
+            uint8_t keyboard_event_id = ev_id[2];
             uint8_t event = ev_id[0];
 
+//            Print::print(id, event, keyboard_event_id);
+
             id_to_event[id] = event;
+            id_to_keyboard[id] = keyboard_event_id;
 
             std::string device_path = "/dev/input/event" + std::to_string(event);
             id_to_fd[id] = open(device_path.c_str(), O_RDONLY | O_NONBLOCK);
+            device_path = "/dev/input/event" + std::to_string(keyboard_event_id);
+            id_to_kfd[id] = open(device_path.c_str(), O_RDONLY | O_NONBLOCK);
 
             id_to_pointing_device[id] = new QPointingDevice("MMOUSE", -1, QInputDevice::DeviceType::Mouse, QPointingDevice::PointerType::Cursor, QInputDevice::Capability::Hover | QInputDevice::Capability::Position | QInputDevice::Capability::Scroll, 1024, 3, "", QPointingDeviceUniqueId::fromNumericId(id));
         }
@@ -73,6 +79,7 @@ void MultiMouseKeyboardManager::start()
 void *MultiMouseKeyboardManager::handle_devices()
 {
     std::mutex m;
+    int it = 0;
 
     while(d_is_started)
     {
@@ -88,70 +95,27 @@ void *MultiMouseKeyboardManager::handle_devices()
 
             ssize_t bytesRead = read(id_to_fd[i], &ev, sizeof(struct input_event));
 
-            if (bytesRead != sizeof(struct input_event))
+            if (bytesRead == sizeof(struct input_event))
             {
-//                perror("1 Error reading event");
-                continue;
+                handle_mouse_move(i, ev);
+                handle_mouse_buttons(i, ev);
             }
 
-            if (ev.type == EV_REL && (ev.code == REL_X || ev.code == REL_Y))
-            {
-                d_previous_mmouse_coords[i].x = d_mmouse_coords[i].x;
-                d_previous_mmouse_coords[i].y = d_mmouse_coords[i].y;
-
-                if (ev.code == REL_X) {
-                    d_mmouse_coords[i].x += ev.value;
-
-                    if (d_mmouse_coords[i].x < d_min_x)
-                        d_mmouse_coords[i].x = d_min_x;
-
-                    if (d_mmouse_coords[i].x > d_max_x)
-                        d_mmouse_coords[i].x = d_max_x;
-                } else if (ev.code == REL_Y) {
-                    d_mmouse_coords[i].y += ev.value;
-
-                    if (d_mmouse_coords[i].y < d_min_y)
-                        d_mmouse_coords[i].y = d_min_y;
-
-                    if (d_mmouse_coords[i].y > d_max_y)
-                        d_mmouse_coords[i].y = d_max_y;
-                }
-
-                id_to_mouse_move_event[i] = new QMouseEvent(QEvent::Type::MouseMove, QPointF(), QPointF(d_mmouse_coords[i].x + QApplication::primaryScreen()->geometry().x(), d_mmouse_coords[i].y), Qt::NoButton, Qt::NoButton, Qt::NoModifier, id_to_pointing_device[i]);
-                QApplication::postEvent(QApplication::instance(), id_to_mouse_move_event[i]);
-            }
-
-            if (ev.type == EV_KEY && (ev.code == BTN_LEFT || ev.code == BTN_RIGHT))
-            {
-                if(ev.code == BTN_LEFT)
-                {
-
-                    if(ev.value == 1)
-                    {
-                        id_to_mouse_lmb_event[i] = new QMouseEvent(QEvent::Type::MouseButtonPress, QPointF(), QPointF(d_mmouse_coords[i].x + QApplication::primaryScreen()->geometry().x(), d_mmouse_coords[i].y), Qt::LeftButton, Qt::NoButton, Qt::NoModifier, id_to_pointing_device[i]);
-                    }
-                    else
-                    {
-                        id_to_mouse_lmb_event[i] = new QMouseEvent(QEvent::Type::MouseButtonRelease, QPointF(), QPointF(d_mmouse_coords[i].x + QApplication::primaryScreen()->geometry().x(), d_mmouse_coords[i].y), Qt::LeftButton, Qt::NoButton, Qt::NoModifier, id_to_pointing_device[i]);
-                    }
-
-                    QApplication::postEvent(QApplication::instance(), id_to_mouse_lmb_event[i]);
-                }
-
-                if(ev.code == BTN_RIGHT)
-                {
-                    if(ev.value == 1)
-                    {
-                        id_to_mouse_rmb_event[i] = new QMouseEvent(QEvent::Type::MouseButtonPress, QPointF(), QPointF(d_mmouse_coords[i].x + QApplication::primaryScreen()->geometry().x(), d_mmouse_coords[i].y), Qt::RightButton, Qt::NoButton, Qt::NoModifier, id_to_pointing_device[i]);
-                    }
-                    else
-                    {
-                        id_to_mouse_rmb_event[i] = new QMouseEvent(QEvent::Type::MouseButtonRelease, QPointF(), QPointF(d_mmouse_coords[i].x + QApplication::primaryScreen()->geometry().x(), d_mmouse_coords[i].y), Qt::RightButton, Qt::NoButton, Qt::NoModifier, id_to_pointing_device[i]);
-                    }
-
-                    QApplication::postEvent(QApplication::instance(), id_to_mouse_rmb_event[i]);
-                }
-            }
+//            bytesRead = read(id_to_kfd[i], &ev, sizeof(struct input_event));
+//
+//            if(id_to_kfd[i] == -1)
+//            {
+//                perror("0 Error reading event");
+//                continue;
+//            }
+//
+//            if (bytesRead == sizeof(struct input_event))
+//            {
+//                if(ev.type == EV_KEY)
+//                {
+////                    Print::print("TYPED", i, ev.value, ev.code);
+//                }
+//            }
         }
     }
 
@@ -159,6 +123,73 @@ void *MultiMouseKeyboardManager::handle_devices()
         close(fd);
 
     return nullptr;
+}
+
+void MultiMouseKeyboardManager::handle_mouse_move(int id, const input_event &ev)
+{
+    if (ev.type == EV_REL && (ev.code == REL_X || ev.code == REL_Y))
+    {
+        d_previous_mmouse_coords[id].x = d_mmouse_coords[id].x;
+        d_previous_mmouse_coords[id].y = d_mmouse_coords[id].y;
+
+        if (ev.code == REL_X)
+        {
+            d_mmouse_coords[id].x += ev.value;
+
+            if (d_mmouse_coords[id].x < d_min_x)
+                d_mmouse_coords[id].x = d_min_x;
+
+            if (d_mmouse_coords[id].x > d_max_x)
+                d_mmouse_coords[id].x = d_max_x;
+        }
+        else if (ev.code == REL_Y)
+        {
+            d_mmouse_coords[id].y += ev.value;
+
+            if (d_mmouse_coords[id].y < d_min_y)
+                d_mmouse_coords[id].y = d_min_y;
+
+            if (d_mmouse_coords[id].y > d_max_y)
+                d_mmouse_coords[id].y = d_max_y;
+        }
+
+        id_to_mouse_move_event[id] = new QMouseEvent(QEvent::Type::MouseMove, QPointF(), QPointF(d_mmouse_coords[id].x + QApplication::primaryScreen()->geometry().x(), d_mmouse_coords[id].y), Qt::NoButton, Qt::NoButton, Qt::NoModifier, id_to_pointing_device[id]);
+        QApplication::postEvent(QApplication::instance(), id_to_mouse_move_event[id]);
+    }
+}
+
+void MultiMouseKeyboardManager::handle_mouse_buttons(int id, const input_event &ev)
+{
+    if (ev.type == EV_KEY && (ev.code == BTN_LEFT || ev.code == BTN_RIGHT))
+    {
+        if(ev.code == BTN_LEFT)
+        {
+
+            if(ev.value == 1)
+            {
+                id_to_mouse_lmb_event[id] = new QMouseEvent(QEvent::Type::MouseButtonPress, QPointF(), QPointF(d_mmouse_coords[id].x + QApplication::primaryScreen()->geometry().x(), d_mmouse_coords[id].y), Qt::LeftButton, Qt::NoButton, Qt::NoModifier, id_to_pointing_device[id]);
+            }
+            else
+            {
+                id_to_mouse_lmb_event[id] = new QMouseEvent(QEvent::Type::MouseButtonRelease, QPointF(), QPointF(d_mmouse_coords[id].x + QApplication::primaryScreen()->geometry().x(), d_mmouse_coords[id].y), Qt::LeftButton, Qt::NoButton, Qt::NoModifier, id_to_pointing_device[id]);
+            }
+
+            QApplication::postEvent(QApplication::instance(), id_to_mouse_lmb_event[id]);
+        }
+        if(ev.code == BTN_RIGHT)
+        {
+            if(ev.value == 1)
+            {
+                id_to_mouse_rmb_event[id] = new QMouseEvent(QEvent::Type::MouseButtonPress, QPointF(), QPointF(d_mmouse_coords[id].x + QApplication::primaryScreen()->geometry().x(), d_mmouse_coords[id].y), Qt::RightButton, Qt::NoButton, Qt::NoModifier, id_to_pointing_device[id]);
+            }
+            else
+            {
+                id_to_mouse_rmb_event[id] = new QMouseEvent(QEvent::Type::MouseButtonRelease, QPointF(), QPointF(d_mmouse_coords[id].x + QApplication::primaryScreen()->geometry().x(), d_mmouse_coords[id].y), Qt::RightButton, Qt::NoButton, Qt::NoModifier, id_to_pointing_device[id]);
+            }
+
+            QApplication::postEvent(QApplication::instance(), id_to_mouse_rmb_event[id]);
+        }
+    }
 }
 
 bool MultiMouseKeyboardManager::is_started()

@@ -33,7 +33,8 @@ public:
         struct
         {
             uint8_t id;
-        } multimouse;
+            char c;
+        } keyboard;
 
         struct
         {

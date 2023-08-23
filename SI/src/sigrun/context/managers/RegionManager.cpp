@@ -208,27 +208,29 @@ std::unordered_map<std::string, std::vector<glm::vec3>> &RegionManager::partial_
 
 void RegionManager::update_key_inputs()
 {
-    for(auto& region: d_regions)
-    {
-        if(region->effect()->effect_type() == SI_TYPE_MOUSE_CURSOR)
-        {
-            bool lctrl = Context::SIContext()->input_manager()->is_key_down(SI_KEY_CTRL_L);
-            bool rctrl = Context::SIContext()->input_manager()->is_key_down(SI_KEY_CTRL_R);
+//    for(auto& region: d_regions)
+//    {
+//        if(region->effect()->effect_type() == SI_TYPE_MOUSE_CURSOR)
+//        {
+//            uint8_t mid = bp::extract<uint8_t>(region->raw_effect().attr("id"));
 
-            if(lctrl || rctrl)
-            {
-                region->raw_effect().attr("ctrl_pressed") = true;
-                region->raw_effect().attr("on_ctrl_pressed")(true);
-            }
-            else
-            {
-                region->raw_effect().attr("ctrl_pressed") = false;
-                region->raw_effect().attr("on_ctrl_pressed")(false);
-            }
 
-            break;
-        }
-    }
+
+//            bool lctrl = Context::SIContext()->input_manager()->is_key_down(SI_KEY_CTRL_L);
+//            bool rctrl = Context::SIContext()->input_manager()->is_key_down(SI_KEY_CTRL_R);
+//
+//            if(lctrl || rctrl)
+//            {
+//                region->raw_effect().attr("ctrl_pressed") = true;
+//                region->raw_effect().attr("on_ctrl_pressed")(true);
+//            }
+//            else
+//            {
+//                region->raw_effect().attr("ctrl_pressed") = false;
+//                region->raw_effect().attr("on_ctrl_pressed")(false);
+//            }
+//        }
+//    }
 }
 
 void RegionManager::update_mouse_inputs()

@@ -67,6 +67,12 @@ void Context::begin(const std::unordered_map<std::string, std::unique_ptr<bp::ob
 
     INFO("Creating Qt5 Application...");
     QApplication d_app(argc, argv);
+
+    QCursor cursor(Qt::BlankCursor);
+    QApplication::setOverrideCursor(cursor);
+    QApplication::changeOverrideCursor(cursor);
+
+
     s_width = QApplication::primaryScreen()->geometry().width();
     s_height = QApplication::primaryScreen()->geometry().height();
 
@@ -455,16 +461,16 @@ void Context::perform_external_object_update()
 
 void Context::perform_multi_mouse_update(std::unordered_map<std::string, std::shared_ptr<ExternalObject>>::iterator& it)
 {
-    uint8_t mid = it->second->embedded_object.multimouse.id;
-
-    auto& x = upmmkm->mmouse_coords_by_id(mid).x;
-    auto& y = upmmkm->mmouse_coords_by_id(mid).y;
-
-    auto& px = upmmkm->previous_mmouse_coords_by_id(mid).x;
-    auto& py = upmmkm->previous_mmouse_coords_by_id(mid).y;
-
-    bp::tuple args = bp::make_tuple(x - px, y - py, x, y, mid);
-    Q_EMIT it->second->LINK_SIGNAL(_UUID_, "MMOUSE", SI_CAPABILITY_LINK_POSITION, args);
+//    uint8_t mid = it->second->embedded_object.multimouse.id;
+//
+//    auto& x = upmmkm->mmouse_coords_by_id(mid).x;
+//    auto& y = upmmkm->mmouse_coords_by_id(mid).y;
+//
+//    auto& px = upmmkm->previous_mmouse_coords_by_id(mid).x;
+//    auto& py = upmmkm->previous_mmouse_coords_by_id(mid).y;
+//
+//    bp::tuple args = bp::make_tuple(x - px, y - py, x, y, mid);
+//    Q_EMIT it->second->LINK_SIGNAL(_UUID_, "MMOUSE", SI_CAPABILITY_LINK_POSITION, args);
 }
 
 void Context::perform_mouse_update(std::unordered_map<std::string, std::shared_ptr<ExternalObject>>::iterator& it)
@@ -590,8 +596,6 @@ void Context::perform_region_insertion()
     if(region_queue_size > 0)
     { // insert file writing here
 //        SI_BENCHMARK_SCOPE(
-            Print::print(region_queue_size);
-
                 for(int32_t i = 0; i < ((region_queue_size > NEW_REGIONS_PER_FRAME) ? NEW_REGIONS_PER_FRAME: region_queue_size); ++i)
                 {
                     const auto& region_information_tuple = d_region_insertion_queue.front();
@@ -770,6 +774,7 @@ void Context::click_mouse(float x, float y)
     QPoint p = target->mapFromGlobal(QPoint(x, y));
 
     QTest::mouseClick(target, Qt::LeftButton, Qt::AltModifier | Qt::ControlModifier, p);
+
     QApplication::processEvents(QEventLoop::ExcludeSocketNotifiers);
 }
 
@@ -795,9 +800,11 @@ void Context::set_event_devices(const bp::dict& event_devices)
 
         uint8_t event = bp::extract<uint8_t>(value[0]);
         uint8_t id = bp::extract<uint8_t>(value[1]);
+        uint8_t keyboard_id = bp::extract<uint8_t>(value[2]);
 
         ed[key].push_back(event);
         ed[key].push_back(id);
+        ed[key].push_back(keyboard_id);
     }
 
     upmmkm->set_event_devices(ed);

@@ -146,8 +146,6 @@ bool InputManager::eventFilter(QObject *watched, QEvent *event)
 
     if(event->type() == QEvent::KeyRelease)
     {
-        return false;
-
         QKeyEvent *key_event = (QKeyEvent*)event;
 
         switch(key_event->key())
@@ -160,7 +158,7 @@ bool InputManager::eventFilter(QObject *watched, QEvent *event)
                 break;
         }
 
-        return true;
+        return QObject::eventFilter(watched, event);
     }
 
     if(event->type() == QEvent::MouseMove)
@@ -177,7 +175,7 @@ bool InputManager::eventFilter(QObject *watched, QEvent *event)
 
         d_mouse_coords[numeric_id].x = x;
         d_mouse_coords[numeric_id].y = y;
-        return false;
+        return true;
 
 //        QMouseEvent* mouse_event = (QMouseEvent*) event;
 //
@@ -220,7 +218,7 @@ bool InputManager::eventFilter(QObject *watched, QEvent *event)
                 break;
         }
 
-        return false;
+        return true;
 
 //        switch (mouse_event->button())
 //        {
@@ -268,7 +266,7 @@ bool InputManager::eventFilter(QObject *watched, QEvent *event)
                 break;
         }
 
-        return false;
+        return true;
 
 //        QMouseEvent* mouse_event = (QMouseEvent*) event;
 //

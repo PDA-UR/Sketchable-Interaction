@@ -23,6 +23,9 @@ public:
     void set_event_devices(const std::unordered_map<std::string, std::vector<uint8_t>>& event_devices);
 
 private:
+    void handle_mouse_move(int id, const struct input_event& ev);
+    void handle_mouse_buttons(int id, const struct input_event& ev);
+
     bool d_is_started;
 
     pthread_t mmkthread;
@@ -38,7 +41,11 @@ private:
 
     std::unordered_map<std::string, std::vector<uint8_t>> d_event_devices;
     std::unordered_map<uint8_t, uint8_t> id_to_event;
+    std::unordered_map<uint8_t, uint8_t> id_to_keyboard;
+
     std::unordered_map<uint8_t, int> id_to_fd;
+    std::unordered_map<uint8_t, int> id_to_kfd;
+
     std::unordered_map<uint8_t, QPointingDevice*> id_to_pointing_device;
     std::unordered_map<uint8_t, QMouseEvent*> id_to_mouse_move_event;
     std::unordered_map<uint8_t, QMouseEvent*> id_to_mouse_lmb_event;

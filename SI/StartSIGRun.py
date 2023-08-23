@@ -178,10 +178,15 @@ def start_application():
         add_study_setup_fs(kwargs)
 
     if STUDY_PDE & STUDY_CHOICE:
-        device_names = ["Logitech Gaming Mouse G402", "USB OPTICAL MOUSE"]
-        device_id = [0, 1]
-        event_devices = {}
+        mouse_device_names = ["Logitech Gaming Mouse G402"]
+        # device_names = ["Logitech Gaming Mouse G402", "USB OPTICAL MOUSE"]
+        # device_names = ["Logitech Gaming Mouse G402", "USB OPTICAL MOUSE", "PixArt HP USB Optical Mouse"]
+        # device_names = ["Logitech Gaming Mouse G402", "PixArt HP USB Optical Mouse"]
 
+        device_id = [0, 1, 2]
+        keyboard_event_id = [22, -1, -1]
+
+        event_devices = {}
 
         kwargs = {"group": "1", "task": "1"}
         kwargs["port"] = 5000
@@ -193,10 +198,10 @@ def start_application():
 
         devices = [(re.search("(\d+)$", evdev.InputDevice(file).path).group(0), str(evdev.InputDevice(file).name)) for file in files]
 
-        for i in range(len(device_names)):
+        for i in range(len(mouse_device_names)):
             for event, name in devices:
-                if device_names[i].strip() == name.strip():
-                    event_devices[name.strip()] = [int(event), device_id[i]]
+                if mouse_device_names[i].strip() == name.strip():
+                    event_devices[name.strip()] = [int(event), device_id[i], keyboard_event_id[i]]
 
         PySI.Startup.set_event_devices(event_devices)
 
