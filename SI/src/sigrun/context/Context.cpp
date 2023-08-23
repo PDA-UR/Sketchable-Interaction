@@ -771,11 +771,13 @@ void Context::click_mouse(float x, float y)
 {
     x+= QApplication::primaryScreen()->geometry().x();
     QWidget* target = QApplication::widgetAt(x, y);
-    QPoint p = target->mapFromGlobal(QPoint(x, y));
+    if(target)
+    {
+        QPoint p = target->mapFromGlobal(QPoint(x, y));
+        QTest::mouseClick(target, Qt::LeftButton, Qt::NoModifier, p);
 
-    QTest::mouseClick(target, Qt::LeftButton, Qt::AltModifier | Qt::ControlModifier, p);
-
-    QApplication::processEvents(QEventLoop::ExcludeSocketNotifiers);
+        QApplication::processEvents(QEventLoop::ExcludeSocketNotifiers);
+    }
 }
 
 void Context::dbl_click_mouse(float x, float y)

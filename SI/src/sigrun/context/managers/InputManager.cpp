@@ -175,7 +175,7 @@ bool InputManager::eventFilter(QObject *watched, QEvent *event)
 
         d_mouse_coords[numeric_id].x = x;
         d_mouse_coords[numeric_id].y = y;
-        return true;
+//        return true;
 
 //        QMouseEvent* mouse_event = (QMouseEvent*) event;
 //
@@ -218,7 +218,7 @@ bool InputManager::eventFilter(QObject *watched, QEvent *event)
                 break;
         }
 
-        return true;
+//        return true;
 
 //        switch (mouse_event->button())
 //        {
@@ -266,7 +266,7 @@ bool InputManager::eventFilter(QObject *watched, QEvent *event)
                 break;
         }
 
-        return true;
+//        return true;
 
 //        QMouseEvent* mouse_event = (QMouseEvent*) event;
 //
