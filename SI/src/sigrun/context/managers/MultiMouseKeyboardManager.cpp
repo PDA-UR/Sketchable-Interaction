@@ -139,8 +139,8 @@ void MultiMouseKeyboardManager::handle_mouse_move(int id, const input_event &ev)
             if (d_mmouse_coords[id].x < d_min_x)
                 d_mmouse_coords[id].x = d_min_x;
 
-            if (d_mmouse_coords[id].x > d_max_x)
-                d_mmouse_coords[id].x = d_max_x;
+            if (d_mmouse_coords[id].x > d_max_x - (32 * 0.602090) / 1920 * d_max_x)
+                d_mmouse_coords[id].x = d_max_x - (32 * 0.602090) / 1920 * d_max_x;
         }
         else if (ev.code == REL_Y)
         {
@@ -149,8 +149,8 @@ void MultiMouseKeyboardManager::handle_mouse_move(int id, const input_event &ev)
             if (d_mmouse_coords[id].y < d_min_y)
                 d_mmouse_coords[id].y = d_min_y;
 
-            if (d_mmouse_coords[id].y > d_max_y)
-                d_mmouse_coords[id].y = d_max_y;
+            if (d_mmouse_coords[id].y > d_max_y - (float) 32 / 1200 * d_max_y)
+                d_mmouse_coords[id].y = d_max_y - (float) 32 / 1200 * d_max_y;
         }
 
         id_to_mouse_move_event[id] = new QMouseEvent(QEvent::Type::MouseMove, QPointF(), QPointF(d_mmouse_coords[id].x + QApplication::primaryScreen()->geometry().x(), d_mmouse_coords[id].y), Qt::NoButton, Qt::NoButton, Qt::NoModifier, id_to_pointing_device[id]);
