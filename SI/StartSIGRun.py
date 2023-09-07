@@ -179,9 +179,9 @@ def start_application():
 
     if STUDY_PDE & STUDY_CHOICE:
         mouse_device_names = ["Logitech Gaming Mouse G402"]
-        # device_names = ["Logitech Gaming Mouse G402", "USB OPTICAL MOUSE"]
-        # device_names = ["Logitech Gaming Mouse G402", "USB OPTICAL MOUSE", "PixArt HP USB Optical Mouse"]
-        # device_names = ["Logitech Gaming Mouse G402", "PixArt HP USB Optical Mouse"]
+        # mouse_device_names = ["Logitech Gaming Mouse G402", "USB OPTICAL MOUSE"]
+        # mouse_device_names = ["Logitech Gaming Mouse G402", "USB OPTICAL MOUSE", "PixArt HP USB Optical Mouse"]
+        # mouse_device_names = ["Logitech Gaming Mouse G402", "PixArt HP USB Optical Mouse"]
 
         device_id = [0, 1, 2]
         keyboard_event_id = [22, -1, -1]

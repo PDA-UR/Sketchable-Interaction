@@ -30,7 +30,13 @@ public:
 
     void update();
 
+    void started_typing(uint8_t id);
+    void stopped_typing();
+
 private:
+    bool has_started_typing = false;
+    bool has_stopped_typing = false;
+
     std::vector<std::shared_ptr<Region>> d_regions;
     std::unordered_map<std::string, std::vector<glm::vec3>> d_partial_regions;
 

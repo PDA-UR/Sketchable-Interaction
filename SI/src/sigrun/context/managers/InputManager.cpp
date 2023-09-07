@@ -141,6 +141,12 @@ bool InputManager::eventFilter(QObject *watched, QEvent *event)
                 break;
         }
 
+        if(!d_is_typing_started)
+        {
+            d_is_typing_started = true;
+            Context::SIContext()->region_manager()->started_typing(d_last_id_clicked);
+        }
+
         return QObject::eventFilter(watched, event);
     }
 
@@ -205,6 +211,13 @@ bool InputManager::eventFilter(QObject *watched, QEvent *event)
         QMouseEvent* mouse_event = (QMouseEvent*) event;
         int numeric_id = mouse_event->pointingDevice()->uniqueId().numericId();
 
+        if(d_is_typing_started) {
+            d_is_typing_started = false;
+            Context::SIContext()->region_manager()->stopped_typing();
+        }
+
+        d_last_id_clicked = numeric_id;
+
         switch (mouse_event->button())
         {
             case Qt::LeftButton:
@@ -251,6 +264,8 @@ bool InputManager::eventFilter(QObject *watched, QEvent *event)
         QMouseEvent* mouse_event = (QMouseEvent*) event;
         int numeric_id = mouse_event->pointingDevice()->uniqueId().numericId();
 
+        d_last_id_clicked = numeric_id;
+
         switch (mouse_event->button())
         {
             case Qt::LeftButton:
@@ -295,4 +310,8 @@ bool InputManager::eventFilter(QObject *watched, QEvent *event)
     }
 
     return QObject::eventFilter(watched, event);
+}
+
+const uint8_t InputManager::last_id_clicked() {
+    return d_last_id_clicked;
 }

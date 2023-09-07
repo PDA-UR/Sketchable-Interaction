@@ -208,12 +208,44 @@ std::unordered_map<std::string, std::vector<glm::vec3>> &RegionManager::partial_
 
 void RegionManager::update_key_inputs()
 {
-//    for(auto& region: d_regions)
-//    {
-//        if(region->effect()->effect_type() == SI_TYPE_MOUSE_CURSOR)
-//        {
-//            uint8_t mid = bp::extract<uint8_t>(region->raw_effect().attr("id"));
+    for(auto& region: d_regions)
+    {
+        if(region->effect()->effect_type() == SI_TYPE_MOUSE_CURSOR)
+        {
+            uint8_t mid = bp::extract<uint8_t>(region->raw_effect().attr("id"));
+            uint8_t id_last_clicked = Context::SIContext()->input_manager()->last_id_clicked();
 
+            if (has_started_typing)
+            {
+                has_started_typing = false;
+                if(mid == id_last_clicked)
+                {
+                    region->raw_effect().attr("start_typing")(mid, true);
+                }
+                else
+                {
+                    if(mid == 0)
+                    {
+                        region->raw_effect().attr("start_typing")(mid, false);
+                    }
+                }
+            }
+
+            if(has_stopped_typing) {
+                has_stopped_typing = false;
+
+                if(mid == id_last_clicked)
+                {
+                    region->raw_effect().attr("stop_typing")();
+                }
+                else
+                {
+                    if(mid == 0)
+                    {
+                        region->raw_effect().attr("stop_typing")();
+                    }
+                }
+            }
 
 
 //            bool lctrl = Context::SIContext()->input_manager()->is_key_down(SI_KEY_CTRL_L);
@@ -229,8 +261,8 @@ void RegionManager::update_key_inputs()
 //                region->raw_effect().attr("ctrl_pressed") = false;
 //                region->raw_effect().attr("on_ctrl_pressed")(false);
 //            }
-//        }
-//    }
+        }
+    }
 }
 
 void RegionManager::update_mouse_inputs()
@@ -329,4 +361,14 @@ void RegionManager::update()
     update_mouse_inputs();
     update_region_deletions();
     update_regions();
+}
+
+void RegionManager::started_typing(uint8_t id)
+{
+    has_started_typing = true;
+}
+
+void RegionManager::stopped_typing()
+{
+    has_stopped_typing = true;
 }

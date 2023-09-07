@@ -51,7 +51,7 @@ Scripting::Scripting()
                               "                out = str(args).replace(chr(0), '')\n" +
                               "                outputfile.write(out)\n" +
                               "                outputfile.write('\\n')\n" +
-                              "            return func(\"PySI:\", *args, **kwargs)\n" +
+                              "            return func(*args, **kwargs)\n" +
                               "        return wrapped_func\n" +
                               "    return wrap\n\n" +
                               "builtins.print = si_print(\".TEST.TXT\")(builtins.print)\n"

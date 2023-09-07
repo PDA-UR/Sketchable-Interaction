@@ -92,11 +92,15 @@ public:
 
     const MouseWheelAngles mouse_wheel_angles();
 
+    const uint8_t last_id_clicked();
+
     const bool is_double_click();
 
 private:
     bool was_key_down(uint32_t key_id);
     bool was_mouse_down(uint32_t button_id, uint8_t mid);
+
+    uint8_t d_last_id_clicked = 255;
 
     std::unordered_map<uint32_t, bool> d_key_map;
     std::unordered_map<uint32_t, bool> d_previous_key_map;
@@ -109,6 +113,7 @@ private:
 
     std::unordered_map<std::string, std::shared_ptr<ExternalObject>> deo;
     bool d_is_double_click = false;
+    bool d_is_typing_started = false;
     float d_mouse_wheel_angle_in_px;
 };
 

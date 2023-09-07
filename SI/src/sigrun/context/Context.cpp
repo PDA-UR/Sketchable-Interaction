@@ -802,11 +802,11 @@ void Context::set_event_devices(const bp::dict& event_devices)
 
         uint8_t event = bp::extract<uint8_t>(value[0]);
         uint8_t id = bp::extract<uint8_t>(value[1]);
-        uint8_t keyboard_id = bp::extract<uint8_t>(value[2]);
+//        uint8_t keyboard_id = bp::extract<uint8_t>(value[2]);
 
         ed[key].push_back(event);
         ed[key].push_back(id);
-        ed[key].push_back(keyboard_id);
+//        ed[key].push_back(keyboard_id);
     }
 
     upmmkm->set_event_devices(ed);
