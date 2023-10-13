@@ -522,27 +522,20 @@ uint8_t Region::handle_collision_event(const std::string &function_name, PySIEff
             if (emission_functions[function_name].is_none() || !d_py_effect->cap_collision_recv().count(capability))
                 continue;
 
-//            bp::object T = bp::import("concurrent.futures").attr("ThreadPoolExecutor")().attr("submit")(emission_functions[function_name], *d_effect);
-//            const bp::object& t = T.attr("result")();
+            if (d_py_effect->cap_collision_recv()[capability][function_name].is_none())
+                continue;
 
             const bp::object& t = emission_functions[function_name](*d_effect);
 
             if (t.is_none())
             {
-                if(!d_py_effect->cap_collision_recv()[capability][function_name].is_none())
-//                    bp::import("threading").attr("Thread")(bp::object(), d_py_effect->cap_collision_recv()[capability][function_name]).attr("start")();
-                   d_py_effect->cap_collision_recv()[capability][function_name]();
+               d_py_effect->cap_collision_recv()[capability][function_name]();
             }
             else
             {
-                if(d_py_effect->cap_collision_recv()[capability][function_name].is_none())
-                    continue;
-
                 if (bp::extract<bp::tuple>(t).check())
                     d_py_effect->cap_collision_recv()[capability][function_name](*t);
-//                    bp::import("threading").attr("Thread")(bp::object(), d_py_effect->cap_collision_recv()[capability][function_name], bp::object(), t).attr("start")();
                 else
-//                    bp::import("threading").attr("Thread")(bp::object(), d_py_effect->cap_collision_recv()[capability][function_name], bp::object(), bp::make_tuple(t)).attr("start")();
                     d_py_effect->cap_collision_recv()[capability][function_name](t);
            }
         )
